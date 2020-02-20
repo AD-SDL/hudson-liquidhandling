@@ -3,6 +3,7 @@ class SoloSoft:
     file = None
     plateList = []
     pipeline = []
+    STEP_DELIMITER = "!@#$"
 
     def __init__(self, filename=None, plateList=None, pipeline=None):
         # *Open protocol file for editing
@@ -54,9 +55,6 @@ class SoloSoft:
         else:
             self.pipeline = pipeline
 
-    def insertStepDelimiter(self):
-        self.pipeline.append("!@#$")
-
     def initializePipeline(self):
         self.setPipeline([self.plateList])
 
@@ -67,25 +65,121 @@ class SoloSoft:
             self.pipeline.pop()
 
     def getTips(
-        self, position="Position1", disposal="TipDisposal", number=8
+        self,
+        position="Position1",
+        disposal="TipDisposal",
+        num_tips=8,
+        auto_tip_selection=True,
+        count_tips_from_last_channel=False,
+        index=None,
     ):  # TODO Need to figure out rest of parameters
         properties_list = ["GetTip"]
         properties_list.append(position)
         properties_list.append(disposal)
-        properties_list.append(number)
-        properties_list.append(1)  # TODO
-        properties_list.append(0)  # TODO
-        properties_list.append("False")  # TODO
-        self.pipeline.append(properties_list)
-        self.insertStepDelimiter()
+        properties_list.append(num_tips)
+        if auto_tip_selection:
+            properties_list.append(1)
+        else:
+            properties_list.append(0)
+        properties_list.append(
+            0
+        )  # ? Likely unused, but we'll keep it in for consistency
+        properties_list.append(count_tips_from_last_channel)
+        properties_list.append(self.STEP_DELIMITER)
+        if index != None:
+            self.pipeline.insert(index, properties_list)
+        else:
+            self.pipeline.append(properties_list)
 
-    def startLoop(self, iterations = 1):
+    def startLoop(self, iterations=-1):
         properties_list = ["Loop"]
         properties_list.append(iterations)
+        properties_list.append(self.STEP_DELIMITER)
         self.pipeline.append(properties_list)
-        self.insertStepDelimiter()
 
-    def endLoop(self, iterations = 1):
+    def endLoop(self):
         properties_list = ["EndLoop"]
+        properties_list.append(self.STEP_DELIMITER)
         self.pipeline.append(properties_list)
-        self.insertStepDelimiter()
+
+    # TODO
+    def aspirate(
+        self,
+        position="Position1",
+        aspirate_volume_named=None,
+        syringe_speed=100,
+        start_by_emptying_syringe=0,
+        increment_column_order=None,
+        aspirate_point="Position1",
+        aspirate_shift=[0, 0, 1],
+        do_tip_touch=0,
+        tip_touch_shift=[0, 0, 0],
+        file_data_path="",
+        multiple_wells=1,
+        backlash=0,
+        move_distance=[0, 0, 0],
+        pre_aspirate=0,
+        mix_at_start=0,
+        mix_cycles=1,
+        mix_volume=0,
+    ):
+        properties_list = ["Aspirate"]
+        properties_list.append(position)
+        if aspirate_volume_named != None:
+            properties_list.append(position)
+        else:
+            properties_list.append("")
+        properties_list.append(2)  # ? Mysterious integer value
+        properties_list.append(syringe_speed)
+        properties_list.append(start_by_emptying_syringe)
+        if aspirate_volume_named != None:
+            properties_list.append("True")
+            properties_list.append("False")
+        else:
+            properties_list.append("False")
+            properties_list.append("True")
+        if increment_column_order != None:
+            properties_list.append("True")
+            properties_list.append("False")
+        else:
+            properties_list.append("False")
+            properties_list.append("True")
+        properties_list.append(aspirate_point)
+        properties_list.append(aspirate_shift)
+        properties_list.append(do_tip_touch)
+        properties_list.append(tip_touch_shift)
+        properties_list.append(file_data_path)
+        properties_list.append(multiple_wells)
+        properties_list.append(backlash)
+        properties_list.append(mix_at_start)
+        properties_list.append(mix_cycles)
+        properties_list.append(mix_volume)
+        properties_list.append(self.STEP_DELIMITER)
+
+    # TODO
+    def dispense(self):
+        return
+
+    # TODO
+    def hitPicking(self):
+        return
+
+    # TODO
+    def operateAccessory(self):
+        return
+
+    # TODO
+    def pause(self):
+        return
+
+    # TODO
+    def getBottom(self):
+        return
+
+    # TODO
+    def setSpeed(self):
+        return
+
+    # TODO
+    def moveArm(self):
+        return
