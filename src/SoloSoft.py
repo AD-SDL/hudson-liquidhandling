@@ -2,18 +2,18 @@ STEP_DELIMITER = "!@#$"
 
 
 class SoloSoft:
-
-    file = None
-    plateList = []
-    pipeline = []
-
     def __init__(self, filename=None, plateList=None, pipeline=None):
+        self.file = None
+        self.plateList = []
+        self.pipeline = []
+
         # *Open protocol file for editing
         try:
             if filename != None:
                 self.setFile(filename)
         except:
             print("Error creating SoloSoft protocol with filename %s" % filename)
+            return
         # *Set plate list
         try:
             if plateList != None:
@@ -33,25 +33,24 @@ class SoloSoft:
                 )
         except:
             print("Error setting Plate List")
+            return
         # *Set pipeline, if we're expanding on an existing pipeline
         try:
             if pipeline != None:
                 self.setPipeline(pipeline)
             else:
-                self.initialize_pipeline()
+                self.initializePipeline()
         except:
             print("Error setting pipeline")
 
     def setFile(self, filename):
-        self.file = open(filename, "x")
+        self.file = open(filename, "w")
 
     def setPlates(self, plateList):
         if not isinstance(plateList, list):
             raise TypeError("plateList must be a list of strings.")
         else:
-            for plate in plateList:
-                if not isinstance(plate, str):
-                    raise TypeError("plate must be a string.")
+            self.plateList = plateList
 
     def setPipeline(self, pipeline):
         if not isinstance(pipeline, list):
@@ -73,20 +72,25 @@ class SoloSoft:
             if self.file != None:
                 file = self.file
             else:
-                raise BaseException('Need to specify a file to save pipeline')
+                raise BaseException("Need to specify a file to save pipeline")
 
-        for item in self.pipeline:
-            if isinstance(item, list):
-                if isinstance(item[0], list):
-                    for line in item:
-                        for number in line:
-                            file.write(number, ',')
-                        file.write('\n')
+        for step in self.pipeline:
+            for item in step:
+                if isinstance(item, list):
+                    if len(item) > 0 and isinstance(item[0], list):
+                        for line in item:
+                            for number in line[:-1]:
+                                file.write(str(number))
+                                file.write(",")
+                            file.write(str(line[-1]))
+                            file.write("\n")
+                    else:
+                        for number in item:
+                            file.write(str(number))
+                            file.write("\n")
                 else:
-                    for number in item:
-                        file.write(number, '\n')
-            else:
-                file.write(item, '\n')
+                    file.write(str(item))
+                    file.write("\n")
 
     # * SOLOSoft Pipeline Functions
 
@@ -154,9 +158,9 @@ class SoloSoft:
         mix_cycles=0,
         mix_volume=0,
         dispense_height=0,
-        delay_after_dispense=0.0,
+        delay_after_dispense=0,
         aspirate_volumes=None,
-        dwell_after_aspirate=0.0,
+        dwell_after_aspirate=0,
         find_bottom_of_vessel=False,
         reverse_order=False,
         post_aspirate=0,
@@ -174,17 +178,17 @@ class SoloSoft:
         else:
             properties_list.append(0)
         if aspirate_volume_to_named_point:
-            properties_list.append("True")
             properties_list.append("False")
+            properties_list.append("True")
         else:
-            properties_list.append("False")
             properties_list.append("True")
+            properties_list.append("False")
         if increment_column_order:
-            properties_list.append("True")
             properties_list.append("False")
+            properties_list.append("True")
         else:
-            properties_list.append("False")
             properties_list.append("True")
+            properties_list.append("False")
         properties_list.append(aspirate_point)
         properties_list.append(aspirate_shift)
         if do_tip_touch:
@@ -212,7 +216,6 @@ class SoloSoft:
         else:
             properties_list.append(
                 [
-                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
                     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
                     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
                     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -259,13 +262,13 @@ class SoloSoft:
         tip_touch_shift=[0, 0, 0],
         file_data_path="",
         multiple_wells=1,
-        dwell_after_dispense=0.0,
+        dwell_after_dispense=0,
         blowoff=0,
         mix_at_finish=False,
         mix_cycles=0,
         mix_volume=0,
-        aspirate_height=0.0,
-        delay_after_aspirate=0.0,
+        aspirate_height=0,
+        delay_after_aspirate=0,
         dispense_volumes=None,
         reverse_order=False,
         move_while_pipetting=False,
@@ -279,17 +282,17 @@ class SoloSoft:
         properties_list.append(syringe_speed)
         properties_list.append(backlash)
         if dispense_volume_to_named_point:
-            properties_list.append("True")
             properties_list.append("False")
+            properties_list.append("True")
         else:
-            properties_list.append("False")
             properties_list.append("True")
+            properties_list.append("False")
         if increment_column_order:
-            properties_list.append("True")
             properties_list.append("False")
+            properties_list.append("True")
         else:
-            properties_list.append("False")
             properties_list.append("True")
+            properties_list.append("False")
         properties_list.append(dispense_point)
         properties_list.append(dispense_shift)
         if do_tip_touch:
@@ -317,7 +320,6 @@ class SoloSoft:
         else:
             properties_list.append(
                 [
-                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
                     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
                     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
                     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -369,7 +371,10 @@ class SoloSoft:
         properties_list = ["MoveArm"]
         properties_list.append(destination)
         properties_list.append(xyz_speed)
-        properties_list.append(move_z_at_start)
+        if move_z_at_start:
+            properties_list.append(1)
+        else:
+            properties_list.append(0)
         properties_list.append(STEP_DELIMITER)
         if index != None:
             self.pipeline.insert(index, properties_list)
