@@ -198,7 +198,6 @@ class SoloSoft:
         properties_list.append(self.STEP_DELIMITER)
         self.pipeline.append(properties_list)
 
-    # TODO
     def dispense(
         self,
         position="Position1",
@@ -301,6 +300,10 @@ class SoloSoft:
     def setSpeed(self):
         return
 
-    # TODO
-    def moveArm(self):
-        return
+    def moveArm(self, destination='Position1', xyz_speed=100, move_z_at_start=1):
+        properties_list = ["Dispense"]
+        properties_list.append(destination)
+        properties_list.append(xyz_speed)
+        properties_list.append(move_z_at_start)
+        properties_list.append(self.STEP_DELIMITER)
+        self.pipeline.append(properties_list)
