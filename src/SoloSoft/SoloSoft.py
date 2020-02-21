@@ -105,7 +105,7 @@ class SoloSoft:
     def aspirate(
         self,
         position="Position1",
-        aspirate_volume_named=None,
+        aspirate_volume_to_named_point=None,
         aspirate_volume_single=0,
         syringe_speed=100,
         start_by_emptying_syringe=0,
@@ -132,15 +132,12 @@ class SoloSoft:
         move_distance=[0, 0, 0],
     ):
         properties_list = ["Aspirate"]
-        if aspirate_volume_named != None:
-            properties_list.append(position)
-        else:
-            properties_list.append("")
+        properties_list.append(position)
         properties_list.append(aspirate_volume_single)
         properties_list.append(2)  # ? Mysterious integer value
         properties_list.append(syringe_speed)
         properties_list.append(start_by_emptying_syringe)
-        if aspirate_volume_named != None:
+        if aspirate_volume_to_named_point != None:
             properties_list.append("True")
             properties_list.append("False")
         else:
@@ -168,16 +165,32 @@ class SoloSoft:
         properties_list.append(0)  # ? Mysterious arbitrary integer
         properties_list.append(dispense_height)
         properties_list.append(delay_after_dispense)
-        if aspirate_volume_named == None:
-            if aspirate_volumes != None:
-                properties_list.append(aspirate_volumes)
-            else:
-                raise BaseException(
-                    "If aspirating from Plate Position, need aspirate volumes"
-                )
+        #        if aspirate_volume_to_named_point == None:
+        #            if aspirate_volumes != None:
+        #                properties_list.append(aspirate_volumes)
+        #            else:
+        #                raise BaseException(
+        #                    "If aspirating from Plate Position, need aspirate volumes"
+        #                )
+        if aspirate_volumes != None:
+            properties_list.append(aspirate_volumes)
+        else:
+            properties_list.append(
+                [
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                ]
+            )
         properties_list.append(dwell_after_aspirate)
         properties_list.append(find_bottom_of_vessel)
-        properties_list.append(5) # ? Myterious 1 or 2 digit integer
+        properties_list.append(5)  # ? Myterious 1 or 2 digit integer
         properties_list.append(reverse_order)
         properties_list.append(post_aspirate)
         properties_list.append(move_while_pipetting)
@@ -186,8 +199,87 @@ class SoloSoft:
         self.pipeline.append(properties_list)
 
     # TODO
-    def dispense(self):
-        return
+    def dispense(
+        self,
+        position="Position1",
+        dispense_volume_single=0,
+        syringe_speed=100,
+        backlash=0,
+        dispense_volume_to_named_point=None,
+        increment_column_order=None,
+        dispense_point="Position6",
+        dispense_shift=[0, 0, 1.5],
+        do_tip_touch=0,
+        tip_touch_shift=[0, 0, 0],
+        file_data_path="",
+        multiple_wells=1,
+        dwell_after_dispense=0.0,
+        blowoff=20,
+        mix_at_finish=1,
+        mix_cycles=3,
+        mix_volume=100,
+        aspirate_height=1.2,
+        delay_after_aspirate=0.0,
+        dispense_volumes=None,
+        reverse_order=0,
+        move_while_pipetting=0,
+        move_distance=[0, 0, 0],
+    ):
+        properties_list = ["Dispense"]
+        properties_list.append(position)
+        properties_list.append(dispense_volume_single)
+        properties_list.append(2)  # ? Mysterious integer value
+        properties_list.append(syringe_speed)
+        properties_list.append(backlash)
+        if dispense_volume_to_named_point != None:
+            properties_list.append("True")
+            properties_list.append("False")
+        else:
+            properties_list.append("False")
+            properties_list.append("True")
+        if increment_column_order != None:
+            properties_list.append("True")
+            properties_list.append("False")
+        else:
+            properties_list.append("False")
+            properties_list.append("True")
+        properties_list.append(dispense_point)
+        properties_list.append(dispense_shift)
+        properties_list.append(do_tip_touch)
+        properties_list.append(tip_touch_shift)
+        properties_list.append(file_data_path)
+        properties_list.append(multiple_wells)
+        properties_list.append(dwell_after_dispense)
+        properties_list.append(blowoff)
+        properties_list.append(mix_at_finish)
+        properties_list.append(mix_cycles)
+        properties_list.append(mix_volume)
+        properties_list.append(
+            "a"
+        )  # ? Something to do with the uneditable setting 'Valve Port'
+        properties_list.append(aspirate_height)
+        properties_list.append(delay_after_aspirate)
+        if dispense_volumes != None:
+            properties_list.append(dispense_volumes)
+        else:
+            properties_list.append(
+                [
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                ]
+            )
+        properties_list.append(reverse_order)
+        properties_list.append(move_while_pipetting)
+        properties_list.append(move_distance)
+        properties_list.append(self.STEP_DELIMITER)
+        self.pipeline.append(properties_list)
 
     # TODO
     def hitPicking(self):
