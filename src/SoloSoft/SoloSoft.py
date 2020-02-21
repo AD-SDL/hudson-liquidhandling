@@ -1,5 +1,6 @@
 STEP_DELIMITER = "!@#$"
 
+
 class SoloSoft:
 
     file = None
@@ -67,6 +68,25 @@ class SoloSoft:
         except:
             print("Error removing step at position %i in pipeline" % position)
 
+    def savePipeline(self, file=None):
+        if file == None:
+            if self.file != None:
+                file = self.file
+            else:
+                raise BaseException('Need to specify a file to save pipeline')
+
+        for item in self.pipeline:
+            if isinstance(item, list):
+                if isinstance(item[0], list):
+                    for line in item:
+                        for number in line:
+                            file.write(number, ',')
+                        file.write('\n')
+                else:
+                    for number in item:
+                        file.write(number, '\n')
+            else:
+                file.write(item, '\n')
 
     # * SOLOSoft Pipeline Functions
 
@@ -99,7 +119,7 @@ class SoloSoft:
 
     def startLoop(self, iterations=-1, index=None):
         properties_list = ["Loop"]
-        properties_list.append(iterations) # -1 for continuous loop
+        properties_list.append(iterations)  # -1 for continuous loop
         properties_list.append(STEP_DELIMITER)
         if index != None:
             self.pipeline.insert(index, properties_list)
@@ -142,7 +162,7 @@ class SoloSoft:
         post_aspirate=0,
         move_while_pipetting=False,
         move_distance=[0, 0, 0],
-        index=None
+        index=None,
     ):
         properties_list = ["Aspirate"]
         properties_list.append(position)
@@ -250,7 +270,7 @@ class SoloSoft:
         reverse_order=False,
         move_while_pipetting=False,
         move_distance=[0, 0, 0],
-        index=None
+        index=None,
     ):
         properties_list = ["Dispense"]
         properties_list.append(position)
@@ -275,7 +295,7 @@ class SoloSoft:
         if do_tip_touch:
             properties_list.append(1)
         else:
-                properties_list.append(0)
+            properties_list.append(0)
         properties_list.append(tip_touch_shift)
         properties_list.append(file_data_path)
         properties_list.append(multiple_wells)
@@ -284,7 +304,7 @@ class SoloSoft:
         if mix_at_finish:
             properties_list.append(1)
         else:
-                properties_list.append(0)
+            properties_list.append(0)
         properties_list.append(mix_cycles)
         properties_list.append(mix_volume)
         properties_list.append(
@@ -311,11 +331,11 @@ class SoloSoft:
         if reverse_order:
             properties_list.append(1)
         else:
-                properties_list.append(0)
+            properties_list.append(0)
         if move_while_pipetting:
             properties_list.append(1)
         else:
-                properties_list.append(0)
+            properties_list.append(0)
         properties_list.append(move_distance)
         properties_list.append(STEP_DELIMITER)
         if index != None:
@@ -343,7 +363,9 @@ class SoloSoft:
     def setSpeed(self):
         return
 
-    def moveArm(self, destination='TipDisposal', xyz_speed=100, move_z_at_start=True, index=None):
+    def moveArm(
+        self, destination="TipDisposal", xyz_speed=100, move_z_at_start=True, index=None
+    ):
         properties_list = ["MoveArm"]
         properties_list.append(destination)
         properties_list.append(xyz_speed)
