@@ -102,11 +102,11 @@ class SoloSoft:
         properties_list.append(self.STEP_DELIMITER)
         self.pipeline.append(properties_list)
 
-    # TODO
     def aspirate(
         self,
         position="Position1",
         aspirate_volume_named=None,
+        aspirate_volume_single=0,
         syringe_speed=100,
         start_by_emptying_syringe=0,
         increment_column_order=None,
@@ -117,18 +117,26 @@ class SoloSoft:
         file_data_path="",
         multiple_wells=1,
         backlash=0,
-        move_distance=[0, 0, 0],
         pre_aspirate=0,
         mix_at_start=0,
         mix_cycles=1,
         mix_volume=0,
+        dispense_height=1,
+        delay_after_dispense=0.0,
+        aspirate_volumes=None,
+        dwell_after_aspirate=0,
+        find_bottom_of_vessel=0,
+        reverse_order=0,
+        post_aspirate=0,
+        move_while_pipetting=0,
+        move_distance=[0, 0, 0],
     ):
         properties_list = ["Aspirate"]
-        properties_list.append(position)
         if aspirate_volume_named != None:
             properties_list.append(position)
         else:
             properties_list.append("")
+        properties_list.append(aspirate_volume_single)
         properties_list.append(2)  # ? Mysterious integer value
         properties_list.append(syringe_speed)
         properties_list.append(start_by_emptying_syringe)
@@ -151,10 +159,31 @@ class SoloSoft:
         properties_list.append(file_data_path)
         properties_list.append(multiple_wells)
         properties_list.append(backlash)
+        properties_list.append(pre_aspirate)
         properties_list.append(mix_at_start)
         properties_list.append(mix_cycles)
         properties_list.append(mix_volume)
+        properties_list.append("a")  # ? Mysterious letter 'a'
+        properties_list.append(0)  # ? Mysterious 0/1 integer
+        properties_list.append(0)  # ? Mysterious arbitrary integer
+        properties_list.append(dispense_height)
+        properties_list.append(delay_after_dispense)
+        if aspirate_volume_named == None:
+            if aspirate_volumes != None:
+                properties_list.append(aspirate_volumes)
+            else:
+                raise BaseException(
+                    "If aspirating from Plate Position, need aspirate volumes"
+                )
+        properties_list.append(dwell_after_aspirate)
+        properties_list.append(find_bottom_of_vessel)
+        properties_list.append(5) # ? Myterious 1 or 2 digit integer
+        properties_list.append(reverse_order)
+        properties_list.append(post_aspirate)
+        properties_list.append(move_while_pipetting)
+        properties_list.append(move_distance)
         properties_list.append(self.STEP_DELIMITER)
+        self.pipeline.append(properties_list)
 
     # TODO
     def dispense(self):
