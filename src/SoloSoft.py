@@ -103,36 +103,26 @@ class SoloSoft:
         count_tips_from_last_channel=False,
         index=None,
     ):
-        properties_list = ["GetTip"]
-        properties_list.append(position)
-        properties_list.append(disposal)
-        properties_list.append(num_tips)
+        properties_list = ["GetTip", position, disposal, num_tips]
         if auto_tip_selection:
             properties_list.append(1)
         else:
             properties_list.append(0)
-        properties_list.append(
-            0
-        )  # ? Likely unused, but we'll keep it in for consistency
-        properties_list.append(count_tips_from_last_channel)
-        properties_list.append(STEP_DELIMITER)
+        properties_list.extend(0, count_tips_from_last_channel, STEP_DELIMITER)
         if index != None:
             self.pipeline.insert(index, properties_list)
         else:
             self.pipeline.append(properties_list)
 
     def startLoop(self, iterations=-1, index=None):
-        properties_list = ["Loop"]
-        properties_list.append(iterations)  # -1 for continuous loop
-        properties_list.append(STEP_DELIMITER)
+        properties_list = ["Loop", iterations, STEP_DELIMITER]
         if index != None:
             self.pipeline.insert(index, properties_list)
         else:
             self.pipeline.append(properties_list)
 
     def endLoop(self, index=None):
-        properties_list = ["EndLoop"]
-        properties_list.append(STEP_DELIMITER)
+        properties_list = ["EndLoop", STEP_DELIMITER]
         if index != None:
             self.pipeline.insert(index, properties_list)
         else:
@@ -168,49 +158,40 @@ class SoloSoft:
         move_distance=[0, 0, 0],
         index=None,
     ):
-        properties_list = ["Aspirate"]
-        properties_list.append(position)
-        properties_list.append(aspirate_volume_single)
-        properties_list.append(2)  # ? Mysterious integer value - maybe syringe?
-        properties_list.append(syringe_speed)
+        properties_list = [
+            "Aspirate",
+            position,
+            aspirate_volume_single,
+            2,
+            syringe_speed,
+        ]
         if start_by_emptying_syringe:
             properties_list.append(1)
         else:
             properties_list.append(0)
         if aspirate_volume_to_named_point:
-            properties_list.append("False")
-            properties_list.append("True")
+            properties_list.extend("False", "True")
         else:
-            properties_list.append("True")
-            properties_list.append("False")
+            properties_list.extend("True", "False")
         if increment_column_order:
-            properties_list.append("False")
-            properties_list.append("True")
+            properties_list.extend("False", "True")
         else:
-            properties_list.append("True")
-            properties_list.append("False")
-        properties_list.append(aspirate_point)
-        properties_list.append(aspirate_shift)
+            properties_list.extend("True", "False")
+        properties_list.extend(aspirate_point, aspirate_shift)
         if do_tip_touch:
             properties_list.append(1)
         else:
             properties_list.append(0)
-        properties_list.append(tip_touch_shift)
-        properties_list.append(file_data_path)
-        properties_list.append(multiple_wells)
-        properties_list.append(backlash)
-        properties_list.append(pre_aspirate)
+        properties_list.extend(
+            tip_touch_shift, file_data_path, multiple_wells, backlash, pre_aspirate
+        )
         if mix_at_start:
             properties_list.append(1)
         else:
             properties_list.append(0)
-        properties_list.append(mix_cycles)
-        properties_list.append(mix_volume)
-        properties_list.append("a")  # ? Mysterious letter 'a'
-        properties_list.append(0)  # ? Mysterious 0/1 integer
-        properties_list.append(0)  # ? Mysterious arbitrary integer
-        properties_list.append(dispense_height)
-        properties_list.append(delay_after_dispense)
+        properties_list.extend(
+            mix_cycles, mix_volume, "a", 0, 0, dispense_height, delay_after_dispense
+        )
         if aspirate_volumes != None:
             properties_list.append(aspirate_volumes)
         else:
@@ -241,8 +222,7 @@ class SoloSoft:
             properties_list.append(1)
         else:
             properties_list.append(0)
-        properties_list.append(move_distance)
-        properties_list.append(STEP_DELIMITER)
+        properties_list.extend(move_distance, STEP_DELIMITER)
         if index != None:
             self.pipeline.insert(index, properties_list)
         else:
@@ -275,46 +255,41 @@ class SoloSoft:
         move_distance=[0, 0, 0],
         index=None,
     ):
-        properties_list = ["Dispense"]
-        properties_list.append(position)
-        properties_list.append(dispense_volume_single)
-        properties_list.append(2)  # ? Mysterious integer value - maybe syringe?
-        properties_list.append(syringe_speed)
-        properties_list.append(backlash)
+        properties_list = [
+            "Dispense",
+            position,
+            dispense_volume_single,
+            2,
+            syringe_speed,
+            backlash,
+        ]
         if dispense_volume_to_named_point:
-            properties_list.append("False")
-            properties_list.append("True")
+            properties_list.extend("False", "True")
         else:
-            properties_list.append("True")
-            properties_list.append("False")
+            properties_list.extend("True", "False")
         if increment_column_order:
-            properties_list.append("False")
-            properties_list.append("True")
+            properties_list.extend("False", "True")
         else:
-            properties_list.append("True")
-            properties_list.append("False")
-        properties_list.append(dispense_point)
-        properties_list.append(dispense_shift)
+            properties_list.extend("True", "False")
+        properties_list.extend(dispense_point, dispense_shift)
         if do_tip_touch:
             properties_list.append(1)
         else:
             properties_list.append(0)
-        properties_list.append(tip_touch_shift)
-        properties_list.append(file_data_path)
-        properties_list.append(multiple_wells)
-        properties_list.append(dwell_after_dispense)
-        properties_list.append(blowoff)
+        properties_list.extend(
+            tip_touch_shift,
+            file_data_path,
+            multiple_wells,
+            dwell_after_dispense,
+            blowoff,
+        )
         if mix_at_finish:
             properties_list.append(1)
         else:
             properties_list.append(0)
-        properties_list.append(mix_cycles)
-        properties_list.append(mix_volume)
-        properties_list.append(
-            "a"
-        )  # ? Something to do with the uneditable setting 'Valve Port'
-        properties_list.append(aspirate_height)
-        properties_list.append(delay_after_aspirate)
+        properties_list.extend(
+            mix_cycles, mix_volume, "a", aspirate_height, delay_after_aspirate
+        )
         if dispense_volumes != None:
             properties_list.append(dispense_volumes)
         else:
@@ -338,8 +313,7 @@ class SoloSoft:
             properties_list.append(1)
         else:
             properties_list.append(0)
-        properties_list.append(move_distance)
-        properties_list.append(STEP_DELIMITER)
+        properties_list.extend(move_distance, STEP_DELIMITER)
         if index != None:
             self.pipeline.insert(index, properties_list)
         else:
@@ -353,24 +327,226 @@ class SoloSoft:
     def operateAccessory(self):
         return
 
-    # TODO
-    def pause(self):
-        return
+    def prime(
+        self,
+        position="Position1",
+        syringe_speed=100,
+        fill_syringe=False,
+        empty_syringe=True,
+        aspirate_volume=False,
+        dispense_volume=False,
+        volume=0,
+        index=None,
+    ):
+        properties_list = [
+            "Pause",
+            syringe_speed,
+            True,  # ? Unclear what this is
+            False,  # ? Unclear what this is
+            False,  # ? Unclear what this is
+            0,  # ? Unclear what this is
+            "a",  # ? Unclear what this is
+            2,  # ? Unclear what this is
+            True,  # ? Unclear what this is
+            1,  # ? Unclear what this is
+            "*",  # ? Unclear what this is
+            volume,
+            fill_syringe,
+            empty_syringe,
+            aspirate_volume,
+            dispense_volume,
+            "*",
+            "*",
+            STEP_DELIMITER,
+        ]
+        if index != None:
+            self.pipeline.insert(index, properties_list)
+        else:
+            self.pipeline.append(properties_list)
 
-    # TODO
-    def getBottom(self):
-        return
+    def pause(
+        self,
+        pause_message="",
+        allow_end_run=False,
+        auto_continue_after=False,
+        wait_seconds=0,
+        index=None,
+    ):
+        properties_list = ["Pause", pause_message]
+        if allow_end_run or auto_continue_after:
+            properties_list.append(1)
+        else:
+            properties_list.append(0)
+        if auto_continue_after:
+            properties_list.append(1)
+        else:
+            properties_list.append(0)
+        properties_list.extend(wait_seconds, STEP_DELIMITER)
+        if index != None:
+            self.pipeline.insert(index, properties_list)
+        else:
+            self.pipeline.append(properties_list)
 
-    # TODO
-    def setSpeed(self):
-        return
+    def getBottom(
+        self,
+        position="Position1",
+        increment_row_order=True,
+        increment_column_order=False,
+        output_file_path="",
+        wells_per_pass=1,  # * -1 for all
+        search_start_distance=0,
+        well_list=None,
+        index=None,
+    ):
+        properties_list = [
+            "GetBottom",
+            position,
+            increment_row_order,
+            increment_column_order,
+            output_file_path,
+            wells_per_pass,
+            search_start_distance,
+            5,  # ? Unclear what this is
+            5,  # ? Unclear what this is
+            "*",  # ? Unclear what this is
+            "*",  # ? Unclear what this is
+        ]
+        if well_list != None:
+            properties_list.append(well_list)
+        else:
+            properties_list.append(
+                [
+                    [
+                        False,
+                        False,
+                        False,
+                        False,
+                        False,
+                        False,
+                        False,
+                        False,
+                        False,
+                        False,
+                        False,
+                        False,
+                    ],
+                    [
+                        False,
+                        False,
+                        False,
+                        False,
+                        False,
+                        False,
+                        False,
+                        False,
+                        False,
+                        False,
+                        False,
+                        False,
+                    ],
+                    [
+                        False,
+                        False,
+                        False,
+                        False,
+                        False,
+                        False,
+                        False,
+                        False,
+                        False,
+                        False,
+                        False,
+                        False,
+                    ],
+                    [
+                        False,
+                        False,
+                        False,
+                        False,
+                        False,
+                        False,
+                        False,
+                        False,
+                        False,
+                        False,
+                        False,
+                        False,
+                    ],
+                    [
+                        False,
+                        False,
+                        False,
+                        False,
+                        False,
+                        False,
+                        False,
+                        False,
+                        False,
+                        False,
+                        False,
+                        False,
+                    ],
+                    [
+                        False,
+                        False,
+                        False,
+                        False,
+                        False,
+                        False,
+                        False,
+                        False,
+                        False,
+                        False,
+                        False,
+                        False,
+                    ],
+                    [
+                        False,
+                        False,
+                        False,
+                        False,
+                        False,
+                        False,
+                        False,
+                        False,
+                        False,
+                        False,
+                        False,
+                        False,
+                    ],
+                    [
+                        False,
+                        False,
+                        False,
+                        False,
+                        False,
+                        False,
+                        False,
+                        False,
+                        False,
+                        False,
+                        False,
+                        False,
+                    ],
+                ]
+            )
+        properties_list.append(STEP_DELIMITER)
+        if index != None:
+            self.pipeline.insert(index, properties_list)
+        else:
+            self.pipeline.append(properties_list)
+
+    def setSpeed(self, xyz_speed=100, index=None):
+        properties_list = ["SetSpeed", xyz_speed, STEP_DELIMITER]
+        if index != None:
+            self.pipeline.insert(index, properties_list)
+        else:
+            self.pipeline.append(properties_list)
 
     def moveArm(
         self, destination="TipDisposal", xyz_speed=100, move_z_at_start=True, index=None
     ):
-        properties_list = ["MoveArm"]
-        properties_list.append(destination)
-        properties_list.append(xyz_speed)
+        properties_list = ["MoveArm", destination, xyz_speed]
         if move_z_at_start:
             properties_list.append(1)
         else:
