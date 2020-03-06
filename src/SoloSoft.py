@@ -108,7 +108,14 @@ class SoloSoft:
             properties_list.append(1)
         else:
             properties_list.append(0)
-        properties_list.extend(0, count_tips_from_last_channel, STEP_DELIMITER)
+        properties_list.extend([0, count_tips_from_last_channel, STEP_DELIMITER])
+        if index != None:
+            self.pipeline.insert(index, properties_list)
+        else:
+            self.pipeline.append(properties_list)
+
+    def shuckTips(self, disposal="TipDisposal", index=None):
+        properties_list = ["ShuckTip", disposal, STEP_DELIMITER]
         if index != None:
             self.pipeline.insert(index, properties_list)
         else:
@@ -170,27 +177,27 @@ class SoloSoft:
         else:
             properties_list.append(0)
         if aspirate_volume_to_named_point:
-            properties_list.extend("False", "True")
+            properties_list.extend(["False", "True"])
         else:
-            properties_list.extend("True", "False")
+            properties_list.extend(["True", "False"])
         if increment_column_order:
-            properties_list.extend("False", "True")
+            properties_list.extend(["False", "True"])
         else:
-            properties_list.extend("True", "False")
-        properties_list.extend(aspirate_point, aspirate_shift)
+            properties_list.extend(["True", "False"])
+        properties_list.extend([aspirate_point, aspirate_shift])
         if do_tip_touch:
             properties_list.append(1)
         else:
             properties_list.append(0)
         properties_list.extend(
-            tip_touch_shift, file_data_path, multiple_wells, backlash, pre_aspirate
+            [tip_touch_shift, file_data_path, multiple_wells, backlash, pre_aspirate]
         )
         if mix_at_start:
             properties_list.append(1)
         else:
             properties_list.append(0)
         properties_list.extend(
-            mix_cycles, mix_volume, "a", 0, 0, dispense_height, delay_after_dispense
+            [mix_cycles, mix_volume, "a", 0, 0, dispense_height, delay_after_dispense]
         )
         if aspirate_volumes != None:
             properties_list.append(aspirate_volumes)
@@ -222,7 +229,7 @@ class SoloSoft:
             properties_list.append(1)
         else:
             properties_list.append(0)
-        properties_list.extend(move_distance, STEP_DELIMITER)
+        properties_list.extend([move_distance, STEP_DELIMITER])
         if index != None:
             self.pipeline.insert(index, properties_list)
         else:
@@ -264,31 +271,31 @@ class SoloSoft:
             backlash,
         ]
         if dispense_volume_to_named_point:
-            properties_list.extend("False", "True")
+            properties_list.extend(["False", "True"])
         else:
-            properties_list.extend("True", "False")
+            properties_list.extend(["True", "False"])
         if increment_column_order:
-            properties_list.extend("False", "True")
+            properties_list.extend(["False", "True"])
         else:
-            properties_list.extend("True", "False")
-        properties_list.extend(dispense_point, dispense_shift)
+            properties_list.extend(["True", "False"])
+        properties_list.extend([dispense_point, dispense_shift])
         if do_tip_touch:
             properties_list.append(1)
         else:
             properties_list.append(0)
         properties_list.extend(
-            tip_touch_shift,
+            [tip_touch_shift,
             file_data_path,
             multiple_wells,
             dwell_after_dispense,
-            blowoff,
+            blowoff,]
         )
         if mix_at_finish:
             properties_list.append(1)
         else:
             properties_list.append(0)
         properties_list.extend(
-            mix_cycles, mix_volume, "a", aspirate_height, delay_after_aspirate
+            [mix_cycles, mix_volume, "a", aspirate_height, delay_after_aspirate]
         )
         if dispense_volumes != None:
             properties_list.append(dispense_volumes)
@@ -313,7 +320,7 @@ class SoloSoft:
             properties_list.append(1)
         else:
             properties_list.append(0)
-        properties_list.extend(move_distance, STEP_DELIMITER)
+        properties_list.extend([move_distance, STEP_DELIMITER])
         if index != None:
             self.pipeline.insert(index, properties_list)
         else:
@@ -339,7 +346,7 @@ class SoloSoft:
         index=None,
     ):
         properties_list = [
-            "Pause",
+            "Prime",
             syringe_speed,
             True,  # ? Unclear what this is
             False,  # ? Unclear what this is
@@ -381,7 +388,7 @@ class SoloSoft:
             properties_list.append(1)
         else:
             properties_list.append(0)
-        properties_list.extend(wait_seconds, STEP_DELIMITER)
+        properties_list.extend([wait_seconds, STEP_DELIMITER])
         if index != None:
             self.pipeline.insert(index, properties_list)
         else:
