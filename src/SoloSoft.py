@@ -284,11 +284,13 @@ class SoloSoft:
         else:
             properties_list.append(0)
         properties_list.extend(
-            [tip_touch_shift,
-            file_data_path,
-            multiple_wells,
-            dwell_after_dispense,
-            blowoff,]
+            [
+                tip_touch_shift,
+                file_data_path,
+                multiple_wells,
+                dwell_after_dispense,
+                blowoff,
+            ]
         )
         if mix_at_finish:
             properties_list.append(1)

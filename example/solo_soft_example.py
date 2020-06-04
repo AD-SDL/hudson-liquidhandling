@@ -1,6 +1,7 @@
 import sys
 
-sys.path.append("C:\\Users\\ryand\\Dev\\repos\\liquidhandling\\src")
+# Change this path to point to the location of the repository, if neccessary
+sys.path.append("E:\\Dev\\repos\\liquidhandling\\src")
 import SoloSoft
 
 soloSoft = SoloSoft.SoloSoft(
