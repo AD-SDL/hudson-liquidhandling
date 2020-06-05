@@ -1,0 +1,103 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema",
+    "title": "Schema for SoloSoft Aspirate Step",
+    "type": "object",
+    "properties": {
+        "spec_version": {
+            "type": "string"
+        },
+        "position": {
+            "type": "string"
+        },
+        "aspirate_volume_to_named_point": {
+            "type": "boolean"
+        },
+        "aspirate_volume_single": {
+            "type": "number",
+            "minimum": 0
+        },
+        "syringe_speed": {
+            "type": "number",
+            "minimum": 0
+        },
+        "start_by_emptying_syringe": {
+            "type": "boolean"
+        },
+        "increment_column_order": {
+            "type": "boolean"
+        },
+        "aspirate_point": {
+            "type": "string"
+        },
+        "aspirate_shift": {
+            "$ref": "SoloSoft\\datatypes\\vector3.json"
+        },
+        "do_tip_touch": {
+            "type": "boolean"
+        },
+        "tip_touch_shift": {
+            "$ref": "SoloSoft\\datatypes\\vector3.json"
+        },
+        "file_data_path": {
+            "type": "string"
+        },
+        "multiple_wells": {
+            "type": "number",
+            "enum": [0, 1]
+        },
+        "backlash": {
+            "type": "number",
+            "minimum": 0
+        },
+        "pre_aspirate": {
+            "type": "number",
+            "minimum": 0
+        },
+        "mix_at_start": {
+            "type": "boolean"
+        },
+        "mix_cycles": {
+            "type": "number",
+            "minimum": 0
+        },
+        "mix_volume": {
+            "type": "number",
+            "minimum": 0
+        },
+        "dispense_height": {
+            "type": "number",
+            "minimum": 0
+        },
+        "delay_after_dispense": {
+            "type": "number",
+            "minimum": 0
+        },
+        "aspirate_volumes": {
+            "$ref": "SoloSoft\\datatypes\\plate96well.json"
+        },
+        "dwell_after_aspirate": {
+            "type": "number",
+            "minimum": 0
+        },
+        "find_bottom_of_vessel": {
+            "type": "boolean"
+        },
+        "reverse_order": {
+            "type": "boolean"
+        },
+        "post_aspirate": {
+            "type": "number",
+            "minimum": 0
+        },
+        "move_while_pipetting": {
+            "type": "boolean"
+        },
+        "move_distance": {
+            "$ref": "SoloSoft\\datatypes\\vector3.json"
+        }
+    },
+    "additionalProperties": false,
+    "required": [
+        "spec_version"
+    ]
+}

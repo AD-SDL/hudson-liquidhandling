@@ -1,0 +1,33 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema",
+    "title": "Schema for SoloSoft Step",
+    "type": "object",
+    "properties": {
+        "spec_version": {
+            "type": "string"
+        },
+        "step_type": {
+            "type": "string"
+        },
+        "step_label": {
+            "type": "string"
+        },
+        "info": {
+            "type": "object"
+        },
+        "step_definition": {
+            "anyOf": [
+                {"$ref": "SoloSoft\\steps\\aspirate.json"},
+                {"$ref": "SoloSoft\\steps\\dispense.json"},
+                {"$ref": "SoloSoft\\steps\\hitpicking.json"}
+            ],
+            "additionalProperties": false
+        }
+    },
+    "required": [
+        "step_type",
+        "spec_version",
+        "step_definition"
+    ],
+    "additionalProperties": false
+}

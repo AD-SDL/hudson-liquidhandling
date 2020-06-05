@@ -1,0 +1,93 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema",
+    "title": "Schema for SoloSoft Dispense Step",
+    "type": "object",
+    "properties": {
+        "spec_version": {
+            "type": "string"
+        },
+        "position": {
+            "type": "string"
+        },
+        "dispense_volume_to_named_point": {
+            "type": "boolean"
+        },
+        "dispense_volume_single": {
+            "type": "number",
+            "minimum": 0
+        },
+        "syringe_speed": {
+            "type": "number",
+            "minimum": 0
+        },
+        "increment_column_order": {
+            "type": "boolean"
+        },
+        "dispense_point": {
+            "type": "string"
+        },
+        "dispense_shift": {
+            "$ref": "SoloSoft\\datatypes\\vector3.json"
+        },
+        "do_tip_touch": {
+            "type": "boolean"
+        },
+        "tip_touch_shift": {
+            "$ref": "SoloSoft\\datatypes\\vector3.json"
+        },
+        "file_data_path": {
+            "type": "string"
+        },
+        "multiple_wells": {
+            "type": "number",
+            "enum": [0, 1]
+        },
+        "blowoff": {
+            "type": "number",
+            "minimum": 0
+        },
+        "backlash": {
+            "type": "number",
+            "minimum": 0
+        },
+        "mix_at_finish": {
+            "type": "boolean"
+        },
+        "mix_cycles": {
+            "type": "number",
+            "minimum": 0
+        },
+        "mix_volume": {
+            "type": "number",
+            "minimum": 0
+        },
+        "dispense_height": {
+            "type": "number",
+            "minimum": 0
+        },
+        "delay_after_dispense": {
+            "type": "number",
+            "minimum": 0
+        },
+        "dispense_volumes": {
+            "$ref": "SoloSoft\\datatypes\\plate96well.json"
+        },
+        "dwell_after_dispense": {
+            "type": "number",
+            "minimum": 0
+        },
+        "reverse_order": {
+            "type": "boolean"
+        },
+        "move_while_pipetting": {
+            "type": "boolean"
+        },
+        "move_distance": {
+            "$ref": "SoloSoft\\datatypes\\vector3.json"
+        }
+    },
+    "additionalProperties": false,
+    "required": [
+        "spec_version"
+    ]
+}
