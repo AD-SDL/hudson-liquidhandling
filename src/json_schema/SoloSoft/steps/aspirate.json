@@ -3,8 +3,8 @@
     "title": "Schema for SoloSoft Aspirate Step",
     "type": "object",
     "properties": {
-        "spec_version": {
-            "type": "string"
+        "metadata": {
+            "$ref": "../../metadata.json"
         },
         "position": {
             "type": "string"
@@ -30,20 +30,23 @@
             "type": "string"
         },
         "aspirate_shift": {
-            "$ref": "SoloSoft\\datatypes\\vector3.json"
+            "$ref": "../datatypes/vector3.json"
         },
         "do_tip_touch": {
             "type": "boolean"
         },
         "tip_touch_shift": {
-            "$ref": "SoloSoft\\datatypes\\vector3.json"
+            "$ref": "../datatypes/vector3.json"
         },
         "file_data_path": {
             "type": "string"
         },
         "multiple_wells": {
             "type": "number",
-            "enum": [0, 1]
+            "enum": [
+                0,
+                1
+            ]
         },
         "backlash": {
             "type": "number",
@@ -73,7 +76,7 @@
             "minimum": 0
         },
         "aspirate_volumes": {
-            "$ref": "SoloSoft\\datatypes\\plate96well.json"
+            "$ref": "../datatypes/plate96well.json"
         },
         "dwell_after_aspirate": {
             "type": "number",
@@ -93,11 +96,8 @@
             "type": "boolean"
         },
         "move_distance": {
-            "$ref": "SoloSoft\\datatypes\\vector3.json"
+            "$ref": "../datatypes/vector3.json"
         }
     },
-    "additionalProperties": false,
-    "required": [
-        "spec_version"
-    ]
+    "additionalProperties": false
 }

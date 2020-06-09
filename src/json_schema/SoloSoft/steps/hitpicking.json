@@ -3,8 +3,8 @@
     "title": "Schema for SoloSoft HitPicking Step",
     "type": "object",
     "properties": {
-        "spec_version": {
-            "type": "string"
+        "metadata": {
+            "$ref": "../../metadata.json"
         },
         "picks": {
             "type": "array",
@@ -12,10 +12,10 @@
                 "type": "object",
                 "properties": {
                     "source": {
-                        "$ref": "SoloSoft\\steps\\aspirate.json"
+                        "$ref": "aspirate.json"
                     },
                     "target": {
-                        "$ref": "SoloSoft\\steps\\dispense.json"
+                        "$ref": "dispense.json"
                     }
                 },
                 "required": [
@@ -31,7 +31,6 @@
         }
     },
     "required": [
-        "spec_version",
         "picks"
     ],
     "additionalProperties": false

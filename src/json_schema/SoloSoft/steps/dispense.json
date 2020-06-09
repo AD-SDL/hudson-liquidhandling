@@ -3,8 +3,8 @@
     "title": "Schema for SoloSoft Dispense Step",
     "type": "object",
     "properties": {
-        "spec_version": {
-            "type": "string"
+        "metadata": {
+            "$ref": "../../metadata.json"
         },
         "position": {
             "type": "string"
@@ -27,13 +27,13 @@
             "type": "string"
         },
         "dispense_shift": {
-            "$ref": "SoloSoft\\datatypes\\vector3.json"
+            "$ref": "../datatypes/vector3.json"
         },
         "do_tip_touch": {
             "type": "boolean"
         },
         "tip_touch_shift": {
-            "$ref": "SoloSoft\\datatypes\\vector3.json"
+            "$ref": "../datatypes/vector3.json"
         },
         "file_data_path": {
             "type": "string"
@@ -70,7 +70,7 @@
             "minimum": 0
         },
         "dispense_volumes": {
-            "$ref": "SoloSoft\\datatypes\\plate96well.json"
+            "$ref": "../datatypes/plate96well.json"
         },
         "dwell_after_dispense": {
             "type": "number",
@@ -83,11 +83,8 @@
             "type": "boolean"
         },
         "move_distance": {
-            "$ref": "SoloSoft\\datatypes\\vector3.json"
+            "$ref": "../datatypes/vector3.json"
         }
     },
-    "additionalProperties": false,
-    "required": [
-        "spec_version"
-    ]
+    "additionalProperties": false
 }

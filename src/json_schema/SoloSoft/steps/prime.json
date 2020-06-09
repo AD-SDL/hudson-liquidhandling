@@ -1,0 +1,32 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema",
+    "title": "Schema for the SoloSoft Prime Step",
+    "type": "object",
+    "properties": {
+        "metadata": {
+            "$ref": "../../metadata.json"
+        },
+        "position": {
+            "type": "string"
+        },
+        "syringe_speed": {
+            "type": "number"
+        },
+        "fill_syringe": {
+            "type": "boolean"
+        },
+        "empty_syringe": {
+            "type": "boolean"
+        },
+        "aspirate_volume": {
+            "type": "boolean"
+        },
+        "dispense_volume": {
+            "type": "boolean"
+        },
+        "volume": {
+            "type": "number"
+        }
+    },
+    "additionalProperties": false
+}

@@ -1,0 +1,14 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema",
+    "title": "Schema for the SoloSoft StartLoop Step",
+    "type": "object",
+    "properties": {
+        "metadata": {
+            "$ref": "../../metadata.json"
+        },
+        "iterations": {
+            "type": "number"
+        }
+    },
+    "additionalProperties": false
+}

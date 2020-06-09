@@ -1,0 +1,23 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema",
+    "title": "Schema for the SoloSoft Pause Step",
+    "type": "object",
+    "properties": {
+        "metadata": {
+            "$ref": "../../metadata.json"
+        },
+        "pause_message": {
+            "type": "string"
+        },
+        "allow_end_run": {
+            "type": "boolean"
+        },
+        "auto_continue_after": {
+            "type": "boolean"
+        },
+        "wait_seconds": {
+            "type": "number"
+        }
+    },
+    "additionalProperties": false
+}

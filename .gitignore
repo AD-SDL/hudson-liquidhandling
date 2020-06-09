@@ -1,6 +1,9 @@
 # Example generation
 *.hso
 
+# JSON Specification Schema
+schema/
+
 # VSCode Workspace
 .vscode/
 

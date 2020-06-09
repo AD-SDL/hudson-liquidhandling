@@ -3,8 +3,8 @@
     "title": "Schema for SoloSoft Step",
     "type": "object",
     "properties": {
-        "spec_version": {
-            "type": "string"
+        "metadata": {
+            "$ref": "../../metadata.json"
         },
         "step_type": {
             "type": "string"
@@ -12,21 +12,27 @@
         "step_label": {
             "type": "string"
         },
-        "info": {
-            "type": "object"
-        },
         "step_definition": {
             "anyOf": [
-                {"$ref": "SoloSoft\\steps\\aspirate.json"},
-                {"$ref": "SoloSoft\\steps\\dispense.json"},
-                {"$ref": "SoloSoft\\steps\\hitpicking.json"}
+                {"$ref": "aspirate.json"},
+                {"$ref": "dispense.json"},
+                {"$ref": "endLoop.json"},
+                {"$ref": "getBottom.json"},
+                {"$ref": "getTips.json"},
+                {"$ref": "hitpicking.json"},
+                {"$ref": "moveArm.json"},
+                {"$ref": "pause.json"},
+                {"$ref": "prime.json"},
+                {"$ref": "setSpeed.json"},
+                {"$ref": "shuckTips.json"},
+                {"$ref": "startLoop.json"}
             ],
             "additionalProperties": false
         }
     },
     "required": [
         "step_type",
-        "spec_version",
+        "metadata",
         "step_definition"
     ],
     "additionalProperties": false
