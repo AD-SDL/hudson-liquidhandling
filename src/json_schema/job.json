@@ -27,10 +27,10 @@
             "additionalItems": false
         },
         "output": {
-            "type": "object"
+            "$ref": "output.json"
         },
         "debug": {
-            "type": "object"
+            "$ref": "debug.json"
         }
     },
     "required": [

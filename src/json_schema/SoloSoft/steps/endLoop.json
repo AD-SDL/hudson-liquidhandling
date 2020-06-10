@@ -5,7 +5,13 @@
     "properties": {
         "metadata": {
             "$ref": "../../metadata.json"
+        },
+        "step_type": {
+            "const": "EndLoop"
         }
     },
+    "required": [
+        "step_type"
+    ],
     "additionalProperties": false
 }

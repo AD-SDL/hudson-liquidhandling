@@ -6,6 +6,9 @@
         "metadata": {
             "$ref": "../../metadata.json"
         },
+        "step_type": {
+            "const": "GetBottom"
+        },
         "position": {
             "type": "string"
         },
@@ -28,5 +31,8 @@
             "$ref": "../datatypes/plate96well-bool.json"
         }
     },
+    "required": [
+        "step_type"
+    ],
     "additionalProperties": false
 }

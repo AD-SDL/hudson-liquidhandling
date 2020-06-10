@@ -6,6 +6,9 @@
         "metadata": {
             "$ref": "../../metadata.json"
         },
+        "step_type": {
+            "const": "Prime"
+        },
         "position": {
             "type": "string"
         },
@@ -28,5 +31,8 @@
             "type": "number"
         }
     },
+    "required": [
+        "step_type"
+    ],
     "additionalProperties": false
 }

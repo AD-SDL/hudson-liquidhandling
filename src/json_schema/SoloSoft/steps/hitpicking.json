@@ -6,6 +6,9 @@
         "metadata": {
             "$ref": "../../metadata.json"
         },
+        "step_type": {
+            "const": "HitPicking"
+        },
         "picks": {
             "type": "array",
             "items": {
@@ -31,7 +34,8 @@
         }
     },
     "required": [
-        "picks"
+        "picks",
+        "step_type"
     ],
     "additionalProperties": false
 }

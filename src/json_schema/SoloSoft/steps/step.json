@@ -6,14 +6,8 @@
         "metadata": {
             "$ref": "../../metadata.json"
         },
-        "step_type": {
-            "type": "string"
-        },
-        "step_label": {
-            "type": "string"
-        },
         "step_definition": {
-            "anyOf": [
+            "oneOf": [
                 {"$ref": "aspirate.json"},
                 {"$ref": "dispense.json"},
                 {"$ref": "endLoop.json"},
@@ -26,13 +20,10 @@
                 {"$ref": "setSpeed.json"},
                 {"$ref": "shuckTips.json"},
                 {"$ref": "startLoop.json"}
-            ],
-            "additionalProperties": false
+            ]
         }
     },
     "required": [
-        "step_type",
-        "metadata",
         "step_definition"
     ],
     "additionalProperties": false

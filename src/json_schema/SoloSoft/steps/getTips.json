@@ -6,6 +6,9 @@
         "metadata": {
             "$ref": "../../metadata.json"
         },
+        "step_type": {
+            "const": "GetTips"
+        },
         "position": {
             "type": "string"
         },
@@ -22,5 +25,8 @@
             "type": "boolean"
         }
     },
+    "required": [
+        "step_type"
+    ],
     "additionalProperties": false
 }

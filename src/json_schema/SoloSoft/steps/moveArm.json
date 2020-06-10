@@ -6,6 +6,9 @@
         "metadata": {
             "$ref": "../../metadata.json"
         },
+        "step_type": {
+            "const": "MoveArm"
+        },
         "desination": {
             "type": "string"
         },
@@ -17,5 +20,8 @@
             "type": "boolean"
         }
     },
+    "required": [
+        "step_type"
+    ],
     "additionalProperties": false
 }

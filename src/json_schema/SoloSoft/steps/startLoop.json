@@ -6,9 +6,15 @@
         "metadata": {
             "$ref": "../../metadata.json"
         },
+        "step_type": {
+            "const": "StartLoop"
+        },
         "iterations": {
             "type": "number"
         }
     },
+    "required": [
+        "step_type"
+    ],
     "additionalProperties": false
 }

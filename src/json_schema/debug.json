@@ -1,0 +1,11 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema",
+    "title": "Schema for Debugging Information",
+    "type": "object",
+    "properties": {
+        "metadata": {
+            "$ref": "metadata.json"
+        }
+    },
+    "additionalProperties": true
+}

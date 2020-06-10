@@ -6,6 +6,9 @@
         "metadata": {
             "$ref": "../../metadata.json"
         },
+        "step_type": {
+            "const": "Aspirate"
+        },
         "position": {
             "type": "string"
         },
@@ -99,5 +102,8 @@
             "$ref": "../datatypes/vector3.json"
         }
     },
+    "required": [
+        "step_type"
+    ],
     "additionalProperties": false
 }
