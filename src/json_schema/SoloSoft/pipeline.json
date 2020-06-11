@@ -8,9 +8,7 @@
         },
         "pipeline_type": {
             "type": "string",
-            "enum": [
-                "SoloSoft"
-            ]
+            "const": "SoloSoft"
         },
         "steps": {
             "type": "array",
@@ -29,7 +27,10 @@
         }
     },
     "required": [
-        "metadata"
+        "metadata",
+        "pipeline_type",
+        "steps",
+        "platelist"
     ],
     "additionalProperties": false
 }

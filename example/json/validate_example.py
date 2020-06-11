@@ -2,8 +2,7 @@ import jsonref
 import os
 from json import dump
 import errno
-from jsonschema import Draft7Validator, validate
-from pprint import pprint
+from jsonschema import validate
 
 
 current_directory = os.path.abspath(os.path.dirname(__file__))

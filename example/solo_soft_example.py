@@ -1,7 +1,8 @@
 import sys
+import os
 
 # Change this path to point to the location of the repository, if neccessary
-sys.path.append("E:\\Dev\\repos\\liquidhandling\\src")
+sys.path.append(os.path.abspath(os.path.join(os.path.abspath(os.path.dirname(__file__)), '../src')))
 import SoloSoft
 
 soloSoft = SoloSoft.SoloSoft(
@@ -18,8 +19,8 @@ soloSoft = SoloSoft.SoloSoft(
     ],
 )
 
-soloSoft.getTips()
-soloSoft.startLoop(1)
+soloSoft.getTip()
+soloSoft.loop(1)
 soloSoft.aspirate()
 soloSoft.dispense()
 soloSoft.endLoop()

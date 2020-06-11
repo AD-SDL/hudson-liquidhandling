@@ -27,5 +27,4 @@ with open(file_path) as schema_file:
                 raise
 
     with open(os.path.join(schema_dir, "schema.json"), "w") as f:
-        # pprint(my_schema, f)
         dump(my_schema, f, indent=4, sort_keys=True)

@@ -1,0 +1,507 @@
+{
+    "metadata": {
+        "spec_version": "0.0.1"
+    },
+    "pipeline_type": "SoloSoft",
+    "platelist": [
+        "TipBox-Corning 200uL",
+        "Corning 3383",
+        "Corning 3383",
+        "Corning 3383",
+        "Corning 3383",
+        "Z_Agilent_Reservoir_1row",
+        "Corning 3383",
+        "Corning 3635"
+    ],
+    "steps": [
+        {
+            "step_definition": {
+                "iterations": -1,
+                "step_type": "Loop"
+            }
+        },
+        {
+            "step_definition": {
+                "step_type": "EndLoop"
+            }
+        },
+        {
+            "step_definition": {
+                "aspirate_point": "Position1",
+                "aspirate_shift": [
+                    0,
+                    0,
+                    0
+                ],
+                "aspirate_volume_single": 0,
+                "aspirate_volume_to_named_point": false,
+                "aspirate_volumes": [
+                    [
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0
+                    ],
+                    [
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0
+                    ],
+                    [
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0
+                    ],
+                    [
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0
+                    ],
+                    [
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0
+                    ],
+                    [
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0
+                    ],
+                    [
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0
+                    ],
+                    [
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0
+                    ]
+                ],
+                "backlash": 0,
+                "delay_after_dispense": 0,
+                "dispense_height": 0,
+                "do_tip_touch": 0,
+                "dwell_after_aspirate": 0,
+                "file_data_path": "",
+                "find_bottom_of_vessel": 0,
+                "increment_column_order": false,
+                "mix_at_start": 0,
+                "mix_cycles": 0,
+                "mix_volume": 0,
+                "move_distance": [
+                    0,
+                    0,
+                    0
+                ],
+                "move_while_pipetting": 0,
+                "multiple_wells": 1,
+                "position": "Position1",
+                "post_aspirate": 0,
+                "pre_aspirate": 0,
+                "reverse_order": 0,
+                "start_by_emptying_syringe": 1,
+                "step_type": "Aspirate",
+                "syringe_speed": 100,
+                "tip_touch_shift": [
+                    0,
+                    0,
+                    0
+                ]
+            }
+        },
+        {
+            "step_definition": {
+                "backlash": 0,
+                "blowoff": 0,
+                "delay_after_aspirate": 0,
+                "dispense_height": 0,
+                "dispense_point": "Position1",
+                "dispense_shift": [
+                    0,
+                    0,
+                    0
+                ],
+                "dispense_volume_single": 0,
+                "dispense_volume_to_named_point": false,
+                "dispense_volumes": [
+                    [
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0
+                    ],
+                    [
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0
+                    ],
+                    [
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0
+                    ],
+                    [
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0
+                    ],
+                    [
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0
+                    ],
+                    [
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0
+                    ],
+                    [
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0
+                    ],
+                    [
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0
+                    ]
+                ],
+                "do_tip_touch": 0,
+                "dwell_after_dispense": 0,
+                "file_data_path": "",
+                "increment_column_order": false,
+                "mix_at_finish": 0,
+                "mix_cycles": 0,
+                "mix_volume": 0,
+                "move_distance": [
+                    0,
+                    0,
+                    0
+                ],
+                "move_while_pipetting": 0,
+                "multiple_wells": 1,
+                "position": "Position1",
+                "reverse_order": 0,
+                "step_type": "Dispense",
+                "syringe_speed": 100,
+                "tip_touch_shift": [
+                    0,
+                    0,
+                    0
+                ]
+            }
+        },
+        {
+            "step_definition": {
+                "increment_column_order": false,
+                "increment_row_order": true,
+                "output_file_path": "",
+                "position": "Position1",
+                "search_start_distance": 0,
+                "step_type": "GetBottom",
+                "well_list": [
+                    [
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false
+                    ],
+                    [
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false
+                    ],
+                    [
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false
+                    ],
+                    [
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false
+                    ],
+                    [
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false
+                    ],
+                    [
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false
+                    ],
+                    [
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false
+                    ],
+                    [
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false
+                    ]
+                ],
+                "wells_per_pass": 1
+            }
+        },
+        {
+            "step_definition": {
+                "auto_tip_selection": 1,
+                "count_tips_from_last_channel": false,
+                "disposal": "TipDisposal",
+                "num_tips": 8,
+                "position": "Position1",
+                "step_type": "GetTip"
+            }
+        },
+        {
+            "step_definition": {
+                "destination": "TipDisposal",
+                "move_z_at_start": 1,
+                "step_type": "MoveArm",
+                "xyz_speed": 100
+            }
+        },
+        {
+            "step_definition": {
+                "disposal": "TipDisposal",
+                "step_type": "ShuckTip"
+            }
+        },
+        {
+            "step_definition": {
+                "allow_end_run": 0,
+                "auto_continue_after": 0,
+                "pause_message": "",
+                "step_type": "Pause",
+                "wait_seconds": 0
+            }
+        },
+        {
+            "step_definition": {
+                "aspirate_volume": false,
+                "dispense_volume": false,
+                "empty_syringe": true,
+                "fill_syringe": false,
+                "step_type": "Prime",
+                "syringe_speed": 100,
+                "volume": 0
+            }
+        }
+    ]
+}

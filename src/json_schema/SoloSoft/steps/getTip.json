@@ -1,13 +1,13 @@
 {
     "$schema": "http://json-schema.org/draft-07/schema",
-    "title": "Schema for SoloSoft GetTips step.",
+    "title": "Schema for SoloSoft GetTip step.",
     "type": "object",
     "properties": {
         "metadata": {
             "$ref": "../../metadata.json"
         },
         "step_type": {
-            "const": "GetTips"
+            "const": "GetTip"
         },
         "position": {
             "type": "string"

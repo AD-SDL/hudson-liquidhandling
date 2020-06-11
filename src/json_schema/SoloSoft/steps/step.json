@@ -21,7 +21,7 @@
                     "$ref": "getBottom.json"
                 },
                 {
-                    "$ref": "getTips.json"
+                    "$ref": "getTip.json"
                 },
                 {
                     "$ref": "moveArm.json"
@@ -36,10 +36,10 @@
                     "$ref": "setSpeed.json"
                 },
                 {
-                    "$ref": "shuckTips.json"
+                    "$ref": "shuckTip.json"
                 },
                 {
-                    "$ref": "startLoop.json"
+                    "$ref": "loop.json"
                 }
             ]
         }

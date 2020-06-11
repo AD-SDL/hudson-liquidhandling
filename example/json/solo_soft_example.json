@@ -21,12 +21,12 @@
             "steps": [
                 {
                     "step_definition": {
-                        "step_type": "GetTips"
+                        "step_type": "GetTip"
                     }
                 },
                 {
                     "step_definition": {
-                        "step_type": "StartLoop",
+                        "step_type": "Loop",
                         "iterations": 1
                     }
                 },

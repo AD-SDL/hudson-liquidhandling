@@ -9,7 +9,7 @@
         "step_type": {
             "const": "MoveArm"
         },
-        "desination": {
+        "destination": {
             "type": "string"
         },
         "xyz_speed": {
