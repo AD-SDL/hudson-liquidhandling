@@ -8,18 +8,39 @@
         },
         "step_definition": {
             "oneOf": [
-                {"$ref": "aspirate.json"},
-                {"$ref": "dispense.json"},
-                {"$ref": "endLoop.json"},
-                {"$ref": "getBottom.json"},
-                {"$ref": "getTips.json"},
-                {"$ref": "hitpicking.json"},
-                {"$ref": "moveArm.json"},
-                {"$ref": "pause.json"},
-                {"$ref": "prime.json"},
-                {"$ref": "setSpeed.json"},
-                {"$ref": "shuckTips.json"},
-                {"$ref": "startLoop.json"}
+                {
+                    "$ref": "aspirate.json"
+                },
+                {
+                    "$ref": "dispense.json"
+                },
+                {
+                    "$ref": "endLoop.json"
+                },
+                {
+                    "$ref": "getBottom.json"
+                },
+                {
+                    "$ref": "getTips.json"
+                },
+                {
+                    "$ref": "moveArm.json"
+                },
+                {
+                    "$ref": "pause.json"
+                },
+                {
+                    "$ref": "prime.json"
+                },
+                {
+                    "$ref": "setSpeed.json"
+                },
+                {
+                    "$ref": "shuckTips.json"
+                },
+                {
+                    "$ref": "startLoop.json"
+                }
             ]
         }
     },

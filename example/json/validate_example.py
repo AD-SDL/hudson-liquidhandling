@@ -15,4 +15,3 @@ with open(schema_file_path) as schema_file:
     file_path = os.path.join(current_directory, "solo_soft_example.json")
     with open(file_path) as json_file:
         validate(instance=jsonref.load(json_file), schema=my_schema)
-

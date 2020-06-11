@@ -7,7 +7,7 @@
             "metadata": {
                 "spec_version": "0.0.1"
             },
-            "pipeline-type": "SoloSoft",
+            "pipeline_type": "SoloSoft",
             "platelist": [
                 "TipBox-Corning 200uL",
                 "Corning 3383",

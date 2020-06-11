@@ -24,7 +24,11 @@
             "minimum": 0
         },
         "start_by_emptying_syringe": {
-            "type": "boolean"
+            "type": "number",
+            "enum": [
+                0,
+                1
+            ]
         },
         "increment_column_order": {
             "type": "boolean"
@@ -36,7 +40,11 @@
             "$ref": "../datatypes/vector3.json"
         },
         "do_tip_touch": {
-            "type": "boolean"
+            "type": "number",
+            "enum": [
+                0,
+                1
+            ]
         },
         "tip_touch_shift": {
             "$ref": "../datatypes/vector3.json"
@@ -60,7 +68,11 @@
             "minimum": 0
         },
         "mix_at_start": {
-            "type": "boolean"
+            "type": "number",
+            "enum": [
+                0,
+                1
+            ]
         },
         "mix_cycles": {
             "type": "number",
@@ -86,17 +98,29 @@
             "minimum": 0
         },
         "find_bottom_of_vessel": {
-            "type": "boolean"
+            "type": "number",
+            "enum": [
+                0,
+                1
+            ]
         },
         "reverse_order": {
-            "type": "boolean"
+            "type": "number",
+            "enum": [
+                0,
+                1
+            ]
         },
         "post_aspirate": {
             "type": "number",
             "minimum": 0
         },
         "move_while_pipetting": {
-            "type": "boolean"
+            "type": "number",
+            "enum": [
+                0,
+                1
+            ]
         },
         "move_distance": {
             "$ref": "../datatypes/vector3.json"

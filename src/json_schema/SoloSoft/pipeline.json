@@ -6,7 +6,7 @@
         "metadata": {
             "$ref": "../metadata.json"
         },
-        "pipeline-type": {
+        "pipeline_type": {
             "type": "string",
             "enum": [
                 "SoloSoft"

@@ -19,7 +19,11 @@
             "type": "number"
         },
         "auto_tip_selection": {
-            "type": "boolean"
+            "type": "number",
+            "enum": [
+                0,
+                1
+            ]
         },
         "count_tips_from_last_channel": {
             "type": "boolean"

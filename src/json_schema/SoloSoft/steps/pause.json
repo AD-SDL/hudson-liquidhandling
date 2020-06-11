@@ -13,10 +13,18 @@
             "type": "string"
         },
         "allow_end_run": {
-            "type": "boolean"
+            "type": "number",
+            "enum": [
+                0,
+                1
+            ]
         },
         "auto_continue_after": {
-            "type": "boolean"
+            "type": "number",
+            "enum": [
+                0,
+                1
+            ]
         },
         "wait_seconds": {
             "type": "number"

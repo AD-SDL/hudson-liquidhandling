@@ -17,7 +17,11 @@
             "minimum": 0
         },
         "move_z_at_start": {
-            "type": "boolean"
+            "type": "number",
+            "enum": [
+                0,
+                1
+            ]
         }
     },
     "required": [

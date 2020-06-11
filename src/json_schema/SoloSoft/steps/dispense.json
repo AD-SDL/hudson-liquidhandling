@@ -33,7 +33,11 @@
             "$ref": "../datatypes/vector3.json"
         },
         "do_tip_touch": {
-            "type": "boolean"
+            "type": "number",
+            "enum": [
+                0,
+                1
+            ]
         },
         "tip_touch_shift": {
             "$ref": "../datatypes/vector3.json"
@@ -43,7 +47,10 @@
         },
         "multiple_wells": {
             "type": "number",
-            "enum": [0, 1]
+            "enum": [
+                0,
+                1
+            ]
         },
         "blowoff": {
             "type": "number",
@@ -54,7 +61,11 @@
             "minimum": 0
         },
         "mix_at_finish": {
-            "type": "boolean"
+            "type": "number",
+            "enum": [
+                0,
+                1
+            ]
         },
         "mix_cycles": {
             "type": "number",
@@ -68,7 +79,7 @@
             "type": "number",
             "minimum": 0
         },
-        "delay_after_dispense": {
+        "delay_after_aspirate": {
             "type": "number",
             "minimum": 0
         },
@@ -80,10 +91,18 @@
             "minimum": 0
         },
         "reverse_order": {
-            "type": "boolean"
+            "type": "number",
+            "enum": [
+                0,
+                1
+            ]
         },
         "move_while_pipetting": {
-            "type": "boolean"
+            "type": "number",
+            "enum": [
+                0,
+                1
+            ]
         },
         "move_distance": {
             "$ref": "../datatypes/vector3.json"
