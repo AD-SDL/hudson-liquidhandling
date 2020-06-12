@@ -102,7 +102,7 @@ class SoloSoft:
                         file.write(str(item))
                         file.write("\n")
 
-    def pipelineToJSON(self, json_file = None, pipeline=None, plateList=None):
+    def pipelineToJSON(self, json_file=None, pipeline=None, plateList=None):
         if pipeline != None:
             if not isinstance(pipeline, list):
                 raise TypeError("pipeline should be a list")
@@ -120,8 +120,8 @@ class SoloSoft:
         json_data["platelist"] = plateList
         steps = []
         for step in pipeline:
-        # step = pipeline[28]
-        # if True:
+            # step = pipeline[28]
+            # if True:
             step_extraction_function = self.jsonify[step[0]]
             step_data = {}
             step_data["step_definition"] = step_extraction_function(self, step)
@@ -129,8 +129,28 @@ class SoloSoft:
         json_data["steps"] = steps
         return json_data
 
-    def jsonToPipeline(self, json_file, pipeline=None):
-        print("blah")
+    def jsonToPipeline(self, json_data, inplace=True):
+        if isinstance(json_data, str):
+            json_local = json.loads(json_data)
+        elif isinstance(json_data, dict):
+            json_local = json_data
+        else:
+            print("json needs to be either a dict or string.")
+            return
+
+        steps = []
+        for step in json_local["steps"]:
+            params = {}
+            for key in step["step_definition"]:
+                if key == "step_type":
+                    step_function = self.pipelinify[step["step_definition"][key]]
+                else:
+                    params[key] = step["step_definition"][key]
+            steps.append(step_function(self=self, inplace=False, **params))
+            params={}
+        if inplace:
+            self.setPipeline = steps
+        return steps
 
     # * SOLOSoft Pipeline Functions
 
@@ -142,6 +162,7 @@ class SoloSoft:
         auto_tip_selection=True,
         count_tips_from_last_channel=False,
         index=None,
+        inplace=True,
     ):
         properties_list = ["GetTip", position, disposal, num_tips]
         if auto_tip_selection:
@@ -149,10 +170,11 @@ class SoloSoft:
         else:
             properties_list.append(0)
         properties_list.extend([0, count_tips_from_last_channel, STEP_DELIMITER])
-        if index != None:
-            self.pipeline.insert(index, properties_list)
-        else:
-            self.pipeline.append(properties_list)
+        if inplace:
+            if index != None:
+                self.pipeline.insert(index, properties_list)
+            else:
+                self.pipeline.append(properties_list)
         return properties_list
 
     def jsonifyGetTip(self, step):
@@ -161,16 +183,17 @@ class SoloSoft:
         json_data["position"] = step[1]
         json_data["disposal"] = step[2]
         json_data["num_tips"] = step[3]
-        json_data['auto_tip_selection'] = step[4]
+        json_data["auto_tip_selection"] = step[4]
         json_data["count_tips_from_last_channel"] = step[6]
         return json_data
 
-    def shuckTip(self, disposal="TipDisposal", index=None):
+    def shuckTip(self, disposal="TipDisposal", index=None, inplace=True):
         properties_list = ["ShuckTip", disposal, STEP_DELIMITER]
-        if index != None:
-            self.pipeline.insert(index, properties_list)
-        else:
-            self.pipeline.append(properties_list)
+        if inplace:
+            if index != None:
+                self.pipeline.insert(index, properties_list)
+            else:
+                self.pipeline.append(properties_list)
         return properties_list
 
     def jsonifyShuckTip(self, step):
@@ -179,12 +202,13 @@ class SoloSoft:
         json_data["disposal"] = step[1]
         return json_data
 
-    def loop(self, iterations=-1, index=None):
+    def loop(self, iterations=-1, index=None, inplace=True):
         properties_list = ["Loop", iterations, STEP_DELIMITER]
-        if index != None:
-            self.pipeline.insert(index, properties_list)
-        else:
-            self.pipeline.append(properties_list)
+        if inplace:
+            if index != None:
+                self.pipeline.insert(index, properties_list)
+            else:
+                self.pipeline.append(properties_list)
         return properties_list
 
     def jsonifyLoop(self, step):
@@ -193,12 +217,13 @@ class SoloSoft:
         json_data["iterations"] = step[1]
         return json_data
 
-    def endLoop(self, index=None):
+    def endLoop(self, index=None, inplace=True):
         properties_list = ["EndLoop", STEP_DELIMITER]
-        if index != None:
-            self.pipeline.insert(index, properties_list)
-        else:
-            self.pipeline.append(properties_list)
+        if inplace:
+            if index != None:
+                self.pipeline.insert(index, properties_list)
+            else:
+                self.pipeline.append(properties_list)
         return properties_list
 
     def jsonifyEndLoop(self, step):
@@ -235,6 +260,7 @@ class SoloSoft:
         move_while_pipetting=False,
         move_distance=[0, 0, 0],
         index=None,
+        inplace=True,
     ):
         properties_list = [
             "Aspirate",
@@ -301,10 +327,11 @@ class SoloSoft:
         else:
             properties_list.append(0)
         properties_list.extend([move_distance, STEP_DELIMITER])
-        if index != None:
-            self.pipeline.insert(index, properties_list)
-        else:
-            self.pipeline.append(properties_list)
+        if inplace:
+            if index != None:
+                self.pipeline.insert(index, properties_list)
+            else:
+                self.pipeline.append(properties_list)
         return properties_list
 
     def jsonifyAspirate(self, step):
@@ -364,6 +391,7 @@ class SoloSoft:
         move_while_pipetting=False,
         move_distance=[0, 0, 0],
         index=None,
+        inplace=True,
     ):
         properties_list = [
             "Dispense",
@@ -426,10 +454,11 @@ class SoloSoft:
         else:
             properties_list.append(0)
         properties_list.extend([move_distance, STEP_DELIMITER])
-        if index != None:
-            self.pipeline.insert(index, properties_list)
-        else:
-            self.pipeline.append(properties_list)
+        if inplace:
+            if index != None:
+                self.pipeline.insert(index, properties_list)
+            else:
+                self.pipeline.append(properties_list)
         return properties_list
 
     def jsonifyDispense(self, step):
@@ -470,6 +499,7 @@ class SoloSoft:
         dispense_volume=False,
         volume=0,
         index=None,
+        inplace=True,
     ):
         properties_list = [
             "Prime",
@@ -492,10 +522,11 @@ class SoloSoft:
             "*",
             STEP_DELIMITER,
         ]
-        if index != None:
-            self.pipeline.insert(index, properties_list)
-        else:
-            self.pipeline.append(properties_list)
+        if inplace:
+            if index != None:
+                self.pipeline.insert(index, properties_list)
+            else:
+                self.pipeline.append(properties_list)
         return properties_list
 
     def jsonifyPrime(self, step):
@@ -516,6 +547,7 @@ class SoloSoft:
         auto_continue_after=False,
         wait_seconds=0,
         index=None,
+        inplace=True,
     ):
         properties_list = ["Pause", pause_message]
         if allow_end_run or auto_continue_after:
@@ -527,10 +559,11 @@ class SoloSoft:
         else:
             properties_list.append(0)
         properties_list.extend([wait_seconds, STEP_DELIMITER])
-        if index != None:
-            self.pipeline.insert(index, properties_list)
-        else:
-            self.pipeline.append(properties_list)
+        if inplace:
+            if index != None:
+                self.pipeline.insert(index, properties_list)
+            else:
+                self.pipeline.append(properties_list)
         return properties_list
 
     def jsonifyPause(self, step):
@@ -552,6 +585,7 @@ class SoloSoft:
         search_start_distance=0,
         well_list=None,
         index=None,
+        inplace=True,
     ):
         properties_list = [
             "GetBottom",
@@ -686,10 +720,11 @@ class SoloSoft:
                 ]
             )
         properties_list.append(STEP_DELIMITER)
-        if index != None:
-            self.pipeline.insert(index, properties_list)
-        else:
-            self.pipeline.append(properties_list)
+        if inplace:
+            if index != None:
+                self.pipeline.insert(index, properties_list)
+            else:
+                self.pipeline.append(properties_list)
         return properties_list
 
     def jsonifyGetBottom(self, step):
@@ -704,12 +739,13 @@ class SoloSoft:
         json_data["well_list"] = step[11]
         return json_data
 
-    def setSpeed(self, xyz_speed=100, index=None):
+    def setSpeed(self, xyz_speed=100, index=None, inplace=True):
         properties_list = ["SetSpeed", xyz_speed, STEP_DELIMITER]
-        if index != None:
-            self.pipeline.insert(index, properties_list)
-        else:
-            self.pipeline.append(properties_list)
+        if inplace:
+            if index != None:
+                self.pipeline.insert(index, properties_list)
+            else:
+                self.pipeline.append(properties_list)
         return properties_list
 
     def jsonifySetSpeed(self, step):
@@ -719,7 +755,12 @@ class SoloSoft:
         return json_data
 
     def moveArm(
-        self, destination="TipDisposal", xyz_speed=100, move_z_at_start=True, index=None
+        self,
+        destination="TipDisposal",
+        xyz_speed=100,
+        move_z_at_start=True,
+        index=None,
+        inplace=True,
     ):
         properties_list = ["MoveArm", destination, xyz_speed]
         if move_z_at_start:
@@ -727,10 +768,11 @@ class SoloSoft:
         else:
             properties_list.append(0)
         properties_list.append(STEP_DELIMITER)
-        if index != None:
-            self.pipeline.insert(index, properties_list)
-        else:
-            self.pipeline.append(properties_list)
+        if inplace:
+            if index != None:
+                self.pipeline.insert(index, properties_list)
+            else:
+                self.pipeline.append(properties_list)
         return properties_list
 
     def jsonifyMoveArm(self, step):
@@ -753,4 +795,18 @@ class SoloSoft:
         "Pause": jsonifyPause,
         "MoveArm": jsonifyMoveArm,
         "SetSpeed": jsonifySetSpeed,
+    }
+
+    pipelinify = {
+        "GetTip": getTip,
+        "ShuckTip": shuckTip,
+        "Loop": loop,
+        "EndLoop": endLoop,
+        "Aspirate": aspirate,
+        "Dispense": dispense,
+        "GetBottom": getBottom,
+        "Prime": prime,
+        "Pause": pause,
+        "MoveArm": moveArm,
+        "SetSpeed": setSpeed,
     }
