@@ -28,4 +28,6 @@ soloSoft.dispense()
 soloSoft.endLoop()
 soloSoft.moveArm()
 
+print(soloSoft.pipeline)
+
 soloSoft.savePipeline()

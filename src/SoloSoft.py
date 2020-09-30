@@ -148,7 +148,7 @@ class SoloSoft:
                 else:
                     params[key] = step["step_definition"][key]
             steps.append(step_function(self=self, inplace=False, **params))
-            params={}
+            params = {}
         if inplace:
             self.setPipeline = steps
         return steps
