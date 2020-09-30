@@ -141,6 +141,7 @@ class SoloSoft:
         steps = []
         for step in json_local["steps"]:
             params = {}
+            step_function = None
             for key in step["step_definition"]:
                 if key == "step_type":
                     step_function = self.pipelinify[step["step_definition"][key]]
