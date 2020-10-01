@@ -10,5 +10,5 @@ import RapidPick
 
 
 class TestRapidPick:
-    def __init__(self):
-        pass
+    def test_temp(self):
+        assert True

@@ -14,5 +14,5 @@ import SoloSoft
 
 
 class TestJsonSchema:
-    def __init__(self):
-        pass
+    def test_temp(self):
+        assert True

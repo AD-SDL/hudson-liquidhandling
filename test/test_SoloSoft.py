@@ -115,9 +115,6 @@ class TestSoloSoft:
         "Corning 3383",
     ]
 
-    def __init__(self):
-        pass
-
     def test_empty(self):
         soloSoft = SoloSoft.SoloSoft()
         assert soloSoft.file == None
