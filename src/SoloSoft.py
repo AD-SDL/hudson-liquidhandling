@@ -1,7 +1,7 @@
 import json
+import Properties
 
 STEP_DELIMITER = "!@#$"
-SPEC_VERSION = "0.0.1"
 
 
 class SoloSoft:
@@ -115,7 +115,7 @@ class SoloSoft:
             plateList = self.plateList
 
         json_data = {}
-        json_data["metadata"] = {"spec_version": SPEC_VERSION}
+        json_data["metadata"] = {"spec_version": Properties.SPEC_VERSION}
         json_data["pipeline_type"] = "SoloSoft"
         json_data["platelist"] = plateList
         steps = []
