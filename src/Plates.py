@@ -48,7 +48,7 @@ class Plate96Well:
                 print("value must be a non-negative number")
                 return
         else:
-            print("column must be a number in the range 1-13")
+            print("column must be a number in the range 1-12 inclusive")
             return
         return self.plate
 
