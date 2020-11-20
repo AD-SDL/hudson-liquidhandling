@@ -385,7 +385,7 @@ class SoloSoft:
         mix_at_finish=False,
         mix_cycles=0,
         mix_volume=0,
-        dispense_height=0,
+        aspirate_height=0,
         delay_after_aspirate=0,
         dispense_volumes=None,
         reverse_order=False,
@@ -429,7 +429,7 @@ class SoloSoft:
         else:
             properties_list.append(0)
         properties_list.extend(
-            [mix_cycles, mix_volume, "a", dispense_height, delay_after_aspirate]
+            [mix_cycles, mix_volume, "a", aspirate_height, delay_after_aspirate]
         )
         if dispense_volumes != None:
             properties_list.append(dispense_volumes)
