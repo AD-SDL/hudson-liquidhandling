@@ -6,7 +6,7 @@ sys.path.append(
     os.path.abspath(os.path.join(os.path.abspath(os.path.dirname(__file__)), "../src"))
 )
 import SoloSoft
-from Plates import Plate96Well
+from Plates import GenericPlate96Well
 
 # Initialize Pipeline
 soloSoft = SoloSoft.SoloSoft(
@@ -35,7 +35,7 @@ def sub_pipeline(i, interim_get_tips=False, interim_pause=False):
         mix_volume=30,
         dispense_height=2,
         post_aspirate=1,
-        aspirate_volumes=Plate96Well().setColumn(i, 10),
+        aspirate_volumes=GenericPlate96Well().setColumn(i, 10),
     )
     soloSoft.dispense(
         position="Position8",
@@ -45,7 +45,7 @@ def sub_pipeline(i, interim_get_tips=False, interim_pause=False):
         mix_cycles=5,
         mix_volume=50,
         aspirate_height=0.5,
-        dispense_volumes=Plate96Well().setColumn(i + 1, 10),
+        dispense_volumes=GenericPlate96Well().setColumn(i + 1, 10),
     )
     if interim_pause:
         soloSoft.pause(allow_end_run=True, pause_message="finished first half")
@@ -55,13 +55,13 @@ def sub_pipeline(i, interim_get_tips=False, interim_pause=False):
         position="Position8",
         aspirate_shift=[0, 0, 0.5],
         syringe_speed=100,
-        aspirate_volumes=Plate96Well().setColumn(i, 3.5),
+        aspirate_volumes=GenericPlate96Well().setColumn(i, 3.5),
     )
     soloSoft.dispense(
         position="Position7",
         dispense_shift=[0, 0, 0.5],
         syringe_speed=100,
-        dispense_volumes=Plate96Well().setColumn(i, 3.5),
+        dispense_volumes=GenericPlate96Well().setColumn(i, 3.5),
     )
 
 
@@ -78,13 +78,13 @@ soloSoft.aspirate(
     position="Position8",
     aspirate_shift=[0, 0, 0.5],
     syringe_speed=100,
-    aspirate_volumes=Plate96Well().setColumn(12, 3.5),
+    aspirate_volumes=GenericPlate96Well().setColumn(12, 3.5),
 )
 soloSoft.dispense(
     position="Position7",
     dispense_shift=[0, 0, 0.5],
     syringe_speed=100,
-    dispense_volumes=Plate96Well().setColumn(12, 3.5),
+    dispense_volumes=GenericPlate96Well().setColumn(12, 3.5),
 )
 soloSoft.shuckTip()
 soloSoft.savePipeline()

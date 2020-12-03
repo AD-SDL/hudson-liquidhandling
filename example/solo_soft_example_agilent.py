@@ -11,7 +11,7 @@ sys.path.append(
     os.path.abspath(os.path.join(os.path.abspath(os.path.dirname(__file__)), "../src"))
 )
 import SoloSoft
-from Plates import Plate96Well
+from Plates import GenericPlate96Well
 
 soloSoft = SoloSoft.SoloSoft(
     filename="agilent_rese.hso",
@@ -34,12 +34,12 @@ for i in range(1, 7):
     soloSoft.aspirate(
         position="Position6",
         aspirate_shift=[0, 0, 2],
-        aspirate_volumes=Plate96Well().setColumn(6, 180),
+        aspirate_volumes=GenericPlate96Well().setColumn(6, 180),
     )
     soloSoft.dispense(
         position="Position8",
         dispense_shift=[0, 0, 2],
-        dispense_volumes=Plate96Well().setColumn(i, 180),
+        dispense_volumes=GenericPlate96Well().setColumn(i, 180),
     )
 soloSoft.shuckTip()
 soloSoft.getTip()
@@ -48,12 +48,12 @@ for i in range(1, 7):
     soloSoft.aspirate(
         position="Position6",
         aspirate_shift=[0, 0, 2],
-        aspirate_volumes=Plate96Well().setColumn(8, 180),
+        aspirate_volumes=GenericPlate96Well().setColumn(8, 180),
     )
     soloSoft.dispense(
         position="Position8",
         dispense_shift=[0, 0, 2],
-        dispense_volumes=Plate96Well().setColumn(i + 6, 180),
+        dispense_volumes=GenericPlate96Well().setColumn(i + 6, 180),
     )
 soloSoft.shuckTip()
 soloSoft.pause(
