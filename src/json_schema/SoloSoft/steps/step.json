@@ -24,6 +24,9 @@
                     "$ref": "getTip.json"
                 },
                 {
+                    "$ref": "movePlate.json"
+                },
+                {
                     "$ref": "moveArm.json"
                 },
                 {

@@ -784,6 +784,36 @@ class SoloSoft:
         json_data["move_z_at_start"] = step[3]
         return json_data
 
+    def movePlate(
+        self,
+        source_position="Position1",
+        target_position="Position2",
+        grip_offset=0,
+        index=None,
+        inplace=True,
+    ):
+        properties_list = [
+            "MovePlate",
+            source_position,
+            target_position,
+            grip_offset,
+            STEP_DELIMITER,
+        ]
+        if inplace:
+            if index != None:
+                self.pipeline.insert(index, properties_list)
+            else:
+                self.pipeline.append(properties_list)
+        return properties_list
+
+    def jsonifyMovePlate(self, step):
+        json_data = {}
+        json_data["step_type"] = "MovePlate"
+        json_data["source_position"] = step[1]
+        json_data["target_position"] = step[2]
+        json_data["grip_offset"] = step[3]
+        return json_data
+
     jsonify = {
         "GetTip": jsonifyGetTip,
         "ShuckTip": jsonifyShuckTip,
@@ -795,6 +825,7 @@ class SoloSoft:
         "Prime": jsonifyPrime,
         "Pause": jsonifyPause,
         "MoveArm": jsonifyMoveArm,
+        "MovePlate": jsonifyMovePlate,
         "SetSpeed": jsonifySetSpeed,
     }
 
@@ -809,5 +840,6 @@ class SoloSoft:
         "Prime": prime,
         "Pause": pause,
         "MoveArm": moveArm,
+        "MovePlate": movePlate,
         "SetSpeed": setSpeed,
     }
