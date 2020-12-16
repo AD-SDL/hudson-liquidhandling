@@ -117,7 +117,7 @@ class TestSoloSoft:
 
     def test_empty(self):
         soloSoft = SoloSoft.SoloSoft()
-        assert soloSoft.file == None
+        assert soloSoft.filename == None
         assert soloSoft.pipeline == []
         assert soloSoft.plateList == [
             "Empty",
@@ -132,13 +132,13 @@ class TestSoloSoft:
 
     def test_filename(self):
         soloSoft = SoloSoft.SoloSoft("example_filename.hso")
-        assert soloSoft.file == "example_filename.hso"
+        assert soloSoft.filename == "example_filename.hso"
         soloSoft.setFile("new_filename.hso")
-        assert soloSoft.file == "new_filename.hso"
+        assert soloSoft.filename == "new_filename.hso"
         with pytest.raises(TypeError):
             soloSoft.setFile(1)
-        soloSoft.file = "once_more.hso"
-        assert soloSoft.file == "once_more.hso"
+        soloSoft.filename = "once_more.hso"
+        assert soloSoft.filename == "once_more.hso"
 
     def test_pipeline(self):
         soloSoft = SoloSoft.SoloSoft(pipeline=self.example_pipeline)
@@ -147,14 +147,14 @@ class TestSoloSoft:
         assert soloSoft.pipeline == []
         soloSoft.setPipeline(self.example_pipeline)
         assert soloSoft.pipeline == self.example_pipeline
-        soloSoft.pipeline = self.example_pipeline
+        soloSoft.pipeline = []
         assert soloSoft.pipeline == []
         soloSoft.pipeline = self.example_pipeline
         assert soloSoft.pipeline == self.example_pipeline
         with pytest.raises(TypeError):
             soloSoft.setPipeline(3)
 
-    def test_pipeline(self):
+    def test_plates(self):
         soloSoft = SoloSoft.SoloSoft(plateList=self.example_platelist)
         assert soloSoft.plateList == self.example_platelist
         soloSoft.setPlates([])

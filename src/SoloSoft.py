@@ -6,7 +6,7 @@ STEP_DELIMITER = "!@#$"
 
 class SoloSoft:
     def __init__(self, filename=None, plateList=None, pipeline=None):
-        self.file = None
+        self.filename = None
         self.plateList = []
         self.pipeline = []
 
@@ -14,8 +14,9 @@ class SoloSoft:
         try:
             if filename != None:
                 self.setFile(filename)
-        except:
+        except Exception as error:
             print("Error creating SoloSoft protocol with filename %s" % filename)
+            print(error)
             return
         # *Set plate list
         try:
@@ -34,8 +35,9 @@ class SoloSoft:
                         "Empty",
                     ]
                 )
-        except:
+        except Exception as error:
             print("Error setting Plate List")
+            print(error)
             return
         # *Set pipeline, if we're expanding on an existing pipeline
         try:
@@ -43,14 +45,15 @@ class SoloSoft:
                 self.setPipeline(pipeline)
             else:
                 self.initializePipeline()
-        except:
+        except Exception as error:
             print("Error setting pipeline")
+            print(error)
 
     def setFile(self, filename):
         if not isinstance(filename, str):
             raise TypeError("filename must be a string.")
         else:
-            self.file = filename
+            self.filename = filename
 
     def setPlates(self, plateList):
         if not isinstance(plateList, list):
@@ -75,8 +78,8 @@ class SoloSoft:
 
     def savePipeline(self, filename=None):
         if filename == None:
-            if self.file != None:
-                filename = self.file
+            if self.filename != None:
+                filename = self.filename
             else:
                 raise BaseException("Need to specify a file to save pipeline")
 
