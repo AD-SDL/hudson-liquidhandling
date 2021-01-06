@@ -8,3 +8,8 @@ This repository contains the source code for a python library developed to allow
 1. Git clone this repository: `git clone https://xgitlab.cels.anl.gov/rarvind/liquidhandling.git`
 1. Run `pip install -r requirements.txt` in the repository root
 1. Use python to run the `example/solo_soft_example.py` and open the `example.hso` file it generates in SoloSoft to test your setup.
+
+
+## Tests
+
+* Run all: `python -m pytest test` in the repo's root directory 
