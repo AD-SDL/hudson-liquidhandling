@@ -1,0 +1,53 @@
+﻿<Protocol mc:Ignorable="sap sap2010 sads" PreProtocolWizard="{x:Null}" ActivityLabel="" DisplayName="example_protocol" HasConstraints="False" sap2010:WorkflowViewState.IdRef="Protocol_1" SLXId="df50c4dd-572a-41df-a285-0caf0907a053" ToolTip="" UserComments="" isActive="True" isSetup="True"
+ xmlns="clr-namespace:Hudson.Workflow.Activities;assembly=Hudson.Workflow.Activities"
+ xmlns:hcc="clr-namespace:Hudson.Common.Communications;assembly=Hudson.Common"
+ xmlns:hwab="clr-namespace:Hudson.Workflow.Activities.Base;assembly=SoftLinxBaseActivities"
+ xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+ xmlns:p="http://schemas.microsoft.com/netfx/2009/xaml/activities"
+ xmlns:sads="http://schemas.microsoft.com/netfx/2010/xaml/activities/debugger"
+ xmlns:sap="http://schemas.microsoft.com/netfx/2009/xaml/activities/presentation"
+ xmlns:sap2010="http://schemas.microsoft.com/netfx/2010/xaml/activities/presentation"
+ xmlns:scg="clr-namespace:System.Collections.Generic;assembly=mscorlib"
+ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <Protocol.Activities>
+    <scg:List x:TypeArguments="p:Activity" Capacity="4">
+      <DelayActivity CommandLine="" Description="" DisplayName="Delay: 00:00:05" HasConstraints="False" SLXId="53716c88-2bea-49a9-9d60-2e75006e9543" ToolTip="" UserComments="" isActive="True" isCanceled="False" isSetup="True">
+        <DelayActivity.Arguments>
+          <DelayActivityArguments Delay="00:00:05" />
+        </DelayActivity.Arguments>
+        <DelayActivity.TimeConstraints>
+          <scg:List x:TypeArguments="hwab:TimeConstraint" Capacity="0" />
+        </DelayActivity.TimeConstraints>
+        <sap2010:WorkflowViewState.IdRef>DelayActivity_1</sap2010:WorkflowViewState.IdRef>
+      </DelayActivity>
+    </scg:List>
+  </Protocol.Activities>
+  <Protocol.Activities2>
+    <scg:List x:TypeArguments="p:Activity" Capacity="0" />
+  </Protocol.Activities2>
+  <Protocol.InitialValues>
+    <scg:Dictionary x:TypeArguments="x:String, hwab:Variable" />
+  </Protocol.InitialValues>
+  <Protocol.Interfaces>
+    <scg:Dictionary x:TypeArguments="hcc:SLAddress, hwab:Interface" />
+  </Protocol.Interfaces>
+  <Protocol.TimeConstraints>
+    <scg:List x:TypeArguments="hwab:TimeConstraint" Capacity="0" />
+  </Protocol.TimeConstraints>
+  <Protocol.Variables>
+    <hwab:VariableList SLXHost="{x:Null}" />
+  </Protocol.Variables>
+  <sap2010:WorkflowViewState.ViewStateManager>
+    <sap2010:ViewStateManager>
+      <sap2010:ViewStateData Id="DelayActivity_1" sap:VirtualizedContainerService.HintSize="185,78">
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+      </sap2010:ViewStateData>
+      <sap2010:ViewStateData Id="Protocol_1" sap:VirtualizedContainerService.HintSize="205,214" />
+    </sap2010:ViewStateManager>
+  </sap2010:WorkflowViewState.ViewStateManager>
+  <sads:DebugSymbol.Symbol>d0RDOlxVc2Vyc1xyeWFuLmxld2lzXERldlxsaXF1aWRoYW5kbGluZ1xleGFtcGxlXGV4YW1wbGVfcHJvdG9jb2wuc2x2cAIBATUMAQEOBxYXAQU=</sads:DebugSymbol.Symbol>
+</Protocol>

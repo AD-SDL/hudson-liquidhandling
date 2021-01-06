@@ -1,0 +1,23 @@
+<?xml version='1.0' encoding='utf-8'?>
+<Protocol mc:Ignorable="sap sap2010 sads" PreProtocolWizard="{x:Null}" ActivityLabel="" DisplayName="ExampleProtocol" HasConstraints="False" sap2010:WorkflowViewState.IdRef="Protocol_1" SLXId="df50c4dd-572a-41df-a285-0caf0907a053" ToolTip="" UserComments="" isActive="True" isSetup="True" xmlns="clr-namespace:Hudson.Workflow.Activities;assembly=Hudson.Workflow.Activities" xmlns:hcc="clr-namespace:Hudson.Common.Communications;assembly=Hudson.Common" xmlns:hwab="clr-namespace:Hudson.Workflow.Activities.Base;assembly=SoftLinxBaseActivities" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:p="http://schemas.microsoft.com/netfx/2009/xaml/activities" xmlns:s="clr-namespace:System;assembly=mscorlib" xmlns:sads="http://schemas.microsoft.com/netfx/2010/xaml/activities/debugger" xmlns:sap="http://schemas.microsoft.com/netfx/2009/xaml/activities/presentation" xmlns:sap2010="http://schemas.microsoft.com/netfx/2010/xaml/activities/presentation" xmlns:scg="clr-namespace:System.Collections.Generic;assembly=mscorlib" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <Protocol.Activities>
+    <scg:List x:TypeAgruments="p:Activity" Capacity="0" />
+  </Protocol.Activities>
+<Protocol.Activities2>
+    <scg:List x:TypeAgruments="p:Activity" Capacity="0" />
+  </Protocol.Activities2>
+<Protocol.InitialValues>
+    <scg:Dictionary x:TypeArguments="x:String, hwab:Variable" />
+  </Protocol.InitialValues>
+<Protocol.Interfaces />
+<Protocol.TimeConstraints>
+    <scg:List x:TypeArguments="hwab:TimeConstraint" Capacity="0" />
+  </Protocol.TimeConstraints>
+<Protocol.Variables />
+<sap2010:WorkflowViewState.ViewStateManager>
+    <sap2010:ViewStateManager>
+      <sap2010:ViewStateData Id="Protocol_1" sap:VirtualizedContainerService.HintSize="205,119" />
+    </sap2010:ViewStateManager>
+  </sap2010:WorkflowViewState.ViewStateManager>
+<sads:DebugSymbol.Symbol>dxYuXERldlxOZXdQcm90b2NvbC5zbHZwAQEBPAwBAQ==</sads:DebugSymbol.Symbol>
+</Protocol>

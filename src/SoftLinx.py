@@ -91,6 +91,12 @@ class SoftLinx:
             raise TypeError("Variables must be a List.")
         self.plugins = variables
 
+    def activityCapacityCalculator(self):
+        if len(self.protocolSteps) > 0:
+            return "4"
+        else:
+            return "0"
+
     def saveProtocol(self, filename=None):
         if filename == None:
             if self.filename != None:
@@ -116,6 +122,7 @@ class SoftLinx:
                 "xmlns:hwab": "clr-namespace:Hudson.Workflow.Activities.Base;assembly=SoftLinxBaseActivities",
                 "xmlns:mc": "http://schemas.openxmlformats.org/markup-compatibility/2006",
                 "xmlns:p": "http://schemas.microsoft.com/netfx/2009/xaml/activities",
+                "xmlns:s": "clr-namespace:System;assembly=mscorlib",
                 "xmlns:sads": "http://schemas.microsoft.com/netfx/2010/xaml/activities/debugger",
                 "xmlns:sap": "http://schemas.microsoft.com/netfx/2009/xaml/activities/presentation",
                 "xmlns:sap2010": "http://schemas.microsoft.com/netfx/2010/xaml/activities/presentation",
@@ -126,13 +133,16 @@ class SoftLinx:
         activities = ET.SubElement(protocol, "Protocol.Activities")
         # !Capacity changes based on some factor...unclear exactly what though.
         scg_list = ET.SubElement(
-            activities, "scg:List", {"x:TypeAgruments": "p:Activity", "Capacity": "0"},
+            activities, "scg:List", {"x:TypeArguments": "p:Activity", "Capacity": self.activityCapacityCalculator()},
         )
-        # TODO: Protocol Steps
-        # ...
+        # *Add each step in the protocol
+        for step in self.protocolSteps:
+            step_xml = ET.SubElement(
+                scg_list, step.xml()
+            )
         activities2 = ET.SubElement(protocol, "Protocol.Activities2")
         scg_list = ET.SubElement(
-            activities2, "scg:List", {"x:TypeAgruments": "p:Activity", "Capacity": "0"},
+            activities2, "scg:List", {"x:TypeArguments": "p:Activity", "Capacity": "0"},
         )
         initialValues = ET.SubElement(protocol, "Protocol.InitialValues")
         scg_dict = ET.SubElement(
@@ -141,8 +151,11 @@ class SoftLinx:
             {"x:TypeArguments": "x:String, hwab:Variable"},
         )
         interfaces = ET.SubElement(protocol, "Protocol.Interfaces")
-        # TODO: Plugins
-        # ...
+        # *Add each plugin we need
+        for plugin in self.plugins:
+            plugin_xml = ET.SubElement(
+                interfaces, plugin.xml()
+            )
         timeConstraints = ET.SubElement(protocol, "Protocol.TimeConstraints")
         scg_list = ET.SubElement(
             timeConstraints,
@@ -150,8 +163,15 @@ class SoftLinx:
             {"x:TypeArguments": "hwab:TimeConstraint", "Capacity": "0"},
         )
         variables = ET.SubElement(protocol, "Protocol.Variables")
-        # TODO: Variables
-        # ...
+        # *Add each variable
+        for plugin in self.plugins:
+            variable_xml = ET.SubElement(
+                variables, plugin.variable_xml()
+            )
+        for variable in self.variables:
+            variable_xml = ET.SubElement(
+                variables, variable.xml()
+            )
         workflowViewState = ET.SubElement(
             protocol, "sap2010:WorkflowViewState.ViewStateManager"
         )
