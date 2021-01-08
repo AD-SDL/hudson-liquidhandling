@@ -12,4 +12,18 @@ This repository contains the source code for a python library developed to allow
 
 ## Tests
 
-* Run all: `python -m pytest test` in the repo's root directory 
+* Run all: `python -m pytest test` in the repo's root directory
+
+## Formatting the Code
+
+To automatically format the code for style and readability, run `black .` in the repo's root directory. This keeps all of our python code stylistically consistent.
+
+## Development
+
+## Recommended Visual Studio Code Extensions
+
+* Better Comments by Aaron Bond
+* GitLens by Eric Amodio
+* Pylance by Microsoft
+* Python by Microsoft
+* Visual Studio IntelliCode by Microsoft

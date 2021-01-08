@@ -4,6 +4,7 @@ import string
 class PlateDefinition:
     def __init__(
         self,
+        name="Custom Defined Plate",
         plate=None,
         plate_height=0,
         well_depth=0,
@@ -15,11 +16,15 @@ class PlateDefinition:
         column_spacing=9,
         comments="",
     ):
+        if isinstance(name, str):
+            self.name = name
+        else:
+            raise ValueError("Plate name must be a string.")
         if isinstance(plate_height, (int, float)) and plate_height >= 0:
             self.plate_height = plate_height
         else:
             raise ValueError("Plate Height must be a positive numeric value.")
-        if isinstance(well_depth, int) and well_depth >= 0:
+        if isinstance(well_depth, (int, float)) and well_depth >= 0:
             self.well_depth = well_depth
         else:
             raise ValueError("Well depth must be a positive numeric value.")
@@ -48,7 +53,7 @@ class PlateDefinition:
         else:
             raise ValueError("Column Spacing must be a positive numeric value")
         if plate == None:
-            plate = [[0 for j in self.columns] for i in self.rows]
+            self.plate = [[0 for j in range(self.columns)] for i in range(self.rows)]
         else:
             self.plate == plate
         self.comments = comments
@@ -102,17 +107,21 @@ class PlateDefinition:
 class GenericPlate96Well:
     def __new__(cls, plate=None):
         return PlateDefinition(
-            plate, 14.5, 10.7, 8, 12, 0, 0, 9, 9, "Based on 96 PlateOne V-Bottom"
+            "Generic 96-well Plate", plate, 14.5, 10.7, 8, 12, 0, 0, 9, 9, "Based on 96 PlateOne V-Bottom"
         )
 
 
 class NinetySixPlateOneVBottom:
     def __new__(cls, plate=None):
         return PlateDefinition(
-            plate, 14.5, 10.7, 8, 12, 0, 0, 9, 9, "Based on 96 PlateOne V-Bottom"
+            "96 Plate One V Bottom", plate, 14.5, 10.7, 8, 12, 0, 0, 9, 9, "Based on 96 PlateOne V-Bottom"
         )
 
 
 class ZAgilentReservoir_1row:
     def __new__(cls, plate=None):
-        return PlateDefinition(plate, 44.5, 42.3, 1, 12, 0, 0, 9, 9, "")
+        return PlateDefinition("Z Agilent Reservoir - 1 row", plate, 44.5, 42.3, 8, 12, 0, 0, 9, 9, "")
+
+class NinetySixDeepWell:
+    def __new__(cls, plate=None):
+        return PlateDefinition("96 Deep Well", plate, 42.0, 38.0, 8, 12, 0, 0, 9, 9, "")
