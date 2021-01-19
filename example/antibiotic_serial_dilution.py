@@ -41,8 +41,7 @@ soloSoft = SoloSoft.SoloSoft(
 )
 # volumeManager = VolumeManager(ZAgilentReservoir_1row(), 7, 1, 1) #TODO Update placeholder values - https://www.agilent.com/store/en_US/LCat-SubCat1ECS_112089/Reservoirs
 
-
-soloSoft.getTip() # default position 1 ok
+soloSoft.getTip() # default position 1 OK
 
 #* Fill half plate (6 columns) of generic 96 well plate with lb media
 j=1
@@ -55,7 +54,7 @@ for i in range(1,7):
     soloSoft.aspirate(
         position="Position3",
         aspirate_volumes=ZAgilentReservoir_1row().setColumn(j, media_reservoir_aspirate_volume),
-        aspirate_shift=[0,0,4], # larger shift needed for 12 channel reservoir # TODO fix this/remeasure 12 channel
+        aspirate_shift=[0,0,4], # larger shift needed for 12 channel reservoir # TODO fix this/remeasure 12 channel reservoir
         pre_aspirate=blowoff_volume,
     )
     soloSoft.dispense(
@@ -66,7 +65,7 @@ for i in range(1,7):
     )
 
 #* Make first 10 fold dilution (from antibiotic reservoir to first row of destination plate)
-soloSoft.getTip()
+soloSoft.getTip()  
 soloSoft.aspirate(
     position="Position6",
     aspirate_volumes=NinetySixDeepWell().setColumn(1, antibiotic_transfer_volume), 
@@ -90,17 +89,13 @@ soloSoft.dispense(
 
 #* serial dilution within Generic 96 deep well plate
 
+soloSoft.getTip()  # no need to get new tips for each transfer? This get tips step might not even be necessary
 for i in range(1,6):
-    soloSoft.getTip()
     soloSoft.aspirate(
         position="Position2", 
         aspirate_volumes=GenericPlate96Well().setColumn(i, antibiotic_transfer_volume), 
         aspirate_shift=[0,0,2], 
-        pre_aspirate=blowoff_volume,
-        mix_at_start=True, 
-        mix_cycles=num_mixes,
-        mix_volume=destination_mixing_volume, 
-        dispense_height=2, 
+        pre_aspirate=blowoff_volume, # no need to mix at start here, just mixed at end of previous dispense step
     )
     soloSoft.dispense(
         position="Position2",
@@ -114,7 +109,7 @@ for i in range(1,6):
 )
 
 #* Throw away the extra volume from the final dilution (no need to get new tips)
-soloSoft.aspirate(  # already mixed, don't need to do again. 
+soloSoft.aspirate(   
     position="Position2", 
     aspirate_volumes=GenericPlate96Well().setColumn(6, antibiotic_transfer_volume), 
     aspirate_shift=[0,0,2], 
