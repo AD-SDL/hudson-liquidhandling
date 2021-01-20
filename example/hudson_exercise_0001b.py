@@ -7,7 +7,8 @@ sys.path.append(
 )
 import SoloSoft
 from Plates import GenericPlate96Well, NinetySixDeepWell, ZAgilentReservoir_1row
-#from VolumeManager import VolumeManager
+
+# from VolumeManager import VolumeManager
 
 
 # * Program Constants
@@ -48,8 +49,14 @@ for i in range(1, 13):
         current_reservoir_volume = reservoir_volume
     soloSoft.aspirate(
         position="Position3",
-        aspirate_volumes=ZAgilentReservoir_1row().setColumn(j, reservoir_aspirate_volume),
-        aspirate_shift=[0, 0, 4],  # larger z shift needed for 12 channel reservoir # TODO Remeasure well depth of 12 channel reservoir, current definition might be off. 
+        aspirate_volumes=ZAgilentReservoir_1row().setColumn(
+            j, reservoir_aspirate_volume
+        ),
+        aspirate_shift=[
+            0,
+            0,
+            4,
+        ],  # larger z shift needed for 12 channel reservoir # TODO Remeasure well depth of 12 channel reservoir, current definition might be off.
         pre_aspirate=blowoff_volume,
     )
     soloSoft.dispense(
@@ -70,7 +77,7 @@ for i in range(1, 13):
         aspirate_volumes=NinetySixDeepWell().setColumn(i, source_volume),
         aspirate_shift=[0, 0, 2],
         dispense_height=2,
-        pre_aspirate=blowoff_volume
+        pre_aspirate=blowoff_volume,
     )
     soloSoft.dispense(
         position="Position1",

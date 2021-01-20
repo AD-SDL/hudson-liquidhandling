@@ -8,4 +8,5 @@ sys.path.append(
 import SoftLinx
 
 softLinx = SoftLinx.SoftLinx("ExampleProtocol", "example_protocol.slvp")
+softLinx.movePlate()
 softLinx.saveProtocol()

@@ -107,20 +107,43 @@ class PlateDefinition:
 class GenericPlate96Well:
     def __new__(cls, plate=None):
         return PlateDefinition(
-            "Generic 96-well Plate", plate, 14.5, 10.7, 8, 12, 0, 0, 9, 9, "Based on 96 PlateOne V-Bottom"
+            "Generic 96-well Plate",
+            plate,
+            14.5,
+            10.7,
+            8,
+            12,
+            0,
+            0,
+            9,
+            9,
+            "Based on 96 PlateOne V-Bottom",
         )
 
 
 class NinetySixPlateOneVBottom:
     def __new__(cls, plate=None):
         return PlateDefinition(
-            "96 Plate One V Bottom", plate, 14.5, 10.7, 8, 12, 0, 0, 9, 9, "Based on 96 PlateOne V-Bottom"
+            "96 Plate One V Bottom",
+            plate,
+            14.5,
+            10.7,
+            8,
+            12,
+            0,
+            0,
+            9,
+            9,
+            "Based on 96 PlateOne V-Bottom",
         )
 
 
 class ZAgilentReservoir_1row:
     def __new__(cls, plate=None):
-        return PlateDefinition("Z Agilent Reservoir - 1 row", plate, 44.5, 42.3, 8, 12, 0, 0, 9, 9, "")
+        return PlateDefinition(
+            "Z Agilent Reservoir - 1 row", plate, 44.5, 42.3, 8, 12, 0, 0, 9, 9, ""
+        )
+
 
 class NinetySixDeepWell:
     def __new__(cls, plate=None):

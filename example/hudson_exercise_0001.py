@@ -7,7 +7,8 @@ sys.path.append(
 )
 import SoloSoft
 from Plates import GenericPlate96Well, NinetySixDeepWell, ZAgilentReservoir_1row
-#from VolumeManager import VolumeManager
+
+# from VolumeManager import VolumeManager
 
 
 # * Program Constants
@@ -48,7 +49,9 @@ for i in range(1, 13):
         current_reservoir_volume = reservoir_volume
     soloSoft.aspirate(
         position="Position6",
-        aspirate_volumes=ZAgilentReservoir_1row().setColumn(j, reservoir_aspirate_volume),
+        aspirate_volumes=ZAgilentReservoir_1row().setColumn(
+            j, reservoir_aspirate_volume
+        ),
         aspirate_shift=[0, 0, 2],
     )
     soloSoft.dispense(
