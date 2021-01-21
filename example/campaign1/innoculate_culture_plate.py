@@ -30,7 +30,7 @@ sys.path.append(
     os.path.abspath(os.path.join(os.path.abspath(os.path.dirname(__file__)), "../../src"))
 )
 import SoloSoft
-from Plates import GenericPlate96Well, NinetySixDeepWell, ZAgilentReservoir_1row   # TODO: determine which plate types you will actually need
+from Plates import GenericPlate96Well, NinetySixDeepWell, ZAgilentReservoir_1row    # TODO: determine which plate types you will actually need
 
 #* Program variables
 media_transfer_volume = 60

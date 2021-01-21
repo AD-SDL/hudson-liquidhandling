@@ -28,10 +28,11 @@ num_mixes = 10
 current_media_reservoir_volume = media_reservoir_volume = 7000 # use to check that you have media left in the well to aspirate
 
 # Step 1 variables
+    # can be a 5 num mixes
 media_transfer_volume_s1= 60
-culture_transfer_volume_s1 = 40
-culture_plate_mix_volume_s1 = 50
-growth_plate_mix_volume_s1 = 50
+culture_transfer_volume_s1 = 30
+culture_plate_mix_volume_s1 = 180
+growth_plate_mix_volume_s1 = 60
 
 # Step 2 variables
 media_transfer_volume_s2 = 180
@@ -41,7 +42,7 @@ serial_destination_mixing_volume_s2 = 150  # must be less than total volume, oth
 
 
 # Step 3 variables
-antibiotic_transfer_volume_s3 = 75
+antibiotic_transfer_volume_s3 = 90
 antibiotic_mix_volume_s3 = 100 
 destination_mix_volume_s3 = 150
 
@@ -61,7 +62,7 @@ soloSoft = SoloSoft.SoloSoft(
 )
 
 """
-STEP 1: INNOCULATE CULTURE PLATES FROM SOURCE BACTERIA PLATE -----------------------------------------------------------------
+STEP 1: INNOCULATE GROWTH PLATE FROM SOURCE BACTERIA PLATE -----------------------------------------------------------------
 """
 
 #* Idea: fill empty 96 well plate (corning 3383) with fresh media (lb) (fill the whole plate?) 
@@ -87,12 +88,11 @@ for i in range(1,13):
     )
 
 #* add culture from thawed culture plate (column 1) to newly created growth plate with fresh media (columns 1-6)
-
-soloSoft.getTip() # is this needed here? tips have only touched fresh media at this point.
+    # no need to get tips 
 for i in range(1,7):
     soloSoft.aspirate(
         position="Position5", 
-        aspirate_volumes=GenericPlate96Well().setColumn(1, culture_transfer_volume_s1), 
+        aspirate_volumes=NinetySixDeepWell().setColumn(1, culture_transfer_volume_s1), #TODO change plate type to 96 deep well round bottom
         mix_at_start=True, 
         mix_cycles=num_mixes, 
         mix_volume=culture_plate_mix_volume_s1, 
@@ -139,7 +139,7 @@ for i in range(1,7):
     )
 
 #* Make first 10 fold dilution (from antibiotic reservoir to first row of destination plate)
-soloSoft.getTip()
+# no need to get tips here
 soloSoft.aspirate(
     position="Position8",
     aspirate_volumes=NinetySixDeepWell().setColumn(1, serial_antibiotic_transfer_volume_s2), 
@@ -192,7 +192,6 @@ STEP 3: ADD ANTIBIOTIC TO CULTURE PLATES ---------------------------------------
 """
 
 # no need to get tips (just ended at smallest serial dilution) -> work backwards in growth plate
-
 for i in range(6,0,-1):
     soloSoft.aspirate(
         position="Position6", 
