@@ -1,10 +1,25 @@
 """
-CAMPAIGN 1. STEP 3: ADD ANTIBIOTIC TO CULTURE PLATES
+CAMPAIGN 1, STEP 3: 
+
+ADD ANTIBIOTIC TO CULTURE PLATES
+
+Deck Layout:
+Deck Layout:
+1 -> Tips ("TipBox-Corning 200uL")
+2 -> Growth plate (Corning 3383 or Falcon - ref 353916)
+3 -> Lb media well, antibiotic stock solution well (12 channel reservoir) -> column 1 = lb media; column 3 = antibiotic stock solution 
+4 -> HEATING NEST
+5 -> Culture plate from freezer (96 deep well round bottom)
+6 -> Antibiotic serial dilution plate (Corning 3383 or Falcon - ref 353916)
+7 -> Empty
+8 -> Empty
+
 
 Idea: 
 -Transfer set volume from Column1 of antibiotic dilution plate to Column 1 of inoculated growth media plate
 -Transfer set volume from Colum 2 of antibiotic dilution plate to Column 2 of inoculated growth media plate
 . . . ect. 
+
 
 """
 
@@ -19,63 +34,48 @@ import SoloSoft
 from Plates import GenericPlate96Well, NinetySixDeepWell, ZAgilentReservoir_1row   # TODO: determine which plate types you will actually need
 
 #* Program Variables
-antibiotic_transfer_volume = 75
 blowoff_volume = 20
-num_mixes = 10  # will mixing too much be too stressfull on cells? we are plannign to shake when incubating anyway
-antibiotic_mix_volume = 100 
-destination_mix_volume = 150
-
+num_mixes = 5
+# Step 3 variables
+antibiotic_transfer_volume_s3 = 90
+antibiotic_mix_volume_s3 = 90  
+destination_mix_volume_s3 = 120
 
 soloSoft = SoloSoft.SoloSoft(
-    filename="antibiotic_serial_dilution.hso",
+    filename="antibiotic_into_culture_plate.hso",
     plateList=[
         "TipBox-Corning 200uL",
         "Corning 3383",
         "12 Channel Reservoir",
         "Empty",
-        "Corning 3383",
+        "96 Deep Protein",
         "Corning 3383",
         "Empty",
-        "96 Deep Protein",
+        "Empty",
     ],
 )
 
-#* transfer antibiotics into bacteria plate
-    # if you just finished the last antibiotic dilution, could use the same tips and work backwards? 
-        # for i in range(6,0,-1): <- this is the for loop to go backwards
-
-for i in range(1,7):
-    soloSoft.getTip() # take this out when you combine all three steps. 
+# no need to get tips (just ended at smallest serial dilution) -> work backwards in growth plate
+soloSoft.getTip()
+for i in range(6,0,-1):
     soloSoft.aspirate(
         position="Position6", 
-        aspirate_volumes=GenericPlate96Well().setColumn(i, antibiotic_transfer_volume), 
+        aspirate_volumes=GenericPlate96Well().setColumn(i, antibiotic_transfer_volume_s3), 
         mix_at_start=True, 
         mix_cycles=num_mixes, 
-        mix_volume=antibiotic_mix_volume,
+        mix_volume=antibiotic_mix_volume_s3,
         dispense_height=2, 
         aspirate_shift=[0,0,2], 
-        pre_aspirate=blowoff_volume,
     )
     soloSoft.dispense(
         position="Position2", 
-        dispense_volumes=GenericPlate96Well().setColumn(i, antibiotic_transfer_volume),
+        dispense_volumes=GenericPlate96Well().setColumn(i, antibiotic_transfer_volume_s3),
         mix_at_finish=True,
         mix_cycles=num_mixes,
-        mix_volume=destination_mix_volume, 
+        mix_volume=destination_mix_volume_s3, 
         aspirate_height=2, 
         dispense_shift=[0,0,2], 
-        blowoff=blowoff_volume,
     )
 
 soloSoft.shuckTip()
 soloSoft.savePipeline() 
-
-
-
-
-
-
-
-
-
-
