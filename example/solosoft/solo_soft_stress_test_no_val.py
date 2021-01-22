@@ -1,38 +1,12 @@
 import sys
-import json
-import jsonref
 import os
-from jsonschema import validate
 
 # Change this path to point to the location of the repository, if neccessary
 sys.path.append(
-    os.path.abspath(os.path.join(os.path.abspath(os.path.dirname(__file__)), "../src"))
+    os.path.abspath(os.path.join(os.path.abspath(os.path.dirname(__file__)), "../../src"))
 )
 import SoloSoft
 from Plates import GenericPlate96Well
-
-# Validate our pipeline using JSON schema for reference
-def validate_pipeline():
-    jsonified_pipeline = soloSoft.pipelineToJSON()
-    current_directory = os.path.abspath(os.path.dirname(__file__))
-    schema_file_path = os.path.join(
-        current_directory, "../src/json_schema/SoloSoft/pipeline.json"
-    )
-    json_schema_path = os.path.join(current_directory, "../src/json_schema/SoloSoft")
-
-    if os.name == "nt":
-        base_uri = "file:///{}/".format(json_schema_path)
-    else:
-        base_uri = "file://{}/".format(json_schema_path)
-
-    with open(os.path.join(os.path.dirname(__file__), "test.json"), "w") as f:
-        json.dump(jsonified_pipeline, f, indent=4, sort_keys=True)
-
-    with open(schema_file_path) as schema_file:
-        my_schema = jsonref.load(schema_file, base_uri=base_uri, jsonschema=True)
-
-        validate(instance=jsonified_pipeline, schema=my_schema)
-
 
 # Initialize Pipeline
 soloSoft = SoloSoft.SoloSoft(
@@ -113,5 +87,4 @@ soloSoft.dispense(
     dispense_volumes=GenericPlate96Well().setColumn(12, 3.5),
 )
 soloSoft.shuckTip()
-validate_pipeline()
 soloSoft.savePipeline()
