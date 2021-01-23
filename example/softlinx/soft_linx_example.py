@@ -12,5 +12,7 @@ import SoftLinx
 softLinx = SoftLinx.SoftLinx("ExampleProtocol", "example_protocol.slvp")
 softLinx.setPlates({"SoftLinx.PlateCrane.Stack1": "Falcon 96"})
 # softLinx.plateCraneMovePlate()
-softLinx.soloSoftRun("C:\\Users\\ryand\\Dev\\repos\\liquidhandling\\example\\solosoft\\example.hso")
+softLinx.soloSoftRun(
+    "C:\\Users\\ryand\\Dev\\repos\\liquidhandling\\example\\solosoft\\example.hso"
+)
 softLinx.saveProtocol()

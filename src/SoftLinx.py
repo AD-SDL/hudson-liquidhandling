@@ -19,7 +19,7 @@ class SoftLinx:
         self.protocolSteps = []
         self.variables = []
         self.plates = {}
-        self.plugin_flags={
+        self.plugin_flags = {
             "PlateCrane": False,
             "Plates": False,
             "Solo": False,
@@ -373,7 +373,7 @@ class SoftLinx:
                     "SetupData": "{x:Null}",
                     "Address": "{x:Reference __ReferenceID5}",
                     "AddinType": "PlateCrane",
-                }
+                },
             )
         else:
             plugin = ET.SubElement(
@@ -389,7 +389,11 @@ class SoftLinx:
             sladdress = ET.SubElement(
                 address,
                 "hcc:SLAddress",
-                {"x:Name": "__ReferenceID5", "Name": "PlateCrane", "Workcell": "SoftLinx"},
+                {
+                    "x:Name": "__ReferenceID5",
+                    "Name": "PlateCrane",
+                    "Workcell": "SoftLinx",
+                },
             )
         # *Plate
         if len(self.plates) > 0:
@@ -418,7 +422,7 @@ class SoftLinx:
                 "hwab:Interface",
                 {
                     "x:Key": "{x:Reference __ReferenceID6}",
-                "SetupData": "{x:Null}",
+                    "SetupData": "{x:Null}",
                     "AddinType": "Plates",
                 },
             )
@@ -455,7 +459,11 @@ class SoftLinx:
             sladdress = ET.SubElement(
                 address,
                 "hcc:SLAddress",
-                {"x:Name": "__ReferenceID7", "Name": "RapidPick", "Workcell": "SoftLinx"},
+                {
+                    "x:Name": "__ReferenceID7",
+                    "Name": "RapidPick",
+                    "Workcell": "SoftLinx",
+                },
             )
         # *Solo
         if self.plugin_flags["Solo"]:
@@ -511,7 +519,11 @@ class SoftLinx:
             sladdress = ET.SubElement(
                 address,
                 "hcc:SLAddress",
-                {"x:Name": "__ReferenceID9", "Name": "TorreyPinesRIC20", "Workcell": "SoftLinx"},
+                {
+                    "x:Name": "__ReferenceID9",
+                    "Name": "TorreyPinesRIC20",
+                    "Workcell": "SoftLinx",
+                },
             )
 
         # *TimeConstraints
@@ -552,7 +564,9 @@ class SoftLinx:
         # !debugSymbol is probably some sort of hashed nonsense, which could be an issue
         # !Update: seems to be constructive rather than hashed. But it also doesn't seem to impact operation atm
         debugSymbol = ET.SubElement(protocol, "sads:DebugSymbol.Symbol")
-        debugSymbol.text = "dypDOlxVc2Vyc1xyeWFuZFxEZXZcTmV3UHJvdG9jb2xfcGx1Z2luLnNsdnABAQFqDAEB"
+        debugSymbol.text = (
+            "dypDOlxVc2Vyc1xyeWFuZFxEZXZcTmV3UHJvdG9jb2xfcGx1Z2luLnNsdnABAQFqDAEB"
+        )
         tree = ET.ElementTree(self.indent(protocol))
         # tree.write(filename, xml_declaration=False, encoding="utf-8")
         xmlstring = ET.tostring(
