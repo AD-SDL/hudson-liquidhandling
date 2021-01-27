@@ -120,7 +120,7 @@ soloSoft.dispense(
 
 # no need to get new tips
 
-#* Add bacteria from thawed culture plate (Position 3, column 1) to dilution plate (Position 7, column 1) to make culture 10 fold dilution
+#* Add bacteria from thawed culture plate (Position 5, column 1) to dilution plate (Position 7, column 1) to make culture 10 fold dilution
 soloSoft.aspirate(
     position="Position5",
     aspirate_volumes=NinetySixDeepWell().setColumn(1, dilution_culture_volume),
