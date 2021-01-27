@@ -37,7 +37,7 @@ current_media_reservoir_volume = (
 # Step 1 variables
 media_transfer_volume_s1 = 60
 culture_transfer_volume_s1 = 30
-dilution_media_volume = 198 
+dilution_media_volume = 198
 dilution_culture_volume = 22
 culture_plate_mix_volume_s1 = 50
 growth_plate_mix_volume_s1 = 40
@@ -46,9 +46,7 @@ growth_plate_mix_volume_s1 = 40
 media_transfer_volume_s2 = 135
 first_column_transfer_volume_s2 = 150
 serial_antibiotic_transfer_volume_s2 = 15
-serial_source_mixing_volume_s2 = (
-    100  # antibiotic stock solution mix volume
-)
+serial_source_mixing_volume_s2 = 100  # antibiotic stock solution mix volume
 serial_source_num_mixes_s2 = (
     10  # num mixes in antibiotic stock solutuion prior to first transfer
 )
@@ -78,7 +76,7 @@ soloSoft = SoloSoft.SoloSoft(
 STEP 1: INNOCULATE GROWTH PLATE FROM SOURCE BACTERIA PLATE -----------------------------------------------------------------
 """
 # * Fill 6 columns of empty 96 well plate (corning 3383 or Falcon - ref 353916) with fresh lb media (12 channel in Position 3, column 1)
-soloSoft.getTip()  
+soloSoft.getTip()
 j = 1
 for i in range(1, 7):
     soloSoft.aspirate(
@@ -100,33 +98,33 @@ for i in range(1, 7):
         dispense_shift=[0, 0, 2],
     )
 
-# * Fill first column of culture 10 fold dilution plate with fresh lb media 
+# * Fill first column of culture 10 fold dilution plate with fresh lb media
 soloSoft.aspirate(
-    position="Position3", 
-    aspirate_volumes=ZAgilentReservoir_1row().setColumn(1, dilution_media_volume), 
-    aspirate_shift=[0,0,4], 
-    #pre_aspirate=blowoff_volume, # don't have enough volume left in syringe for blowoff
+    position="Position3",
+    aspirate_volumes=ZAgilentReservoir_1row().setColumn(1, dilution_media_volume),
+    aspirate_shift=[0, 0, 4],
+    # pre_aspirate=blowoff_volume, # don't have enough volume left in syringe for blowoff
 )
 soloSoft.dispense(
-    position="Position7", 
+    position="Position7",
     dispense_volumes=GenericPlate96Well().setColumn(1, dilution_media_volume),
-    dispense_shift=[0,0,2],
-    #mix_at_finish=True,
-    #mix_volume= culture_plate_mix_volume_s1, 
-    #mix_cycles=num_mixes,
-    #aspirate_height=2, 
-    #blowoff=blowoff_volume,
+    dispense_shift=[0, 0, 2],
+    # mix_at_finish=True,
+    # mix_volume= culture_plate_mix_volume_s1,
+    # mix_cycles=num_mixes,
+    # aspirate_height=2,
+    # blowoff=blowoff_volume,
 )
 
 # no need to get new tips
 
 #! Using culture plate column 2 for first test with Tom
-#* Add bacteria from thawed culture plate (Position 5, column 2) to dilution plate (Position 7, column 1) to make culture 10 fold dilution
+# * Add bacteria from thawed culture plate (Position 5, column 2) to dilution plate (Position 7, column 1) to make culture 10 fold dilution
 soloSoft.aspirate(
     position="Position5",
     aspirate_volumes=NinetySixDeepWell().setColumn(2, dilution_culture_volume),
-    aspirate_shift=[0,0,2],
-    mix_at_start=True, 
+    aspirate_shift=[0, 0, 2],
+    mix_at_start=True,
     mix_cycles=num_mixes,
     mix_volume=culture_plate_mix_volume_s1,
     dispense_height=2,
@@ -134,9 +132,9 @@ soloSoft.aspirate(
     syringe_speed=25,
 )
 soloSoft.dispense(
-    position="Position7", 
+    position="Position7",
     dispense_volumes=GenericPlate96Well().setColumn(1, dilution_culture_volume),
-    dispense_shift=[0,0,2],
+    dispense_shift=[0, 0, 2],
     mix_at_finish=True,
     mix_cycles=num_mixes,
     mix_volume=culture_plate_mix_volume_s1,
@@ -147,18 +145,22 @@ soloSoft.dispense(
 
 # * Add bacteria from 10 fold diluted culture plate (Position 7, column 1) to growth plate with fresh media (columns 1-6)
 for i in range(1, 7):
-    soloSoft.aspirate(    # already mixed the cells, no need to do it before every transfer
+    soloSoft.aspirate(  # already mixed the cells, no need to do it before every transfer
         position="Position7",
-        aspirate_volumes=GenericPlate96Well().setColumn(1, culture_transfer_volume_s1),  
-        #mix_at_start=True,
-        #mix_cycles=num_mixes,
-        #mix_volume=culture_plate_mix_volume_s1,
-        #dispense_height=10, 
-        aspirate_shift=[0, 0, 2],  # prevents 50 uL tips from going too deep in 96 deep well plate
-        #pre_aspirate=blowoff_volume,
+        aspirate_volumes=GenericPlate96Well().setColumn(1, culture_transfer_volume_s1),
+        # mix_at_start=True,
+        # mix_cycles=num_mixes,
+        # mix_volume=culture_plate_mix_volume_s1,
+        # dispense_height=10,
+        aspirate_shift=[
+            0,
+            0,
+            2,
+        ],  # prevents 50 uL tips from going too deep in 96 deep well plate
+        # pre_aspirate=blowoff_volume,
         syringe_speed=25,
     )
-    soloSoft.dispense(    # do need to mix at end of transfer 
+    soloSoft.dispense(  # do need to mix at end of transfer
         position="Position2",
         dispense_volumes=GenericPlate96Well().setColumn(i, culture_transfer_volume_s1),
         mix_at_finish=True,
@@ -166,7 +168,7 @@ for i in range(1, 7):
         mix_volume=growth_plate_mix_volume_s1,
         aspirate_height=2,
         dispense_shift=[0, 0, 2],
-        #blowoff=blowoff_volume,
+        # blowoff=blowoff_volume,
         syringe_speed=25,
     )
 """

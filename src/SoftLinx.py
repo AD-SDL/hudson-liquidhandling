@@ -1,8 +1,5 @@
-import json
-import Properties
+import os
 import xml.etree.ElementTree as ET
-
-from SoloSoft import STEP_DELIMITER
 
 
 class SoftLinx:
@@ -140,6 +137,40 @@ class SoftLinx:
                 "Workcell": "SoftLinx",
             },
         )
+
+    def generateAutoHotKey(self, softlinx_filename=None, ahk_filename=None):
+        if ahk_filename == None:
+            ahk_filename = os.path.splitext(self.filename)[0] + ".ahk"
+        if softlinx_filename == None:
+            softlinx_filename = self.filename
+        if softlinx_filename == None:
+            raise Exception(
+                "Cannot generate AutoHotKey script without a softlinx filename."
+            )
+        with open(ahk_filename, "w") as file:
+            file.write("#SingleInstance, Force\n")
+            file.write("SendMode Input\n")
+            file.write("SetWorkingDir, \%A_ScriptDir%\n")
+            file.write("\n")
+            file.write(
+                'Run, "C:\Program Files (x86)\Hudson Robotics\SoftLinx V\SoftLinxVProtocolEditor.exe" '
+                + softlinx_filename
+                + "\n"
+            )
+            file.write("WinActivate, SoftLinx V\n")
+            file.write("Sleep, 5000\n")
+            file.write("#IfWinActive, Microsoft Visual Basic\n")
+            file.write("MsgBox, Problem Running Pipeline - Check plugins\n")
+            file.write("Exit")
+            file.write("#If")
+            file.write("\tMouseClick, Left, 300, 45\n")
+            file.write("\tSleep, 1000\n")
+            file.write("\t#IfWinActive, Not Saved\n")
+            file.write("\tSend, {Tab}{Enter}\n")
+            file.write("\tSleep, 1000\n")
+            file.write("\t#IfWinActive, Start Now?\n")
+            file.write("\tSend, {Enter}\n")
+            file.write("\tSleep, 1000\n")
 
     def generateStepXML(self, scg_list, step):
         self.plugin_flags[step["system"]] = True
@@ -299,7 +330,7 @@ class SoftLinx:
                 self.protocolSteps.append(step)
         return step
 
-    def saveProtocol(self, filename=None):
+    def saveProtocol(self, filename=None, generate_ahk=True):
         if filename == None:
             if self.filename != None:
                 filename = self.filename
@@ -362,7 +393,6 @@ class SoftLinx:
 
         # *Add each plugin
         interfaces = ET.SubElement(protocol, "Protocol.Interfaces")
-        print(self.plugin_flags)
         # *PlateCrane
         if self.plugin_flags["PlateCrane"]:
             plugin = ET.SubElement(
@@ -574,6 +604,8 @@ class SoftLinx:
         ).replace("&amp;", "&")
         with open(filename, "w") as file:
             file.write(xmlstring)
+        # *Generate AutoHotKey script
+        self.generateAutoHotKey(filename, os.path.splitext(filename)[0] + ".ahk")
 
     # *Pretty-print XML
     def indent(self, element, level=0):
