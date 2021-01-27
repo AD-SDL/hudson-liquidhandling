@@ -464,7 +464,7 @@ class SoftLinx:
             )
 
         # *RapidPickSP
-        if self.plugin_flags["TorreyPinesRIC20"]:
+        if self.plugin_flags["RapidPick"]:
             plugin = ET.SubElement(
                 interfaces,
                 "hwab:Interface",
