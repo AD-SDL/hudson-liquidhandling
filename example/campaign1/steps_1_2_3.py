@@ -5,9 +5,9 @@ CAMPAIGN STEPS 1-3
 
 Deck Layout:
 1 -> 200 uL Tips ("TipBox-Corning 200uL")
-2 -> Growth plate (Corning 3383 or Falcon - ref 353916)
+2 -> HEATING NEST
 3 -> Lb media well, antibiotic stock solution well (12 channel reservoir) -> column 1 = lb media; column 2 = antibiotic stock solution 
-4 -> HEATING NEST
+4 -> Growth plate (Corning 3383 or Falcon - ref 353916)
 5 -> Culture plate from freezer (96 deep well round bottom)
 6 -> Antibiotic serial dilution plate (Corning 3383 or Falcon - ref 353916)
 7 -> 10 fold culture plate dilution (Corning 3383 or Falcon - ref 353916)

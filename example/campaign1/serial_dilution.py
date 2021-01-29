@@ -5,6 +5,9 @@ CUSTOMIZABLE SERIAL DILUTION PROTOCOL
 
 """
 
+import os
+import sys
+
 #* Program Variables --------------------------------------------------------------------------------
 # TODO: clean up this section
 
@@ -52,8 +55,7 @@ diluent_column_num = 1
 #     elif diluent_nest_num == i:
 #         plate_list[i-1] = diluent_plate_type
 # -----------------------------------------------------------------------------------------------------
-import os
-import sys
+
 
 # TODO: see Tom's note on slack in testing channel
 # Change this path to point to the location of the repository, if neccessary
