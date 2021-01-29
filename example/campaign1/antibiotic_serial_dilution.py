@@ -4,13 +4,13 @@ CAMPAIGN 1, STEP 2:
 ANTIBIOTIC SERIAL DILUTION INTO LB MEDIA PROTOCOL
 
 Deck Layout:
-1 -> Tips ("TipBox-Corning 200uL")
-2 -> Growth plate (Corning 3383 or Falcon - ref 353916)
-3 -> Lb media well, antibiotic stock solution well (12 channel reservoir) -> columns 1 = lb media; column 2 = antibiotic stock solution 
-4 -> HEATING NEST
+1 -> 200 uL Tips ("TipBox-Corning 200uL")
+2 -> HEATING NEST
+3 -> Lb media well, antibiotic stock solution well (12 channel reservoir) -> column 1 = lb media; column 2 = antibiotic stock solution 
+4 -> Growth plate (Corning 3383 or Falcon - ref 353916)
 5 -> Culture plate from freezer (96 deep well round bottom)
 6 -> Antibiotic serial dilution plate (Corning 3383 or Falcon - ref 353916)
-7 -> Empty
+7 -> 10 fold culture plate dilution (Corning 3383 or Falcon - ref 353916)
 8 -> Empty
 """
 
@@ -48,9 +48,9 @@ soloSoft = SoloSoft.SoloSoft(
     filename="antibiotic_serial_dilution.hso",
     plateList=[
         "TipBox-Corning 200uL",
-        "Corning 3383",
-        "12 Channel Reservoir",
         "Empty",
+        "12 Channel Reservoir",
+        "Corning 3383",
         "96 Deep Protein",
         "Corning 3383",
         "Empty",
@@ -65,14 +65,8 @@ for i in range(2, 7):
     # no need for volume management, drawing from 12 channel at Position 3, 1st row (lb media)
     soloSoft.aspirate(
         position="Position3",
-        aspirate_volumes=ZAgilentReservoir_1row().setColumn(
-            1, media_transfer_volume_s2
-        ),
-        aspirate_shift=[
-            0,
-            0,
-            4,
-        ],  # larger shift needed for 12 channel reservoir # TODO fix this/remeasure 12 channel
+        aspirate_volumes=ZAgilentReservoir_1row().setColumn(1, media_transfer_volume_s2),
+        aspirate_shift=[0,0,4],  
         pre_aspirate=blowoff_volume,
     )
     soloSoft.dispense(

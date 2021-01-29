@@ -4,14 +4,13 @@ CAMPAIGN 1, STEP 3:
 ADD ANTIBIOTIC TO CULTURE PLATES
 
 Deck Layout:
-Deck Layout:
-1 -> Tips ("TipBox-Corning 200uL")
-2 -> Growth plate (Corning 3383 or Falcon - ref 353916)
-3 -> Lb media well, antibiotic stock solution well (12 channel reservoir) -> column 1 = lb media; column 3 = antibiotic stock solution 
-4 -> HEATING NEST
+1 -> 200 uL Tips ("TipBox-Corning 200uL")
+2 -> HEATING NEST
+3 -> Lb media well, antibiotic stock solution well (12 channel reservoir) -> column 1 = lb media; column 2 = antibiotic stock solution 
+4 -> Growth plate (Corning 3383 or Falcon - ref 353916)
 5 -> Culture plate from freezer (96 deep well round bottom)
 6 -> Antibiotic serial dilution plate (Corning 3383 or Falcon - ref 353916)
-7 -> Empty
+7 -> 10 fold culture plate dilution (Corning 3383 or Falcon - ref 353916)
 8 -> Empty
 
 
@@ -19,8 +18,6 @@ Idea:
 -Transfer set volume from Column1 of antibiotic dilution plate to Column 1 of inoculated growth media plate
 -Transfer set volume from Colum 2 of antibiotic dilution plate to Column 2 of inoculated growth media plate
 . . . ect. 
-
-
 """
 
 import os
@@ -37,7 +34,7 @@ from Plates import (
     GenericPlate96Well,
     NinetySixDeepWell,
     ZAgilentReservoir_1row,
-)  # TODO: determine which plate types you will actually need
+) 
 
 # * Program Variables
 blowoff_volume = 20
@@ -51,9 +48,9 @@ soloSoft = SoloSoft.SoloSoft(
     filename="antibiotic_into_culture_plate.hso",
     plateList=[
         "TipBox-Corning 200uL",
-        "Corning 3383",
-        "12 Channel Reservoir",
         "Empty",
+        "12 Channel Reservoir",
+        "Corning 3383",
         "96 Deep Protein",
         "Corning 3383",
         "Empty",
@@ -76,7 +73,7 @@ for i in range(6, 0, -1):
         aspirate_shift=[0, 0, 2],
     )
     soloSoft.dispense(
-        position="Position2",
+        position="Position4",
         dispense_volumes=GenericPlate96Well().setColumn(
             i, antibiotic_transfer_volume_s3
         ),
