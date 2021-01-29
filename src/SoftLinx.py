@@ -23,6 +23,20 @@ class SoftLinx:
             "RapidPick": False,
             "TorreyPinesRIC20": False,
         }
+        self.plugin_reference = {
+            "PlateCrane": 0,
+            "Plates": 1,
+            "Solo": 2,
+            # "RapidPick": 3,
+            # "TorreyPinesRIC20": 4,
+        }
+        self.plugin_address = {
+            "PlateCrane": 3,
+            "Plates": 4,
+            "Solo": 5,
+            # "RapidPick": 8,
+            # "TorreyPinesRIC20": 9,
+        }
 
         # *Set Protocol Name
         try:
@@ -105,38 +119,116 @@ class SoftLinx:
         else:
             return "0"
 
-    def generatePluginVariables(self, variableList, reference, reference_address, name):
+    def generatePluginVariables(self, parentXML, system):
         variable = ET.SubElement(
-            variableList,
+            parentXML,
             "hwab:Variable",
             {
                 "x:TypeArguments": "hwab:Interface",
-                "Value": "{x:Reference __ReferenceID%d}" % reference,
-                "x:Key": "SoftLinx." + name,
-                "Name": "SoftLinx." + name,
+                "Value": "{x:Reference __ReferenceID%d}" % self.plugin_reference[system],
+                "x:Key": "SoftLinx." + system,
+                "Name": "SoftLinx." + system,
                 "Prompt": "False",
             },
         )
         default = ET.SubElement(variable, "hwab:Variable.Default")
-        interface = ET.SubElement(
-            default,
-            "hwab:Interface",
-            {
-                "SetupData": "{x:Null}",
-                "x:Name": "__ReferenceID" + str(reference),
-                "AddinType": name,
-            },
-        )
-        interface_address = ET.SubElement(interface, "hwab:Interface.Address")
+        if (system == "Plates" and len(self.plates)):
+            interface = ET.SubElement(
+                default,
+                "hwab:Interface",
+                {
+                    "x:Name": "__ReferenceID" + str(self.plugin_reference[system]),
+                    "AddinType": system,
+                },
+            )
+            interface_address = ET.SubElement(interface, "hwab:Interface.Address")
+            setupData = ET.SubElement(interface, "hwab:Interface.SetupData")
+            array = ET.SubElement(setupData, "x:Array", {"Type": "x:String"})
+            for key, value in self.plates.items():
+                element = ET.SubElement(array, "x:String")
+                element.text = key + "=" + value
+        else:
+            interface = ET.SubElement(
+                default,
+                "hwab:Interface",
+                {
+                    "SetupData": "{x:Null}",
+                    "x:Name": "__ReferenceID" + str(self.plugin_reference[system]),
+                    "AddinType": system,
+                },
+            )
+            interface_address = ET.SubElement(interface, "hwab:Interface.Address")
         sladdress = ET.SubElement(
             interface_address,
             "hcc:SLAddress",
             {
-                # "x:Name": "__ReferenceID" + str(reference_address),
-                "Name": name,
+                "x:Name": "__ReferenceID%d" % self.plugin_address[system],
+                "Name": system,
                 "Workcell": "SoftLinx",
             },
         )
+
+    def generatePluginInterface(self, parentXML, system):
+        ref = ET.SubElement(parentXML, "x:Reference")
+        ref.text ="__ReferenceID%d" % self.plugin_reference[system]
+        key = ET.SubElement(ref, "x:Key")
+        sub_ref = ET.SubElement(key, "x:Reference")
+        sub_ref.text = "__ReferenceID%d" % self.plugin_address[system]
+        # if system != "Plates" or len(self.plates) == 0:
+        #     if self.plugin_flags[system]:
+        #         plugin = ET.SubElement(
+        #             parentXML,
+        #             "hwab:Interface",
+        #             {
+        #                 "x:Key": "{x:Reference __ReferenceID%d}" % self.plugin_reference[system],
+        #                 "Address": "{x:Reference __ReferenceID%d}" % self.plugin_reference[system],
+        #                 "SetupData": "{x:Null}",
+        #                 "AddinType": system,
+        #             },
+        #         )
+        #         return
+        #     else:
+        #         plugin = ET.SubElement(
+        #             parentXML,
+        #             "hwab:Interface",
+        #             {
+        #                 "x:Key": "{x:Reference __ReferenceID%d}" % self.plugin_reference[system],
+        #                 "SetupData": "{x:Null}",
+        #                 "AddinType": system,
+        #             },
+        #         )
+        #         address = ET.SubElement(plugin, "hwab:Interface.Address")
+        #         sladdress = ET.SubElement(
+        #             address,
+        #             "hcc:SLAddress",
+        #             {
+        #                 "x:Name": "__ReferenceID%d" % self.plugin_reference[system],
+        #                 "Name": system,
+        #                 "Workcell": "SoftLinx",
+        #             },
+        #         )
+        #         return
+        # # *Non-empty Plates-specific implementation
+        # plugin = ET.SubElement(
+        #     parentXML,
+        #     "hwab:Interface",
+        #     {
+        #         "x:Key": "{x:Reference __ReferenceID%d}" % self.plugin_reference[system],
+        #         "AddinType": system,
+        #     },
+        # )
+        # address = ET.SubElement(plugin, "hwab:Interface.Address")
+        # sladdress = ET.SubElement(
+        #     address,
+        #     "hcc:SLAddress",
+        #     {"x:Name":  "__ReferenceID%d" % self.plugin_reference[system], "Name": system, "Workcell": "SoftLinx"},
+        # )
+        # setupData = ET.SubElement(plugin, "hwab:Interface.SetupData")
+        # array = ET.SubElement(setupData, "x:Array", {"Type": "x:String"})
+        # for key, value in self.plates.items():
+        #     element = ET.SubElement(array, "x:String")
+        #     element.text = key + "=" + value
+
 
     def generateAutoHotKey(self, softlinx_filename=None, ahk_filename=None):
         if ahk_filename == None:
@@ -150,7 +242,7 @@ class SoftLinx:
         with open(ahk_filename, "w") as file:
             file.write("#SingleInstance, Force\n")
             file.write("SendMode Input\n")
-            file.write("SetWorkingDir, \%A_ScriptDir%\n")
+            file.write("SetWorkingDir, %A_ScriptDir%\n")
             file.write("\n")
             file.write(
                 'Run, "C:\Program Files (x86)\Hudson Robotics\SoftLinx V\SoftLinxVProtocolEditor.exe" '
@@ -159,18 +251,16 @@ class SoftLinx:
             )
             file.write("WinActivate, SoftLinx V\n")
             file.write("Sleep, 5000\n")
-            file.write("#IfWinActive, Microsoft Visual Basic\n")
-            file.write("MsgBox, Problem Running Pipeline - Check plugins\n")
-            file.write("Exit")
-            file.write("#If")
-            file.write("\tMouseClick, Left, 300, 45\n")
-            file.write("\tSleep, 1000\n")
-            file.write("\t#IfWinActive, Not Saved\n")
+            file.write("MouseClick, Left, 300, 45\n")
+            file.write("Sleep, 1000\n")
+            file.write('if WinActive("Not Saved") {\n')
             file.write("\tSend, {Tab}{Enter}\n")
-            file.write("\tSleep, 1000\n")
-            file.write("\t#IfWinActive, Start Now?\n")
+            file.write("\tSleep, 5000\n")
+            file.write("}\n")
+            file.write('if WinActive("Start Now?") {\n')
             file.write("\tSend, {Enter}\n")
-            file.write("\tSleep, 1000\n")
+            file.write("\tSleep, 5000\n")
+            file.write("}\n")
 
     def generateStepXML(self, scg_list, step):
         self.plugin_flags[step["system"]] = True
@@ -193,24 +283,24 @@ class SoftLinx:
             arguments,
             "InstrumentActivityArguments",
             {
-                # "Address": "{x:Reference __ReferenceID%d}" % step["address"],
+                "Address": "{x:Reference __ReferenceID%d}" % self.plugin_address[step["system"]],
                 "ResultVariable": "{x:Null}",
                 "AddinType": step["system"],
                 "Command": step["Command"],
             },
         )
-        iarg_add = ET.SubElement(
-            instrument_arguments, "InstrumentActivityArguments.Address"
-        )
-        sladdress = ET.SubElement(
-            iarg_add,
-            "hcc:SLAddress",
-            {
-                "x:Name": "__ReferenceID" + str(step["address"]),
-                "Name": step["system"],
-                "Workcell": "SoftLinx",
-            },
-        )
+        # iarg_add = ET.SubElement(
+        #     instrument_arguments, "InstrumentActivityArguments.Address"
+        # )
+        # sladdress = ET.SubElement(
+        #     iarg_add,
+        #     "hcc:SLAddress",
+        #     {
+        #         "x:Name": "__ReferenceID" + str(self.plugin_address[step["system"]]),
+        #         "Name": step["system"],
+        #         "Workcell": "SoftLinx",
+        #     },
+        # )
         iarg_arg = ET.SubElement(
             instrument_arguments, "InstrumentActivityArguments.Arguments"
         )
@@ -253,7 +343,6 @@ class SoftLinx:
             "SLXId": "83279d2c-43f7-4f36-8515-103a2f9a3de9",
             "ToolTip": "MoveCrane to '%s'" % position,
             "isActive": str(isActive),
-            "address": 5,
             "system": "PlateCrane",
             "args": [["x:String", position]],
         }
@@ -284,7 +373,6 @@ class SoftLinx:
             + "&#xD;&#xA;"
             + "To: %s" % ",".join(positionsTo),
             "isActive": str(isActive),
-            "address": 5,
             "system": "PlateCrane",
             "args": [
                 ["x:String", ",".join(positionsFrom)],
@@ -316,7 +404,6 @@ class SoftLinx:
             "SLXId": "5eb5e609-1660-4c5b-ade7-f51828196e13",
             "ToolTip": "Protocol: " + filename,
             "isActive": str(isActive),
-            "address": 8,
             "system": "Solo",
             "args": [
                 ["x:String", filename],
@@ -336,6 +423,11 @@ class SoftLinx:
                 filename = self.filename
             else:
                 raise BaseException("Need to specify a filename to save a protocol.")
+        
+        if len(self.plates) > 0:
+            self.plugin_flags["Plates"] = True
+
+        # *Start Constructing XML
         protocol_dict = {
             "mc:Ignorable": "sap sap2010 sads",
             "PreProtocolWizard": "{x:Null}",
@@ -393,168 +485,15 @@ class SoftLinx:
 
         # *Add each plugin
         interfaces = ET.SubElement(protocol, "Protocol.Interfaces")
-        # *PlateCrane
-        if self.plugin_flags["PlateCrane"]:
-            plugin = ET.SubElement(
-                interfaces,
-                "hwab:Interface",
-                {
-                    "x:Key": "{x:Reference __ReferenceID5}",
-                    "SetupData": "{x:Null}",
-                    "Address": "{x:Reference __ReferenceID5}",
-                    "AddinType": "PlateCrane",
-                },
-            )
-        else:
-            plugin = ET.SubElement(
-                interfaces,
-                "hwab:Interface",
-                {
-                    "x:Key": "{x:Reference __ReferenceID5}",
-                    "SetupData": "{x:Null}",
-                    "AddinType": "PlateCrane",
-                },
-            )
-            address = ET.SubElement(plugin, "hwab:Interface.Address")
-            sladdress = ET.SubElement(
-                address,
-                "hcc:SLAddress",
-                {
-                    "x:Name": "__ReferenceID5",
-                    "Name": "PlateCrane",
-                    "Workcell": "SoftLinx",
-                },
-            )
-        # *Plate
-        if len(self.plates) > 0:
-            plugin = ET.SubElement(
-                interfaces,
-                "hwab:Interface",
-                {
-                    "x:Key": "{x:Reference __ReferenceID6}",
-                    "AddinType": "Plates",
-                },
-            )
-            address = ET.SubElement(plugin, "hwab:Interface.Address")
-            sladdress = ET.SubElement(
-                address,
-                "hcc:SLAddress",
-                {"x:Name": "__ReferenceID6", "Name": "Plates", "Workcell": "SoftLinx"},
-            )
-            setupData = ET.SubElement(plugin, "hwab:Interface.SetupData")
-            array = ET.SubElement(setupData, "x:Array", {"Type": "x:String"})
-            for key, value in self.plates.items():
-                element = ET.SubElement(array, "x:String")
-                element.text = key + "=" + value
-        else:
-            plugin = ET.SubElement(
-                interfaces,
-                "hwab:Interface",
-                {
-                    "x:Key": "{x:Reference __ReferenceID6}",
-                    "SetupData": "{x:Null}",
-                    "AddinType": "Plates",
-                },
-            )
-            address = ET.SubElement(plugin, "hwab:Interface.Address")
-            sladdress = ET.SubElement(
-                address,
-                "hcc:SLAddress",
-                {"x:Name": "__ReferenceID6", "Name": "Plates", "Workcell": "SoftLinx"},
-            )
-
-        # *RapidPickSP
-        if self.plugin_flags["RapidPick"]:
-            plugin = ET.SubElement(
-                interfaces,
-                "hwab:Interface",
-                {
-                    "x:Key": "{x:Reference __ReferenceID7}",
-                    "SetupData": "{x:Null}",
-                    "Address": "{x:Reference __ReferenceID7}",
-                    "AddinType": "RapidPick",
-                },
-            )
-        else:
-            plugin = ET.SubElement(
-                interfaces,
-                "hwab:Interface",
-                {
-                    "x:Key": "{x:Reference __ReferenceID7}",
-                    "SetupData": "{x:Null}",
-                    "AddinType": "RapidPick",
-                },
-            )
-            address = ET.SubElement(plugin, "hwab:Interface.Address")
-            sladdress = ET.SubElement(
-                address,
-                "hcc:SLAddress",
-                {
-                    "x:Name": "__ReferenceID7",
-                    "Name": "RapidPick",
-                    "Workcell": "SoftLinx",
-                },
-            )
-        # *Solo
-        if self.plugin_flags["Solo"]:
-            plugin = ET.SubElement(
-                interfaces,
-                "hwab:Interface",
-                {
-                    "x:Key": "{x:Reference __ReferenceID8}",
-                    "SetupData": "{x:Null}",
-                    "Address": "{x:Reference __ReferenceID8}",
-                    "AddinType": "Solo",
-                },
-            )
-        else:
-            plugin = ET.SubElement(
-                interfaces,
-                "hwab:Interface",
-                {
-                    "x:Key": "{x:Reference __ReferenceID8}",
-                    "SetupData": "{x:Null}",
-                    "AddinType": "Solo",
-                },
-            )
-            address = ET.SubElement(plugin, "hwab:Interface.Address")
-            sladdress = ET.SubElement(
-                address,
-                "hcc:SLAddress",
-                {"x:Name": "__ReferenceID8", "Name": "Solo", "Workcell": "SoftLinx"},
-            )
-        # *TorreyPinesRIC20
-        if self.plugin_flags["TorreyPinesRIC20"]:
-            plugin = ET.SubElement(
-                interfaces,
-                "hwab:Interface",
-                {
-                    "x:Key": "{x:Reference __ReferenceID9}",
-                    "SetupData": "{x:Null}",
-                    "Address": "{x:Reference __ReferenceID9}",
-                    "AddinType": "TorreyPinesRIC20",
-                },
-            )
-        else:
-            plugin = ET.SubElement(
-                interfaces,
-                "hwab:Interface",
-                {
-                    "x:Key": "{x:Reference __ReferenceID9}",
-                    "SetupData": "{x:Null}",
-                    "AddinType": "TorreyPinesRIC20",
-                },
-            )
-            address = ET.SubElement(plugin, "hwab:Interface.Address")
-            sladdress = ET.SubElement(
-                address,
-                "hcc:SLAddress",
-                {
-                    "x:Name": "__ReferenceID9",
-                    "Name": "TorreyPinesRIC20",
-                    "Workcell": "SoftLinx",
-                },
-            )
+        scg_dict = ET.SubElement(interfaces, "scg:Dictionary", {"x:TypeArguments": "hcc:SLAddress, hwab:Interface"})
+        self.generatePluginInterface(scg_dict, "PlateCrane")
+        self.generatePluginInterface(scg_dict, "Plates")
+        self.generatePluginInterface(scg_dict, "Solo")
+        # self.generatePluginInterface(interfaces, "PlateCrane")
+        # self.generatePluginInterface(interfaces, "Plates")
+        # self.generatePluginInterface(interfaces, "RapidPick")
+        # self.generatePluginInterface(interfaces, "Solo")
+        # self.generatePluginInterface(interfaces, "TorreyPinesRIC20")
 
         # *TimeConstraints
         timeConstraints = ET.SubElement(protocol, "Protocol.TimeConstraints")
@@ -569,15 +508,15 @@ class SoftLinx:
         variableList = ET.SubElement(
             variables, "hwab:VariableList", {"SLXHost": "{x:Null}"}
         )
-        self.generatePluginVariables(variableList, 0, 5, "PlateCrane")
-        self.generatePluginVariables(variableList, 1, 6, "Plates")
-        self.generatePluginVariables(variableList, 2, 7, "RapidPick")
-        self.generatePluginVariables(variableList, 3, 8, "Solo")
-        self.generatePluginVariables(variableList, 4, 9, "TorreyPinesRIC20")
+        self.generatePluginVariables(variableList, "PlateCrane")
+        self.generatePluginVariables(variableList, "Plates")
+        # self.generatePluginVariables(variableList, "RapidPick")
+        self.generatePluginVariables(variableList, "Solo")
+        # self.generatePluginVariables(variableList, "TorreyPinesRIC20")
 
         # *Add each variable
-        for variable in self.variables:
-            variable_xml = ET.SubElement(variableList, variable.xml())
+        # for variable in self.variables:
+        #     variable_xml = ET.SubElement(variableList, variable.xml())
 
         workflowViewState = ET.SubElement(
             protocol, "sap2010:WorkflowViewState.ViewStateManager"
@@ -598,7 +537,6 @@ class SoftLinx:
             "dypDOlxVc2Vyc1xyeWFuZFxEZXZcTmV3UHJvdG9jb2xfcGx1Z2luLnNsdnABAQFqDAEB"
         )
         tree = ET.ElementTree(self.indent(protocol))
-        # tree.write(filename, xml_declaration=False, encoding="utf-8")
         xmlstring = ET.tostring(
             tree.getroot(), method="xml", encoding="unicode"
         ).replace("&amp;", "&")
