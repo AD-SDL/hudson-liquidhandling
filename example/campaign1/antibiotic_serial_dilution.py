@@ -65,8 +65,10 @@ for i in range(2, 7):
     # no need for volume management, drawing from 12 channel at Position 3, 1st row (lb media)
     soloSoft.aspirate(
         position="Position3",
-        aspirate_volumes=ZAgilentReservoir_1row().setColumn(1, media_transfer_volume_s2),
-        aspirate_shift=[0,0,4],  
+        aspirate_volumes=ZAgilentReservoir_1row().setColumn(
+            1, media_transfer_volume_s2
+        ),
+        aspirate_shift=[0, 0, 4],
         pre_aspirate=blowoff_volume,
     )
     soloSoft.dispense(

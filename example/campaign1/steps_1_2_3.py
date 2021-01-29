@@ -33,7 +33,7 @@ from Plates import GenericPlate96Well, NinetySixDeepWell, ZAgilentReservoir_1row
 # * Program variables
 blowoff_volume = 20
 num_mixes = 5
-current_media_reservoir_volume = media_reservoir_volume = 7000  
+current_media_reservoir_volume = media_reservoir_volume = 7000
 
 # Step 1 variables
 culture_plate_column_num = 2
@@ -49,7 +49,7 @@ media_transfer_volume_s2 = 135
 first_column_transfer_volume_s2 = 150
 serial_antibiotic_transfer_volume_s2 = 15
 serial_source_mixing_volume_s2 = 100
-serial_source_num_mixes_s2 = 10  
+serial_source_num_mixes_s2 = 10
 serial_destination_mixing_volume_s2 = 100
 
 # Step 3 variables
@@ -84,7 +84,7 @@ for i in range(1, 7):
         aspirate_volumes=ZAgilentReservoir_1row().setColumn(
             1, media_transfer_volume_s1
         ),
-        aspirate_shift=[0,0,4,],  
+        aspirate_shift=[0, 0, 4,],
     )
     soloSoft.dispense(
         position="Position4",
@@ -94,22 +94,24 @@ for i in range(1, 7):
 
 # * Fill first column of culture 10 fold dilution plate with fresh lb media
 soloSoft.aspirate(
-    position="Position3", 
-    aspirate_volumes=ZAgilentReservoir_1row().setColumn(1, dilution_media_volume), 
-    aspirate_shift=[0,0,4], 
+    position="Position3",
+    aspirate_volumes=ZAgilentReservoir_1row().setColumn(1, dilution_media_volume),
+    aspirate_shift=[0, 0, 4],
 )
 soloSoft.dispense(
     position="Position7",
     dispense_volumes=GenericPlate96Well().setColumn(1, dilution_media_volume),
-    dispense_shift=[0,0,2],
+    dispense_shift=[0, 0, 2],
 )
 
-#* Add bacteria from thawed culture plate (Position 5, column defined in variable) to dilution plate (Position 7, column 1) to make culture 10 fold dilution
+# * Add bacteria from thawed culture plate (Position 5, column defined in variable) to dilution plate (Position 7, column 1) to make culture 10 fold dilution
 soloSoft.aspirate(
     position="Position5",
-    aspirate_volumes=NinetySixDeepWell().setColumn(culture_plate_column_num, dilution_culture_volume),
-    aspirate_shift=[0,0,2],
-    mix_at_start=True, 
+    aspirate_volumes=NinetySixDeepWell().setColumn(
+        culture_plate_column_num, dilution_culture_volume
+    ),
+    aspirate_shift=[0, 0, 2],
+    mix_at_start=True,
     mix_cycles=num_mixes,
     mix_volume=culture_plate_mix_volume_s1,
     dispense_height=2,
@@ -132,11 +134,15 @@ soloSoft.dispense(
 for i in range(1, 7):
     soloSoft.aspirate(  # already mixed the cells, no need to do it before every transfer
         position="Position7",
-        aspirate_volumes=GenericPlate96Well().setColumn(1, culture_transfer_volume_s1),  
-        aspirate_shift=[0, 0, 2],  # prevents 50 uL tips from going too deep in 96 deep well plate
+        aspirate_volumes=GenericPlate96Well().setColumn(1, culture_transfer_volume_s1),
+        aspirate_shift=[
+            0,
+            0,
+            2,
+        ],  # prevents 50 uL tips from going too deep in 96 deep well plate
         syringe_speed=25,
     )
-    soloSoft.dispense(    # do need to mix at end of transfer 
+    soloSoft.dispense(  # do need to mix at end of transfer
         position="Position4",
         dispense_volumes=GenericPlate96Well().setColumn(i, culture_transfer_volume_s1),
         mix_at_finish=True,
@@ -157,8 +163,10 @@ for i in range(2, 7):
     # no need for volume management, drawing from 12 channel at Position 3, 1st row (lb media)
     soloSoft.aspirate(
         position="Position3",
-        aspirate_volumes=ZAgilentReservoir_1row().setColumn(1, media_transfer_volume_s2),
-        aspirate_shift=[0,0,4],  
+        aspirate_volumes=ZAgilentReservoir_1row().setColumn(
+            1, media_transfer_volume_s2
+        ),
+        aspirate_shift=[0, 0, 4],
         pre_aspirate=blowoff_volume,
     )
     soloSoft.dispense(
@@ -171,7 +179,9 @@ for i in range(2, 7):
 # * Transfer undiluted antibiotic stock solution (12 channel in Position 3, 2rd row) into empty first row of serial dilution plate
 soloSoft.aspirate(
     position="Position3",
-    aspirate_volumes=ZAgilentReservoir_1row().setColumn(2, first_column_transfer_volume_s2),
+    aspirate_volumes=ZAgilentReservoir_1row().setColumn(
+        2, first_column_transfer_volume_s2
+    ),
     pre_aspirate=blowoff_volume,
     mix_at_start=True,
     mix_cycles=serial_source_num_mixes_s2,
@@ -194,7 +204,9 @@ soloSoft.dispense(
 for i in range(1, 6):
     soloSoft.aspirate(
         position="Position6",
-        aspirate_volumes=GenericPlate96Well().setColumn(i, serial_antibiotic_transfer_volume_s2),
+        aspirate_volumes=GenericPlate96Well().setColumn(
+            i, serial_antibiotic_transfer_volume_s2
+        ),
         aspirate_shift=[0, 0, 2],
         pre_aspirate=blowoff_volume,
         mix_at_start=True,
@@ -204,7 +216,9 @@ for i in range(1, 6):
     )
     soloSoft.dispense(
         position="Position6",
-        dispense_volumes=GenericPlate96Well().setColumn(i + 1, serial_antibiotic_transfer_volume_s2),
+        dispense_volumes=GenericPlate96Well().setColumn(
+            i + 1, serial_antibiotic_transfer_volume_s2
+        ),
         dispense_shift=[0, 0, 2],
         blowoff=blowoff_volume,
         mix_at_finish=True,
@@ -218,11 +232,13 @@ for i in range(1, 6):
 """
 STEP 3: ADD ANTIBIOTIC TO CULTURE PLATES -------------------------------------------------------------------------------------
 """
-#soloSoft.getTip() # no need to get tips here unless steps separated into indivudual files
+# soloSoft.getTip() # no need to get tips here unless steps separated into indivudual files
 for i in range(6, 0, -1):
     soloSoft.aspirate(
         position="Position6",
-        aspirate_volumes=GenericPlate96Well().setColumn(i, antibiotic_transfer_volume_s3),
+        aspirate_volumes=GenericPlate96Well().setColumn(
+            i, antibiotic_transfer_volume_s3
+        ),
         mix_at_start=True,
         mix_cycles=num_mixes,
         mix_volume=antibiotic_mix_volume_s3,
@@ -231,7 +247,9 @@ for i in range(6, 0, -1):
     )
     soloSoft.dispense(
         position="Position4",
-        dispense_volumes=GenericPlate96Well().setColumn(i, antibiotic_transfer_volume_s3),
+        dispense_volumes=GenericPlate96Well().setColumn(
+            i, antibiotic_transfer_volume_s3
+        ),
         mix_at_finish=True,
         mix_cycles=num_mixes,
         mix_volume=destination_mix_volume_s3,

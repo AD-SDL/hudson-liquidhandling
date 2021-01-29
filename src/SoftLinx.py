@@ -125,14 +125,15 @@ class SoftLinx:
             "hwab:Variable",
             {
                 "x:TypeArguments": "hwab:Interface",
-                "Value": "{x:Reference __ReferenceID%d}" % self.plugin_reference[system],
+                "Value": "{x:Reference __ReferenceID%d}"
+                % self.plugin_reference[system],
                 "x:Key": "SoftLinx." + system,
                 "Name": "SoftLinx." + system,
                 "Prompt": "False",
             },
         )
         default = ET.SubElement(variable, "hwab:Variable.Default")
-        if (system == "Plates" and len(self.plates)):
+        if system == "Plates" and len(self.plates):
             interface = ET.SubElement(
                 default,
                 "hwab:Interface",
@@ -170,7 +171,7 @@ class SoftLinx:
 
     def generatePluginInterface(self, parentXML, system):
         ref = ET.SubElement(parentXML, "x:Reference")
-        ref.text ="__ReferenceID%d" % self.plugin_reference[system]
+        ref.text = "__ReferenceID%d" % self.plugin_reference[system]
         key = ET.SubElement(ref, "x:Key")
         sub_ref = ET.SubElement(key, "x:Reference")
         sub_ref.text = "__ReferenceID%d" % self.plugin_address[system]
@@ -229,7 +230,6 @@ class SoftLinx:
         #     element = ET.SubElement(array, "x:String")
         #     element.text = key + "=" + value
 
-
     def generateAutoHotKey(self, softlinx_filename=None, ahk_filename=None):
         if ahk_filename == None:
             ahk_filename = os.path.splitext(self.filename)[0] + ".ahk"
@@ -283,7 +283,8 @@ class SoftLinx:
             arguments,
             "InstrumentActivityArguments",
             {
-                "Address": "{x:Reference __ReferenceID%d}" % self.plugin_address[step["system"]],
+                "Address": "{x:Reference __ReferenceID%d}"
+                % self.plugin_address[step["system"]],
                 "ResultVariable": "{x:Null}",
                 "AddinType": step["system"],
                 "Command": step["Command"],
@@ -321,10 +322,7 @@ class SoftLinx:
         constraint_list = ET.SubElement(
             time_constraints,
             "scg:List",
-            {
-                "x:TypeArguments": "hwab:TimeConstraint",
-                "Capacity": "0",
-            },
+            {"x:TypeArguments": "hwab:TimeConstraint", "Capacity": "0",},
         )
         workflowViewState = ET.SubElement(step_xml, "sap2010:WorkflowViewState.IdRef")
         workflowViewState.text = "InstrumentActivity_1"
@@ -405,9 +403,7 @@ class SoftLinx:
             "ToolTip": "Protocol: " + filename,
             "isActive": str(isActive),
             "system": "Solo",
-            "args": [
-                ["x:String", filename],
-            ],
+            "args": [["x:String", filename],],
         }
 
         if inplace:
@@ -423,7 +419,7 @@ class SoftLinx:
                 filename = self.filename
             else:
                 raise BaseException("Need to specify a filename to save a protocol.")
-        
+
         if len(self.plates) > 0:
             self.plugin_flags["Plates"] = True
 
@@ -452,29 +448,19 @@ class SoftLinx:
             "xmlns:scg": "clr-namespace:System.Collections.Generic;assembly=mscorlib",
             "xmlns:x": "http://schemas.microsoft.com/winfx/2006/xaml",
         }
-        protocol = ET.Element(
-            "Protocol",
-            protocol_dict,
-        )
+        protocol = ET.Element("Protocol", protocol_dict,)
 
         # *Activities
         activities = ET.SubElement(protocol, "Protocol.Activities")
         scg_list = ET.SubElement(
-            activities,
-            "scg:List",
-            {
-                "x:TypeArguments": "p:Activity",
-                "Capacity": "4",
-            },
+            activities, "scg:List", {"x:TypeArguments": "p:Activity", "Capacity": "4",},
         )
         # *Add each step in the protocol
         for step in self.protocolSteps:
             self.generateStepXML(scg_list, step)
         activities2 = ET.SubElement(protocol, "Protocol.Activities2")
         scg_list = ET.SubElement(
-            activities2,
-            "scg:List",
-            {"x:TypeArguments": "p:Activity", "Capacity": "0"},
+            activities2, "scg:List", {"x:TypeArguments": "p:Activity", "Capacity": "0"},
         )
         initialValues = ET.SubElement(protocol, "Protocol.InitialValues")
         scg_dict = ET.SubElement(
@@ -485,7 +471,11 @@ class SoftLinx:
 
         # *Add each plugin
         interfaces = ET.SubElement(protocol, "Protocol.Interfaces")
-        scg_dict = ET.SubElement(interfaces, "scg:Dictionary", {"x:TypeArguments": "hcc:SLAddress, hwab:Interface"})
+        scg_dict = ET.SubElement(
+            interfaces,
+            "scg:Dictionary",
+            {"x:TypeArguments": "hcc:SLAddress, hwab:Interface"},
+        )
         self.generatePluginInterface(scg_dict, "PlateCrane")
         self.generatePluginInterface(scg_dict, "Plates")
         self.generatePluginInterface(scg_dict, "Solo")

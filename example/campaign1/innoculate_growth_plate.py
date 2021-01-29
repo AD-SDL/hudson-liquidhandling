@@ -77,22 +77,24 @@ for i in range(1, 7):
 
 # * Fill first column of culture 10 fold dilution plate with fresh lb media
 soloSoft.aspirate(
-    position="Position3", 
-    aspirate_volumes=ZAgilentReservoir_1row().setColumn(1, dilution_media_volume), 
-    aspirate_shift=[0,0,4], 
+    position="Position3",
+    aspirate_volumes=ZAgilentReservoir_1row().setColumn(1, dilution_media_volume),
+    aspirate_shift=[0, 0, 4],
 )
 soloSoft.dispense(
     position="Position7",
     dispense_volumes=GenericPlate96Well().setColumn(1, dilution_media_volume),
-    dispense_shift=[0,0,2],
+    dispense_shift=[0, 0, 2],
 )
 
-#* Add bacteria from thawed culture plate (Position 5, column defined in variable) to dilution plate (Position 7, column 1) to make culture 10 fold dilution
+# * Add bacteria from thawed culture plate (Position 5, column defined in variable) to dilution plate (Position 7, column 1) to make culture 10 fold dilution
 soloSoft.aspirate(
     position="Position5",
-    aspirate_volumes=NinetySixDeepWell().setColumn(culture_plate_column_num, dilution_culture_volume),
-    aspirate_shift=[0,0,2],
-    mix_at_start=True, 
+    aspirate_volumes=NinetySixDeepWell().setColumn(
+        culture_plate_column_num, dilution_culture_volume
+    ),
+    aspirate_shift=[0, 0, 2],
+    mix_at_start=True,
     mix_cycles=num_mixes,
     mix_volume=culture_plate_mix_volume_s1,
     dispense_height=2,
@@ -115,11 +117,15 @@ soloSoft.dispense(
 for i in range(1, 7):
     soloSoft.aspirate(  # already mixed the cells, no need to do it before every transfer
         position="Position7",
-        aspirate_volumes=GenericPlate96Well().setColumn(1, culture_transfer_volume_s1),  
-        aspirate_shift=[0, 0, 2],  # prevents 50 uL tips from going too deep in 96 deep well plate
+        aspirate_volumes=GenericPlate96Well().setColumn(1, culture_transfer_volume_s1),
+        aspirate_shift=[
+            0,
+            0,
+            2,
+        ],  # prevents 50 uL tips from going too deep in 96 deep well plate
         syringe_speed=25,
     )
-    soloSoft.dispense(    # do need to mix at end of transfer 
+    soloSoft.dispense(  # do need to mix at end of transfer
         position="Position4",
         dispense_volumes=GenericPlate96Well().setColumn(i, culture_transfer_volume_s1),
         mix_at_finish=True,
