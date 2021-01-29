@@ -245,7 +245,7 @@ class SoftLinx:
             file.write("SetWorkingDir, %A_ScriptDir%\n")
             file.write("\n")
             file.write(
-                'Run, "C:\Program Files (x86)\Hudson Robotics\SoftLinx V\SoftLinxVProtocolEditor.exe" '
+                'Run, "C:\Program Files (x86)\Hudson Robotics\SoftLinx V\SoftLinxVProtocolEditor.exe" %A_ScriptDir%\\'
                 + softlinx_filename
                 + "\n"
             )
