@@ -1,5 +1,5 @@
 import json
-import Properties
+import liquidhandling.Properties
 
 STEP_DELIMITER = "!@#$"
 
@@ -84,9 +84,9 @@ class SoloSoft:
                 raise BaseException("Need to specify a file to save pipeline")
 
         if CRLF:
-            newline = '\r\n'
+            newline = "\r\n"
         else:
-            newline = ''
+            newline = ""
 
         with open(filename, "w", newline=newline) as file:
             for plate in self.plateList:

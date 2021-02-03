@@ -3,15 +3,8 @@ import json
 import jsonref
 import os
 from jsonschema import validate
-
-# Change this path to point to the location of the repository, if neccessary
-sys.path.append(
-    os.path.abspath(
-        os.path.join(os.path.abspath(os.path.dirname(__file__)), "../../src")
-    )
-)
-import SoloSoft
-from Plates import GenericPlate96Well
+from liquidhandling import SoloSoft
+from liquidhandling import GenericPlate96Well
 
 # Validate our pipeline using JSON schema for reference
 def validate_pipeline():

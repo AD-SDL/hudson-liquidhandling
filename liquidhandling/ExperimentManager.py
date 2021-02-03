@@ -1,12 +1,14 @@
 import json
-import Properties
 
 
 class ExperimentManager:
     # TODO: parameters
     # TODO: logic for well-based, parameter-based, or copy
     def __init__(
-        self, numberOfCombinations=96, numberOfSamples=1, parameterList=None,
+        self,
+        numberOfCombinations=96,
+        numberOfSamples=1,
+        parameterList=None,
     ):
         self.setNumberOfCombinations(numberOfCombinations)
         self.setNumberOfSamples(numberOfSamples)

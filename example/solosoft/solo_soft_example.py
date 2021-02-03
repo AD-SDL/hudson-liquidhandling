@@ -1,15 +1,8 @@
 import sys
 import os
+from liquidhandling import SoloSoft
 
-# Change this path to point to the location of the repository, if neccessary
-sys.path.append(
-    os.path.abspath(
-        os.path.join(os.path.abspath(os.path.dirname(__file__)), "../../src")
-    )
-)
-import SoloSoft
-
-soloSoft = SoloSoft.SoloSoft(
+soloSoft = SoloSoft(
     filename="example.hso",
     plateList=[
         "TipBox-Corning 200uL",

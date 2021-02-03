@@ -322,7 +322,10 @@ class SoftLinx:
         constraint_list = ET.SubElement(
             time_constraints,
             "scg:List",
-            {"x:TypeArguments": "hwab:TimeConstraint", "Capacity": "0",},
+            {
+                "x:TypeArguments": "hwab:TimeConstraint",
+                "Capacity": "0",
+            },
         )
         workflowViewState = ET.SubElement(step_xml, "sap2010:WorkflowViewState.IdRef")
         workflowViewState.text = "InstrumentActivity_1"
@@ -403,7 +406,9 @@ class SoftLinx:
             "ToolTip": "Protocol: " + filename,
             "isActive": str(isActive),
             "system": "Solo",
-            "args": [["x:String", filename],],
+            "args": [
+                ["x:String", filename],
+            ],
         }
 
         if inplace:
@@ -448,19 +453,29 @@ class SoftLinx:
             "xmlns:scg": "clr-namespace:System.Collections.Generic;assembly=mscorlib",
             "xmlns:x": "http://schemas.microsoft.com/winfx/2006/xaml",
         }
-        protocol = ET.Element("Protocol", protocol_dict,)
+        protocol = ET.Element(
+            "Protocol",
+            protocol_dict,
+        )
 
         # *Activities
         activities = ET.SubElement(protocol, "Protocol.Activities")
         scg_list = ET.SubElement(
-            activities, "scg:List", {"x:TypeArguments": "p:Activity", "Capacity": "4",},
+            activities,
+            "scg:List",
+            {
+                "x:TypeArguments": "p:Activity",
+                "Capacity": "4",
+            },
         )
         # *Add each step in the protocol
         for step in self.protocolSteps:
             self.generateStepXML(scg_list, step)
         activities2 = ET.SubElement(protocol, "Protocol.Activities2")
         scg_list = ET.SubElement(
-            activities2, "scg:List", {"x:TypeArguments": "p:Activity", "Capacity": "0"},
+            activities2,
+            "scg:List",
+            {"x:TypeArguments": "p:Activity", "Capacity": "0"},
         )
         initialValues = ET.SubElement(protocol, "Protocol.InitialValues")
         scg_dict = ET.SubElement(

@@ -20,15 +20,8 @@ TODO:
 
 import os
 import sys
-
-# Change this path to point to the location of the repository, if neccessary
-sys.path.append(
-    os.path.abspath(
-        os.path.join(os.path.abspath(os.path.dirname(__file__)), "../../src")
-    )
-)
-import SoloSoft
-from Plates import GenericPlate96Well, NinetySixDeepWell, ZAgilentReservoir_1row
+from liquidhandling import SoloSoft
+from liquidhandling import GenericPlate96Well, NinetySixDeepWell, ZAgilentReservoir_1row
 
 # * Program variables
 blowoff_volume = 20
@@ -84,7 +77,11 @@ for i in range(1, 7):
         aspirate_volumes=ZAgilentReservoir_1row().setColumn(
             1, media_transfer_volume_s1
         ),
-        aspirate_shift=[0, 0, 4,],
+        aspirate_shift=[
+            0,
+            0,
+            4,
+        ],
     )
     soloSoft.dispense(
         position="Position4",
