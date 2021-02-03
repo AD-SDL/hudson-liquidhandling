@@ -30,6 +30,6 @@ soloSoft.dispense()
 soloSoft.endLoop()
 soloSoft.moveArm()
 
-print(soloSoft.pipeline)
+# print(soloSoft.pipeline)
 
-soloSoft.savePipeline()
+soloSoft.savePipeline(CRLF=True)

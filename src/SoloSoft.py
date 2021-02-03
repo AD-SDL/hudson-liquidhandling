@@ -76,17 +76,21 @@ class SoloSoft:
         except:
             print("Error removing step at position %i in pipeline" % position)
 
-    def savePipeline(self, filename=None):
+    def savePipeline(self, filename=None, CRLF=True):
         if filename == None:
             if self.filename != None:
                 filename = self.filename
             else:
                 raise BaseException("Need to specify a file to save pipeline")
 
-        with open(filename, "w") as file:
+        if CRLF:
+            newline = '\r\n'
+        else:
+            newline = ''
+
+        with open(filename, "w", newline=newline) as file:
             for plate in self.plateList:
-                file.write(str(plate))
-                file.write("\n")
+                file.write(str(plate) + "\n")
             for step in self.pipeline:
                 for item in step:
                     if isinstance(item, list):
@@ -99,11 +103,9 @@ class SoloSoft:
                                 file.write("\n")
                         else:
                             for number in item:
-                                file.write(str(number))
-                                file.write("\n")
+                                file.write(str(number) + "\n")
                     else:
-                        file.write(str(item))
-                        file.write("\n")
+                        file.write(str(item) + "\n")
 
     def pipelineToJSON(self, json_file=None, pipeline=None, plateList=None):
         if pipeline != None:
