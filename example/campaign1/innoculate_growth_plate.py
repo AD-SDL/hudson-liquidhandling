@@ -140,6 +140,7 @@ for i in range(1, 7):
 soloSoft.shuckTip()
 soloSoft.savePipeline()
 
+
 softLinx = SoftLinx.SoftLinx("Innoculate Growth Plate", "innoculate_growth_plate.slvp")
 softLinx.soloSoftRun(
     "C:\\Users\\svcaibio\\Dev\\liquidhandling\\example\\campaign1\\innoculate_growth_plate.hso"
