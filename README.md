@@ -6,7 +6,13 @@ This library is currently in **active development**. As such, there are no guara
 
 ## Installation
 
+Pip:
+
 `pip install liquidhandling`
+
+Conda:
+
+`conda install -c luckierdodge liquidhandling`
 
 (For development install, see below)
 
@@ -19,10 +25,12 @@ Documentation for the interfaces contained in this library can be found in the `
 ### Installing For Development/Testing
 
 1. Install [Python 3.8.5+](https://www.python.org/downloads/), making sure to include pip in the install
-1. Git clone this repository: `git clone https://xgitlab.cels.anl.gov/rarvind/liquidhandling.git`
+1. Git clone this repository:
+    1. Either `git clone https://xgitlab.cels.anl.gov/rarvind/liquidhandling.git`
+    1. or `git clone https://github.com/LuckierDodge/liquidhandling.git`
 1. Run `pip install -r requirements.txt` in the repository root
 1. Run `pip install -e .` in the repository root
-1. Use python to run the `example/solosoft/solo_soft_example.py` and open the `example.hso` file it generates in SoloSoft to test that your setup is functioning properly.
+1. Use python to run the `./example/solosoft/solo_soft_example.py` and open the `example.hso` file it generates in SoloSoft to test that your setup is functioning properly.
 
 ### Tests
 
@@ -32,7 +40,9 @@ Documentation for the interfaces contained in this library can be found in the `
 
 To automatically format the code for style and readability, run `black .` in the repo's root directory. This keeps all python code stylistically consistent.
 
-### Building and Deploying to Pypi
+### Building and Deploying
+
+#### To PyPI
 
 Make sure you have your `~/.pypirc` correctly configured with an API token from PyPi.
 
@@ -40,6 +50,20 @@ Make sure you have your `~/.pypirc` correctly configured with an API token from 
 black .
 python -m build
 python -m twine upload --repository pypi dist/*
+```
+
+#### To Conda
+
+
+```
+conda skeleton pypi liquidhandling
+conda skeleton pypi jsonref
+conda-build jsonref
+conda install --use-local jsonref
+conda-build liquidhandling
+conda install anaconda-client
+anaconda login
+anaconda upload <build-path> # this needs to be modified
 ```
 
 ### Recommended Visual Studio Code Extensions
