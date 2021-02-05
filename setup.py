@@ -10,15 +10,18 @@ def read(fname):
     return open(os.path.join(os.path.dirname(__file__), fname)).read()
 
 
-
-setup(name='liquidhandling',
-      version='0.1',
-      description='A python library developed to allow programmatic control of the Hudson Robotics systems installed in Argonne National Laboratory\'s Secure BIO Lab. ',
-      url='http://github.com/luckierdodge/liquidhandling',
-      author='Ryan D. Lewis',
-      author_email='ryan.lewis@anl.gov',
-      license='MIT',
-      packages=['liquidhandling'],
-      keywords="robotics laboratory automation biology",
-      long_description=read("README.md"),
-      zip_safe=False)
+setup(
+    name="liquidhandling",
+    version="0.1.1",
+    description="A python library developed to allow programmatic control of the Hudson Robotics systems installed in Argonne National Laboratory's Secure BIO Lab. ",
+    url="http://github.com/luckierdodge/liquidhandling",
+    author="Ryan D. Lewis",
+    author_email="ryan.lewis@anl.gov",
+    license="MIT",
+    packages=["liquidhandling"],
+    keywords="robotics laboratory automation biology",
+    long_description=read("README.md"),
+    long_description_content_type="text/markdown",
+    install_requires=["jsonref", "jsonschema", "pytest"],
+    zip_safe=False,
+)
