@@ -29,12 +29,8 @@ sys.path.append(
         os.path.join(os.path.abspath(os.path.dirname(__file__)), "../../src")
     )
 )
-import SoloSoft
-from Plates import (
-    GenericPlate96Well,
-    NinetySixDeepWell,
-    ZAgilentReservoir_1row,
-)
+from liquidhandling import SoloSoft
+from liquidhandling import GenericPlate96Well, NinetySixDeepWell, ZAgilentReservoir_1row
 
 # * Program Variables
 blowoff_volume = 20
@@ -44,7 +40,7 @@ antibiotic_transfer_volume_s3 = 90
 antibiotic_mix_volume_s3 = 90
 destination_mix_volume_s3 = 120
 
-soloSoft = SoloSoft.SoloSoft(
+soloSoft = SoloSoft(
     filename="antibiotic_into_culture_plate.hso",
     plateList=[
         "TipBox-Corning 200uL",

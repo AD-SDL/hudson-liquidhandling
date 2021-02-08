@@ -18,14 +18,15 @@ import os
 import sys
 
 # Change this path to point to the location of the repository, if neccessary
-sys.path.append(
-    os.path.abspath(
-        os.path.join(os.path.abspath(os.path.dirname(__file__)), "../../src")
-    )
-)
-import SoloSoft
-import SoftLinx
-from Plates import GenericPlate96Well, NinetySixDeepWell, ZAgilentReservoir_1row
+# sys.path.append(
+#     os.path.abspath(
+#         os.path.join(os.path.abspath(os.path.dirname(__file__)), "../../src")
+#     )
+# )
+
+from liquidhandling import SoloSoft
+from liquidhandling import SoftLinx
+from liquidhandling import ZAgilentReservoir_1row, NinetySixDeepWell, GenericPlate96Well
 
 # from VolumeManager import VolumeManager
 
@@ -41,7 +42,7 @@ dilution_culture_volume = 22
 culture_plate_mix_volume_s1 = 50
 growth_plate_mix_volume_s1 = 40
 
-soloSoft = SoloSoft.SoloSoft(
+soloSoft = SoloSoft(
     filename="innoculate_growth_plate.hso",
     plateList=[
         "TipBox-Corning 200uL",
@@ -141,7 +142,7 @@ soloSoft.shuckTip()
 soloSoft.savePipeline()
 
 
-softLinx = SoftLinx.SoftLinx("Innoculate Growth Plate", "innoculate_growth_plate.slvp")
+softLinx = SoftLinx("Innoculate Growth Plate", "innoculate_growth_plate.slvp")
 softLinx.soloSoftRun(
     "C:\\Users\\svcaibio\\Dev\\liquidhandling\\example\\campaign1\\innoculate_growth_plate.hso"
 )

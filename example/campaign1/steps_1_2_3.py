@@ -51,7 +51,7 @@ antibiotic_mix_volume_s3 = 90
 destination_mix_volume_s3 = 120
 
 
-soloSoft = SoloSoft.SoloSoft(
+soloSoft = SoloSoft(
     filename="steps_1_2_3.hso",
     plateList=[
         "TipBox-Corning 200uL",

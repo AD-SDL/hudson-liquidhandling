@@ -23,8 +23,8 @@ sys.path.append(
         os.path.join(os.path.abspath(os.path.dirname(__file__)), "../../src")
     )
 )
-import SoloSoft
-from Plates import GenericPlate96Well, NinetySixDeepWell, ZAgilentReservoir_1row
+from liquidhandling import SoloSoft
+from liquidhandling import GenericPlate96Well, NinetySixDeepWell, ZAgilentReservoir_1row
 
 # from VolumeManager import VolumeManager
 
@@ -44,7 +44,7 @@ serial_source_num_mixes_s2 = (
 )
 serial_destination_mixing_volume_s2 = 100
 
-soloSoft = SoloSoft.SoloSoft(
+soloSoft = SoloSoft(
     filename="antibiotic_serial_dilution.hso",
     plateList=[
         "TipBox-Corning 200uL",
