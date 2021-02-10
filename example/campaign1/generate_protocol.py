@@ -413,14 +413,14 @@ soloSoft.savePipeline()
 
 # Uncomment this section to run the program automatically through SoftLinx ------------------------------------------------
 
-# # initialize softLinx
-# softLinx = SoftLinx("Generate Protocol", "generate_protocol.slvp")
-# # add steps to the softLinx protocol
-# softLinx.soloSoftRun(
-#     "C:\\Users\\svcaibio\\Dev\\liquidhandling\\example\\campaign1\\generate_protocol.hso"
-# )
-# # save the protocol and generate .slvp and .ahk
-# softLinx.saveProtocol()
+# initialize softLinx
+softLinx = SoftLinx("Generate Protocol", "generate_protocol.slvp")
+# add steps to the softLinx protocol
+softLinx.soloSoftRun(
+    "C:\\Users\\svcaibio\\Dev\\liquidhandling\\example\\campaign1\\generate_protocol.hso"
+)
+# save the protocol and generate .slvp and .ahk
+softLinx.saveProtocol()
 # # open the .ahk file to remotely start the program
 # os.startfile("C:\\Users\\svcaibio\\Dev\\liquidhandling\\example\\campaign1\\generate_protocol.ahk")
 
