@@ -60,10 +60,12 @@ conda skeleton pypi liquidhandling
 conda skeleton pypi jsonref
 conda-build jsonref
 conda install --use-local jsonref
-conda-build liquidhandling
+conda-build liquidhandling -o <output-dir>
+cd <output-dir>
+conda convert -f --platform all .\\win-64\\liquidhandling-<version>-py38_0.tar.bz2
 conda install anaconda-client
 anaconda login
-anaconda upload <build-path> # this needs to be modified
+anaconda upload <output-dir>\\<platform>\\liquidhandling-<version>-py38_0.tar.bz2
 ```
 
 ### Recommended Visual Studio Code Extensions

@@ -548,7 +548,7 @@ class SoftLinx:
         with open(filename, "w") as file:
             file.write(xmlstring)
         # *Generate AutoHotKey script
-        self.generateAutoHotKey(filename, os.path.splitext(filename)[0] + ".ahk")
+        self.generateAutoHotKey(os.path.basename(filename), os.path.splitext(filename)[0] + ".ahk")
 
     # *Pretty-print XML
     def indent(self, element, level=0):

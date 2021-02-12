@@ -1,0 +1,43 @@
+{% set name = "liquidhandling" %}
+{% set version = "0.1.4" %}
+
+package:
+  name: "{{ name|lower }}"
+  version: "{{ version }}"
+ 
+source:
+  path: ..
+
+build:
+  number: 0
+  script: python setup.py install --single-version-externally-managed --record=record.txt
+
+requirements:
+  build:
+    - jsonref
+    - jsonschema
+    - pip
+    - pytest
+    - python
+  run:
+    - jsonref
+    - jsonschema
+    - pytest
+    - python
+
+test:
+  imports:
+    - liquidhandling
+
+about:
+  home: "http://github.com/luckierdodge/liquidhandling"
+  license: MIT
+  license_family: MIT
+  license_file: 
+  summary: "A python library developed to allow programmatic control of the Hudson Robotics systems installed in Argonne National Laboratory's Secure BIO Lab."
+  doc_url: 
+  dev_url: 
+
+extra:
+  recipe-maintainers:
+    - @luckierdodge

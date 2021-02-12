@@ -53,8 +53,13 @@ from liquidhandling import SoftLinx
 from liquidhandling import ZAgilentReservoir_1row, NinetySixDeepWell, GenericPlate96Well
 
 parser = argparse.ArgumentParser()
-parser.add_argument("--start_cons", help="generated the protocol with the specified starting concentration")
-parser.add_argument("--end_cons", help="generates the protocol with the specified enfing concentration")
+parser.add_argument(
+    "--start_cons",
+    help="generated the protocol with the specified starting concentration",
+)
+parser.add_argument(
+    "--end_cons", help="generates the protocol with the specified enfing concentration"
+)
 args = parser.parse_args()
 
 start_cons = None
@@ -95,9 +100,9 @@ growth_plate_mix_volume_s1 = 40
 # Step 2 variables 
 serial_source_num_mixes_s2 = 10
 # variables added for new command line version of step 2
-stock_cons = 1/1000   
+stock_cons = 1 / 1000
 desired_volume_serial_dilution = 150
-default_df = 1/10
+default_df = 1 / 10
 
 # Step 3 variables
 antibiotic_transfer_volume_s3 = 90
@@ -190,7 +195,7 @@ for i in range(1, 7):
             0,
             0,
             2,
-        ],  
+        ],
         syringe_speed=25,
     )
     soloSoft.dispense(  # do need to mix at end of transfer
@@ -221,7 +226,7 @@ if args.start_cons:
 if args.end_cons: 
     df = (end_cons/first_column_cons) ** (1/(num_columns-1))
 
-# calculate amounts to transfer into the first column 
+# calculate amounts to transfer into the first column
 stock_transfer_first_column = int(first_column_df * desired_volume_serial_dilution)
 diluent_transfer_first_column = int(desired_volume_serial_dilution - stock_transfer_first_column)
 print("STEP 2:")
@@ -229,10 +234,10 @@ print("Into column 1:")
 print("\tStock trasfer volume: " + str(stock_transfer_first_column))
 print("\tDiluent transfer volume: " + str(diluent_transfer_first_column))
 
-# calculate amounts to transfer into remaining wells 
+# calculate amounts to transfer into remaining wells
 serial_transfer_volume = int(df * desired_volume_serial_dilution)
 diluent_transfer_volume = int(desired_volume_serial_dilution - serial_transfer_volume)
-print("Into remaining " + str(num_columns-1) + " columns:") 
+print("Into remaining " + str(num_columns - 1) + " columns:")
 print("\tSerial trasfer volume: " + str(serial_transfer_volume))
 print("\tDiluent transfer volume: " + str(diluent_transfer_volume))
 
@@ -245,23 +250,35 @@ serial_tips_loc = "Position1" if serial_transfer_volume > 20 else "Position8"
 #* MIXING VOLUME CALCULATIONS 
 # mix volume for first stock antibiotic transfer
 if serial_first_tips_loc == "Position1":
-    first_serial_mix_volume = int(.6 * desired_volume_serial_dilution) if desired_volume_serial_dilution < 200 else int(.6 * 200)
+    first_serial_mix_volume = (
+        int(0.6 * desired_volume_serial_dilution)
+        if desired_volume_serial_dilution < 200
+        else int(0.6 * 200)
+    )
 elif serial_first_tips_loc == "Position8":
     first_serial_mix_volume = int(.6 * desired_volume_serial_dilution) if desired_volume_serial_dilution < 50 else int( .6 * 50)
 else: first_serial_mix_volume =  0
 
 # mix volume for remaining serial transfers
 if serial_tips_loc == "Position1":
-    serial_mix_volume = int(.6 * desired_volume_serial_dilution) if desired_volume_serial_dilution < 200 else int(.6 * 200)
+    serial_mix_volume = (
+        int(0.6 * desired_volume_serial_dilution)
+        if desired_volume_serial_dilution < 200
+        else int(0.6 * 200)
+    )
 elif serial_tips_loc == "Position8":
     serial_mix_volume = int(.6 * desired_volume_serial_dilution) if desired_volume_serial_dilution < 50 else int( .6 * 50)
 else: 
     serial_mix_volume = 0
 
-#* BLOWOFF VOLUME CALCLATIONS
+# * BLOWOFF VOLUME CALCLATIONS
 # first diluent transfer
 if diluent_first_tips_loc == "Position1":
-    diluent_first_blowoff_volume = blowoff_volume if (200-diluent_transfer_first_column) >= blowoff_volume else (200-diluent_transfer_first_column)
+    diluent_first_blowoff_volume = (
+        blowoff_volume
+        if (200 - diluent_transfer_first_column) >= blowoff_volume
+        else (200 - diluent_transfer_first_column)
+    )
 elif diluent_first_tips_loc == "Position8":
     diluent_first_blowoff_volume = blowoff_volume if (50-diluent_transfer_first_column) >= blowoff_volume else (50-diluent_transfer_first_column)
 else:
@@ -269,7 +286,11 @@ else:
 
 # remaining diluent transfers
 if diluent_tips_loc == "Position1":
-    diluent_blowoff_volume = blowoff_volume if (200-diluent_transfer_volume) >= blowoff_volume else (200-diluent_transfer_volume)
+    diluent_blowoff_volume = (
+        blowoff_volume
+        if (200 - diluent_transfer_volume) >= blowoff_volume
+        else (200 - diluent_transfer_volume)
+    )
 elif diluent_tips_loc == "Position8":
     diluent_blowoff_volume = blowoff_volume if (50-diluent_transfer_volume) >=  blowoff_volume else (50-diluent_transfer_volume)
 else:
@@ -277,7 +298,11 @@ else:
 
 # first stock transfer
 if serial_first_tips_loc == "Position1":
-    serial_first_blowoff_volume = blowoff_volume if (200-stock_transfer_first_column) >= blowoff_volume else (200-stock_transfer_first_column)
+    serial_first_blowoff_volume = (
+        blowoff_volume
+        if (200 - stock_transfer_first_column) >= blowoff_volume
+        else (200 - stock_transfer_first_column)
+    )
 elif serial_first_tips_loc == "Position8":
     serial_first_blowoff_volume = blowoff_volume if (50-stock_transfer_first_column) >= blowoff_volume else (50-stock_transfer_first_column)
 else:
@@ -285,7 +310,11 @@ else:
 
 # remaining serial transfers
 if serial_tips_loc == "Position1":
-    serial_blowoff_volume = blowoff_volume if (200-serial_transfer_volume) >= blowoff_volume else (200-serial_transfer_volume)
+    serial_blowoff_volume = (
+        blowoff_volume
+        if (200 - serial_transfer_volume) >= blowoff_volume
+        else (200 - serial_transfer_volume)
+    )
 elif serial_tips_loc == "Position8":
     serial_blowoff_volume = blowoff_volume if (50-serial_transfer_volume) >= blowoff_volume else (50-serial_transfer_volume)
 else:
@@ -294,17 +323,23 @@ else:
 
 #* Begin generating step 2 protocol -> Dispense diluent 
 # Transfer the correct amount of diluent into the first column (0 uL if start cons not specified or = to stock cons)
-if diluent_transfer_first_column > 0:   
-    soloSoft.getTip(diluent_first_tips_loc)  # get the correct diluent transfer tips for the first column
+if diluent_transfer_first_column > 0:
+    soloSoft.getTip(
+        diluent_first_tips_loc
+    )  # get the correct diluent transfer tips for the first column
     soloSoft.aspirate(
         position="Position3",
-        aspirate_volumes=ZAgilentReservoir_1row().setColumn(1, diluent_transfer_first_column),
+        aspirate_volumes=ZAgilentReservoir_1row().setColumn(
+            1, diluent_transfer_first_column
+        ),
         aspirate_shift=[0, 0, 4],
         pre_aspirate=diluent_first_blowoff_volume,
     )
     soloSoft.dispense(
         position="Position6",
-        dispense_volumes=GenericPlate96Well().setColumn(1, diluent_transfer_first_column),
+        dispense_volumes=GenericPlate96Well().setColumn(
+            1, diluent_transfer_first_column
+        ),
         dispense_shift=[0, 0, 2],
         blowoff=diluent_first_blowoff_volume,
     )
@@ -354,7 +389,7 @@ soloSoft.dispense(
 # Serial Dilute into the remaining wells
 if not serial_tips_loc == serial_first_tips_loc:  # get new tips if you need to
     soloSoft.getTip(serial_tips_loc)
-for i in range(1, num_columns-1):
+for i in range(1, num_columns - 1):
     soloSoft.aspirate(
         position="Position6",
         aspirate_volumes=GenericPlate96Well().setColumn(i, serial_transfer_volume),
