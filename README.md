@@ -12,7 +12,7 @@ Pip:
 
 Conda:
 
-`conda install -c luckierdodge liquidhandling`
+`conda install -c conda-forge -c luckierdodge liquidhandling`
 
 (For development install, see below)
 
