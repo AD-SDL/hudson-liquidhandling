@@ -1,2 +1,2 @@
 class Properties:
-    SPEC_VERSION = "0.1.4"
+    SPEC_VERSION = "0.1.5"

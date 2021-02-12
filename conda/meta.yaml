@@ -1,5 +1,5 @@
 {% set name = "liquidhandling" %}
-{% set version = "0.1.4" %}
+{% set version = "0.1.5" %}
 
 package:
   name: "{{ name|lower }}"
@@ -40,4 +40,4 @@ about:
 
 extra:
   recipe-maintainers:
-    - @luckierdodge
+    - "luckierdodge"
