@@ -40,34 +40,6 @@ Documentation for the interfaces contained in this library can be found in the `
 
 To automatically format the code for style and readability, run `black .` in the repo's root directory. This keeps all python code stylistically consistent.
 
-### Building and Deploying
-
-#### To PyPI
-
-Make sure you have your `~/.pypirc` correctly configured with an API token from PyPi.
-
-```
-black .
-python -m build
-python -m twine upload --repository pypi dist/*
-```
-
-#### To Conda
-
-
-```
-conda skeleton pypi liquidhandling
-conda skeleton pypi jsonref
-conda-build jsonref
-conda install --use-local jsonref
-conda-build liquidhandling -o <output-dir>
-cd <output-dir>
-conda convert -f --platform all .\\win-64\\liquidhandling-<version>-py38_0.tar.bz2
-conda install anaconda-client
-anaconda login
-anaconda upload <output-dir>\\<platform>\\liquidhandling-<version>-py38_0.tar.bz2
-```
-
 ### Recommended Visual Studio Code Extensions
 
 * Better Comments by Aaron Bond

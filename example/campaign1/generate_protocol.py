@@ -63,23 +63,29 @@ parser.add_argument(
 args = parser.parse_args()
 
 start_cons = None
-end_cons = None 
+end_cons = None
 
-#* Format the command line input
+# * Format the command line input
 if args.start_cons:
     start_cons_string = args.start_cons
     if "/" in start_cons_string:  # parse if start_cons entered as fraction
-        start_numerator, start_denominator = int(start_cons_string.split("/")[0].strip()), int(start_cons_string.split("/")[1].strip())
-        start_cons = float(start_numerator/start_denominator)
-    else:  
+        start_numerator, start_denominator = (
+            int(start_cons_string.split("/")[0].strip()),
+            int(start_cons_string.split("/")[1].strip()),
+        )
+        start_cons = float(start_numerator / start_denominator)
+    else:
         start_cons = float(start_cons_string.strip())
 
 if args.end_cons:
     end_cons_string = args.end_cons
-    if "/" in end_cons_string:   # parse if end_cons entered as a fraction
-        end_numerator, end_denominator = int(end_cons_string.split("/")[0].strip()), int(end_cons_string.split("/")[1].strip())
-        end_cons = float(end_numerator/end_denominator)
-    else: 
+    if "/" in end_cons_string:  # parse if end_cons entered as a fraction
+        end_numerator, end_denominator = (
+            int(end_cons_string.split("/")[0].strip()),
+            int(end_cons_string.split("/")[1].strip()),
+        )
+        end_cons = float(end_numerator / end_denominator)
+    else:
         end_cons = float(end_cons_string.strip())
 
 # * Program variables
@@ -97,7 +103,7 @@ dilution_culture_volume = 22
 culture_plate_mix_volume_s1 = 50
 growth_plate_mix_volume_s1 = 40
 
-# Step 2 variables 
+# Step 2 variables
 serial_source_num_mixes_s2 = 10
 # variables added for new command line version of step 2
 stock_cons = 1 / 1000
@@ -109,7 +115,7 @@ antibiotic_transfer_volume_s3 = 90
 antibiotic_mix_volume_s3 = 90
 destination_mix_volume_s3 = 120
 
-#* Initialize and set deck layout (both 200uL and 50uL tips included)
+# * Initialize and set deck layout (both 200uL and 50uL tips included)
 soloSoft = SoloSoft(
     filename="generate_protocol.hso",
     plateList=[
@@ -212,25 +218,27 @@ for i in range(1, 7):
 """
 STEP 2: PERFORM SERIAL DILUTIONS ON ANTIBIOTIC -------------------------------------------------------------------------------
 """
-#* TRANSFER VOLUME CALCULATIONS
+# * TRANSFER VOLUME CALCULATIONS
 first_column_df = 1.0  # default first column dilution factor => pure stock solution in first column, dilute from there
 first_column_cons = stock_cons
 df = default_df
 
 # if --start_cons entered, calculate volumes needed to dilute to start_cons in first column
-if args.start_cons:  
-    first_column_df = (start_cons/stock_cons)   
+if args.start_cons:
+    first_column_df = start_cons / stock_cons
     first_column_cons = start_cons
 
 # if --end_cons entered, calculate dilution factor needed for final serial dilution to result in end_cons
-if args.end_cons: 
-    df = (end_cons/first_column_cons) ** (1/(num_columns-1))
+if args.end_cons:
+    df = (end_cons / first_column_cons) ** (1 / (num_columns - 1))
 
 # calculate amounts to transfer into the first column
 stock_transfer_first_column = int(first_column_df * desired_volume_serial_dilution)
-diluent_transfer_first_column = int(desired_volume_serial_dilution - stock_transfer_first_column)
+diluent_transfer_first_column = int(
+    desired_volume_serial_dilution - stock_transfer_first_column
+)
 print("STEP 2:")
-print("Into column 1:") 
+print("Into column 1:")
 print("\tStock trasfer volume: " + str(stock_transfer_first_column))
 print("\tDiluent transfer volume: " + str(diluent_transfer_first_column))
 
@@ -241,13 +249,15 @@ print("Into remaining " + str(num_columns - 1) + " columns:")
 print("\tSerial trasfer volume: " + str(serial_transfer_volume))
 print("\tDiluent transfer volume: " + str(diluent_transfer_volume))
 
-#* TIPS (any volumes <= 20ul will be transfered with 50uL tips) 
-diluent_first_tips_loc = "Position1" if diluent_transfer_first_column > 20 else "Position8"
+# * TIPS (any volumes <= 20ul will be transfered with 50uL tips)
+diluent_first_tips_loc = (
+    "Position1" if diluent_transfer_first_column > 20 else "Position8"
+)
 serial_first_tips_loc = "Position1" if stock_transfer_first_column > 20 else "Position8"
 diluent_tips_loc = "Position1" if diluent_transfer_volume > 20 else "Position8"
 serial_tips_loc = "Position1" if serial_transfer_volume > 20 else "Position8"
 
-#* MIXING VOLUME CALCULATIONS 
+# * MIXING VOLUME CALCULATIONS
 # mix volume for first stock antibiotic transfer
 if serial_first_tips_loc == "Position1":
     first_serial_mix_volume = (
@@ -256,8 +266,13 @@ if serial_first_tips_loc == "Position1":
         else int(0.6 * 200)
     )
 elif serial_first_tips_loc == "Position8":
-    first_serial_mix_volume = int(.6 * desired_volume_serial_dilution) if desired_volume_serial_dilution < 50 else int( .6 * 50)
-else: first_serial_mix_volume =  0
+    first_serial_mix_volume = (
+        int(0.6 * desired_volume_serial_dilution)
+        if desired_volume_serial_dilution < 50
+        else int(0.6 * 50)
+    )
+else:
+    first_serial_mix_volume = 0
 
 # mix volume for remaining serial transfers
 if serial_tips_loc == "Position1":
@@ -267,8 +282,12 @@ if serial_tips_loc == "Position1":
         else int(0.6 * 200)
     )
 elif serial_tips_loc == "Position8":
-    serial_mix_volume = int(.6 * desired_volume_serial_dilution) if desired_volume_serial_dilution < 50 else int( .6 * 50)
-else: 
+    serial_mix_volume = (
+        int(0.6 * desired_volume_serial_dilution)
+        if desired_volume_serial_dilution < 50
+        else int(0.6 * 50)
+    )
+else:
     serial_mix_volume = 0
 
 # * BLOWOFF VOLUME CALCLATIONS
@@ -280,9 +299,13 @@ if diluent_first_tips_loc == "Position1":
         else (200 - diluent_transfer_first_column)
     )
 elif diluent_first_tips_loc == "Position8":
-    diluent_first_blowoff_volume = blowoff_volume if (50-diluent_transfer_first_column) >= blowoff_volume else (50-diluent_transfer_first_column)
+    diluent_first_blowoff_volume = (
+        blowoff_volume
+        if (50 - diluent_transfer_first_column) >= blowoff_volume
+        else (50 - diluent_transfer_first_column)
+    )
 else:
-    diluent_first_blowoff_volume = 0 
+    diluent_first_blowoff_volume = 0
 
 # remaining diluent transfers
 if diluent_tips_loc == "Position1":
@@ -292,9 +315,15 @@ if diluent_tips_loc == "Position1":
         else (200 - diluent_transfer_volume)
     )
 elif diluent_tips_loc == "Position8":
-    diluent_blowoff_volume = blowoff_volume if (50-diluent_transfer_volume) >=  blowoff_volume else (50-diluent_transfer_volume)
+    diluent_blowoff_volume = (
+        blowoff_volume
+        if (50 - diluent_transfer_volume) >= blowoff_volume
+        else (50 - diluent_transfer_volume)
+    )
 else:
-    diluent_blowoff_volume = 0  # prevents the variable from being potentially unbound (should never happen)
+    diluent_blowoff_volume = (
+        0  # prevents the variable from being potentially unbound (should never happen)
+    )
 
 # first stock transfer
 if serial_first_tips_loc == "Position1":
@@ -304,7 +333,11 @@ if serial_first_tips_loc == "Position1":
         else (200 - stock_transfer_first_column)
     )
 elif serial_first_tips_loc == "Position8":
-    serial_first_blowoff_volume = blowoff_volume if (50-stock_transfer_first_column) >= blowoff_volume else (50-stock_transfer_first_column)
+    serial_first_blowoff_volume = (
+        blowoff_volume
+        if (50 - stock_transfer_first_column) >= blowoff_volume
+        else (50 - stock_transfer_first_column)
+    )
 else:
     serial_first_blowoff_volume = 0
 
@@ -316,12 +349,16 @@ if serial_tips_loc == "Position1":
         else (200 - serial_transfer_volume)
     )
 elif serial_tips_loc == "Position8":
-    serial_blowoff_volume = blowoff_volume if (50-serial_transfer_volume) >= blowoff_volume else (50-serial_transfer_volume)
+    serial_blowoff_volume = (
+        blowoff_volume
+        if (50 - serial_transfer_volume) >= blowoff_volume
+        else (50 - serial_transfer_volume)
+    )
 else:
     serial_blowoff_volume = 0
 
 
-#* Begin generating step 2 protocol -> Dispense diluent 
+# * Begin generating step 2 protocol -> Dispense diluent
 # Transfer the correct amount of diluent into the first column (0 uL if start cons not specified or = to stock cons)
 if diluent_transfer_first_column > 0:
     soloSoft.getTip(
@@ -345,10 +382,12 @@ if diluent_transfer_first_column > 0:
     )
 
 # dispense diluent into remaining columns
-if not diluent_first_tips_loc == diluent_tips_loc or diluent_transfer_first_column <= 0:  # get new tips if you need to
+if (
+    not diluent_first_tips_loc == diluent_tips_loc or diluent_transfer_first_column <= 0
+):  # get new tips if you need to
     soloSoft.getTip(diluent_tips_loc)
-for i in range(2, num_columns+1):  
-    #TODO: implement volume management to prevent running out of lb media
+for i in range(2, num_columns + 1):
+    # TODO: implement volume management to prevent running out of lb media
     soloSoft.aspirate(
         position="Position3",
         aspirate_volumes=ZAgilentReservoir_1row().setColumn(1, diluent_transfer_volume),
@@ -382,7 +421,7 @@ soloSoft.dispense(
     blowoff=serial_first_blowoff_volume,
     mix_at_finish=True,
     mix_cycles=num_mixes,
-    mix_volume=serial_mix_volume,  
+    mix_volume=serial_mix_volume,
     aspirate_height=2,
 )
 
@@ -415,7 +454,9 @@ for i in range(1, num_columns - 1):
 """
 STEP 3: ADD ANTIBIOTIC TO CULTURE PLATES -------------------------------------------------------------------------------------
 """
-if serial_transfer_volume <= 20:  # get tips if you need to or are currently using 50 uL tips
+if (
+    serial_transfer_volume <= 20
+):  # get tips if you need to or are currently using 50 uL tips
     soloSoft.getTip()
 for i in range(6, 0, -1):
     soloSoft.aspirate(
@@ -444,7 +485,7 @@ for i in range(6, 0, -1):
     )
 
 soloSoft.shuckTip()
-soloSoft.savePipeline() 
+soloSoft.savePipeline()
 
 # Uncomment this section to run the program automatically through SoftLinx ------------------------------------------------
 
@@ -460,8 +501,4 @@ softLinx.saveProtocol()
 # os.startfile("C:\\Users\\svcaibio\\Dev\\liquidhandling\\example\\campaign1\\generate_protocol.ahk")
 
 # TODO: need a way to open .ahk files after they've been transfered to hudson01 from lambda6
-# The current method works for local work on hudson01 only  
-
-
-
-
+# The current method works for local work on hudson01 only

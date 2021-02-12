@@ -1,19 +1,20 @@
 {% set name = "liquidhandling" %}
-{% set version = "0.1.5" %}
+{% set version = "0.1.6" %}
 
 package:
   name: "{{ name|lower }}"
   version: "{{ version }}"
  
 source:
-  path: ..
+  url: "https://pypi.io/packages/source/{{ name[0] }}/{{ name }}/{{ name }}-{{ version }}.tar.gz"
+  sha256: 183b7c0c9fcc13e4fe5a6ee276b38bd0f2874dd756eeabb23cdc195eec361a23
 
 build:
   number: 0
-  script: python setup.py install --single-version-externally-managed --record=record.txt
+  script: "{{ PYTHON }} -m pip install . -vv"
 
 requirements:
-  build:
+  host:
     - jsonref
     - jsonschema
     - pip
@@ -37,7 +38,3 @@ about:
   summary: "A python library developed to allow programmatic control of the Hudson Robotics systems installed in Argonne National Laboratory's Secure BIO Lab."
   doc_url: 
   dev_url: 
-
-extra:
-  recipe-maintainers:
-    - "luckierdodge"
