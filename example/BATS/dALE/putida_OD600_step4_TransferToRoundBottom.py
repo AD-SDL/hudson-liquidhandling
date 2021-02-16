@@ -59,3 +59,9 @@ for i in range(1,13): # i = 1,2,..., 12
 
 soloSoft.shuckTip()
 soloSoft.savePipeline()
+
+# UNCOMMENT FOLLOWING CODE TO GENERATE SOFTLINX .AHK FILE FOR THIS STEP ALONE
+
+# softLinx = SoftLinx("Putida.OD600.step4.TransferToRoundBottom, putida_OD600_step4_TransferToRoundBottom.slvp")
+# softLinx.soloSoftRun( "C:\\Users\\svcaibio\\Dev\\liquidhandling\\example\\BATS\\dALE\\putida_OD600_step4_TransferToRoundBottom.hso")
+# softLinx.saveProtocol()

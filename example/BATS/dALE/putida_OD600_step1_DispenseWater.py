@@ -21,7 +21,8 @@ Deck Layout:
 import os
 import sys
 from liquidhandling import SoloSoft
-from liquidhandling import *
+from liquidhandling import SoftLinx
+from liquidhandling import Reservoir_12col_Agilent_201256_100_BATSgroup, Plate_96_Corning_3635_ClearUVAssay
 
 # Program Variables
 transfer_volume = 180 
@@ -57,6 +58,12 @@ for i in range(1,3): # columns in 12 channel reservoir
             dispense_shift=[0,0,2],
             blowoff=blowoff_volume,
         )
-        
+
 soloSoft.shuckTip()
 soloSoft.savePipeline()
+
+# UNCOMMENT FOLLOWING CODE TO GENERATE SOFTLINX .AHK FILE FOR THIS STEP ALONE
+
+# softLinx = SoftLinx("Putida.OD600.step1.DispenseWater, putida_OD600_step1_DispenseWater.slvp")
+# softLinx.soloSoftRun( "C:\\Users\\svcaibio\\Dev\\liquidhandling\\example\\BATS\\dALE\\putida_OD600_step1_DispenseWater.hso")
+# softLinx.saveProtocol()

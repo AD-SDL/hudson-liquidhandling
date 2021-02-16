@@ -57,3 +57,9 @@ for i in range(7,9): # columns in 12 channel reservoir
         )
 soloSoft.shuckTip()
 soloSoft.savePipeline()
+
+# UNCOMMENT FOLLOWING CODE TO GENERATE SOFTLINX .AHK FILE FOR THIS STEP ALONE
+
+# softLinx = SoftLinx("Putida.OD600.step3.DispenseBuffer, putida_OD600_step3_DispenseBuffer.slvp")
+# softLinx.soloSoftRun( "C:\\Users\\svcaibio\\Dev\\liquidhandling\\example\\BATS\\dALE\\putida_OD600_step3_DispenseBuffer.hso")
+# softLinx.saveProtocol()
