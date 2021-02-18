@@ -38,11 +38,8 @@ Deck Layout: (ALL OPEN DECK POSITITIONS USED)
 8 -> 50 uL Tips("TipBox-50uL EV-50-R-S)  <- just in case very small volumes need to be transered in antibiotic serial dilution step
 
 TODO: 
-    - clean up comments
-    - constrain possible command line inputs (should this be done on the AI side?)
-    - calculate stock mixing volume from default stock volume of antibiotic 
-    - adjust concentration calculations to match real values? (half of what you have now due to 1:1 combination with cells in clean media)
-        (or better to leave as is so the concentraitons in the serial dilution plate are correct?)
+    - Implement volume management for the lb media (-> for two rounds it should be ok without it)
+    
 """
 
 import os
@@ -66,16 +63,18 @@ start_cons = None
 end_cons = None
 
 # * Format the command line input
+# NOTE: The command line start/end cons specify final concentrations desured in Hidex growth plate. 
+# NOTE: Concentrations in the antibiotic serial dilution plate will be double the entered start/end cons to make this work correctly
 if args.start_cons:
     start_cons_string = args.start_cons
     if "/" in start_cons_string:  # parse if start_cons entered as fraction
         start_numerator, start_denominator = (
-            int(start_cons_string.split("/")[0].strip()),
+            int((start_cons_string.split("/")[0].strip())),  
             int(start_cons_string.split("/")[1].strip()),
         )
-        start_cons = float(start_numerator / start_denominator)
+        start_cons = float(start_numerator/start_denominator) * 2   # DOUBLED for correct Hidex plate conc. 
     else:
-        start_cons = float(start_cons_string.strip())
+        start_cons = float(start_cons_string.strip()) * 2  # DOUBLED for correct Hidex plate conc. 
 
 if args.end_cons:
     end_cons_string = args.end_cons
@@ -84,9 +83,9 @@ if args.end_cons:
             int(end_cons_string.split("/")[0].strip()),
             int(end_cons_string.split("/")[1].strip()),
         )
-        end_cons = float(end_numerator / end_denominator)
+        end_cons = float(end_numerator / end_denominator) * 2  # DOUBLED for correct Hidex plate conc. 
     else:
-        end_cons = float(end_cons_string.strip())
+        end_cons = float(end_cons_string.strip()) * 2   # DOUBLED for correct Hidex plate conc. 
 
 # * Program variables
 blowoff_volume = 10
@@ -105,8 +104,7 @@ growth_plate_mix_volume_s1 = 40
 
 # Step 2 variables
 serial_source_num_mixes_s2 = 10
-# variables added for new command line version of step 2
-stock_cons = 1 / 1000
+stock_cons = 1 / 1000   # following variables added for command line version of protocol
 desired_volume_serial_dilution = 150
 default_df = 1 / 10
 
@@ -119,14 +117,14 @@ destination_mix_volume_s3 = 120
 soloSoft = SoloSoft(
     filename="generate_protocol.hso",
     plateList=[
-        "TipBox-Corning 200uL",
+        "TipBox.200uL.Corning-4864.orangebox",
         "Empty",
         "12 Channel Reservoir",
         "Corning 3383",
         "96 Deep Protein",
         "Corning 3383",
         "Corning 3383",
-        "TipBox-50uL EV-50-R-S",
+        "TipBox.50uL.Axygen-EV-50-R-S.tealbox",
     ],
 )
 
@@ -237,7 +235,7 @@ stock_transfer_first_column = int(first_column_df * desired_volume_serial_diluti
 diluent_transfer_first_column = int(
     desired_volume_serial_dilution - stock_transfer_first_column
 )
-print("STEP 2:")
+print("ANTIBIOTIC SERIAL DILUTIONS")
 print("Into column 1:")
 print("\tStock trasfer volume: " + str(stock_transfer_first_column))
 print("\tDiluent transfer volume: " + str(diluent_transfer_first_column))
