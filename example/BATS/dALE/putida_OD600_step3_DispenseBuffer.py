@@ -28,7 +28,7 @@ blowoff_volume = 10
 soloSoft = SoloSoft(
     filename="putida_OD600_step3_DispenseBuffer.hso",
       plateList=[
-        "TipBox-Corning 200uL",
+        "TipBox.200uL.Corning-4864.orangebox",
         "Empty",
         "Reservoir.12col.Agilent-201256-100.BATSgroup",
         "Plate.96.Agilent-5043-9310.RoundBottomStorage",

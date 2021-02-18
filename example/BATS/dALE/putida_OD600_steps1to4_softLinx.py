@@ -12,7 +12,7 @@ from liquidhandling import Reservoir_12col_Agilent_201256_100_BATSgroup, Plate_9
 soloSoft = SoloSoft(
     filename="putida_OD600_step1_DispenseWater.hso",
     plateList=[
-        "TipBox-Corning 200uL",
+        "TipBox.200uL.Corning-4864.orangebox",
         "Empty",
         "Reservoir.12col.Agilent-201256-100.BATSgroup",
         "Plate.96.Agilent-5043-9310.RoundBottomStorage",
