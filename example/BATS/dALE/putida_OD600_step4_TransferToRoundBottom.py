@@ -35,23 +35,24 @@ soloSoft = SoloSoft(
         "Empty",
         "Reservoir.12col.Agilent-201256-100.BATSgroup",
         "Plate.96.Agilent-5043-9310.RoundBottomStorage",
-        "DeepBlock.96VWR-75870-792.sterile",
+        "DeepBlock.96.VWR-75870-792.sterile",
         "Plate.96.Corning-3635.ClearUVAssay",
         "Empty",
         "Empty",
     ],
 )
 
-soloSoft.getTip()
+
 for i in range(1,13): # i = 1,2,..., 12
+    soloSoft.getTip()  # need to get new tips every time 
     soloSoft.aspirate(
-        position="Position5", 
+        position="Position6", 
         aspirate_volumes=Plate_96_Corning_3635_ClearUVAssay().setColumn(i, transfer_volume),
         aspirate_shift=[0,0,clearance_from_bottom], 
         pre_aspirate=blowoff_volume,
     )
     soloSoft.dispense(
-        position="Position6", 
+        position="Position4", 
         dispense_volumes=Plate_96_Agilent_5043_9310_RoundBottomStorage().setColumn(i, transfer_volume), 
         dispense_shift=[0,0,clearance_from_bottom], 
         blowoff=blowoff_volume,
@@ -62,6 +63,6 @@ soloSoft.savePipeline()
 
 # UNCOMMENT FOLLOWING CODE TO GENERATE SOFTLINX .AHK FILE FOR THIS STEP ALONE
 
-# softLinx = SoftLinx("Putida.OD600.step4.TransferToRoundBottom, putida_OD600_step4_TransferToRoundBottom.slvp")
-# softLinx.soloSoftRun( "C:\\Users\\svcaibio\\Dev\\liquidhandling\\example\\BATS\\dALE\\putida_OD600_step4_TransferToRoundBottom.hso")
-# softLinx.saveProtocol()
+softLinx = SoftLinx("Putida.OD600.step4.TransferToRoundBottom", "putida_OD600_step4_TransferToRoundBottom.slvp")
+softLinx.soloSoftRun( "C:\\Users\\svcaibio\\Dev\\liquidhandling\\example\\BATS\\dALE\\putida_OD600_step4_TransferToRoundBottom.hso")
+softLinx.saveProtocol()

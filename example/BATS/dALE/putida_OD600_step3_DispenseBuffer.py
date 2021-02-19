@@ -32,7 +32,7 @@ soloSoft = SoloSoft(
         "Empty",
         "Reservoir.12col.Agilent-201256-100.BATSgroup",
         "Plate.96.Agilent-5043-9310.RoundBottomStorage",
-        "DeepBlock.96VWR-75870-792.sterile",
+        "DeepBlock.96.VWR-75870-792.sterile",
         "Plate.96.Corning-3635.ClearUVAssay",
         "Empty",
         "Empty",
@@ -60,6 +60,6 @@ soloSoft.savePipeline()
 
 # UNCOMMENT FOLLOWING CODE TO GENERATE SOFTLINX .AHK FILE FOR THIS STEP ALONE
 
-# softLinx = SoftLinx("Putida.OD600.step3.DispenseBuffer, putida_OD600_step3_DispenseBuffer.slvp")
-# softLinx.soloSoftRun( "C:\\Users\\svcaibio\\Dev\\liquidhandling\\example\\BATS\\dALE\\putida_OD600_step3_DispenseBuffer.hso")
-# softLinx.saveProtocol()
+softLinx = SoftLinx("Putida.OD600.step3.DispenseBuffer", "putida_OD600_step3_DispenseBuffer.slvp")
+softLinx.soloSoftRun( "C:\\Users\\svcaibio\\Dev\\liquidhandling\\example\\BATS\\dALE\\putida_OD600_step3_DispenseBuffer.hso")
+softLinx.saveProtocol()

@@ -45,7 +45,7 @@ growth_plate_mix_volume_s1 = 40
 soloSoft = SoloSoft(
     filename="innoculate_growth_plate.hso",
     plateList=[
-        "TipBox-Corning 200uL",
+        "TipBox.200uL.Corning-4864.orangebox",
         "Empty",
         "12 Channel Reservoir",
         "Corning 3383",

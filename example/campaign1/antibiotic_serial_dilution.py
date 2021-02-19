@@ -47,7 +47,7 @@ serial_destination_mixing_volume_s2 = 100
 soloSoft = SoloSoft(
     filename="antibiotic_serial_dilution.hso",
     plateList=[
-        "TipBox-Corning 200uL",
+        "TipBox.200uL.Corning-4864.orangeboxL",
         "Empty",
         "12 Channel Reservoir",
         "Corning 3383",

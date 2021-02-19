@@ -54,7 +54,7 @@ destination_mix_volume_s3 = 120
 soloSoft = SoloSoft(
     filename="steps_1_2_3.hso",
     plateList=[
-        "TipBox-Corning 200uL",
+        "TipBox.200uL.Corning-4864.orangebox",
         "Empty",
         "12 Channel Reservoir",
         "Corning 3383",

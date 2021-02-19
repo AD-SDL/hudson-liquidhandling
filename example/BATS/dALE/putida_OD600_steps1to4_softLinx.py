@@ -16,7 +16,7 @@ soloSoft = SoloSoft(
         "Empty",
         "Reservoir.12col.Agilent-201256-100.BATSgroup",
         "Plate.96.Agilent-5043-9310.RoundBottomStorage",
-        "DeepBlock.96VWR-75870-792.sterile",
+        "DeepBlock.96.VWR-75870-792.sterile",
         "Plate.96.Corning-3635.ClearUVAssay",
         "Empty",
         "Empty",

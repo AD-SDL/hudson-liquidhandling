@@ -28,7 +28,7 @@ Command Line Options: (--start_cons AND/OR --end_cons)
             and next 5 columns are serial diluted evenly so that the final columb contains the desired ending concentration
 
 Deck Layout: (ALL OPEN DECK POSITITIONS USED)
-1 -> 200 uL Tips ("TipBox-Corning 200uL")
+1 -> 200 uL Tips ("TipBox.200uL.Corning-4864.orangebox")
 2 -> HEATING NEST
 3 -> Lb media well, antibiotic stock solution well (12 channel reservoir) -> column 1 = lb media; column 2 = antibiotic stock solution 
 4 -> Growth plate (Corning 3383 or Falcon - ref 353916)
