@@ -6,14 +6,14 @@ Steps:
     - make sure to keep 2mm clearance from the bottom
 
 Deck Layout:
-1 -> 
+1 -> TipBox-Corning 200uL (orange)
 2 -> Empty (HEATING NEST)
-3 -> 
-4 -> 
-5 -> 
-6 -> 
-7 -> 
-8 -> 
+3 -> 12 Channel Reservoir (Water -> C1,2; Buffer -> C7,8)
+4 -> Round Bottom Storage
+5 -> Deep Block 96 well
+6 -> Corning 3635 Clear UV 96 well
+7 -> Empty
+8 -> Empty
 
 
 """
