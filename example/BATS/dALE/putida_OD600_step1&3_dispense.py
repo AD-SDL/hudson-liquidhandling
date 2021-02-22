@@ -1,6 +1,8 @@
 """
-This file generates one softLinx .ahk file for Putida.OD600 steps 1 - 4 
-    (just in case you want to run these steps all at once)
+This file generates one softLinx .ahk file for Putida.OD600 steps 1 and 3  
+    (just in case you want to run both dispense steps at the same time)
+
+Can also be used to run all 4 steps at the same time -> just uncomment steps 2 and 4 below
 """
 import os
 import sys
@@ -24,20 +26,20 @@ soloSoft = SoloSoft(
 )
 # Force steps 1-4 to run individually so that all .hso files are created
 os.popen('python ./putida_OD600_step1_DispenseWater.py')
-os.popen('python ./putida_OD600_step2_TransferBacteria.py')
+#os.popen('python ./putida_OD600_step2_TransferBacteria.py')
 os.popen('python ./putida_OD600_step3_DispenseBuffer.py')
-os.popen('python ./putida_OD600_step4_TransferToRoundBottom.py')
+#os.popen('python ./putida_OD600_step4_TransferToRoundBottom.py')
 
 # in itialize softLinx and add all .hso files to the softLinx protocol
 softLinx = SoftLinx("Putida.OD600.steps1to4_softLinx", "putida_OD600_steps1to4_softLinx.slvp")
 # add step 1
 softLinx.soloSoftRun( "C:\\Users\\svcaibio\\Dev\\liquidhandling\\example\\BATS\\dALE\\putida_OD600_step1_DispenseWater.hso")
 # add step 2
-softLinx.soloSoftRun( "C:\\Users\\svcaibio\\Dev\\liquidhandling\\example\\BATS\\dALE\\putida_OD600_step2_TransferBacteria.hso")
+#softLinx.soloSoftRun( "C:\\Users\\svcaibio\\Dev\\liquidhandling\\example\\BATS\\dALE\\putida_OD600_step2_TransferBacteria.hso")
 # add step 3
 softLinx.soloSoftRun( "C:\\Users\\svcaibio\\Dev\\liquidhandling\\example\\BATS\\dALE\\putida_OD600_step3_DispenseBuffer.hso")
 # add step 4
-softLinx.soloSoftRun( "C:\\Users\\svcaibio\\Dev\\liquidhandling\\example\\BATS\\dALE\\putida_OD600_step4_TransferToRoundBottom.hso")
+#softLinx.soloSoftRun( "C:\\Users\\svcaibio\\Dev\\liquidhandling\\example\\BATS\\dALE\\putida_OD600_step4_TransferToRoundBottom.hso")
 
 # generate .slvp and .ahk files
 softLinx.saveProtocol()
