@@ -140,25 +140,79 @@ class NinetySixPlateOneVBottom:
 
 class ZAgilentReservoir_1row:
     def __new__(cls, plate=None):
-        return PlateDefinition("Z Agilent Reservoir - 1 row", plate, 44.5, 42.3, 8, 12, 0, 0, 9, 9, "")
+        return PlateDefinition(
+            "Z Agilent Reservoir - 1 row", plate, 44.5, 42.3, 8, 12, 0, 0, 9, 9, ""
+        )
+
 
 class NinetySixDeepWell:
     def __new__(cls, plate=None):
         return PlateDefinition("96 Deep Well", plate, 42.0, 38.0, 8, 12, 0, 0, 9, 9, "")
 
-class Reservoir_12col_Agilent_201256_100_BATSgroup: 
+
+class Reservoir_12col_Agilent_201256_100_BATSgroup:
     def __new__(cls, plate=None):
-        return PlateDefinition("Reservoir.12col.Agilent-201256-100.BATSgroup", plate, 44.0, 39.0, 8, 12, 0, 0, 9, 9, "12 column reservoir - 21 mL/well (JLJ")
+        return PlateDefinition(
+            "Reservoir.12col.Agilent-201256-100.BATSgroup",
+            plate,
+            44.0,
+            39.0,
+            8,
+            12,
+            0,
+            0,
+            9,
+            9,
+            "12 column reservoir - 21 mL/well (JLJ",
+        )
 
-class Plate_96_Corning_3635_ClearUVAssay: 
+
+class Plate_96_Corning_3635_ClearUVAssay:
     def __new__(cls, plate=None):
-        return PlateDefinition("Plate.96.Corning-3635.ClearUVAssay", plate, 14.2, 10.6, 8, 12, 0, 0, 9, 9, "UV/Vis Transparent")
+        return PlateDefinition(
+            "Plate.96.Corning-3635.ClearUVAssay",
+            plate,
+            14.2,
+            10.6,
+            8,
+            12,
+            0,
+            0,
+            9,
+            9,
+            "UV/Vis Transparent",
+        )
 
-class DeepBlock_96VWR_75870_792_sterile: 
-    def __new__(cls, plate=None): 
-        return PlateDefinition("DeepBlock.96VWR-75870-792.sterile", plate, 44.2, 99.7, 8, 12, 0, 0, 9, 9, "sterile deep well block (JLJ)")
 
-
-class Plate_96_Agilent_5043_9310_RoundBottomStorage: 
+class DeepBlock_96VWR_75870_792_sterile:
     def __new__(cls, plate=None):
-        return PlateDefinition("Plare.96.Agilent-5043-9310.RoundBottomStorage", plate, 14.6, 10.2, 8, 12, 0, 0, 9, 9, "Falcon 96-well round bottom (bacteria)")
+        return PlateDefinition(
+            "DeepBlock.96VWR-75870-792.sterile",
+            plate,
+            44.2,
+            99.7,
+            8,
+            12,
+            0,
+            0,
+            9,
+            9,
+            "sterile deep well block (JLJ)",
+        )
+
+
+class Plate_96_Agilent_5043_9310_RoundBottomStorage:
+    def __new__(cls, plate=None):
+        return PlateDefinition(
+            "Plare.96.Agilent-5043-9310.RoundBottomStorage",
+            plate,
+            14.6,
+            10.2,
+            8,
+            12,
+            0,
+            0,
+            9,
+            9,
+            "Falcon 96-well round bottom (bacteria)",
+        )

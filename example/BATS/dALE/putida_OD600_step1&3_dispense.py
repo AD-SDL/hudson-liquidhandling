@@ -11,7 +11,8 @@ import os
 import sys
 from liquidhandling import SoloSoft
 from liquidhandling import SoftLinx
-# no need to import plate types 
+
+# no need to import plate types
 
 # do we need to initialize this if we aren't creating a soloSoft.hso within this python file?
 soloSoft = SoloSoft(
@@ -28,22 +29,27 @@ soloSoft = SoloSoft(
     ],
 )
 # Force steps 1-4 to run individually so that all .hso files are created
-os.popen('python ./putida_OD600_step1_DispenseWater.py')
-#os.popen('python ./putida_OD600_step2_TransferBacteria.py')
-os.popen('python ./putida_OD600_step3_DispenseBuffer.py')
-#os.popen('python ./putida_OD600_step4_TransferToRoundBottom.py')
+os.popen("python ./putida_OD600_step1_DispenseWater.py")
+# os.popen('python ./putida_OD600_step2_TransferBacteria.py')
+os.popen("python ./putida_OD600_step3_DispenseBuffer.py")
+# os.popen('python ./putida_OD600_step4_TransferToRoundBottom.py')
 
 # in itialize softLinx and add all .hso files to the softLinx protocol
-softLinx = SoftLinx("Putida.OD600.steps1and3_softLinx", "putida_OD600_steps1and3_softLinx.slvp")
+softLinx = SoftLinx(
+    "Putida.OD600.steps1and3_softLinx", "putida_OD600_steps1and3_softLinx.slvp"
+)
 # add step 1
-softLinx.soloSoftRun( "C:\\Users\\svcaibio\\Dev\\liquidhandling\\example\\BATS\\dALE\\putida_OD600_step1_DispenseWater.hso")
+softLinx.soloSoftRun(
+    "C:\\Users\\svcaibio\\Dev\\liquidhandling\\example\\BATS\\dALE\\putida_OD600_step1_DispenseWater.hso"
+)
 # add step 2
-#softLinx.soloSoftRun( "C:\\Users\\svcaibio\\Dev\\liquidhandling\\example\\BATS\\dALE\\putida_OD600_step2_TransferBacteria.hso")
+# softLinx.soloSoftRun( "C:\\Users\\svcaibio\\Dev\\liquidhandling\\example\\BATS\\dALE\\putida_OD600_step2_TransferBacteria.hso")
 # add step 3
-softLinx.soloSoftRun( "C:\\Users\\svcaibio\\Dev\\liquidhandling\\example\\BATS\\dALE\\putida_OD600_step3_DispenseBuffer.hso")
+softLinx.soloSoftRun(
+    "C:\\Users\\svcaibio\\Dev\\liquidhandling\\example\\BATS\\dALE\\putida_OD600_step3_DispenseBuffer.hso"
+)
 # add step 4
-#softLinx.soloSoftRun( "C:\\Users\\svcaibio\\Dev\\liquidhandling\\example\\BATS\\dALE\\putida_OD600_step4_TransferToRoundBottom.hso")
+# softLinx.soloSoftRun( "C:\\Users\\svcaibio\\Dev\\liquidhandling\\example\\BATS\\dALE\\putida_OD600_step4_TransferToRoundBottom.hso")
 
 # generate .slvp and .ahk files
 softLinx.saveProtocol()
-

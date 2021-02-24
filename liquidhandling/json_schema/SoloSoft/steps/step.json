@@ -43,6 +43,9 @@
                 },
                 {
                     "$ref": "loop.json"
+                },
+                {
+                    "$ref": "operateAccessory.json"
                 }
             ]
         }

@@ -23,13 +23,13 @@ from liquidhandling import SoloSoft
 from liquidhandling import *
 
 # Program Variables
-transfer_volume = 20 
+transfer_volume = 20
 blowoff_volume = 10
 clearance_from_bottom = 3
 
 soloSoft = SoloSoft(
     filename="putida_OD600_step2_TransferBacteria.hso",
-      plateList=[
+    plateList=[
         "TipBox.200uL.Corning-4864.orangebox",
         "Empty",
         "Reservoir.12col.Agilent-201256-100.BATSgroup",
@@ -41,18 +41,22 @@ soloSoft = SoloSoft(
     ],
 )
 
-for i in range(1,13): # i = 1,2,..., 12
+for i in range(1, 13):  # i = 1,2,..., 12
     soloSoft.getTip()  # need to get new tips every time -> assumes wells in bacterial suspension not all the same
     soloSoft.aspirate(
-        position="Position5", 
-        aspirate_volumes=DeepBlock_96VWR_75870_792_sterile().setColumn(i, transfer_volume),
-        aspirate_shift=[0,0,clearance_from_bottom], 
+        position="Position5",
+        aspirate_volumes=DeepBlock_96VWR_75870_792_sterile().setColumn(
+            i, transfer_volume
+        ),
+        aspirate_shift=[0, 0, clearance_from_bottom],
         pre_aspirate=blowoff_volume,
     )
     soloSoft.dispense(
-        position="Position6", 
-        dispense_volumes=Plate_96_Corning_3635_ClearUVAssay().setColumn(i, transfer_volume), 
-        dispense_shift=[0,0,clearance_from_bottom], 
+        position="Position6",
+        dispense_volumes=Plate_96_Corning_3635_ClearUVAssay().setColumn(
+            i, transfer_volume
+        ),
+        dispense_shift=[0, 0, clearance_from_bottom],
         blowoff=blowoff_volume,
     )
 
@@ -61,6 +65,10 @@ soloSoft.savePipeline()
 
 # UNCOMMENT FOLLOWING CODE TO GENERATE SOFTLINX .AHK FILE FOR THIS STEP ALONE
 
-softLinx = SoftLinx("Putida.OD600.step2.TransferBacteria", "putida_OD600_step2_TransferBacteria.slvp")
-softLinx.soloSoftRun( "C:\\Users\\svcaibio\\Dev\\liquidhandling\\example\\BATS\\dALE\\putida_OD600_step2_TransferBacteria.hso")
+softLinx = SoftLinx(
+    "Putida.OD600.step2.TransferBacteria", "putida_OD600_step2_TransferBacteria.slvp"
+)
+softLinx.soloSoftRun(
+    "C:\\Users\\svcaibio\\Dev\\liquidhandling\\example\\BATS\\dALE\\putida_OD600_step2_TransferBacteria.hso"
+)
 softLinx.saveProtocol()

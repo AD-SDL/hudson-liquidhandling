@@ -1,0 +1,43 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema",
+    "title": "Schema for the SoloSoft OperateAccessory Step",
+    "type": "object",
+    "properties": {
+        "metadata": {
+            "$ref": "../../metadata.json"
+        },
+        "step_type": {
+            "const": "OperateAccessory"
+        },
+        "desired_temperature": {
+            "type": "number"
+        },
+        "dontWait": {
+            "type": "boolean"
+        },
+        "waitUntilActualEqualsStartPoint": {
+            "type": "boolean"
+        },
+        "waitUntilTemperatureIsStable": {
+            "type": "boolean"
+        },
+        "turnNestOffNow": {
+            "type": "number",
+            "enum": [
+                0,
+                1
+            ]
+        },
+        "turnNestOffAtTemperature": {
+            "type": "number",
+            "enum": [
+                0,
+                1
+            ]
+        }
+    },
+    "required": [
+        "step_type"
+    ],
+    "additionalProperties": true
+}

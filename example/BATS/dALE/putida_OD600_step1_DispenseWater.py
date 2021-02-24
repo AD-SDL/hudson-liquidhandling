@@ -21,10 +21,13 @@ import os
 import sys
 from liquidhandling import SoloSoft
 from liquidhandling import SoftLinx
-from liquidhandling import Reservoir_12col_Agilent_201256_100_BATSgroup, Plate_96_Corning_3635_ClearUVAssay
+from liquidhandling import (
+    Reservoir_12col_Agilent_201256_100_BATSgroup,
+    Plate_96_Corning_3635_ClearUVAssay,
+)
 
 # Program Variables
-transfer_volume = 180 
+transfer_volume = 180
 blowoff_volume = 10
 
 soloSoft = SoloSoft(
@@ -41,20 +44,28 @@ soloSoft = SoloSoft(
     ],
 )
 
-soloSoft.getTip() 
+soloSoft.getTip()
 
-for i in range(1,3): # columns in 12 channel reservoir
-    for j in range(1,7):  # <- columns in corning 3635 clearUV
+for i in range(1, 3):  # columns in 12 channel reservoir
+    for j in range(1, 7):  # <- columns in corning 3635 clearUV
         soloSoft.aspirate(
             position="Position3",
-            aspirate_volumes=Reservoir_12col_Agilent_201256_100_BATSgroup().setColumn(i,transfer_volume), 
-            aspirate_shift=[0,0,4], # larger shift needed for 12 channel resevoir <- check this with new plate entries
-            pre_aspirate=blowoff_volume, 
+            aspirate_volumes=Reservoir_12col_Agilent_201256_100_BATSgroup().setColumn(
+                i, transfer_volume
+            ),
+            aspirate_shift=[
+                0,
+                0,
+                4,
+            ],  # larger shift needed for 12 channel resevoir <- check this with new plate entries
+            pre_aspirate=blowoff_volume,
         )
         soloSoft.dispense(
             position="Position6",
-            dispense_volumes=Plate_96_Corning_3635_ClearUVAssay().setColumn((((i-1)*6)+j), transfer_volume), 
-            dispense_shift=[0,0,2],
+            dispense_volumes=Plate_96_Corning_3635_ClearUVAssay().setColumn(
+                (((i - 1) * 6) + j), transfer_volume
+            ),
+            dispense_shift=[0, 0, 2],
             blowoff=blowoff_volume,
         )
 
@@ -63,6 +74,10 @@ soloSoft.savePipeline()
 
 # UNCOMMENT FOLLOWING CODE TO GENERATE SOFTLINX .AHK FILE FOR THIS STEP ALONE
 
-softLinx = SoftLinx("Putida.OD600.step1.DispenseWater", "putida_OD600_step1_DispenseWater.slvp")
-softLinx.soloSoftRun( "C:\\Users\\svcaibio\\Dev\\liquidhandling\\example\\BATS\\dALE\\putida_OD600_step1_DispenseWater.hso")
+softLinx = SoftLinx(
+    "Putida.OD600.step1.DispenseWater", "putida_OD600_step1_DispenseWater.slvp"
+)
+softLinx.soloSoftRun(
+    "C:\\Users\\svcaibio\\Dev\\liquidhandling\\example\\BATS\\dALE\\putida_OD600_step1_DispenseWater.hso"
+)
 softLinx.saveProtocol()

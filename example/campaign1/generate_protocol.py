@@ -63,18 +63,22 @@ start_cons = None
 end_cons = None
 
 # * Format the command line input
-# NOTE: The command line start/end cons specify final concentrations desured in Hidex growth plate. 
+# NOTE: The command line start/end cons specify final concentrations desured in Hidex growth plate.
 # NOTE: Concentrations in the antibiotic serial dilution plate will be double the entered start/end cons to make this work correctly
 if args.start_cons:
     start_cons_string = args.start_cons
     if "/" in start_cons_string:  # parse if start_cons entered as fraction
         start_numerator, start_denominator = (
-            int((start_cons_string.split("/")[0].strip())),  
+            int((start_cons_string.split("/")[0].strip())),
             int(start_cons_string.split("/")[1].strip()),
         )
-        start_cons = float(start_numerator/start_denominator) * 2   # DOUBLED for correct Hidex plate conc. 
+        start_cons = (
+            float(start_numerator / start_denominator) * 2
+        )  # DOUBLED for correct Hidex plate conc.
     else:
-        start_cons = float(start_cons_string.strip()) * 2  # DOUBLED for correct Hidex plate conc. 
+        start_cons = (
+            float(start_cons_string.strip()) * 2
+        )  # DOUBLED for correct Hidex plate conc.
 
 if args.end_cons:
     end_cons_string = args.end_cons
@@ -83,9 +87,13 @@ if args.end_cons:
             int(end_cons_string.split("/")[0].strip()),
             int(end_cons_string.split("/")[1].strip()),
         )
-        end_cons = float(end_numerator / end_denominator) * 2  # DOUBLED for correct Hidex plate conc. 
+        end_cons = (
+            float(end_numerator / end_denominator) * 2
+        )  # DOUBLED for correct Hidex plate conc.
     else:
-        end_cons = float(end_cons_string.strip()) * 2   # DOUBLED for correct Hidex plate conc. 
+        end_cons = (
+            float(end_cons_string.strip()) * 2
+        )  # DOUBLED for correct Hidex plate conc.
 
 # * Program variables
 blowoff_volume = 10
@@ -104,7 +112,7 @@ growth_plate_mix_volume_s1 = 40
 
 # Step 2 variables
 serial_source_num_mixes_s2 = 10
-stock_cons = 1 / 1000   # following variables added for command line version of protocol
+stock_cons = 1 / 1000  # following variables added for command line version of protocol
 desired_volume_serial_dilution = 150
 default_df = 1 / 10
 

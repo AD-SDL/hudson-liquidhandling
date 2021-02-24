@@ -819,6 +819,106 @@ class SoloSoft:
         json_data["grip_offset"] = step[3]
         return json_data
 
+    # * Currently only supports Hot/Cold Nest
+    def operateAccessory(
+        self,
+        unit2=False,
+        desiredTemperature=24.0,
+        dontWait=False,
+        waitUntilActualEqualsStartPoint=False,
+        waitUntilTemperatureIsStable=False,
+        turnNestOffNow=False,
+        turnNestOffAtTemperature=False,
+        index=None,
+        inplace=True,
+    ):
+        properties_list = [
+            "Accessory",
+            1,
+            5475,
+            5600,
+            960,
+            1080,
+            desiredTemperature,
+        ]
+        if turnNestOffAtTemperature:
+            properties_list.append(1)
+        else:
+            properties_list.append(0)
+        properties_list.extend(
+            [
+                dontWait,
+                waitUntilActualEqualsStartPoint,
+                waitUntilTemperatureIsStable,
+                0,
+                60,
+            ]
+        )
+        if turnNestOffNow:
+            properties_list.append(1)
+        else:
+            properties_list.append(0)
+        properties_list.extend(
+            [
+                0,
+                unit2,
+                "*",
+                "*",
+                "*",
+                "",
+                1,
+                "",
+                1,
+                7,
+                1,
+                "",
+                1,
+                1,
+                0,
+                100,
+                1,
+                25,
+                "N W S E",
+                0,
+                100,
+                1,
+                25,
+                "N W S E",
+                0,
+                100,
+                1,
+                25,
+                "N W S E",
+                0,
+                100,
+                1,
+                25,
+                "N W S E",
+                1,
+                True,
+                0,
+                STEP_DELIMITER,
+            ]
+        )
+        if inplace:
+            if index != None:
+                self.pipeline.insert(index, properties_list)
+            else:
+                self.pipeline.append(properties_list)
+        return properties_list
+
+    def jsonifyOperateAccessory(self, step):
+        json_data = {}
+        json_data["step_type"] = "OperateAccessory"
+        json_data["desired_temperature"] = step[6]
+        json_data["turnNestOffAtTemperature"] = step[7]
+        json_data["dontWait"] = step[8]
+        json_data["waitUntilActualEqualsStartPoint"] = step[9]
+        json_data["waitUntilTemperatureIsStable"] = step[10]
+        json_data["turnNestOffNow"] = step[13]
+        json_data["unit2"] = step[15]
+        return json_data
+
     jsonify = {
         "GetTip": jsonifyGetTip,
         "ShuckTip": jsonifyShuckTip,
@@ -832,6 +932,7 @@ class SoloSoft:
         "MoveArm": jsonifyMoveArm,
         "MovePlate": jsonifyMovePlate,
         "SetSpeed": jsonifySetSpeed,
+        "OperateAccessory": jsonifyOperateAccessory,
     }
 
     pipelinify = {
@@ -847,4 +948,5 @@ class SoloSoft:
         "MoveArm": moveArm,
         "MovePlate": movePlate,
         "SetSpeed": setSpeed,
+        "OperateAccessory": operateAccessory,
     }
