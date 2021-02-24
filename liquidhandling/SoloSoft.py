@@ -1,5 +1,5 @@
 import json
-import liquidhandling.Properties
+from liquidhandling import Properties
 
 STEP_DELIMITER = "!@#$"
 

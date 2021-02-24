@@ -359,10 +359,65 @@ class SoftLinx:
         self,
         positionsFrom=["SoftLinx.PlateCrane.Stack1"],
         positionsTo=["SoftLinx.PlateCrane.Stack2"],
+        hasLid=False,
+        inGripper=False,
+        flip180=False,
+        onEmptyStack="End Method",
+        onMoveComplete="Move to Safe Location",
+        moveUp=999,
+        nestIsSpringLoaded=False,
+        checkForPlatesInAllPositions=False,
         isActive=True,
         index=None,
         inplace=True,
     ):
+        if inGripper:
+            positionsFrom = ["SoftLinx.PlateCrane.Gripper"]
+        onEmptyStackDict = {
+            "End Method": 0,
+            "Post Message and Continue": 1,
+            "Prompt User": 0,
+            "Complete Method": 256,
+            "Ignore and Continue": 512,
+        }
+        onMoveCompleteDict = {
+            "Move Up": "Up",
+            "Move to Safe Location": "Safe",
+            "Hold Plate in Nest": "Hold",
+            "Wait for Lid Removal": "Lid",
+        }
+        if isinstance(onEmptyStack, str):
+            try:
+                onEmptyStackVal = onEmptyStackDict[onEmptyStack]
+            except:
+                raise ValueError(
+                    "onEmptyStack must be one of the following:"
+                    + str([key + ", " for key in onEmptyStackDict])
+                )
+        else:
+            raise ValueError(
+                "onEmptyStack must be one of the following:"
+                + str([key + ", " for key in onEmptyStackDict])
+            )
+        if checkForPlatesInAllPositions:
+            onEmptyStackVal += 240
+        if isinstance(onMoveComplete, str):
+            try:
+                onMoveCompleteVal = onMoveCompleteDict[onMoveComplete]
+            except:
+                raise ValueError(
+                    "onMoveComplete must be one of the following:"
+                    + str([key + ", " for key in onMoveCompleteDict])
+                )
+        else:
+            raise ValueError(
+                "onMoveComplete must be one of the following:"
+                + str([key + ", " for key in onMoveCompleteDict])
+            )
+        if onMoveCompleteVal == "Up":
+            if not isinstance(moveUp, int):
+                raise ValueError("moveUp must be an integer")
+            onMoveCompleteVal += str(moveUp)
         step = {
             "type": "MovePlate",
             "Command": "Move Plate",
@@ -378,12 +433,12 @@ class SoftLinx:
             "args": [
                 ["x:String", ",".join(positionsFrom)],
                 ["x:String", ",".join(positionsTo)],
-                ["x:String", "Safe"],
-                ["x:String", "0"],
+                ["x:String", str(onMoveCompleteVal)],
+                ["x:String", str(onEmptyStackVal)],
                 ["x:String", " "],
-                ["x:String", "False"],
-                ["x:String", "False"],
-                ["x:String", "False"],
+                ["x:String", str(hasLid)],
+                ["x:String", str(nestIsSpringLoaded)],
+                ["x:String", str(flip180)],
                 ["x:String", " "],
             ],
         }
@@ -417,6 +472,26 @@ class SoftLinx:
             else:
                 self.protocolSteps.append(step)
         return step
+
+    def soloSoftResetTipCount(
+        self, position=1, isActive=True, index=None, inplace=True
+    ):
+        if not isinstance(position, int):
+            raise TypeError("position must be an integer")
+        if position < 1 or position > 8:
+            raise ValueError("position must be between 1 and 8, inclusive")
+        step = {
+            "type": "Reset Tip Count",
+            "Command": "Reset Tip Count",
+            "Description": "Position:		" + str(position),
+            "SLXId": "148788b4-63eb-4424-9af8-a175fb195afb",
+            "ToolTip": "Position:		" + str(position),
+            "isActive": str(isActive),
+            "system": "Solo",
+            "args": [
+                str(position),
+            ],
+        }
 
     def saveProtocol(self, filename=None, generate_ahk=True):
         if filename == None:
