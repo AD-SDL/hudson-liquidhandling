@@ -1,10 +1,9 @@
 """ 
-Putida.OD600.step2.TransferBacteria
+Putida.OD600.step4.TransferToRoundBottom
 
 Steps: 
-- Transfer 20uL bacterial suspension from Deep Block - Columns 1-12 to Corning 3635 - Columns 1-12  
-    - use 200uL tips 
-    - keep 3 mm clearance from the bottom 
+- Transfer all contents of wells in ClearUV plate (used for Hidex) to PlateOne V Bottom for centrifugation
+    - ok if bubbles -> centrifuge should take care of them
 
 Deck Layout:
 1 -> TipBox-Corning 200uL (orange)
@@ -15,7 +14,10 @@ Deck Layout:
 6 -> Corning 3635 Clear UV 96 well
 7 -> PlateOne V Bottom
 8 -> Empty
+
 """
+
+
 
 import os
 import sys
@@ -23,12 +25,12 @@ from liquidhandling import SoloSoft
 from liquidhandling import *
 
 # Program Variables
-transfer_volume = 20
-blowoff_volume = 10
-clearance_from_bottom = 3
+transfer_volume = 200
+blowoff_volume = 0
+clearance_from_bottom = 2
 
 soloSoft = SoloSoft(
-    filename="putida_OD600_step2_TransferBacteria.hso",
+    filename="putida_OD600_step4_TransferToRoundBottom.hso",
     plateList=[
         "TipBox.200uL.Corning-4864.orangebox",
         "Empty",
@@ -41,19 +43,20 @@ soloSoft = SoloSoft(
     ],
 )
 
+
 for i in range(1, 13):  # i = 1,2,..., 12
-    soloSoft.getTip()  # need to get new tips every time -> assumes wells in bacterial suspension not all the same
+    soloSoft.getTip()  # need to get new tips every time
     soloSoft.aspirate(
-        position="Position5",
-        aspirate_volumes=DeepBlock_96VWR_75870_792_sterile().setColumn(
+        position="Position6",
+        aspirate_volumes=Plate_96_Corning_3635_ClearUVAssay().setColumn(
             i, transfer_volume
         ),
         aspirate_shift=[0, 0, clearance_from_bottom],
         pre_aspirate=blowoff_volume,
     )
     soloSoft.dispense(
-        position="Position6",
-        dispense_volumes=Plate_96_Corning_3635_ClearUVAssay().setColumn(
+        position="Position7",
+        dispense_volumes=Plate_96_Agilent_5043_9310_RoundBottomStorage().setColumn(
             i, transfer_volume
         ),
         dispense_shift=[0, 0, clearance_from_bottom],
@@ -66,9 +69,10 @@ soloSoft.savePipeline()
 # UNCOMMENT FOLLOWING CODE TO GENERATE SOFTLINX .AHK FILE FOR THIS STEP ALONE
 
 softLinx = SoftLinx(
-    "Putida.OD600.step2.TransferBacteria", "putida_OD600_step2_TransferBacteria.slvp"
+    "Putida.OD600.step4.ClearUVToPlateOneVBottom",
+    "putida_OD600_step4_ClearUVToPlateOneVBottom.slvp",
 )
 softLinx.soloSoftRun(
-    "C:\\Users\\svcaibio\\Dev\\liquidhandling\\example\\BATS\\dALE\\putida_OD600_step2_TransferBacteria.hso"
+    "C:\\Users\\svcaibio\\Dev\\liquidhandling\\example\\BATS\\dALE\\putida_OD600_step4_ClearUVToPlateOneVBottom.hso"
 )
 softLinx.saveProtocol()

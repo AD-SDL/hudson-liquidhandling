@@ -2,8 +2,10 @@
 Putida.OD600.step4.TransferToRoundBottom
 
 Steps: 
-- Transfer 20uL supernatant from Corning 3635 - Columns 1-12 to Round Bottom Storage - Columns 1-12 
+- Transfer 20uL supernatant from PlateOneVBottom - Columns 1-12 to Round Bottom Storage - Columns 1-12 
     - make sure to keep 2mm clearance from the bottom
+
+TODO: Add x and y offset on aspirate step in addition to normal z offset
 
 Deck Layout:
 1 -> TipBox-Corning 200uL (orange)
@@ -12,12 +14,13 @@ Deck Layout:
 4 -> Round Bottom Storage
 5 -> Deep Block 96 well
 6 -> Corning 3635 Clear UV 96 well
-7 -> Empty
+7 -> PlateOne V Bottom
 8 -> Empty
 
 
-"""
 
+
+"""
 import os
 import sys
 from liquidhandling import SoloSoft
@@ -37,7 +40,7 @@ soloSoft = SoloSoft(
         "Plate.96.Agilent-5043-9310.RoundBottomStorage",
         "DeepBlock.96.VWR-75870-792.sterile",
         "Plate.96.Corning-3635.ClearUVAssay",
-        "Empty",
+        "Plate.96.PlateOne-1833-9600.ConicalBottomStorage",
         "Empty",
     ],
 )
