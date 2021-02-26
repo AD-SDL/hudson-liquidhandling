@@ -27,7 +27,7 @@ blowoff_volume = 0
 clearance_from_bottom = 2
 
 soloSoft = SoloSoft(
-    filename="putida_OD600_step4_TransferToRoundBottom.hso",
+    filename="putida_OD600_step4_ClearUVToPlateOneVBottom.hso",
     plateList=[
         "TipBox.200uL.Corning-4864.orangebox",
         "Empty",

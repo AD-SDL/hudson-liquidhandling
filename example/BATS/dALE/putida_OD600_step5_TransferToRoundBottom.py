@@ -27,11 +27,11 @@ blowoff_volume = 10
 aspirate_x_shift = 2
 aspirate_y_shift = 2 
 aspirate_z_shift = 2
-dispence_z_shift = 2
+dispense_z_shift = 2
 
 
 soloSoft = SoloSoft(
-    filename="putida_OD600_step4_TransferToRoundBottom.hso",
+    filename="putida_OD600_step5_TransferToRoundBottom.hso",
     plateList=[
         "TipBox.200uL.Corning-4864.orangebox",
         "Empty",
@@ -52,7 +52,7 @@ for i in range(1, 13):  # i = 1,2,..., 12
         aspirate_volumes=Plate_96_PlateOne_1833_9600_ConicalBottomStorage().setColumn(
             i, transfer_volume
         ),
-        aspirate_shift=[aspirate_x_shift, aspirate_y_shift, clearance_from_bottom],
+        aspirate_shift=[aspirate_x_shift, aspirate_y_shift, aspirate_z_shift],
         pre_aspirate=blowoff_volume,
     )
     soloSoft.dispense(
@@ -60,7 +60,7 @@ for i in range(1, 13):  # i = 1,2,..., 12
         dispense_volumes=Plate_96_Agilent_5043_9310_RoundBottomStorage().setColumn(
             i, transfer_volume
         ),
-        dispense_shift=[0, 0, clearance_from_bottom],
+        dispense_shift=[0, 0, dispense_z_shift],
         blowoff=blowoff_volume,
     )
 
