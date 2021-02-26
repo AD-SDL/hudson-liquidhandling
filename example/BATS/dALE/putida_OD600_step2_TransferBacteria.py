@@ -64,7 +64,6 @@ soloSoft.shuckTip()
 soloSoft.savePipeline()
 
 # UNCOMMENT FOLLOWING CODE TO GENERATE SOFTLINX .AHK FILE FOR THIS STEP ALONE
-
 softLinx = SoftLinx(
     "Putida.OD600.step2.TransferBacteria", "putida_OD600_step2_TransferBacteria.slvp"
 )

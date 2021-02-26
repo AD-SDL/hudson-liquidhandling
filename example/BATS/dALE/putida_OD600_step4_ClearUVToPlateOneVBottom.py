@@ -16,9 +16,6 @@ Deck Layout:
 8 -> Empty
 
 """
-
-
-
 import os
 import sys
 from liquidhandling import SoloSoft
@@ -56,7 +53,7 @@ for i in range(1, 13):  # i = 1,2,..., 12
     )
     soloSoft.dispense(
         position="Position7",
-        dispense_volumes=Plate_96_Agilent_5043_9310_RoundBottomStorage().setColumn(
+        dispense_volumes=Plate_96_PlateOne_1833_9600_ConicalBottomStorage().setColumn(
             i, transfer_volume
         ),
         dispense_shift=[0, 0, clearance_from_bottom],

@@ -5,7 +5,6 @@ Steps:
 - Transfer 180uL water from 12 Channel Reservoir - Column 1 to Corning 3635 - Columns 1-6
 - Transfer 180 uL water from 12 Channel Reservoir - Column 2 to Corning 3635 - Columns 7-12
 
-
 Deck Layout:
 1 -> TipBox-Corning 200uL (orange)
 2 -> Empty (HEATING NEST)

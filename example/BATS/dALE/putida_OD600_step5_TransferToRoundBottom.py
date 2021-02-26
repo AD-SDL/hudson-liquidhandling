@@ -3,9 +3,7 @@ Putida.OD600.step4.TransferToRoundBottom
 
 Steps: 
 - Transfer 20uL supernatant from PlateOneVBottom - Columns 1-12 to Round Bottom Storage - Columns 1-12 
-    - make sure to keep 2mm clearance from the bottom
-
-TODO: Add x and y offset on aspirate step in addition to normal z offset
+    - make sure to keep 2mm clearance from the bottom and add x and y offset during aspirate step
 
 Deck Layout:
 1 -> TipBox-Corning 200uL (orange)
@@ -17,9 +15,6 @@ Deck Layout:
 7 -> PlateOne V Bottom
 8 -> Empty
 
-
-
-
 """
 import os
 import sys
@@ -29,7 +24,11 @@ from liquidhandling import *
 # Program Variables
 transfer_volume = 20
 blowoff_volume = 10
-clearance_from_bottom = 2
+aspirate_x_shift = 2
+aspirate_y_shift = 2 
+aspirate_z_shift = 2
+dispence_z_shift = 2
+
 
 soloSoft = SoloSoft(
     filename="putida_OD600_step4_TransferToRoundBottom.hso",
@@ -49,11 +48,11 @@ soloSoft = SoloSoft(
 for i in range(1, 13):  # i = 1,2,..., 12
     soloSoft.getTip()  # need to get new tips every time
     soloSoft.aspirate(
-        position="Position6",
-        aspirate_volumes=Plate_96_Corning_3635_ClearUVAssay().setColumn(
+        position="Position7",
+        aspirate_volumes=Plate_96_PlateOne_1833_9600_ConicalBottomStorage().setColumn(
             i, transfer_volume
         ),
-        aspirate_shift=[0, 0, clearance_from_bottom],
+        aspirate_shift=[aspirate_x_shift, aspirate_y_shift, clearance_from_bottom],
         pre_aspirate=blowoff_volume,
     )
     soloSoft.dispense(
@@ -71,10 +70,10 @@ soloSoft.savePipeline()
 # UNCOMMENT FOLLOWING CODE TO GENERATE SOFTLINX .AHK FILE FOR THIS STEP ALONE
 
 softLinx = SoftLinx(
-    "Putida.OD600.step4.TransferToRoundBottom",
-    "putida_OD600_step4_TransferToRoundBottom.slvp",
+    "Putida.OD600.step5.TransferToRoundBottom",
+    "putida_OD600_step5_TransferToRoundBottom.slvp",
 )
 softLinx.soloSoftRun(
-    "C:\\Users\\svcaibio\\Dev\\liquidhandling\\example\\BATS\\dALE\\putida_OD600_step4_TransferToRoundBottom.hso"
+    "C:\\Users\\svcaibio\\Dev\\liquidhandling\\example\\BATS\\dALE\\putida_OD600_step5_TransferToRoundBottom.hso"
 )
 softLinx.saveProtocol()
