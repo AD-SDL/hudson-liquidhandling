@@ -4,6 +4,9 @@
 #TODO move this protocol to a jupyter notebook? -> might be a good idea just in case
 TODO: add notes on how to use this file
 TODO: test this protocol with water
+
+NOTE: Not enough application memory in SoloSoft to load this entire protocol.
+    # TODO figure out how to break up this protocol so that it loads in softLinx
 """
 
 from liquidhandling import SoloSoft, SoftLinx

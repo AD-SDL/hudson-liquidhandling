@@ -22,7 +22,7 @@ from liquidhandling import SoloSoft
 from liquidhandling import *
 
 # Program Variables
-transfer_volume = 200
+transfer_volume = 180
 blowoff_volume = 0
 clearance_from_bottom = 2
 
