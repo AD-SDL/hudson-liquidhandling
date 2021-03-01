@@ -232,3 +232,19 @@ class Plate_96_PlateOne_1833_9600_ConicalBottomStorage:
             9,
             "MCULE",
         )
+
+class AgarPlate_40mL_OmniTray_242811_ColonyPicker:   
+    def __new__(cls, plate=None):
+        return PlateDefinition(
+            "AgarPlate.40mLOmniTray-242811.ColonyPicker",
+            plate,
+            15.0,
+            6.9,
+            8,
+            12,
+            0,
+            0,
+            9,
+            9,
+            "Omni Tray with 40ml agar",
+        )
