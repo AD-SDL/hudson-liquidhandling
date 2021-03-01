@@ -30,7 +30,7 @@ spot_volume = 3.5
 #* -------------------------------------
 
 soloSoft = SoloSoft(
-    filename="dilute_then_spot1.hso", 
+    filename="dilute_then_spot.hso", 
     plateList=[
         "TipBox.200uL.Corning-4864.orangebox",
         "Empty",
