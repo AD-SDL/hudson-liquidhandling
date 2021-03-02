@@ -1,5 +1,5 @@
 """ 
-Putida.OD600.step2.TransferBacteria
+Putida.OD600.step3.TransferBacteria
 
 Steps: 
 - Transfer 20uL bacterial suspension from Deep Block - Columns 1-12 to Corning 3635 - Columns 1-12  
@@ -28,7 +28,7 @@ blowoff_volume = 10
 clearance_from_bottom = 3
 
 soloSoft = SoloSoft(
-    filename="putida_OD600_step2_TransferBacteria.hso",
+    filename="putida_OD600_step3_TransferBacteria.hso",
     plateList=[
         "TipBox.200uL.Corning-4864.orangebox",
         "Empty",
@@ -65,9 +65,9 @@ soloSoft.savePipeline()
 
 # UNCOMMENT FOLLOWING CODE TO GENERATE SOFTLINX .AHK FILE FOR THIS STEP ALONE
 softLinx = SoftLinx(
-    "Putida.OD600.step2.TransferBacteria", "putida_OD600_step2_TransferBacteria.slvp"
+    "Putida.OD600.step3.TransferBacteria", "putida_OD600_step3_TransferBacteria.slvp"
 )
 softLinx.soloSoftRun(
-    "C:\\Users\\svcaibio\\Dev\\liquidhandling\\example\\BATS\\dALE\\putida_OD600_step2_TransferBacteria.hso"
+    "C:\\Users\\svcaibio\\Dev\\liquidhandling\\example\\BATS\\dALE\\putida_OD600_step3_TransferBacteria.hso"
 )
 softLinx.saveProtocol()

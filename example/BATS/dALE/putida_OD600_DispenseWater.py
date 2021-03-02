@@ -1,9 +1,9 @@
 """ 
-Putida.OD600.step3.DispenseBuffer
+Putida.OD600.DispenseWater
 
 Steps: 
-- Transfer 180uL buffer from 12 Channel Reservoir - Column 7 to Round Bottom Storage - Columns 1-6
-- Transfer 180uL buffer from 12 Channel Reservoir - Column 8 to Round Bottom Storage - Columns 7-12
+- Transfer 180uL water from 12 Channel Reservoir - Column 1 to Corning 3635 - Columns 1-6
+- Transfer 180 uL water from 12 Channel Reservoir - Column 2 to Corning 3635 - Columns 7-12
 
 Deck Layout:
 1 -> TipBox-Corning 200uL (orange)
@@ -14,19 +14,23 @@ Deck Layout:
 6 -> Corning 3635 Clear UV 96 well
 7 -> PlateOne V Bottom
 8 -> Empty
-"""
 
+"""
 import os
 import sys
 from liquidhandling import SoloSoft
-from liquidhandling import *
+from liquidhandling import SoftLinx
+from liquidhandling import (
+    Reservoir_12col_Agilent_201256_100_BATSgroup,
+    Plate_96_Corning_3635_ClearUVAssay,
+)
 
 # Program Variables
 transfer_volume = 180
 blowoff_volume = 10
 
 soloSoft = SoloSoft(
-    filename="putida_OD600_step3_DispenseBuffer.hso",
+    filename="putida_OD600_DispenseWater.hso",
     plateList=[
         "TipBox.200uL.Corning-4864.orangebox",
         "Empty",
@@ -41,8 +45,8 @@ soloSoft = SoloSoft(
 
 soloSoft.getTip()
 
-for i in range(7, 9):  # columns in 12 channel reservoir
-    for j in range(1, 7):  # <- columns in round bottom storage
+for i in range(1, 3):  # columns in 12 channel reservoir
+    for j in range(1, 7):  # <- columns in corning 3635 clearUV
         soloSoft.aspirate(
             position="Position3",
             aspirate_volumes=Reservoir_12col_Agilent_201256_100_BATSgroup().setColumn(
@@ -56,22 +60,23 @@ for i in range(7, 9):  # columns in 12 channel reservoir
             pre_aspirate=blowoff_volume,
         )
         soloSoft.dispense(
-            position="Position4",
-            dispense_volumes=Plate_96_Agilent_5043_9310_RoundBottomStorage().setColumn(
-                (((i - 7) * 6) + j), transfer_volume
+            position="Position6",
+            dispense_volumes=Plate_96_Corning_3635_ClearUVAssay().setColumn(
+                (((i - 1) * 6) + j), transfer_volume
             ),
             dispense_shift=[0, 0, 2],
             blowoff=blowoff_volume,
         )
+
 soloSoft.shuckTip()
 soloSoft.savePipeline()
 
 # UNCOMMENT FOLLOWING CODE TO GENERATE SOFTLINX .AHK FILE FOR THIS STEP ALONE
 
 softLinx = SoftLinx(
-    "Putida.OD600.step3.DispenseBuffer", "putida_OD600_step3_DispenseBuffer.slvp"
+    "Putida.OD600.DispenseWater", "putida_OD600_DispenseWater.slvp"
 )
 softLinx.soloSoftRun(
-    "C:\\Users\\svcaibio\\Dev\\liquidhandling\\example\\BATS\\dALE\\putida_OD600_step3_DispenseBuffer.hso"
+    "C:\\Users\\svcaibio\\Dev\\liquidhandling\\example\\BATS\\dALE\\putida_OD600_DispenseWater.hso"
 )
 softLinx.saveProtocol()
