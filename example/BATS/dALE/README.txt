@@ -14,6 +14,7 @@ DECK LAYOUT:
 HOW TO RUN THESE PROTOCOLS:
     If you prefer to use SoloSoft .hso protocols:
         (Pregenerated SoloSoft protocols for all steps can be found in the premade_hso_files folder)
+        NOTE: pregenerated files only appear in repo on hudson01, git ignores .hso files
         - Open SoloSoft from the Desktop
         - Open the .hso file you wish to use and run it, all from within the SoloSoft applicaiton
 
