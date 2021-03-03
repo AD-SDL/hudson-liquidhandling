@@ -26,6 +26,7 @@ from liquidhandling import *
 transfer_volume = 20
 blowoff_volume = 10
 clearance_from_bottom = 3
+deep_block_mix_volume = 100 
 
 soloSoft = SoloSoft(
     filename="putida_OD600_step3_TransferBacteria.hso",

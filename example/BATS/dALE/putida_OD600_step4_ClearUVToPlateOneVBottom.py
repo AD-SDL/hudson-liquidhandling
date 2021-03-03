@@ -24,7 +24,7 @@ from liquidhandling import *
 # Program Variables
 transfer_volume = 150
 blowoff_volume = 0
-clearance_from_bottom = 2
+clearance_from_bottom = 1
 
 soloSoft = SoloSoft(
     filename="putida_OD600_step4_ClearUVToPlateOneVBottom.hso",
