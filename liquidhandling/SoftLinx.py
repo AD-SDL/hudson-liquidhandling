@@ -262,7 +262,63 @@ class SoftLinx:
             file.write("\tSleep, 5000\n")
             file.write("}\n")
 
+    def generateConditionalXML(self, parent, step):
+        activity_dict = {
+            "Text": "{x:Null}",
+            "ActivityLabel": "",
+            "DisplayName": step["DisplayName"],
+            "HasConstraints": "False",
+            "SLXId": step["SLXId"],
+            "ToolTip": step["ToolTip"],
+            "UserComments": "",
+            "isActive": step["isActive"],
+            "isSetup": "True",
+        }
+        ifelse_xml = ET.SubElement(parent, "IfElseActivity", activity_dict)
+        ifelse_activities = ET.SubElement(ifelse_xml, "IfElseActivity.Activities")
+        scg_list = ET.SubElement(
+            ifelse_activities,
+            "scg:List",
+            {
+                "x:TypeArguments": "p:Activity",
+                "Capacity": "4",
+            },
+        )
+        for substep in step["branchTrue"]:
+            self.generateStepXML(scg_list, substep)
+        ifelse_activities2 = ET.SubElement(ifelse_xml, "IfElseActivity.Activities")
+        scg_list = ET.SubElement(
+            ifelse_activities2,
+            "scg:List",
+            {
+                "x:TypeArguments": "p:Activity",
+                "Capacity": "4",
+            },
+        )
+        for substep in step["branchFalse"]:
+            self.generateStepXML(scg_list, substep)
+        ifelse_arguments = ET.SubElement(ifelse_xml, "IfElseActivity.Arguments")
+        ET.SubElement(
+            ifelse_arguments,
+            "IfElseActivityArguments",
+            {"Condition": step["conditionalStatement"]},
+        )
+        ifelse_timeconstraints = ET.SubElement(
+            ifelse_xml, "IfElseActivity.TimeConstraints"
+        )
+        ET.SubElement(
+            ifelse_timeconstraints,
+            "scg:List",
+            {
+                "x:TypeArguments": "hwab:TimeConstraint",
+                "Capacity": "0",
+            },
+        )
+
     def generateStepXML(self, scg_list, step):
+        if step["type"] == "IfElseActivity":
+            self.generateConditionalXML(scg_list, step)
+            return
         self.plugin_flags[step["system"]] = True
         activity_dict = {
             "IconPath": "{x:Null}",
@@ -329,6 +385,37 @@ class SoftLinx:
         )
         workflowViewState = ET.SubElement(step_xml, "sap2010:WorkflowViewState.IdRef")
         workflowViewState.text = "InstrumentActivity_1"
+
+    def conditional(
+        self,
+        conditionalStatement="",
+        branchTrue=[],
+        branchFalse=[],
+        isActive=True,
+        displayName="Conditional Statement",
+        index=None,
+        inplace=True,
+    ):
+        if not isinstance(branchTrue, list) or not isinstance(branchFalse, list):
+            raise ValueError("branchTrue and branchFalse must be a list of steps")
+        step = {
+            "type": "IfElseActivity",
+            "DisplayName": str(displayName),
+            "Command": "IfElseActivity",
+            "ToolTip": "If '%s'..." % (conditionalStatement),
+            "SLXId": "7744fd63-8699-40b9-9241-741e701dd8b3",
+            "isActive": str(isActive),
+            "branchTrue": branchTrue,
+            "branchFalse": branchFalse,
+            "conditionalStatement": str(conditionalStatement),
+        }
+
+        if inplace:
+            if index != None:
+                self.protocolSteps.insert(index, step)
+            else:
+                self.protocolSteps.append(step)
+        return step
 
     def plateCraneMoveCrane(
         self,

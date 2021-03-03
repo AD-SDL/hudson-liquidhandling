@@ -9,7 +9,11 @@ import os
 import sys
 from liquidhandling import SoloSoft
 from liquidhandling import SoftLinx
-from liquidhandling import Reservoir_12col_Agilent_201256_100_BATSgroup, Plate_96_Corning_3635_ClearUVAssay, Plate_96_Agilent_5043_9310_RoundBottomStorage
+from liquidhandling import (
+    Reservoir_12col_Agilent_201256_100_BATSgroup,
+    Plate_96_Corning_3635_ClearUVAssay,
+    Plate_96_Agilent_5043_9310_RoundBottomStorage,
+)
 
 soloSoft = SoloSoft(
     filename="putida_OD600_steps1and2_DispenseAll.hso",
@@ -25,7 +29,7 @@ soloSoft = SoloSoft(
     ],
 )
 
-#* DISPENSE WATER ------------------------------------------
+# * DISPENSE WATER ------------------------------------------
 
 # Program Variables
 transfer_volume = 180
@@ -88,11 +92,13 @@ for i in range(7, 9):  # columns in 12 channel reservoir
 soloSoft.shuckTip()
 soloSoft.savePipeline()
 
-softLinx = SoftLinx("Putida.OD600.Steps1and2.DispenseAll", "putida.OD600.Steps1and2.DispenseAll.slvp")
-softLinx.soloSoftRun("C:\\Users\\svcaibio\\Dev\\liquidhandling\\example\\BATS\\dALE\\putida_OD600_steps1and2_DispenseAll.hso")
+softLinx = SoftLinx(
+    "Putida.OD600.Steps1and2.DispenseAll", "putida.OD600.Steps1and2.DispenseAll.slvp"
+)
+softLinx.soloSoftRun(
+    "C:\\Users\\svcaibio\\Dev\\liquidhandling\\example\\BATS\\dALE\\putida_OD600_steps1and2_DispenseAll.hso"
+)
 softLinx.saveProtocol()
-
-
 
 
 # # Force steps 1-4 to run individually so that all .hso files are created
