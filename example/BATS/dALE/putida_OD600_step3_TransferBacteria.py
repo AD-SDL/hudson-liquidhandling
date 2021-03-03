@@ -26,6 +26,8 @@ from liquidhandling import *
 transfer_volume = 20
 blowoff_volume = 10
 clearance_from_bottom = 3
+deep_block_mix_volume = 100
+num_mixes = 5
 
 soloSoft = SoloSoft(
     filename="putida_OD600_step3_TransferBacteria.hso",
@@ -50,6 +52,10 @@ for i in range(1, 13):  # i = 1,2,..., 12
         ),
         aspirate_shift=[0, 0, clearance_from_bottom],
         pre_aspirate=blowoff_volume,
+        mix_at_start=True, 
+        mix_cycles=num_mixes, 
+        mix_volume=deep_block_mix_volume,
+        dispense_height=clearance_from_bottom,
     )
     soloSoft.dispense(
         position="Position6",
