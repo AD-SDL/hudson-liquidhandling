@@ -204,7 +204,7 @@ class DeepBlock_96VWR_75870_792_sterile:
 class Plate_96_Agilent_5043_9310_RoundBottomStorage:
     def __new__(cls, plate=None):
         return PlateDefinition(
-            "Plare.96.Agilent-5043-9310.RoundBottomStorage",
+            "Plate.96.Agilent-5043-9310.RoundBottomStorage",
             plate,
             14.6,
             10.2,
@@ -215,4 +215,36 @@ class Plate_96_Agilent_5043_9310_RoundBottomStorage:
             9,
             9,
             "Falcon 96-well round bottom (bacteria)",
+        )
+
+class Plate_96_PlateOne_1833_9600_ConicalBottomStorage:   
+    def __new__(cls, plate=None):
+        return PlateDefinition(
+            "Plate.96.PlateOne-1833-9600.ConicalBottomStorage",
+            plate,
+            14.5,
+            10.7,
+            8,
+            12,
+            0,
+            0,
+            9,
+            9,
+            "MCULE",
+        )
+
+class AgarPlate_40mL_OmniTray_242811_ColonyPicker:   
+    def __new__(cls, plate=None):
+        return PlateDefinition(
+            "AgarPlate.40mLOmniTray-242811.ColonyPicker",
+            plate,
+            15.0,
+            6.9,
+            8,
+            12,
+            0,
+            0,
+            9,
+            9,
+            "Omni Tray with 40ml agar",
         )

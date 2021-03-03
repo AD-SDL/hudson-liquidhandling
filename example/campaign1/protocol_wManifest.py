@@ -15,15 +15,16 @@ manifest_list = []
 
 # initialise soloSoft with an empty deck and no given file name
 soloSoft = SoloSoft(filename="protocol_wManifest.hso")
-soloSoft.getTip()  # add items to the soloSoft pipeline
-soloSoft.shuckTip()
+soloSoft.moveArm(destination="Position1")  # add items to the soloSoft pipeline
+soloSoft.moveArm(destination="TipDisposal")
 soloSoft.savePipeline()
 
 softLinx = SoftLinx("Protocol with Manifest", "protocol_wManifest.slvp")
+softLinx.setPlates({"SoftLinx.PlateCrane.Stack1": "Plate.96.PlateOne-1833-9600.ConicalBottomStorage"})
 
 # add each step and add to manifest list if necessary
 softLinx.soloSoftRun(
-    "C:\\Users\\svcaibio\\Dev\\liquidhandling\\example\\campaign1\\protocol_wManifest.hso"
+    "C:\\labautomation\\instructions\\protocol_wManifest.hso"
 )
 manifest_list.append("protocol_wManifest.hso")
 
