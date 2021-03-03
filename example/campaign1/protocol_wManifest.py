@@ -20,12 +20,12 @@ soloSoft.moveArm(destination="TipDisposal")
 soloSoft.savePipeline()
 
 softLinx = SoftLinx("Protocol with Manifest", "protocol_wManifest.slvp")
-softLinx.setPlates({"SoftLinx.PlateCrane.Stack1": "Plate.96.PlateOne-1833-9600.ConicalBottomStorage"})
+softLinx.setPlates(
+    {"SoftLinx.PlateCrane.Stack1": "Plate.96.PlateOne-1833-9600.ConicalBottomStorage"}
+)
 
 # add each step and add to manifest list if necessary
-softLinx.soloSoftRun(
-    "C:\\labautomation\\instructions\\protocol_wManifest.hso"
-)
+softLinx.soloSoftRun("C:\\labautomation\\instructions\\protocol_wManifest.hso")
 manifest_list.append("protocol_wManifest.hso")
 
 softLinx.plateCraneMovePlate(

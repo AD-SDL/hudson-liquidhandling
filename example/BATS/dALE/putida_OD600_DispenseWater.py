@@ -73,9 +73,7 @@ soloSoft.savePipeline()
 
 # UNCOMMENT FOLLOWING CODE TO GENERATE SOFTLINX .AHK FILE FOR THIS STEP ALONE
 
-softLinx = SoftLinx(
-    "Putida.OD600.DispenseWater", "putida_OD600_DispenseWater.slvp"
-)
+softLinx = SoftLinx("Putida.OD600.DispenseWater", "putida_OD600_DispenseWater.slvp")
 softLinx.soloSoftRun(
     "C:\\Users\\svcaibio\\Dev\\liquidhandling\\example\\BATS\\dALE\\putida_OD600_DispenseWater.hso"
 )

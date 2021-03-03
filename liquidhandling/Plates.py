@@ -217,7 +217,8 @@ class Plate_96_Agilent_5043_9310_RoundBottomStorage:
             "Falcon 96-well round bottom (bacteria)",
         )
 
-class Plate_96_PlateOne_1833_9600_ConicalBottomStorage:   
+
+class Plate_96_PlateOne_1833_9600_ConicalBottomStorage:
     def __new__(cls, plate=None):
         return PlateDefinition(
             "Plate.96.PlateOne-1833-9600.ConicalBottomStorage",
@@ -233,7 +234,8 @@ class Plate_96_PlateOne_1833_9600_ConicalBottomStorage:
             "MCULE",
         )
 
-class AgarPlate_40mL_OmniTray_242811_ColonyPicker:   
+
+class AgarPlate_40mL_OmniTray_242811_ColonyPicker:
     def __new__(cls, plate=None):
         return PlateDefinition(
             "AgarPlate.40mLOmniTray-242811.ColonyPicker",
