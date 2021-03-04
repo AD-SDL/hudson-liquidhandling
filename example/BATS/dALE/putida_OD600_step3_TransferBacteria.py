@@ -24,7 +24,7 @@ from liquidhandling import *
 
 # Program Variables
 transfer_volume = 20
-blowoff_volume = 10
+blowoff_volume = 0
 clearance_from_bottom = 3
 deep_block_mix_volume = 100
 num_mixes = 5
