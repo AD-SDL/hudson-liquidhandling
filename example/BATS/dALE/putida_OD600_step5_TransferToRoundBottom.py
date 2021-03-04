@@ -25,7 +25,7 @@ from liquidhandling import *
 transfer_volume = 20
 blowoff_volume = 10
 aspirate_x_shift = 2
-aspirate_y_shift = 2
+aspirate_y_shift = 2 
 aspirate_z_shift = 2
 dispense_z_shift = 2
 
