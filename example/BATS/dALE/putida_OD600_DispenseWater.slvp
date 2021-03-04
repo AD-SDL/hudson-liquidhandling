@@ -1,0 +1,86 @@
+<Protocol mc:Ignorable="sap sap2010 sads" PreProtocolWizard="{x:Null}" ActivityLabel="" DisplayName="Putida.OD600.DispenseWater" HasConstraints="False" sap2010:WorkflowViewState.IdRef="Protocol_1" SLXId="df50c4dd-572a-41df-a285-0caf0907a053" ToolTip="" UserComments="" isActive="True" isSetup="True" xmlns="clr-namespace:Hudson.Workflow.Activities;assembly=Hudson.Workflow.Activities" xmlns:hcc="clr-namespace:Hudson.Common.Communications;assembly=Hudson.Common" xmlns:hwab="clr-namespace:Hudson.Workflow.Activities.Base;assembly=SoftLinxBaseActivities" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:p="http://schemas.microsoft.com/netfx/2009/xaml/activities" xmlns:s="clr-namespace:System;assembly=mscorlib" xmlns:sads="http://schemas.microsoft.com/netfx/2010/xaml/activities/debugger" xmlns:sap="http://schemas.microsoft.com/netfx/2009/xaml/activities/presentation" xmlns:sap2010="http://schemas.microsoft.com/netfx/2010/xaml/activities/presentation" xmlns:scg="clr-namespace:System.Collections.Generic;assembly=mscorlib" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <Protocol.Activities>
+    <scg:List x:TypeArguments="p:Activity" Capacity="4">
+      <InstrumentActivity IconPath="{x:Null}" CommandLine="Run" Description="Protocol: C:\Users\svcaibio\Dev\liquidhandling\example\BATS\dALE\putida_OD600_DispenseWater.hso" DisplayName="Solo" HasConstraints="False" SLXId="5eb5e609-1660-4c5b-ade7-f51828196e13" ToolTip="Protocol: C:\Users\svcaibio\Dev\liquidhandling\example\BATS\dALE\putida_OD600_DispenseWater.hso" UserComments="" isActive="True" isCanceled="False" isSetup="True">
+        <InstrumentActivity.Arguments>
+          <InstrumentActivityArguments Address="{x:Reference __ReferenceID5}" ResultVariable="{x:Null}" AddinType="Solo" Command="Run">
+            <InstrumentActivityArguments.Arguments>
+              <scg:List x:TypeArguments="x:Object" Capacity="1">
+                <x:String>C:\Users\svcaibio\Dev\liquidhandling\example\BATS\dALE\putida_OD600_DispenseWater.hso</x:String>
+              </scg:List>
+            </InstrumentActivityArguments.Arguments>
+          <InstrumentActivityArguments.hWnd>
+              <s:IntPtr />
+            </InstrumentActivityArguments.hWnd>
+          </InstrumentActivityArguments>
+        </InstrumentActivity.Arguments>
+      <InstrumentActivity.TimeConstraints>
+          <scg:List x:TypeArguments="hwab:TimeConstraint" Capacity="0" />
+        </InstrumentActivity.TimeConstraints>
+      <sap2010:WorkflowViewState.IdRef>InstrumentActivity_1</sap2010:WorkflowViewState.IdRef>
+      </InstrumentActivity>
+    </scg:List>
+  </Protocol.Activities>
+<Protocol.Activities2>
+    <scg:List x:TypeArguments="p:Activity" Capacity="0" />
+  </Protocol.Activities2>
+<Protocol.InitialValues>
+    <scg:Dictionary x:TypeArguments="x:String, hwab:Variable" />
+  </Protocol.InitialValues>
+<Protocol.Interfaces>
+    <scg:Dictionary x:TypeArguments="hcc:SLAddress, hwab:Interface">
+      <x:Reference>__ReferenceID0<x:Key>
+          <x:Reference>__ReferenceID3</x:Reference>
+        </x:Key>
+      </x:Reference>
+    <x:Reference>__ReferenceID1<x:Key>
+          <x:Reference>__ReferenceID4</x:Reference>
+        </x:Key>
+      </x:Reference>
+    <x:Reference>__ReferenceID2<x:Key>
+          <x:Reference>__ReferenceID5</x:Reference>
+        </x:Key>
+      </x:Reference>
+    </scg:Dictionary>
+  </Protocol.Interfaces>
+<Protocol.TimeConstraints>
+    <scg:List x:TypeArguments="hwab:TimeConstraint" Capacity="0" />
+  </Protocol.TimeConstraints>
+<Protocol.Variables>
+    <hwab:VariableList SLXHost="{x:Null}">
+      <hwab:Variable x:TypeArguments="hwab:Interface" Value="{x:Reference __ReferenceID0}" x:Key="SoftLinx.PlateCrane" Name="SoftLinx.PlateCrane" Prompt="False">
+        <hwab:Variable.Default>
+          <hwab:Interface SetupData="{x:Null}" x:Name="__ReferenceID0" AddinType="PlateCrane">
+            <hwab:Interface.Address>
+              <hcc:SLAddress x:Name="__ReferenceID3" Name="PlateCrane" Workcell="SoftLinx" />
+            </hwab:Interface.Address>
+          </hwab:Interface>
+        </hwab:Variable.Default>
+      </hwab:Variable>
+    <hwab:Variable x:TypeArguments="hwab:Interface" Value="{x:Reference __ReferenceID1}" x:Key="SoftLinx.Plates" Name="SoftLinx.Plates" Prompt="False">
+        <hwab:Variable.Default>
+          <hwab:Interface SetupData="{x:Null}" x:Name="__ReferenceID1" AddinType="Plates">
+            <hwab:Interface.Address>
+              <hcc:SLAddress x:Name="__ReferenceID4" Name="Plates" Workcell="SoftLinx" />
+            </hwab:Interface.Address>
+          </hwab:Interface>
+        </hwab:Variable.Default>
+      </hwab:Variable>
+    <hwab:Variable x:TypeArguments="hwab:Interface" Value="{x:Reference __ReferenceID2}" x:Key="SoftLinx.Solo" Name="SoftLinx.Solo" Prompt="False">
+        <hwab:Variable.Default>
+          <hwab:Interface SetupData="{x:Null}" x:Name="__ReferenceID2" AddinType="Solo">
+            <hwab:Interface.Address>
+              <hcc:SLAddress x:Name="__ReferenceID5" Name="Solo" Workcell="SoftLinx" />
+            </hwab:Interface.Address>
+          </hwab:Interface>
+        </hwab:Variable.Default>
+      </hwab:Variable>
+    </hwab:VariableList>
+  </Protocol.Variables>
+<sap2010:WorkflowViewState.ViewStateManager>
+    <sap2010:ViewStateManager>
+      <sap2010:ViewStateData Id="Protocol_1" sap:VirtualizedContainerService.HintSize="205,119" />
+    </sap2010:ViewStateManager>
+  </sap2010:WorkflowViewState.ViewStateManager>
+<sads:DebugSymbol.Symbol>dypDOlxVc2Vyc1xyeWFuZFxEZXZcTmV3UHJvdG9jb2xfcGx1Z2luLnNsdnABAQFqDAEB</sads:DebugSymbol.Symbol>
+</Protocol>
