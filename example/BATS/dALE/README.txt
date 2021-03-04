@@ -13,10 +13,10 @@ DECK LAYOUT:
 
 HOW TO RUN THESE PROTOCOLS:
     If you prefer to use SoloSoft .hso protocols:
-        (Pregenerated SoloSoft protocols for all steps can be found in the premade_hso_files folder)
-        NOTE: pregenerated files only appear in repo on hudson01, git ignores .hso files
+        (Premade SoloSoft protocols for all steps can be found in the premade_hso_files folder)
+        NOTE: premadefiles only appear in repo on hudson01, git ignores .hso files
         - Open SoloSoft from the Desktop
-        - Open the .hso file you wish to use and run it, all from within the SoloSoft applicaiton
+        - Open the .hso file you wish to use and run it, all from within the SoloSoft application
 
     If you prefer to use SoftLinx:
         - make sure that you cd into the correct folder...
@@ -59,7 +59,7 @@ putida_OD600_step5_TransferToRoundBottom.py
 - Transfer 20uL supernatant from ConicalBottomStorage - Columns 1-12 to 
   RoundBottomStorage - Columns 1-12 
     - 2mm clearance from the bottom
-    - 2mm x and y shift durring aspiration
+    - 2mm x and y shift during aspiration
 
 
         
