@@ -23,7 +23,7 @@ from liquidhandling import *
 
 # Program Variables
 transfer_volume = 180
-blowoff_volume = 10
+blowoff_volume = 0
 
 soloSoft = SoloSoft(
     filename="putida_OD600_DispenseBuffer.hso",

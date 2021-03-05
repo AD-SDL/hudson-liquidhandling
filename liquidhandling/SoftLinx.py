@@ -1,6 +1,7 @@
 import os
 import xml.etree.ElementTree as ET
-
+import time
+import datetime
 
 class SoftLinx:
     def __init__(
@@ -16,6 +17,7 @@ class SoftLinx:
         self.protocolSteps = []
         self.variables = []
         self.plates = {}
+        self.manifest_list = []  
         self.plugin_flags = {
             "PlateCrane": False,
             "Plates": False,
@@ -37,6 +39,7 @@ class SoftLinx:
             # "RapidPick": 8,
             # "TorreyPinesRIC20": 9,
         }
+        
 
         # *Set Protocol Name
         try:
@@ -112,6 +115,11 @@ class SoftLinx:
                 "Plates must be a dict with key 'position' and value 'plate name'."
             )
         self.plates = plates
+    
+    def addToManifest(self, filename):   
+        if not isinstance(filename, str):
+            raise TypeError("filename must be a string to add to manifest.")
+        self.manifest_list.append(filename)
 
     def activityCapacityCalculator(self):
         if len(self.protocolSteps) > 0:
@@ -558,6 +566,15 @@ class SoftLinx:
                 self.protocolSteps.insert(index, step)
             else:
                 self.protocolSteps.append(step)
+        #* Add .hso filename to manifest list    
+        if "\\" in filename:      
+            hso_filename = filename.split("\\")[-1]
+        elif "/" in filename:
+            hso_filename = filename.split("/")[-1]
+        else:
+            hso_filename = filename
+        self.addToManifest(hso_filename)
+
         return step
 
     def soloSoftResetTipCount(
@@ -709,10 +726,17 @@ class SoftLinx:
         ).replace("&amp;", "&")
         with open(filename, "w") as file:
             file.write(xmlstring)
+        # *Add .slvp filename to manifest list
+        self.addToManifest(os.path.basename(filename))
         # *Generate AutoHotKey script
         self.generateAutoHotKey(
             os.path.basename(filename), os.path.splitext(filename)[0] + ".ahk"
         )
+        # *Add AutoHotKey filename to manifest list
+        self.addToManifest(os.path.splitext(filename)[0] + ".ahk")
+        # *Generate Manifest File
+        self.generateManifest()   
+        #)
 
     # *Pretty-print XML
     def indent(self, element, level=0):
@@ -731,3 +755,14 @@ class SoftLinx:
             if level and (not element.tail or not element.tail.strip()):
                 element.tail = j
         return element
+
+    def generateManifest(self, manifest_filename = None):     
+        if manifest_filename == None:
+            manifest_filename = os.path.splitext(self.filename)[0] + ".txt"
+        else: 
+            manifest_filename = os.path.abspath(self.filename).replace(os.path.basename(self.filename), manifest_filename)
+
+        with open(manifest_filename, "w+") as manifest_file:
+            manifest_file.write(str(time.time()) + "\n" + str(datetime.datetime.now()) + "\n")  # add timestamps
+            manifest_file.writelines("\n".join(self.manifest_list))
+

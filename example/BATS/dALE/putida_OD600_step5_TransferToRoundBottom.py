@@ -23,7 +23,7 @@ from liquidhandling import *
 
 # Program Variables
 transfer_volume = 20
-blowoff_volume = 10
+blowoff_volume = 0
 aspirate_x_shift = 2
 aspirate_y_shift = 2 
 aspirate_z_shift = 2

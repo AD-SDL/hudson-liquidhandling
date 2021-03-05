@@ -33,7 +33,7 @@ soloSoft = SoloSoft(
 
 # Program Variables
 transfer_volume = 180
-blowoff_volume = 10
+blowoff_volume = 0
 
 soloSoft.getTip()
 for i in range(1, 3):  # columns in 12 channel reservoir
