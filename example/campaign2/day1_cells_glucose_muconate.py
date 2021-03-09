@@ -6,7 +6,7 @@ Steps:
 1.) Transfer bacteria from 12 channel reservoir to Corning BlackwClearBottomAssay
     output = day1_step1_TransferCells.hso
 2.) Create muconate dilutions on PlateOne ConicalBottomStorage from muconate stock and buffer in 12 channel reservoir 
-    output = day1_step3_CombineCellsGlucoseMuconate.hso
+    output = day1_step2_DiluteMuconate.hso
 3.) Add 10uL glucose dilutions and 10uL muconate dilutions to Corning BlackwClearBottomAssay plate already containing cells
     output = day1_step3_CombineCellsGlucoseMuconate.hso
 
