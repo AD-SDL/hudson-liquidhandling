@@ -1,10 +1,13 @@
 """
-Campaign 1, Day 1
+Campaign 2, Day 1
 
 Steps: 
 1.) Transfer bacteria from 12 channel reservoir to Corning BlackwClearBottomAssay
+    output = day1_step1_TransferCells.hso
 2.) Create muconate dilutions on PlateOne ConicalBottomStorage from muconate stock and buffer in 12 channel reservoir 
+    output = day1_step3_CombineCellsGlucoseMuconate.hso
 3.) Add 10uL glucose dilutions and 10uL muconate dilutions to Corning BlackwClearBottomAssay plate already containing cells
+    output = day1_step3_CombineCellsGlucoseMuconate.hso
 
 WILL INCUBATE IN HIDEX FOR 21 HOURS FOLLOWING COMPLETION OF THIS PROTOCOL
 
@@ -40,7 +43,7 @@ muconate_dilution_volumes = [84, 78, 72, 66, 60, 54, 48, 42, 36, 30, 24, 0]
 muconate_12_channel_column = 6
 muconate_blowoff = 0
 
-buffer_dilution_volumes = [6, 72, 78, 84, 90, 96, 102, 108, 114, 120, 126, 150]
+buffer_dilution_volumes = [66, 72, 78, 84, 90, 96, 102, 108, 114, 120, 126, 150]
 buffer_12_channel_column = 7
 buffer_blowoff = 0
 
@@ -52,7 +55,7 @@ muconate_blowoff = 0
 
 #* Initialize solosoft and deck layout 
 soloSoft = SoloSoft(
-    filename="day1_cells_glucose_muconate.hso", 
+    filename="day1_step1_TransferCells.hso", 
     plateList=[
         "TipBox.200uL.Corning-4864.orangebox", 
         "Empty", 
@@ -88,10 +91,27 @@ for i in range(1,3):
         )
 
         # for testing
-        j_column = (6*(i-1))+j
-        print("Cell spirate: 12 channel ( " + str(i)  + " ) to BlackwClearBottomAssay ( " + str(j_column) + " )") 
+        # j_column = (6*(i-1))+j
+        # print("Cell spirate: 12 channel ( " + str(i)  + " ) to BlackwClearBottomAssay ( " + str(j_column) + " )") 
+
+soloSoft.shuckTip()
+soloSoft.savePipeline()
 
 #* STEP 2: Create Muconate Dilution plate -----------------------------------------------
+
+soloSoft = SoloSoft(
+    filename="day1_step2_DiluteMuconate.hso", 
+    plateList=[
+        "TipBox.200uL.Corning-4864.orangebox", 
+        "Empty", 
+        "Reservoir.12col.Agilent-201256-100.BATSgroup", 
+        "Plate.96.Corning-3635.ClearUVAssay", 
+        "Plate.96.PlateOne-1833-9600.ConicalBottomStorage", 
+        "Plate.96.PlateOne-1833-9600.ConicalBottomStorage", 
+        "TipBox.50uL.Axygen-EV-50-R-S.tealbox", 
+        "Empty"
+    ]
+)
 
 # Dispense buffer into whole dilution plate
 soloSoft.getTip()  # 200uL tips 
@@ -126,7 +146,24 @@ for i in range(1,13):
         # no need to mix, will shake in Hidex 
     )
 
+soloSoft.shuckTip()
+soloSoft.savePipeline()
+
 #* STEP 3: Combine muconate and glucose with cell plate -> New tips each transfer!
+
+soloSoft = SoloSoft(
+    filename="day1_step3_CombineCellsGlucoseMuconate.hso", 
+    plateList=[
+        "TipBox.200uL.Corning-4864.orangebox", 
+        "Empty", 
+        "Reservoir.12col.Agilent-201256-100.BATSgroup", 
+        "Plate.96.Corning-3635.ClearUVAssay", 
+        "Plate.96.PlateOne-1833-9600.ConicalBottomStorage", 
+        "Plate.96.PlateOne-1833-9600.ConicalBottomStorage", 
+        "TipBox.50uL.Axygen-EV-50-R-S.tealbox", 
+        "Empty"
+    ]
+)
 
 for i in range(1,13):
     # dispense glucose into cell plate 
@@ -159,6 +196,13 @@ for i in range(1,13):
     )
 
     # no need to mix -> will shake in the Hidex
-
 soloSoft.shuckTip()
 soloSoft.savePipeline()
+
+#* Add Steps 1-3 .hso files to SofltLinx .slvp file (and generate .ahk and manifest .txt files)
+softLinx = SoftLinx("day1_cells_glucose_muconate", "day1_cells_glucose_muconate.slvp")
+# softLinx.soloSoftRun()  # add the correct paths of the .hso files 
+# softLinx.soloSoftRun()      # assume transfered from lambda 6 or run locally for prep on hudson01? 
+# softLinx.soloSoftRun() 
+softLinx.saveProtocol() 
+
