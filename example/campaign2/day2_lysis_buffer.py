@@ -27,9 +27,10 @@ from liquidhandling import Plate_96_Corning_3635_ClearUVAssay
 #* Program Variables
 lysis_12_channel_column = 12
 lysis_transfer_volume = 22.2
-lysis_syringe_speed = 50
+lysis_syringe_speed = 25
 lysis_blowoff = 0
-default_z_shift = 2
+reservoir_z_shift = 4  # need a larger z shift for 12 channel reservoir (Still? has been remeasured?)
+dispense_z_shift = 2
 
 #* Initialize solosoft and deck layout 
 soloSoft = SoloSoft(
@@ -52,16 +53,15 @@ for i in range (1,13):
     soloSoft.aspirate(
         position="Position3", 
         aspirate_volumes=Reservoir_12col_Agilent_201256_100_BATSgroup().setColumn(lysis_12_channel_column, lysis_transfer_volume), 
-        aspirate_shift=[0,0,default_z_shift], 
+        aspirate_shift=[0,0,reservoir_z_shift], 
         pre_aspirate=lysis_blowoff,
         syringe_speed=lysis_syringe_speed,
-        # mix lysis buffer before transfer? 
+        # mix lysis buffer before transfer? -> might cause bubbles...
     )
-
     soloSoft.dispense(
         position="Position4", 
         dispense_volumes=Plate_96_Corning_3635_ClearUVAssay().setColumn(i, lysis_transfer_volume), 
-        dispense_shift=[0,0,default_z_shift], 
+        dispense_shift=[0,0,dispense_z_shift], 
         blowoff=lysis_blowoff,
         syringe_speed=lysis_syringe_speed,
     )
@@ -71,7 +71,7 @@ soloSoft.savePipeline()
 
 # add .hso file to SoftLinx .slvp file 
 softLinx = SoftLinx("day2_step1_AddLysisBuffer", "day2_step1_AddLysisBuffer.slvp")
-# softLinx.soloSoftRun()  #<----- Add correct file path to .hso file (labautomation/instrucitons)
+softLinx.soloSoftRun("C:\\Users\\svcaibio\\Dev\\liquidhandling\\example\\campaign2\\day2_step1_AddLysisBuffer.hso")  
 softLinx.saveProtocol() 
 
 

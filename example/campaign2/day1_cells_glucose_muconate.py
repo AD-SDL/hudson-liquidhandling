@@ -1,3 +1,4 @@
+
 """
 Campaign 2, Day 1
 
@@ -15,6 +16,10 @@ Deck Layout:
 1 -> TipBox.200uL.Corning-4864.orangebox
 2 -> Empty (HEAT NEST)
 3 -> Reservoir.12col.Agilent-201256-100.BATSgroup
+        Columns 1,2 -> cells
+        Column 6 -> Muconate stock (50nm)
+        Column 7 -> Buffer for Muconate Dilutions
+        (eventually) Column 12 -> lysis byffer (add just before runnig day 2 protocol)
 4 -> Plate.96.Corning-3635.ClearUVAssay    (same measurements as Corning Black UV)
 5 -> Plate.96.PlateOne-1833-9600.ConicalBottomStorage
 6 -> Plate.96.PlateOne-1833-9600.ConicalBottomStorage
@@ -39,19 +44,24 @@ cell_mix_volume = 150
 cell_num_mixes = 3
 
 # Step 2 variables 
-muconate_dilution_volumes = [84, 78, 72, 66, 60, 54, 48, 42, 36, 30, 24, 0]
-muconate_12_channel_column = 6
+muconate_dilution_volumes = [84, 78, 72, 66, 60, 54, 48, 42, 36, 30, 24]  # last column excluded (can't aspirate 0uL)
+muconate_12_channel_column = 7
 muconate_blowoff = 0
 
 buffer_dilution_volumes = [66, 72, 78, 84, 90, 96, 102, 108, 114, 120, 126, 150]
-buffer_12_channel_column = 7
+buffer_12_channel_column = 6
 buffer_blowoff = 0
+
+dilution_mix_volume = 80
+dilution_num_mixes = 3
 
 # Step 3 Variables 
 glucose_transfer_volume = 10
 glucose_blowoff = 0
 muconate_transfer_volume = 10
 muconate_blowoff = 0
+step3_mix_volume = 50
+step3_num_mixes = 3
 
 #* Initialize solosoft and deck layout 
 soloSoft = SoloSoft(
@@ -126,12 +136,10 @@ for i in range(1,13):
         position="Position5", 
         dispense_volumes=Plate_96_PlateOne_1833_9600_ConicalBottomStorage().setColumn(i, buffer_dilution_volumes[i-1]), 
         aspirate_height=default_z_shift, 
-        blowoff=buffer_blowoff,
-        # no need to mix, will shake in Hidex 
+        blowoff=buffer_blowoff, 
     )
-
 # dispense muconate into whole dilution plate, no need to get new tips here
-for i in range(1,13):
+for i in range(1,12):
     soloSoft.aspirate(
         position="Position3", 
         aspirate_volumes=Reservoir_12col_Agilent_201256_100_BATSgroup().setColumn(muconate_12_channel_column, muconate_dilution_volumes[i-1]), 
@@ -143,14 +151,16 @@ for i in range(1,13):
         dispense_volumes=Plate_96_PlateOne_1833_9600_ConicalBottomStorage().setColumn(i, muconate_dilution_volumes[i-1]), 
         aspirate_height=default_z_shift, 
         blowoff=buffer_blowoff,
+        mix_at_finish=True, 
+        mix_volume=dilution_mix_volume, 
+        mix_cycles=dilution_num_mixes, 
+        aspirate_height=default_z_shift
         # no need to mix, will shake in Hidex 
     )
-
 soloSoft.shuckTip()
 soloSoft.savePipeline()
 
-#* STEP 3: Combine muconate and glucose with cell plate -> New tips each transfer!
-
+#* STEP 3: Combine muconate and glucose with cell plate -> New tips each transfer! -------------------
 soloSoft = SoloSoft(
     filename="day1_step3_CombineCellsGlucoseMuconate.hso", 
     plateList=[
@@ -173,6 +183,10 @@ for i in range(1,13):
         aspirate_volumes=Plate_96_PlateOne_1833_9600_ConicalBottomStorage().setColumn(i, glucose_transfer_volume), 
         aspirate_shift=[0,0,default_z_shift], 
         pre_aspirate=glucose_blowoff,
+        mix_at_start=True, 
+        mix_volume=step3_mix_volume, 
+        mix_cycles=step3_num_mixes,
+        dispense_height=default_z_shift,
     )
     soloSoft.dispense(
         position="Position4", 
@@ -186,23 +200,27 @@ for i in range(1,13):
         position="Position5", 
         aspirate_volumes=Plate_96_PlateOne_1833_9600_ConicalBottomStorage().setColumn(i, muconate_transfer_volume), 
         aspirate_shift=[0,0,default_z_shift], 
-        pre_aspirate=muconate_blowoff, 
+        pre_aspirate=muconate_blowoff,
+        mix_at_start=True,
+        mix_volume=step3_mix_volume,
+        mix_cycles=step3_num_mixes,
+        dispense_height=default_z_shift,
     )
     soloSoft.dispense(
         position="Position4", 
         dispense_volumes=Plate_96_Corning_3635_ClearUVAssay().setColumn(i, muconate_transfer_volume), 
         dispense_shift=[0,0,default_z_shift], 
         blowoff=muconate_blowoff,
+        # no need to mix -> will shake in the Hidex
     )
-
-    # no need to mix -> will shake in the Hidex
+    
 soloSoft.shuckTip()
 soloSoft.savePipeline()
 
 #* Add Steps 1-3 .hso files to SofltLinx .slvp file (and generate .ahk and manifest .txt files)
 softLinx = SoftLinx("day1_cells_glucose_muconate", "day1_cells_glucose_muconate.slvp")
-# softLinx.soloSoftRun()  # add the correct paths of the .hso files 
-# softLinx.soloSoftRun()      # assume transfered from lambda 6 or run locally for prep on hudson01? 
-# softLinx.soloSoftRun() 
+softLinx.soloSoftRun("C:\\Users\\svcaibio\\Dev\\liquidhandling\\example\\campaign2\\day1_step1_TransferCells.hso")  # add the correct paths of the .hso files 
+softLinx.soloSoftRun("C:\\Users\\svcaibio\\Dev\\liquidhandling\\example\\campaign2\\day1_step2_DiluteMuconate.hso")      # assume transfered from lambda 6 or run locally for prep on hudson01? 
+softLinx.soloSoftRun("C:\\Users\\svcaibio\\Dev\\liquidhandling\\example\\campaign2\\day1_step3_CombineCellsGlucoseMuconate.hso") 
 softLinx.saveProtocol() 
 
