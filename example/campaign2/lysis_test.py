@@ -49,3 +49,7 @@ for i in range(5):
 
 soloSoft.shuckTip()
 soloSoft.savePipeline()
+
+softLinx = SoftLinx("Lysis Test", "lysis_test.slvp")
+softLinx.soloSoftRun("C:\\labautomation\\instructions\\lysis_test.hso")
+softLinx.saveProtocol()
