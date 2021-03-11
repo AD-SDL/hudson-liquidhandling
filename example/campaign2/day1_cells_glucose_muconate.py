@@ -21,8 +21,11 @@ Deck Layout:
         Column 7 -> Buffer for Muconate Dilutions
         (eventually) Column 12 -> lysis byffer (add just before runnig day 2 protocol)
 4 -> Plate.96.Corning-3635.ClearUVAssay    (same measurements as Corning Black UV)
+        Empty at start, will be final assay plate
 5 -> Plate.96.PlateOne-1833-9600.ConicalBottomStorage
+        Empty at start, Muconate Dilution plate
 6 -> Plate.96.PlateOne-1833-9600.ConicalBottomStorage
+        Glucose Dilution Plate
 7 -> TipBox.50uL.Axygen-EV-50-R-S.tealbox
 8 -> Empty
 """
@@ -151,7 +154,7 @@ for i in range(1,12):
     soloSoft.dispense(
         position="Position5", 
         dispense_volumes=Plate_96_PlateOne_1833_9600_ConicalBottomStorage().setColumn(i, muconate_dilution_volumes[i-1]), 
-        aspirate_height=default_z_shift, 
+        dispense_shift=[0,0,default_z_shift],
         blowoff=buffer_blowoff,
         mix_at_finish=True, 
         mix_volume=dilution_mix_volume, 
