@@ -6,7 +6,7 @@ aspirate_volume = 22.2
 aspirate_mix_volume = 20
 aspirate_num_mixes = 3
 aspirate_syringe_speed = 25 
-default_z_shift = 4
+default_z_shift = 1  # TODO: TEST THIS!
 default_blowoff = 0
 
 #* Initialize solosoft and deck layout 

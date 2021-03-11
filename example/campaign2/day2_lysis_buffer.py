@@ -29,7 +29,7 @@ lysis_12_channel_column = 12
 lysis_transfer_volume = 22.2
 lysis_syringe_speed = 25
 lysis_blowoff = 0
-reservoir_z_shift = 4  # need a larger z shift for 12 channel reservoir (Still? has been remeasured?)
+reservoir_z_shift = 1  #TODO: TEST THIS!
 dispense_z_shift = 2
 
 #* Initialize solosoft and deck layout 

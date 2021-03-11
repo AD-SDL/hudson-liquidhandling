@@ -58,6 +58,8 @@ dilution_num_mixes = 3
 # Step 3 Variables 
 glucose_transfer_volume = 10
 glucose_blowoff = 0
+glucose_z_shift = 1
+
 muconate_transfer_volume = 10
 muconate_blowoff = 0
 step3_mix_volume = 50
@@ -181,7 +183,7 @@ for i in range(1,13):
     soloSoft.aspirate(
         position="Position6", 
         aspirate_volumes=Plate_96_PlateOne_1833_9600_ConicalBottomStorage().setColumn(i, glucose_transfer_volume), 
-        aspirate_shift=[0,0,default_z_shift], 
+        aspirate_shift=[0,0,glucose_z_shift], 
         pre_aspirate=glucose_blowoff,
         mix_at_start=True, 
         mix_volume=step3_mix_volume, 
