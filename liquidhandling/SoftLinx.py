@@ -733,14 +733,8 @@ class SoftLinx:
             os.path.basename(filename), os.path.splitext(filename)[0] + ".ahk"
         )
         # *Add AutoHotKey filename to manifest list
-        ahk_filename_string = os.path.splitext(filename)[0] + ".ahk"
-        if "\\" in ahk_filename_string:      
-            ahk_filename_end = ahk_filename_string.split("\\")[-1]
-        elif "/" in ahk_filename_string:
-            ahk_filename_end = ahk_filename_string.split("/")[-1]
-        else:
-            ahk_filename_end = ahk_filename_string
-        self.addToManifest(ahk_filename_end)
+        #self.addToManifest(str(os.path.basename(filename)).replace(".slvp", ".ahk"))
+        self.addToManifest(os.path.splitext(os.path.basename(filename))[0] + ".ahk")
         # *Generate Manifest File
         self.generateManifest()   
         #)
