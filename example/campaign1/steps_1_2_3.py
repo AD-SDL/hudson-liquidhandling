@@ -20,7 +20,7 @@ TODO:
 
 import os
 import sys
-from liquidhandling import SoloSoft
+from liquidhandling import SoloSoft, SoftLinx
 from liquidhandling import GenericPlate96Well, NinetySixDeepWell, ZAgilentReservoir_1row
 
 # * Program variables
@@ -256,3 +256,8 @@ for i in range(6, 0, -1):
 
 soloSoft.shuckTip()
 soloSoft.savePipeline()
+
+# Add a run step with generated .hso file into SoftLinx and output .slvp and .ahk files
+softLinx = SoftLinx("Steps_1_2_3", "steps_1_2_3.slvp")
+softLinx.soloSoftRun("C:\\labautomation\\instructions\\steps_1_2_3.hso")
+softLinx.saveProtocol()
