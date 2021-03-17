@@ -191,7 +191,7 @@ for i in range(1,13):
         mix_at_start=True, 
         mix_volume=step3_mix_volume, 
         mix_cycles=step3_num_mixes,
-        dispense_height=default_z_shift,
+        dispense_height=default_z_shift, # change this dispense height to match glucose_z_shift
     )
     soloSoft.dispense(
         position="Position4", 
