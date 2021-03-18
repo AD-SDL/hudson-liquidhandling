@@ -24,7 +24,7 @@ sys.path.append(
     )
 )
 from liquidhandling import SoloSoft
-from liquidhandling import GenericPlate96Well, NinetySixDeepWell, ZAgilentReservoir_1row
+from liquidhandling import Plate_96_Corning_3635_ClearUVAssay, Reservoir_12col_Agilent_201256_100_BATSgroup
 
 # from VolumeManager import VolumeManager
 
@@ -47,14 +47,14 @@ serial_destination_mixing_volume_s2 = 100
 soloSoft = SoloSoft(
     filename="antibiotic_serial_dilution.hso",
     plateList=[
-        "TipBox.200uL.Corning-4864.orangeboxL",
+        "TipBox.200uL.Corning-4864.orangebox",
         "Empty",
-        "12 Channel Reservoir",
-        "Corning 3383",
-        "96 Deep Protein",
-        "Corning 3383",
-        "Empty",
-        "Empty",
+        "DeepBlock.96.VWR-75870-792.sterile",
+        "Plate.96.Corning-3635.ClearUVAssay",
+        "DeepBlock.96.VWR-75870-792.sterile",
+        "Plate.96.Corning-3635.ClearUVAssay",
+        "Plate.96.Corning-3635.ClearUVAssay",
+        "Empty"
     ],
 )
 
@@ -65,7 +65,7 @@ for i in range(2, 7):
     # no need for volume management, drawing from 12 channel at Position 3, 1st row (lb media)
     soloSoft.aspirate(
         position="Position3",
-        aspirate_volumes=ZAgilentReservoir_1row().setColumn(
+        aspirate_volumes=Reservoir_12col_Agilent_201256_100_BATSgroup().setColumn(
             1, media_transfer_volume_s2
         ),
         aspirate_shift=[0, 0, 4],
@@ -73,7 +73,7 @@ for i in range(2, 7):
     )
     soloSoft.dispense(
         position="Position6",
-        dispense_volumes=GenericPlate96Well().setColumn(i, media_transfer_volume_s2),
+        dispense_volumes=Plate_96_Corning_3635_ClearUVAssay().setColumn(i, media_transfer_volume_s2),
         dispense_shift=[0, 0, 2],
         blowoff=blowoff_volume,
     )
@@ -81,7 +81,7 @@ for i in range(2, 7):
 # * Transfer undiluted antibiotic stock solution (12 channel in Position 3, 2rd row) into empty first row of serial dilution plate
 soloSoft.aspirate(
     position="Position3",
-    aspirate_volumes=ZAgilentReservoir_1row().setColumn(
+    aspirate_volumes=Reservoir_12col_Agilent_201256_100_BATSgroup().setColumn(
         2, first_column_transfer_volume_s2
     ),
     pre_aspirate=blowoff_volume,
@@ -93,7 +93,7 @@ soloSoft.aspirate(
 )
 soloSoft.dispense(
     position="Position6",
-    dispense_volumes=GenericPlate96Well().setColumn(1, first_column_transfer_volume_s2),
+    dispense_volumes=Plate_96_Corning_3635_ClearUVAssay().setColumn(1, first_column_transfer_volume_s2),
     dispense_shift=[0, 0, 2],
     blowoff=blowoff_volume,
     mix_at_finish=True,
@@ -106,7 +106,7 @@ soloSoft.dispense(
 for i in range(1, 6):
     soloSoft.aspirate(
         position="Position6",
-        aspirate_volumes=GenericPlate96Well().setColumn(
+        aspirate_volumes=Plate_96_Corning_3635_ClearUVAssay().setColumn(
             i, serial_antibiotic_transfer_volume_s2
         ),
         aspirate_shift=[0, 0, 2],
@@ -118,7 +118,7 @@ for i in range(1, 6):
     )
     soloSoft.dispense(
         position="Position6",
-        dispense_volumes=GenericPlate96Well().setColumn(
+        dispense_volumes=Plate_96_Corning_3635_ClearUVAssay().setColumn(
             i + 1, serial_antibiotic_transfer_volume_s2
         ),
         dispense_shift=[0, 0, 2],

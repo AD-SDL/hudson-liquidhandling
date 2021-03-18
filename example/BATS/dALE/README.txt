@@ -2,13 +2,18 @@ BATS/dALE Putida.OD600 Protocols
 
 DECK LAYOUT:
     1 -> TipBox.200uL.Corning-4864.orangebox
+            - be sure to reset tip box in SoloSoft if necessary
     2 -> Empty (HEATING NEST)
     3 -> Reservoir.12col.Agilent-201256-100.BATSgroup
             (Water -> Columns 1 & 2; Buffer -> Columns 7 & 8)
     4 -> Plate.96.Agilent-5043-9310.RoundBottomStorage
-    5 -> DeepBlock.96.VWR-75870-792.sterile
+            - empty at start
+    5 -> DeepBlock.96.VWR-75870-792.sterile 
+            - contains bacterial suspension
     6 -> Plate.96.Corning-3635.ClearUVAssay
-    7 -> Plate.96.PlateOne-1833-9600.ConicalBottomStorage
+            - empty at start
+    7 -> Plate.96.PlateOne-1833-9600.ConicalBottomStorage 
+            - empty at start
     8 -> Empty
 
 HOW TO RUN THESE PROTOCOLS:

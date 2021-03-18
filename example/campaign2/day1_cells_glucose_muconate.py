@@ -37,11 +37,12 @@ from liquidhandling import Plate_96_Corning_3635_ClearUVAssay
 
 #* Program Variables
 default_z_shift = 2
+reservoir_z_shift = .5  # z shift for 12 channel reservoirs
 
 # Step 1 variables  
     # mix before transfer? -> might be a good idea
 cell_transfer_volume = 180
-cell_aspirate_z_shift = 4
+cell_aspirate_z_shift = 1
 cell_blowoff = 0
 cell_mix_volume = 150
 cell_num_mixes = 3
@@ -134,7 +135,7 @@ for i in range(1,13):
     soloSoft.aspirate(
         position="Position3", 
         aspirate_volumes=Reservoir_12col_Agilent_201256_100_BATSgroup().setColumn(buffer_12_channel_column, buffer_dilution_volumes[i-1]), 
-        aspirate_shift=[0,0,default_z_shift], 
+        aspirate_shift=[0,0,reservoir_z_shift], 
         pre_aspirate=buffer_blowoff, 
     )
     soloSoft.dispense(
@@ -148,7 +149,7 @@ for i in range(1,12):
     soloSoft.aspirate(
         position="Position3", 
         aspirate_volumes=Reservoir_12col_Agilent_201256_100_BATSgroup().setColumn(muconate_12_channel_column, muconate_dilution_volumes[i-1]), 
-        aspirate_shift=[0,0,default_z_shift], 
+        aspirate_shift=[0,0,reservoir_z_shift], 
         pre_aspirate=buffer_blowoff, 
     )
     soloSoft.dispense(

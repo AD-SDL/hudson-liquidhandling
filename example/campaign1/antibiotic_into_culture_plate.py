@@ -30,7 +30,7 @@ sys.path.append(
     )
 )
 from liquidhandling import SoloSoft
-from liquidhandling import GenericPlate96Well, NinetySixDeepWell, ZAgilentReservoir_1row
+from liquidhandling import Plate_96_Corning_3635_ClearUVAssay 
 
 # * Program Variables
 blowoff_volume = 20
@@ -45,11 +45,11 @@ soloSoft = SoloSoft(
     plateList=[
         "TipBox.200uL.Corning-4864.orangebox",
         "Empty",
-        "12 Channel Reservoir",
-        "Corning 3383",
-        "96 Deep Protein",
-        "Corning 3383",
-        "Empty",
+        "DeepBlock.96.VWR-75870-792.sterile",
+        "Plate.96.Corning-3635.ClearUVAssay",
+        "DeepBlock.96.VWR-75870-792.sterile",
+        "Plate.96.Corning-3635.ClearUVAssay",
+        "Plate.96.Corning-3635.ClearUVAssay",
         "Empty",
     ],
 )
@@ -59,7 +59,7 @@ soloSoft.getTip()
 for i in range(6, 0, -1):
     soloSoft.aspirate(
         position="Position6",
-        aspirate_volumes=GenericPlate96Well().setColumn(
+        aspirate_volumes=Plate_96_Corning_3635_ClearUVAssay().setColumn(
             i, antibiotic_transfer_volume_s3
         ),
         mix_at_start=True,
@@ -70,7 +70,7 @@ for i in range(6, 0, -1):
     )
     soloSoft.dispense(
         position="Position4",
-        dispense_volumes=GenericPlate96Well().setColumn(
+        dispense_volumes=Plate_96_Corning_3635_ClearUVAssay().setColumn(
             i, antibiotic_transfer_volume_s3
         ),
         mix_at_finish=True,
