@@ -52,8 +52,8 @@ for i in range(1, 13):  # i = 1,2,..., 12
         ),
         aspirate_shift=[0, 0, clearance_from_bottom],
         pre_aspirate=blowoff_volume,
-        mix_at_start=True, 
-        mix_cycles=num_mixes, 
+        mix_at_start=True,
+        mix_cycles=num_mixes,
         mix_volume=deep_block_mix_volume,
         dispense_height=clearance_from_bottom,
     )

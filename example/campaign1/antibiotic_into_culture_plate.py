@@ -30,7 +30,7 @@ sys.path.append(
     )
 )
 from liquidhandling import SoloSoft
-from liquidhandling import Plate_96_Corning_3635_ClearUVAssay 
+from liquidhandling import Plate_96_Corning_3635_ClearUVAssay
 
 # * Program Variables
 blowoff_volume = 20

@@ -13,9 +13,9 @@ Steps:
 from liquidhandling import SoloSoft, SoftLinx
 from liquidhandling import *  # replace with plate types used
 
-#* Program Variables ------------------
+# * Program Variables ------------------
 stock_start_column = 5
-spot_z_shift = 2.2  
+spot_z_shift = 2.2
 
 media_aspirate_column = 1
 first_column_transfer_volume = 100
@@ -30,8 +30,8 @@ pre_spot_mix_volume = 30
 default_z_shift = 2
 pre_spot_aspirate_volume = 10
 spot_volume = 3.5
-#* ---------------------------------------
-soloSoft = SoloSoft( 
+# * ---------------------------------------
+soloSoft = SoloSoft(
     filename="modular_dilute_then_spot_STEP1.hso",
     plateList=[
         "TipBox.200uL.Corning-4864.orangebox",
@@ -84,7 +84,7 @@ soloSoft.savePipeline()
 
 # * STEP2 SERIAL DILUTION FOR BOTH HALVES OF THE PLATE ----------------------------------------------------------------
 
-soloSoft = SoloSoft( 
+soloSoft = SoloSoft(
     filename="modular_dilute_then_spot_STEP2.hso",
     plateList=[
         "TipBox.200uL.Corning-4864.orangebox",
@@ -133,8 +133,8 @@ for i in range(1, 3):
     )
 
     print("Diluting: ")
-    soloSoft.getTip("Position7") # 50uL tips for 10uL transfers
-    for j in range(1,6): # 1,2,3,4,5
+    soloSoft.getTip("Position7")  # 50uL tips for 10uL transfers
+    for j in range(1, 6):  # 1,2,3,4,5
         soloSoft.aspirate(
             position="Position6",
             aspirate_volumes=Plate_96_Corning_3635_ClearUVAssay().setColumn(
@@ -173,7 +173,7 @@ soloSoft.savePipeline()
 
 # * STEP 3 SPOT ALL DILUTIONS -----------------------------------------------------------------------------
 
-soloSoft = SoloSoft( 
+soloSoft = SoloSoft(
     filename="modular_dilute_then_spot_STEP3.hso",
     plateList=[
         "TipBox.200uL.Corning-4864.orangebox",
@@ -190,15 +190,17 @@ soloSoft = SoloSoft(
 print("Spotting: ")
 for i in range(1, 13):
     soloSoft.getTip("Position7")
-    
-    soloSoft.aspirate(      # mix before aspirating the 3.5 uL 
-        position="Position6", 
-        aspirate_volumes=Plate_96_Corning_3635_ClearUVAssay().setColumn(i, pre_spot_aspirate_volume), 
-        aspirate_shift=[0,0,default_z_shift], 
-        mix_at_start=True, 
-        mix_volume=pre_spot_mix_volume, 
-        dispense_height=default_z_shift, 
-        mix_cycles=num_mixes, 
+
+    soloSoft.aspirate(  # mix before aspirating the 3.5 uL
+        position="Position6",
+        aspirate_volumes=Plate_96_Corning_3635_ClearUVAssay().setColumn(
+            i, pre_spot_aspirate_volume
+        ),
+        aspirate_shift=[0, 0, default_z_shift],
+        mix_at_start=True,
+        mix_volume=pre_spot_mix_volume,
+        dispense_height=default_z_shift,
+        mix_cycles=num_mixes,
     )
     soloSoft.dispense(
         position="Position8",
@@ -219,14 +221,16 @@ soloSoft.shuckTip()
 soloSoft.savePipeline()
 
 # LOAD PROTOCOL STEPS 1-3 IN SOFTLINX
-softLinx = SoftLinx("Modular Dilute then Spot Steps 1-3", "modular_dilute_then_spot.slvp")
-softLinx.soloSoftRun("C:\\Users\\svcaibio\\Dev\\liquidhandling\\example\\other_protocols\\dilute_then_spot\\modular_dilute_then_spot_STEP1.hso")
-softLinx.soloSoftRun("C:\\Users\\svcaibio\\Dev\\liquidhandling\\example\\other_protocols\\dilute_then_spot\\modular_dilute_then_spot_STEP2.hso")
-softLinx.soloSoftRun("C:\\Users\\svcaibio\\Dev\\liquidhandling\\example\\other_protocols\\dilute_then_spot\\modular_dilute_then_spot_STEP3.hso")
+softLinx = SoftLinx(
+    "Modular Dilute then Spot Steps 1-3", "modular_dilute_then_spot.slvp"
+)
+softLinx.soloSoftRun(
+    "C:\\Users\\svcaibio\\Dev\\liquidhandling\\example\\other_protocols\\dilute_then_spot\\modular_dilute_then_spot_STEP1.hso"
+)
+softLinx.soloSoftRun(
+    "C:\\Users\\svcaibio\\Dev\\liquidhandling\\example\\other_protocols\\dilute_then_spot\\modular_dilute_then_spot_STEP2.hso"
+)
+softLinx.soloSoftRun(
+    "C:\\Users\\svcaibio\\Dev\\liquidhandling\\example\\other_protocols\\dilute_then_spot\\modular_dilute_then_spot_STEP3.hso"
+)
 softLinx.saveProtocol()
-
-    
-
-
-
-

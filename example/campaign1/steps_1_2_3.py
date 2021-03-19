@@ -18,13 +18,17 @@ Deck Layout:
 import os
 import sys
 from liquidhandling import SoloSoft, SoftLinx
-from liquidhandling import DeepBlock_96VWR_75870_792_sterile, Reservoir_12col_Agilent_201256_100_BATSgroup, Plate_96_Corning_3635_ClearUVAssay
+from liquidhandling import (
+    DeepBlock_96VWR_75870_792_sterile,
+    Reservoir_12col_Agilent_201256_100_BATSgroup,
+    Plate_96_Corning_3635_ClearUVAssay,
+)
 
 # * Program variables
 blowoff_volume = 20
 num_mixes = 5
 current_media_reservoir_volume = media_reservoir_volume = 7000
-reservoir__z_shift = 1  # z shift for 12 channel reservoirs 
+reservoir__z_shift = 1  # z shift for 12 channel reservoirs
 
 # Step 1 variables
 culture_plate_column_num = 2
@@ -83,19 +87,25 @@ for i in range(1, 7):
     )
     soloSoft.dispense(
         position="Position4",
-        dispense_volumes=Plate_96_Corning_3635_ClearUVAssay().setColumn(i, media_transfer_volume_s1),
+        dispense_volumes=Plate_96_Corning_3635_ClearUVAssay().setColumn(
+            i, media_transfer_volume_s1
+        ),
         dispense_shift=[0, 0, 2],
     )
 
 # * Fill first column of culture 10 fold dilution plate with fresh lb media
 soloSoft.aspirate(
     position="Position3",
-    aspirate_volumes=Reservoir_12col_Agilent_201256_100_BATSgroup().setColumn(1, dilution_media_volume),
+    aspirate_volumes=Reservoir_12col_Agilent_201256_100_BATSgroup().setColumn(
+        1, dilution_media_volume
+    ),
     aspirate_shift=[0, 0, reservoir__z_shift],
 )
 soloSoft.dispense(
     position="Position7",
-    dispense_volumes=Plate_96_Corning_3635_ClearUVAssay().setColumn(1, dilution_media_volume),
+    dispense_volumes=Plate_96_Corning_3635_ClearUVAssay().setColumn(
+        1, dilution_media_volume
+    ),
     dispense_shift=[0, 0, 2],
 )
 
@@ -115,7 +125,9 @@ soloSoft.aspirate(
 )
 soloSoft.dispense(
     position="Position7",
-    dispense_volumes=Plate_96_Corning_3635_ClearUVAssay().setColumn(1, dilution_culture_volume),
+    dispense_volumes=Plate_96_Corning_3635_ClearUVAssay().setColumn(
+        1, dilution_culture_volume
+    ),
     dispense_shift=[0, 0, 2],
     mix_at_finish=True,
     mix_cycles=num_mixes,
@@ -129,7 +141,9 @@ soloSoft.dispense(
 for i in range(1, 7):
     soloSoft.aspirate(  # already mixed the cells, no need to do it before every transfer
         position="Position7",
-        aspirate_volumes=Plate_96_Corning_3635_ClearUVAssay().setColumn(1, culture_transfer_volume_s1),
+        aspirate_volumes=Plate_96_Corning_3635_ClearUVAssay().setColumn(
+            1, culture_transfer_volume_s1
+        ),
         aspirate_shift=[
             0,
             0,
@@ -139,7 +153,9 @@ for i in range(1, 7):
     )
     soloSoft.dispense(  # do need to mix at end of transfer
         position="Position4",
-        dispense_volumes=Plate_96_Corning_3635_ClearUVAssay().setColumn(i, culture_transfer_volume_s1),
+        dispense_volumes=Plate_96_Corning_3635_ClearUVAssay().setColumn(
+            i, culture_transfer_volume_s1
+        ),
         mix_at_finish=True,
         mix_cycles=num_mixes,
         mix_volume=growth_plate_mix_volume_s1,
@@ -166,7 +182,9 @@ for i in range(2, 7):
     )
     soloSoft.dispense(
         position="Position6",
-        dispense_volumes=Plate_96_Corning_3635_ClearUVAssay().setColumn(i, media_transfer_volume_s2),
+        dispense_volumes=Plate_96_Corning_3635_ClearUVAssay().setColumn(
+            i, media_transfer_volume_s2
+        ),
         dispense_shift=[0, 0, 2],
         blowoff=blowoff_volume,
     )
@@ -186,7 +204,9 @@ soloSoft.aspirate(
 )
 soloSoft.dispense(
     position="Position6",
-    dispense_volumes=Plate_96_Corning_3635_ClearUVAssay().setColumn(1, first_column_transfer_volume_s2),
+    dispense_volumes=Plate_96_Corning_3635_ClearUVAssay().setColumn(
+        1, first_column_transfer_volume_s2
+    ),
     dispense_shift=[0, 0, 2],
     blowoff=blowoff_volume,
     mix_at_finish=True,

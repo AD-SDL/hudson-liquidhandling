@@ -24,7 +24,10 @@ sys.path.append(
     )
 )
 from liquidhandling import SoloSoft
-from liquidhandling import Plate_96_Corning_3635_ClearUVAssay, Reservoir_12col_Agilent_201256_100_BATSgroup
+from liquidhandling import (
+    Plate_96_Corning_3635_ClearUVAssay,
+    Reservoir_12col_Agilent_201256_100_BATSgroup,
+)
 
 # from VolumeManager import VolumeManager
 
@@ -54,7 +57,7 @@ soloSoft = SoloSoft(
         "DeepBlock.96.VWR-75870-792.sterile",
         "Plate.96.Corning-3635.ClearUVAssay",
         "Plate.96.Corning-3635.ClearUVAssay",
-        "Empty"
+        "Empty",
     ],
 )
 
@@ -73,7 +76,9 @@ for i in range(2, 7):
     )
     soloSoft.dispense(
         position="Position6",
-        dispense_volumes=Plate_96_Corning_3635_ClearUVAssay().setColumn(i, media_transfer_volume_s2),
+        dispense_volumes=Plate_96_Corning_3635_ClearUVAssay().setColumn(
+            i, media_transfer_volume_s2
+        ),
         dispense_shift=[0, 0, 2],
         blowoff=blowoff_volume,
     )
@@ -93,7 +98,9 @@ soloSoft.aspirate(
 )
 soloSoft.dispense(
     position="Position6",
-    dispense_volumes=Plate_96_Corning_3635_ClearUVAssay().setColumn(1, first_column_transfer_volume_s2),
+    dispense_volumes=Plate_96_Corning_3635_ClearUVAssay().setColumn(
+        1, first_column_transfer_volume_s2
+    ),
     dispense_shift=[0, 0, 2],
     blowoff=blowoff_volume,
     mix_at_finish=True,

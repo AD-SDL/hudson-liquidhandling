@@ -3,6 +3,7 @@ import xml.etree.ElementTree as ET
 import time
 import datetime
 
+
 class SoftLinx:
     def __init__(
         self,
@@ -17,7 +18,7 @@ class SoftLinx:
         self.protocolSteps = []
         self.variables = []
         self.plates = {}
-        self.manifest_list = []  
+        self.manifest_list = []
         self.plugin_flags = {
             "PlateCrane": False,
             "Plates": False,
@@ -39,7 +40,6 @@ class SoftLinx:
             # "RapidPick": 8,
             # "TorreyPinesRIC20": 9,
         }
-        
 
         # *Set Protocol Name
         try:
@@ -115,285 +115,8 @@ class SoftLinx:
                 "Plates must be a dict with key 'position' and value 'plate name'."
             )
         self.plates = plates
-    
-    def addToManifest(self, filename):   
-        if not isinstance(filename, str):
-            raise TypeError("filename must be a string to add to manifest.")
-        self.manifest_list.append(filename)
 
-    def activityCapacityCalculator(self):
-        if len(self.protocolSteps) > 0:
-            return "4"
-        else:
-            return "0"
-
-    def generatePluginVariables(self, parentXML, system):
-        variable = ET.SubElement(
-            parentXML,
-            "hwab:Variable",
-            {
-                "x:TypeArguments": "hwab:Interface",
-                "Value": "{x:Reference __ReferenceID%d}"
-                % self.plugin_reference[system],
-                "x:Key": "SoftLinx." + system,
-                "Name": "SoftLinx." + system,
-                "Prompt": "False",
-            },
-        )
-        default = ET.SubElement(variable, "hwab:Variable.Default")
-        if system == "Plates" and len(self.plates):
-            interface = ET.SubElement(
-                default,
-                "hwab:Interface",
-                {
-                    "x:Name": "__ReferenceID" + str(self.plugin_reference[system]),
-                    "AddinType": system,
-                },
-            )
-            interface_address = ET.SubElement(interface, "hwab:Interface.Address")
-            setupData = ET.SubElement(interface, "hwab:Interface.SetupData")
-            array = ET.SubElement(setupData, "x:Array", {"Type": "x:String"})
-            for key, value in self.plates.items():
-                element = ET.SubElement(array, "x:String")
-                element.text = key + "=" + value
-        else:
-            interface = ET.SubElement(
-                default,
-                "hwab:Interface",
-                {
-                    "SetupData": "{x:Null}",
-                    "x:Name": "__ReferenceID" + str(self.plugin_reference[system]),
-                    "AddinType": system,
-                },
-            )
-            interface_address = ET.SubElement(interface, "hwab:Interface.Address")
-        sladdress = ET.SubElement(
-            interface_address,
-            "hcc:SLAddress",
-            {
-                "x:Name": "__ReferenceID%d" % self.plugin_address[system],
-                "Name": system,
-                "Workcell": "SoftLinx",
-            },
-        )
-
-    def generatePluginInterface(self, parentXML, system):
-        ref = ET.SubElement(parentXML, "x:Reference")
-        ref.text = "__ReferenceID%d" % self.plugin_reference[system]
-        key = ET.SubElement(ref, "x:Key")
-        sub_ref = ET.SubElement(key, "x:Reference")
-        sub_ref.text = "__ReferenceID%d" % self.plugin_address[system]
-        # if system != "Plates" or len(self.plates) == 0:
-        #     if self.plugin_flags[system]:
-        #         plugin = ET.SubElement(
-        #             parentXML,
-        #             "hwab:Interface",
-        #             {
-        #                 "x:Key": "{x:Reference __ReferenceID%d}" % self.plugin_reference[system],
-        #                 "Address": "{x:Reference __ReferenceID%d}" % self.plugin_reference[system],
-        #                 "SetupData": "{x:Null}",
-        #                 "AddinType": system,
-        #             },
-        #         )
-        #         return
-        #     else:
-        #         plugin = ET.SubElement(
-        #             parentXML,
-        #             "hwab:Interface",
-        #             {
-        #                 "x:Key": "{x:Reference __ReferenceID%d}" % self.plugin_reference[system],
-        #                 "SetupData": "{x:Null}",
-        #                 "AddinType": system,
-        #             },
-        #         )
-        #         address = ET.SubElement(plugin, "hwab:Interface.Address")
-        #         sladdress = ET.SubElement(
-        #             address,
-        #             "hcc:SLAddress",
-        #             {
-        #                 "x:Name": "__ReferenceID%d" % self.plugin_reference[system],
-        #                 "Name": system,
-        #                 "Workcell": "SoftLinx",
-        #             },
-        #         )
-        #         return
-        # # *Non-empty Plates-specific implementation
-        # plugin = ET.SubElement(
-        #     parentXML,
-        #     "hwab:Interface",
-        #     {
-        #         "x:Key": "{x:Reference __ReferenceID%d}" % self.plugin_reference[system],
-        #         "AddinType": system,
-        #     },
-        # )
-        # address = ET.SubElement(plugin, "hwab:Interface.Address")
-        # sladdress = ET.SubElement(
-        #     address,
-        #     "hcc:SLAddress",
-        #     {"x:Name":  "__ReferenceID%d" % self.plugin_reference[system], "Name": system, "Workcell": "SoftLinx"},
-        # )
-        # setupData = ET.SubElement(plugin, "hwab:Interface.SetupData")
-        # array = ET.SubElement(setupData, "x:Array", {"Type": "x:String"})
-        # for key, value in self.plates.items():
-        #     element = ET.SubElement(array, "x:String")
-        #     element.text = key + "=" + value
-
-    def generateAutoHotKey(self, softlinx_filename=None, ahk_filename=None):
-        if ahk_filename == None:
-            ahk_filename = os.path.splitext(self.filename)[0] + ".ahk"
-        if softlinx_filename == None:
-            softlinx_filename = self.filename
-        if softlinx_filename == None:
-            raise Exception(
-                "Cannot generate AutoHotKey script without a softlinx filename."
-            )
-        with open(ahk_filename, "w") as file:
-            file.write("#SingleInstance, Force\n")
-            file.write("SendMode Input\n")
-            file.write("SetWorkingDir, %A_ScriptDir%\n")
-            file.write("\n")
-            file.write(
-                'Run, "C:\Program Files (x86)\Hudson Robotics\SoftLinx V\SoftLinxVProtocolEditor.exe" %A_ScriptDir%\\'
-                + softlinx_filename
-                + "\n"
-            )
-            file.write("WinActivate, SoftLinx V\n")
-            file.write("Sleep, 5000\n")
-            file.write("MouseClick, Left, 300, 45\n")
-            file.write("Sleep, 1000\n")
-            file.write('if WinActive("Not Saved") {\n')
-            file.write("\tSend, {Tab}{Enter}\n")
-            file.write("\tSleep, 5000\n")
-            file.write("}\n")
-            file.write('if WinActive("Start Now?") {\n')
-            file.write("\tSend, {Enter}\n")
-            file.write("\tSleep, 5000\n")
-            file.write("}\n")
-
-    def generateConditionalXML(self, parent, step):
-        activity_dict = {
-            "Text": "{x:Null}",
-            "ActivityLabel": "",
-            "DisplayName": step["DisplayName"],
-            "HasConstraints": "False",
-            "SLXId": step["SLXId"],
-            "ToolTip": step["ToolTip"],
-            "UserComments": "",
-            "isActive": step["isActive"],
-            "isSetup": "True",
-        }
-        ifelse_xml = ET.SubElement(parent, "IfElseActivity", activity_dict)
-        ifelse_activities = ET.SubElement(ifelse_xml, "IfElseActivity.Activities")
-        scg_list = ET.SubElement(
-            ifelse_activities,
-            "scg:List",
-            {
-                "x:TypeArguments": "p:Activity",
-                "Capacity": "4",
-            },
-        )
-        for substep in step["branchTrue"]:
-            self.generateStepXML(scg_list, substep)
-        ifelse_activities2 = ET.SubElement(ifelse_xml, "IfElseActivity.Activities")
-        scg_list = ET.SubElement(
-            ifelse_activities2,
-            "scg:List",
-            {
-                "x:TypeArguments": "p:Activity",
-                "Capacity": "4",
-            },
-        )
-        for substep in step["branchFalse"]:
-            self.generateStepXML(scg_list, substep)
-        ifelse_arguments = ET.SubElement(ifelse_xml, "IfElseActivity.Arguments")
-        ET.SubElement(
-            ifelse_arguments,
-            "IfElseActivityArguments",
-            {"Condition": step["conditionalStatement"]},
-        )
-        ifelse_timeconstraints = ET.SubElement(
-            ifelse_xml, "IfElseActivity.TimeConstraints"
-        )
-        ET.SubElement(
-            ifelse_timeconstraints,
-            "scg:List",
-            {
-                "x:TypeArguments": "hwab:TimeConstraint",
-                "Capacity": "0",
-            },
-        )
-
-    def generateStepXML(self, scg_list, step):
-        if step["type"] == "IfElseActivity":
-            self.generateConditionalXML(scg_list, step)
-            return
-        self.plugin_flags[step["system"]] = True
-        activity_dict = {
-            "IconPath": "{x:Null}",
-            "CommandLine": step["Command"],
-            "Description": step["Description"],
-            "DisplayName": step["system"],
-            "HasConstraints": "False",
-            "SLXId": step["SLXId"],
-            "ToolTip": step["ToolTip"],
-            "UserComments": "",
-            "isActive": step["isActive"],
-            "isCanceled": "False",
-            "isSetup": "True",
-        }
-        step_xml = ET.SubElement(scg_list, "InstrumentActivity", activity_dict)
-        arguments = ET.SubElement(step_xml, "InstrumentActivity.Arguments")
-        instrument_arguments = ET.SubElement(
-            arguments,
-            "InstrumentActivityArguments",
-            {
-                "Address": "{x:Reference __ReferenceID%d}"
-                % self.plugin_address[step["system"]],
-                "ResultVariable": "{x:Null}",
-                "AddinType": step["system"],
-                "Command": step["Command"],
-            },
-        )
-        # iarg_add = ET.SubElement(
-        #     instrument_arguments, "InstrumentActivityArguments.Address"
-        # )
-        # sladdress = ET.SubElement(
-        #     iarg_add,
-        #     "hcc:SLAddress",
-        #     {
-        #         "x:Name": "__ReferenceID" + str(self.plugin_address[step["system"]]),
-        #         "Name": step["system"],
-        #         "Workcell": "SoftLinx",
-        #     },
-        # )
-        iarg_arg = ET.SubElement(
-            instrument_arguments, "InstrumentActivityArguments.Arguments"
-        )
-        arg_list = ET.SubElement(
-            iarg_arg,
-            "scg:List",
-            {"x:TypeArguments": "x:Object", "Capacity": str(len(step["args"]))},
-        )
-        for arg in step["args"]:
-            arg_xml = ET.SubElement(arg_list, arg[0])
-            arg_xml.text = arg[1]
-        iarg_hWnd = ET.SubElement(
-            instrument_arguments, "InstrumentActivityArguments.hWnd"
-        )
-        s = ET.SubElement(iarg_hWnd, "s:IntPtr")
-
-        time_constraints = ET.SubElement(step_xml, "InstrumentActivity.TimeConstraints")
-        constraint_list = ET.SubElement(
-            time_constraints,
-            "scg:List",
-            {
-                "x:TypeArguments": "hwab:TimeConstraint",
-                "Capacity": "0",
-            },
-        )
-        workflowViewState = ET.SubElement(step_xml, "sap2010:WorkflowViewState.IdRef")
-        workflowViewState.text = "InstrumentActivity_1"
-
+    # * SoftLinx Steps * #
     def conditional(
         self,
         conditionalStatement="",
@@ -425,6 +148,7 @@ class SoftLinx:
                 self.protocolSteps.append(step)
         return step
 
+    # * Plate Crane Steps * #
     def plateCraneMoveCrane(
         self,
         position="SoftLinx.PlateCrane.Safe",
@@ -545,6 +269,7 @@ class SoftLinx:
                 self.protocolSteps.append(step)
         return step
 
+    # * SoloSoft Steps * #
     def soloSoftRun(
         self, filename="protocol.hso", isActive=True, index=None, inplace=True
     ):
@@ -566,8 +291,8 @@ class SoftLinx:
                 self.protocolSteps.insert(index, step)
             else:
                 self.protocolSteps.append(step)
-        #* Add .hso filename to manifest list    
-        if "\\" in filename:      
+        # * Add .hso filename to manifest list
+        if "\\" in filename:
             hso_filename = filename.split("\\")[-1]
         elif "/" in filename:
             hso_filename = filename.split("/")[-1]
@@ -597,6 +322,7 @@ class SoftLinx:
             ],
         }
 
+    # * Output * #
     def saveProtocol(self, filename=None, generate_ahk=True):
         if filename == None:
             if self.filename != None:
@@ -714,8 +440,6 @@ class SoftLinx:
                 "sap:VirtualizedContainerService.HintSize": "205,119",
             },
         )
-        # !debugSymbol is probably some sort of hashed nonsense, which could be an issue
-        # !Update: seems to be constructive rather than hashed. But it also doesn't seem to impact operation atm
         debugSymbol = ET.SubElement(protocol, "sads:DebugSymbol.Symbol")
         debugSymbol.text = (
             "dypDOlxVc2Vyc1xyeWFuZFxEZXZcTmV3UHJvdG9jb2xfcGx1Z2luLnNsdnABAQFqDAEB"
@@ -733,11 +457,15 @@ class SoftLinx:
             os.path.basename(filename), os.path.splitext(filename)[0] + ".ahk"
         )
         # *Add AutoHotKey filename to manifest list
-        #self.addToManifest(str(os.path.basename(filename)).replace(".slvp", ".ahk"))
         self.addToManifest(os.path.splitext(os.path.basename(filename))[0] + ".ahk")
         # *Generate Manifest File
-        self.generateManifest()   
-        #)
+        self.generateManifest()
+
+    # * Manifest Handler *#
+    def addToManifest(self, filename):
+        if not isinstance(filename, str):
+            raise TypeError("filename must be a string to add to manifest.")
+        self.manifest_list.append(filename)
 
     # *Pretty-print XML
     def indent(self, element, level=0):
@@ -757,13 +485,219 @@ class SoftLinx:
                 element.tail = j
         return element
 
-    def generateManifest(self, manifest_filename = None):     
+    # * Output File Generators * #
+    def generateManifest(self, manifest_filename=None):
         if manifest_filename == None:
             manifest_filename = os.path.splitext(self.filename)[0] + ".txt"
-        else: 
-            manifest_filename = os.path.abspath(self.filename).replace(os.path.basename(self.filename), manifest_filename)
+        else:
+            manifest_filename = os.path.abspath(self.filename).replace(
+                os.path.basename(self.filename), manifest_filename
+            )
 
         with open(manifest_filename, "w+") as manifest_file:
-            manifest_file.write(str(time.time()) + "\n" + str(datetime.datetime.now()) + "\n")  # add timestamps
+            manifest_file.write(
+                str(time.time()) + "\n" + str(datetime.datetime.now()) + "\n"
+            )  # add timestamps
             manifest_file.writelines("\n".join(self.manifest_list))
 
+    def generateAutoHotKey(self, softlinx_filename=None, ahk_filename=None):
+        if ahk_filename == None:
+            ahk_filename = os.path.splitext(self.filename)[0] + ".ahk"
+        if softlinx_filename == None:
+            softlinx_filename = self.filename
+        if softlinx_filename == None:
+            raise Exception(
+                "Cannot generate AutoHotKey script without a softlinx filename."
+            )
+        with open(ahk_filename, "w") as file:
+            file.write("#SingleInstance, Force\n")
+            file.write("SendMode Input\n")
+            file.write("SetWorkingDir, %A_ScriptDir%\n")
+            file.write("\n")
+            file.write(
+                'Run, "C:\Program Files (x86)\Hudson Robotics\SoftLinx V\SoftLinxVProtocolEditor.exe" %A_ScriptDir%\\'
+                + softlinx_filename
+                + "\n"
+            )
+            file.write("WinActivate, SoftLinx V\n")
+            file.write("Sleep, 5000\n")
+            file.write("MouseClick, Left, 300, 45\n")
+            file.write("Sleep, 1000\n")
+            file.write('if WinActive("Not Saved") {\n')
+            file.write("\tSend, {Tab}{Enter}\n")
+            file.write("\tSleep, 5000\n")
+            file.write("}\n")
+            file.write('if WinActive("Start Now?") {\n')
+            file.write("\tSend, {Enter}\n")
+            file.write("\tSleep, 5000\n")
+            file.write("}\n")
+
+    def generatePluginVariables(self, parentXML, system):
+        variable = ET.SubElement(
+            parentXML,
+            "hwab:Variable",
+            {
+                "x:TypeArguments": "hwab:Interface",
+                "Value": "{x:Reference __ReferenceID%d}"
+                % self.plugin_reference[system],
+                "x:Key": "SoftLinx." + system,
+                "Name": "SoftLinx." + system,
+                "Prompt": "False",
+            },
+        )
+        default = ET.SubElement(variable, "hwab:Variable.Default")
+        if system == "Plates" and len(self.plates):
+            interface = ET.SubElement(
+                default,
+                "hwab:Interface",
+                {
+                    "x:Name": "__ReferenceID" + str(self.plugin_reference[system]),
+                    "AddinType": system,
+                },
+            )
+            interface_address = ET.SubElement(interface, "hwab:Interface.Address")
+            setupData = ET.SubElement(interface, "hwab:Interface.SetupData")
+            array = ET.SubElement(setupData, "x:Array", {"Type": "x:String"})
+            for key, value in self.plates.items():
+                element = ET.SubElement(array, "x:String")
+                element.text = key + "=" + value
+        else:
+            interface = ET.SubElement(
+                default,
+                "hwab:Interface",
+                {
+                    "SetupData": "{x:Null}",
+                    "x:Name": "__ReferenceID" + str(self.plugin_reference[system]),
+                    "AddinType": system,
+                },
+            )
+            interface_address = ET.SubElement(interface, "hwab:Interface.Address")
+        sladdress = ET.SubElement(
+            interface_address,
+            "hcc:SLAddress",
+            {
+                "x:Name": "__ReferenceID%d" % self.plugin_address[system],
+                "Name": system,
+                "Workcell": "SoftLinx",
+            },
+        )
+
+    # * XML Generators * #
+    def generatePluginInterface(self, parentXML, system):
+        ref = ET.SubElement(parentXML, "x:Reference")
+        ref.text = "__ReferenceID%d" % self.plugin_reference[system]
+        key = ET.SubElement(ref, "x:Key")
+        sub_ref = ET.SubElement(key, "x:Reference")
+        sub_ref.text = "__ReferenceID%d" % self.plugin_address[system]
+
+    def generateConditionalXML(self, parent, step):
+        activity_dict = {
+            "Text": "{x:Null}",
+            "ActivityLabel": "",
+            "DisplayName": step["DisplayName"],
+            "HasConstraints": "False",
+            "SLXId": step["SLXId"],
+            "ToolTip": step["ToolTip"],
+            "UserComments": "",
+            "isActive": step["isActive"],
+            "isSetup": "True",
+        }
+        ifelse_xml = ET.SubElement(parent, "IfElseActivity", activity_dict)
+        ifelse_activities = ET.SubElement(ifelse_xml, "IfElseActivity.Activities")
+        scg_list = ET.SubElement(
+            ifelse_activities,
+            "scg:List",
+            {
+                "x:TypeArguments": "p:Activity",
+                "Capacity": "4",
+            },
+        )
+        for substep in step["branchTrue"]:
+            self.generateStepXML(scg_list, substep)
+        ifelse_activities2 = ET.SubElement(ifelse_xml, "IfElseActivity.Activities")
+        scg_list = ET.SubElement(
+            ifelse_activities2,
+            "scg:List",
+            {
+                "x:TypeArguments": "p:Activity",
+                "Capacity": "4",
+            },
+        )
+        for substep in step["branchFalse"]:
+            self.generateStepXML(scg_list, substep)
+        ifelse_arguments = ET.SubElement(ifelse_xml, "IfElseActivity.Arguments")
+        ET.SubElement(
+            ifelse_arguments,
+            "IfElseActivityArguments",
+            {"Condition": step["conditionalStatement"]},
+        )
+        ifelse_timeconstraints = ET.SubElement(
+            ifelse_xml, "IfElseActivity.TimeConstraints"
+        )
+        ET.SubElement(
+            ifelse_timeconstraints,
+            "scg:List",
+            {
+                "x:TypeArguments": "hwab:TimeConstraint",
+                "Capacity": "0",
+            },
+        )
+
+    def generateStepXML(self, scg_list, step):
+        if step["type"] == "IfElseActivity":
+            self.generateConditionalXML(scg_list, step)
+            return
+        self.plugin_flags[step["system"]] = True
+        activity_dict = {
+            "IconPath": "{x:Null}",
+            "CommandLine": step["Command"],
+            "Description": step["Description"],
+            "DisplayName": step["system"],
+            "HasConstraints": "False",
+            "SLXId": step["SLXId"],
+            "ToolTip": step["ToolTip"],
+            "UserComments": "",
+            "isActive": step["isActive"],
+            "isCanceled": "False",
+            "isSetup": "True",
+        }
+        step_xml = ET.SubElement(scg_list, "InstrumentActivity", activity_dict)
+        arguments = ET.SubElement(step_xml, "InstrumentActivity.Arguments")
+        instrument_arguments = ET.SubElement(
+            arguments,
+            "InstrumentActivityArguments",
+            {
+                "Address": "{x:Reference __ReferenceID%d}"
+                % self.plugin_address[step["system"]],
+                "ResultVariable": "{x:Null}",
+                "AddinType": step["system"],
+                "Command": step["Command"],
+            },
+        )
+        iarg_arg = ET.SubElement(
+            instrument_arguments, "InstrumentActivityArguments.Arguments"
+        )
+        arg_list = ET.SubElement(
+            iarg_arg,
+            "scg:List",
+            {"x:TypeArguments": "x:Object", "Capacity": str(len(step["args"]))},
+        )
+        for arg in step["args"]:
+            arg_xml = ET.SubElement(arg_list, arg[0])
+            arg_xml.text = arg[1]
+        iarg_hWnd = ET.SubElement(
+            instrument_arguments, "InstrumentActivityArguments.hWnd"
+        )
+        s = ET.SubElement(iarg_hWnd, "s:IntPtr")
+
+        time_constraints = ET.SubElement(step_xml, "InstrumentActivity.TimeConstraints")
+        constraint_list = ET.SubElement(
+            time_constraints,
+            "scg:List",
+            {
+                "x:TypeArguments": "hwab:TimeConstraint",
+                "Capacity": "0",
+            },
+        )
+        workflowViewState = ET.SubElement(step_xml, "sap2010:WorkflowViewState.IdRef")
+        workflowViewState.text = "InstrumentActivity_1"
