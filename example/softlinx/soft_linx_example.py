@@ -25,7 +25,7 @@ softLinx.conditional(
         softLinx.plateCraneMoveCrane("SoftLinx.PlateCrane.Safe", inplace=False)
     ],
     branchFalse=[
-        softLinx.plateCraneMovePlate("SoftLinx.PlateCrane.Home", inplace=False)
+        softLinx.plateCraneMovePlate(["SoftLinx.PlateCrane.Home"], inplace=False)
     ],
 )
 softLinx.saveProtocol()

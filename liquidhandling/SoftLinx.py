@@ -192,6 +192,10 @@ class SoftLinx:
     ):
         if inGripper:
             positionsFrom = ["SoftLinx.PlateCrane.Gripper"]
+        if not isinstance(positionsFrom, list) or not isinstance(positionsTo, list):
+            raise ValueError(
+                    "positionsFrom and positionsTo must be Lists."
+                )
         onEmptyStackDict = {
             "End Method": 0,
             "Post Message and Continue": 1,
@@ -619,7 +623,7 @@ class SoftLinx:
         )
         for substep in step["branchTrue"]:
             self.generateStepXML(scg_list, substep)
-        ifelse_activities2 = ET.SubElement(ifelse_xml, "IfElseActivity.Activities")
+        ifelse_activities2 = ET.SubElement(ifelse_xml, "IfElseActivity.Activities2")
         scg_list = ET.SubElement(
             ifelse_activities2,
             "scg:List",
