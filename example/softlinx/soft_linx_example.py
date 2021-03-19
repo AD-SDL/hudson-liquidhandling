@@ -18,4 +18,14 @@ softLinx.plateCraneMoveCrane("SoftLinx.PlateCrane.Safe")
 softLinx.soloSoftRun(
     "C:\\Users\\svcaibio\\Dev\\liquidhandling\\example\\softlinx\\example.hso"
 )
+softLinx.soloSoftResetTipCount(position=6)
+softLinx.conditional(
+    conditionalStatement="[SoftLinx.PlateCrane].Speed > 0",
+    branchTrue=[
+        softLinx.plateCraneMoveCrane("SoftLinx.PlateCrane.Safe", inplace=False)
+    ],
+    branchFalse=[
+        softLinx.plateCraneMovePlate("SoftLinx.PlateCrane.Home", inplace=False)
+    ],
+)
 softLinx.saveProtocol()

@@ -318,9 +318,14 @@ class SoftLinx:
             "isActive": str(isActive),
             "system": "Solo",
             "args": [
-                str(position),
+                ["x:String", str(position)],
             ],
         }
+        if inplace:
+            if index != None:
+                self.protocolSteps.insert(index, step)
+            else:
+                self.protocolSteps.append(step)
 
     # * Output * #
     def saveProtocol(self, filename=None, generate_ahk=True):
