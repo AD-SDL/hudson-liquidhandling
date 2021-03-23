@@ -1,0 +1,1 @@
+"C:\Program Files\Python38\python.exe" C:\Users\svcaibio\Dev\liquidhandling\remote_run\run_ahk.py >C:\Users\svcaibio\Desktop\run_ahk.log 2>&1
