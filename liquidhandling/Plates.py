@@ -250,3 +250,20 @@ class AgarPlate_40mL_OmniTray_242811_ColonyPicker:
             9,
             "Omni Tray with 40ml agar",
         )
+
+
+class Plate_384_Corning_3540_BlackwClearBottomAssay:
+    def __new__(cls, plate=None):
+        return PlateDefinition(
+            "Plate.384.Corning-3540.BlackwClearBottomAssay",
+            plate,
+            11.0,
+            5.5,
+            16,
+            24,
+            -2.25,
+            -2.25,
+            4.5,
+            4.5,
+            "Black w/clear 384 well (JLJ) 50uL",
+        )

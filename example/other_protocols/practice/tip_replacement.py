@@ -5,10 +5,8 @@ TODO: put this code into a method that can be called when tip box is flagged as 
 
 PLATE DEFINITIONS USED:
 TipBox.200uL.Corning-4864.orangebox
-TipBox.200uL.Corning-4864.orangebox.empty
 
 TipBox.50uL.Axygen-EV-50-R-S.tealbox
-TipBox.50uL.Axygen-EV-50-R-S.tealbox.empty
 
 """
 from liquidhandling import SoloSoft, SoftLinx

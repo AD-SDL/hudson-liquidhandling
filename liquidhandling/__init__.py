@@ -14,4 +14,5 @@ from .Plates import (
     Plate_96_Agilent_5043_9310_RoundBottomStorage,
     Plate_96_PlateOne_1833_9600_ConicalBottomStorage,
     AgarPlate_40mL_OmniTray_242811_ColonyPicker,
+    Plate_384_Corning_3540_BlackwClearBottomAssay,
 )
