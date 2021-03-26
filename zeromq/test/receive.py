@@ -13,11 +13,17 @@ socket.bind("tcp://*:5555")
 
 while True:
     #  Wait for next request from client
-    message = socket.recv()
-    print(f"Received request: {message}")
+    message = bytes(socket.recv())
+    decoded = message.decode('utf-8')
+    print(f"Received request: {decoded}")
 
     #  Do some 'work'
     time.sleep(1)
+
+    # Shutdown if message is SHUTDOWN
+    if message == b"SHUTDOWN":
+        socket.send(b"Shutting down")
+        break
 
     #  Send reply back to client
     socket.send(b"World")
