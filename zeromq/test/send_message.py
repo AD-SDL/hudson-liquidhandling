@@ -18,3 +18,10 @@ for request in range(10):
     print(f"Sending request {request} …")
     socket.send(b"Hello")
 
+    repl = socket.recv()
+    print(f"Got {repl}")
+
+socket.send(b"SHUTDOWN")
+repl = socket.recv()
+print(f"Got {repl}")
+
