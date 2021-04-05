@@ -234,6 +234,7 @@ soloSoft.savePipeline()
 
 # Add a run step with generated .hso file into SoftLinx and output .slvp and .ahk files
 softLinx = SoftLinx("Steps_1_2_3", "steps_1_2_3.slvp")
+softLinx.soloSoftResetTipCount(1)  # this forces SoloSoft to know tip box is full at start
 softLinx.soloSoftRun("C:\\labautomation\\instructions\\steps_1_2_3.hso")
 softLinx.saveProtocol()
 

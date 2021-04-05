@@ -2,10 +2,10 @@
 SoftLinx protocol to test tip replacement
 
 TODO: put this code into a method that can be called when tip box is flagged as empty?
+NOTE: Hudson needs to update SoftLinx/SoloSoft before TipCounts conditional is usable
 
 PLATE DEFINITIONS USED:
 TipBox.200uL.Corning-4864.orangebox
-
 TipBox.50uL.Axygen-EV-50-R-S.tealbox
 
 """
@@ -31,51 +31,91 @@ from liquidhandling import SoloSoft, SoftLinx
 
 # --------------------------------------------------------------------------------------------------------------
 #default_empty_tip = "TipBox.50uL.Axygen-EV-50-R-S.tealbox.empty"
-default_full_tip = "TipBox.200uL.Corning-4864.orangebox"
+tip_box_name = "TipBox.200uL.Corning-4864.orangebox"
 default_empty_tip_loc = "SoftLinx.Solo.Position6"
 default_empty_tip_storage = "SoftLinx.PlateCrane.Stack5"
 default_full_tip_storage = "SoftLinx.PlateCrane.Stack4"
 
-# do i need to include self as a paramater if method does not yet blong to a class?
-def replace_tips(
-    tip_type=default_full_tip,
-    empty_tip_location=default_empty_tip_loc,
-    empty_tip_storage=default_empty_tip_storage,
-    full_tip_storage=default_full_tip_storage,
+# previously instantiated SoftLinx
+softLinx = SoftLinx("Tip Replacement Test Main", "tip_replacement_test_main.slvp")
+softLinx.setPlates({
+            default_full_tip_storage: tip_box_name,
+            default_empty_tip_loc: tip_box_name,
+        })
+
+# Replace Tips Method ----------------------------------------------------------------
+def replace_tips( 
+    current_softLinx, # required argument! -> can't run multiple .slvp files 
+    empty_tip_location,  # "Position6" -> "SoftLinx.Solo.Position6"
+    empty_tip_storage="SoftLinx.PlateCrane.Stack4",
+    full_tip_storage="SoftLinx.PlateCrane.Stack5",
 ):
     print("Now replacing the tips")
-    print("\ttip type -> " + tip_type)
     print("\tempty tip location -> " + empty_tip_location)
     print("\tempty tip storage -> " + empty_tip_storage)
     print("\tfull tip storage -> " + full_tip_storage)
 
-    # do we assume that softLinx is alredy initialized wherever this code is happening? --> for now no
-
-    softLinx = SoftLinx("Tip Replacement Test", "tip_replacement_test.slvp")
-    softLinx.setPlates(
-        {
-            full_tip_storage: tip_type,
-            empty_tip_location: tip_type,
-        }
-    )
+    # format empty tip location and determine tip type at that location
+    empty_tip_location = "SoftLinx.Solo." + str(empty_tip_location)
+    print("Empty tip location: " +  str(empty_tip_location))
+    tip_type = current_softLinx.plates[empty_tip_location]
+    print("Tip type: " + str(tip_type))
 
     # remove the empty plate and place it in an empty stack locaiton
-    softLinx.plateCraneMovePlate(
+    current_softLinx.plateCraneMovePlate(
         [empty_tip_location],
         [empty_tip_storage],
         # hasLid = False <-- default setting 
     )
 
     # pick up the new tip box and place it in the correct location
-    softLinx.plateCraneMovePlate(
+    current_softLinx.plateCraneMovePlate(
         [full_tip_storage],
         [empty_tip_location],
         hasLid=True, 
     )
+    #softLinx.saveProtocol()
+# ---------------------------------------------------------------------------------------------------
 
-    softLinx.saveProtocol()
+#* Use all tips in a tip box
+softLinx.soloSoftResetTipCount(6)  # automatically reset the tip count (for testing)
+soloSoft = SoloSoft(
+    filename="use_all_tips.hso",
+    plateList=[
+        "Empty",
+        "Empty",
+        "Empty",
+        "Empty",
+        "Empty",
+        "TipBox.200uL.Corning-4864.orangebox",
+        "Empty",
+        "Empty",
+    ])
 
-replace_tips()
+for i in range(1,13):
+    soloSoft.getTip("Position6")
+soloSoft.shuckTip()
+soloSoft.savePipeline()
+
+#* Test conditional recognition of empty tip box
+# softLinx.conditional(
+#     conditionalStatement="[SoftLinx.PlateCrane].Speed > 0",
+#     branchTrue=[
+#         softLinx.plateCraneMoveCrane("SoftLinx.PlateCrane.Safe", inplace=False)
+#     ],
+#     branchFalse=[
+#         softLinx.plateCraneMovePlate(["SoftLinx.PlateCrane.Home"], inplace=False)
+#     ],
+# )
+
+softLinx.conditional(
+    conditionalStatement="[SoftLinx.Solo].TipCount"
+)
+
+# add conditional here
+replace_tips(current_softLinx=softLinx, empty_tip_location="Position6")
 
 
-# for testing -> make .hso that uses all the tips in a box
+softLinx.saveProtocol()
+
+
