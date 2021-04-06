@@ -28,7 +28,7 @@ current_media_reservoir_volume = media_reservoir_volume = 7000
 reservoir_z_shift = .5  # z shift for deep blocks (Deck Positions 3 and 5)
 
 # Step 1 variables
-culture_plate_column_num = 3   # Changed to column 3 for test with Tom - March 10th 2021
+culture_plate_column_num = 4   # Changed to column 4 for test with Tom/Becca 04/07/21
 media_transfer_volume_s1 = 60
 culture_transfer_volume_s1 = 30
 dilution_media_volume = 198
