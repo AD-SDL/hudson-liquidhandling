@@ -19,14 +19,24 @@ def checkDir(dir, last_mtime=0):
     ptime = ctime - last_mtime
     
     file_list = [f for f in os.listdir(dir) if not f.startswith('.')]
-    # print("files newer than {}".format(datetime.fromtimestamp(ptime)))
+
+    #save the absolute path instead of just filename
+    file_list = [os.path.join(os.path.abspath(dir),f) for f in os.listdir(dir) if not f.startswith('.')]
+    #file_list = [f for f in os.listdir(dir) if not f.startswith('.')]
+    #print("files newer than {}".format(datetime.fromtimestamp(ptime)))
 
     new_files = []
     for f in file_list:
+        print(f)
         obj = pathlib.Path(f)
         if obj.stat().st_mtime >= ptime:
             # print ("{} {}".format(
             #    datetime.fromtimestamp(obj.stat().st_mtime), f ))
             new_files.append(os.path.abspath(f))
 
+
+
+
     return new_files
+
+
