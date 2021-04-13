@@ -10,10 +10,11 @@ import sys
 import json
 
 
+
 def lambda6_handle_message(decoded_message):
 
     lambda6_data_path = "/lambda_stor/data/hudson/data/"
-    test_lambda6_data_path = "/Users/cstone/Desktop/liquidhandling_Git_Clone/zeromq/test/test_lambda6_data_dir"
+    test_lambda6_data_path = "/Users/cstone/Desktop/liquidhandling_Git_Clone/zeromq/test/"
         
     #* extract message address and body
     address, message_body = decoded_message.split("***")
@@ -23,40 +24,58 @@ def lambda6_handle_message(decoded_message):
     print(f"Handling message on lambda6")
 
     # for debugging --> print out message
-    for key,value in json_decoded.items(): 
-        print(key)    # filenames
-        for value_k,value_v in value.items(): 
-            print("\t" + str(value_k))
-            for each in value_v: 
-                print("\t\t" + str(each.strip()))
+    # for item in json_decoded.items(): 
+    #     print(item)
+    # for key,value in json_decoded.items(): 
+    #     print(key)    # filenames
+    #     for value_k,value_v in value.items(): 
+    #         print("\t" + str(value_k))
+    #         for each in value_v: 
+    #             print("\t\t" + str(each.strip()))
+      
+    #* assign path names (on lambda6 or running locally for testing?)
+    if os.path.exists(lambda6_data_path) or os.path.exists(test_lambda6_data_path): 
+        if os.path.exists(lambda6_data_path):  # if running on lambda6
+            log_dir_path = os.path.join(lambda6_data_path, "log/")
+            data_dir_path = os.path.join(lambda6_data_path,str(address) + "/")
+            print("Running on lambda6")
+        elif os.path.exists(test_lambda6_data_path):  # if testing locally
+            log_dir_path = os.path.join(test_lambda6_data_path, "log/")
+            data_dir_path = os.path.join(test_lambda6_data_path,str(address) + "/")
+            print("Running on local computer for testing")
 
-    #* record in message log, print data to files in folder with a timestamp
-    # if running on lambda6
-    if os.path.exists(lambda6_data_path): 
-        # record in message_log
-        with open(os.path.join(test_lambda6_data_path, "message_log.txt"), 'a+') as message_log: 
-            message_log.writelines(address + "-R\n")  # address = {timestamp}-{numFiles}-{R(received) or S(sent)}
+        #* record in message_log.txt
+        if not os.path.exists(os.path.dirname(log_dir_path)): 
+            try: 
+                os.makedirs(os.path.dirname(log_dir_path))
+            except OSError as exc:
+                print("Failed to create directory -> " + str(log_dir_path))
+                raise
+
+        # write to log file if directory exists/was created
+        if os.path.exists(os.path.dirname(log_dir_path)): 
+            with open(os.path.join(log_dir_path, "message_log.txt"), 'a+') as message_log: 
+                message_log.writelines(address + "-R\n")  # address = {timestamp}-{numFiles}-{R(received) or S(sent)}
+                for key,value in json_decoded.items(): 
+                    message_log.writelines("\t" + str(key) + "\n")  # filenames 
+
+        #* write data to files 
+        # create a folder to store data (same name as in log file)
+        if not os.path.exists(os.path.dirname(data_dir_path)): 
+            try: 
+                os.makedirs(os.path.dirname(data_dir_path))
+            except OSError as exc:
+                print("Failed to create directoty -> " + str(data_dir_path))
+                raise
+
+        # write data contents to files within folder
+        if os.path.exists(os.path.dirname(data_dir_path)): 
             for key,value in json_decoded.items(): 
-                message_log.writelines("\t" + str(key) + "\n")  # filenames 
-        # write files to folder on lambda6
-            # TODO
+                file_name = key
+                data = value["data"]
+                with open(os.path.join(data_dir_path, os.path.basename(file_name)), 'w+') as data_file: 
+                    data_file.writelines(data)
 
-    # if running locally for testing ----------------------------------------------------------
-    elif os.path.exists(test_lambda6_data_path): 
-        print("Running on my local computer for testing")
-
-        # write log to message_log.txt
-        with open(os.path.join(test_lambda6_data_path, "message_log.txt"), 'a+') as message_log: 
-            message_log.writelines(address + "-R\n")  # address = {timestamp}-{numFiles}-{R(received) or S(sent)}
-            for key,value in json_decoded.items(): 
-                message_log.writelines("\t" + str(key) + "\n")  # filenames 
-
-        # write contents of file to folder (folder name = address)
-            # create folder with same name as address? 
-            # write all files to that folder
-            # call QC on folder with name = address ---------------------------------------------
-
-    print("Done handling message on lambda6")
     return return_val
 
 def main(args):
