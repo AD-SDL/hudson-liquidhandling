@@ -29,7 +29,7 @@ def generateFileManifest(filename, manifest_filename=None):
             contents = "TODO: CONTENTS OF NEITHER CSV OR EXCEL FILE"
 
         #* Construct message
-        data[os.path.abspath(filename)] = {
+        data[os.path.basename(filename)] = {
                     'purpose': ["data"], 
                     'type': [(os.path.splitext(filename)[1]).replace(".","")],
                     'ctime': [str(f.stat().st_ctime), str(datetime.fromtimestamp(f.stat().st_ctime))],

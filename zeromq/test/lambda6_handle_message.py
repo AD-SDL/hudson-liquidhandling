@@ -21,7 +21,7 @@ def lambda6_handle_message(decoded_message):
     json_decoded = json.loads(message_body)
 
     return_val = "PASS"
-    print(f"Handling message on lambda6")
+    print(f"Handling message: {str(address)}")
 
     # for debugging --> print out message
     # for item in json_decoded.items(): 
@@ -77,6 +77,7 @@ def lambda6_handle_message(decoded_message):
                     data_file.writelines(data)
 
     return return_val
+    print(f"Done handling message: {address}")
 
 def main(args):
     decoded_message = sys.argv[1]
