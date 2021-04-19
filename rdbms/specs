@@ -1,0 +1,10 @@
+Plates off of the hidex will be named:
+
+	Spec:
+	<project.name>_<instrument.name>_<timestamp>.csv
+
+	Example:
+	AMR_Hidex1_20210410.csv
+
+
+
