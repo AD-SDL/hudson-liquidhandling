@@ -1,5 +1,5 @@
 """
-Lambda6 listens for data files from the Hidex: 
+Lambda6 listens for data files from the Hidex (Port 5555)
     sample sheet (csv)
     hidex data (excel or csv?)
 
@@ -43,4 +43,4 @@ while True:
             start_new_session=True
             ).pid
     
-    socket.send(b"World")
+    socket.send(b"Message received and passed to lambda6_handle_message")

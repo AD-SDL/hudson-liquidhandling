@@ -9,8 +9,6 @@ import os
 import sys
 import json
 
-
-
 def lambda6_handle_message(decoded_message):
 
     lambda6_data_path = "/lambda_stor/data/hudson/data/"
@@ -49,7 +47,7 @@ def lambda6_handle_message(decoded_message):
             try: 
                 os.makedirs(os.path.dirname(log_dir_path))
             except OSError as exc:
-                print("Failed to create directory -> " + str(log_dir_path))
+                print("Failed to create directory-> " + str(log_dir_path))
                 raise
 
         # write to log file if directory exists/was created
@@ -65,7 +63,7 @@ def lambda6_handle_message(decoded_message):
             try: 
                 os.makedirs(os.path.dirname(data_dir_path))
             except OSError as exc:
-                print("Failed to create directoty -> " + str(data_dir_path))
+                print("Failed to create directory -> " + str(data_dir_path))
                 raise
 
         # write data contents to files within folder
@@ -76,8 +74,9 @@ def lambda6_handle_message(decoded_message):
                 with open(os.path.join(data_dir_path, os.path.basename(file_name)), 'w+') as data_file: 
                     data_file.writelines(data)
 
+    print(f"Done handling message: {str(address)}")
     return return_val
-    print(f"Done handling message: {address}")
+
 
 def main(args):
     decoded_message = sys.argv[1]

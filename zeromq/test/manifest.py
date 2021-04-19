@@ -10,10 +10,12 @@ from stat import *
 import pathlib
 import json
 
-def generateFileManifest(filename, manifest_filename=None):
+def generateFileManifest(filename, purpose, manifest_filename=None):
 
     string = ""
     data = {}
+    instruction_types = ["slvp", "txt", "hso", "ahk"]
+
     if os.path.isfile(filename):
         f = pathlib.Path(filename)  
 
@@ -25,12 +27,15 @@ def generateFileManifest(filename, manifest_filename=None):
         # excel file
         elif (os.path.splitext(filename)[1]).replace(".","") == "xlsx": 
             contents = "TODO: CONTENTS OF EXCEL FILE"
+        elif (os.path.splitext(filename)[1]).replace(".","") in instruction_types: 
+            with open(filename) as open_file: 
+                contents = open_file.readlines()
         else: 
             contents = "TODO: CONTENTS OF NEITHER CSV OR EXCEL FILE"
 
         #* Construct message
         data[os.path.basename(filename)] = {
-                    'purpose': ["data"], 
+                    'purpose': [purpose], 
                     'type': [(os.path.splitext(filename)[1]).replace(".","")],
                     'ctime': [str(f.stat().st_ctime), str(datetime.fromtimestamp(f.stat().st_ctime))],
                     'mtime':[str(f.stat().st_mtime), str(datetime.fromtimestamp(f.stat().st_mtime))], 
@@ -47,3 +52,6 @@ def generateFileManifest(filename, manifest_filename=None):
         print ("skipping bad filename: {}".format(filename))
 
     return data
+
+
+
