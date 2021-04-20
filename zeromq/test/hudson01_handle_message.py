@@ -71,7 +71,7 @@ def hudson01_handle_message(decoded_message):
                 data = value["data"]
                 with open(os.path.join(instructions_dir_path, os.path.basename(file_name)), 'w+') as instruction_file: 
                     instruction_file.writelines(data)
-            print(f"Instructions copied to directory: {instructions_dir_path}")
+            print(f"Instructions copied to new directory: {instructions_dir_path}")
                     
         # pass the new folder name to run_ahk (checks if ok to run on robot, if so runs .ahk file)
         #if os.path.exists(hudosn01_instructions_path):
@@ -86,6 +86,7 @@ def hudson01_handle_message(decoded_message):
             
     print(f"Done handling message on hudson01: {str(address)} \n")
     return return_val
+
 
 def main(args):
     decoded_message = sys.argv[1]

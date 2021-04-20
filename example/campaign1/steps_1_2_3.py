@@ -14,12 +14,28 @@ Deck Layout:
 8 -> Empty
 
 """
+import os
+import sys
+from subprocess import Popen
 from liquidhandling import SoloSoft, SoftLinx
+
 from liquidhandling import (
     DeepBlock_96VWR_75870_792_sterile,
     Reservoir_12col_Agilent_201256_100_BATSgroup,
     Plate_96_Corning_3635_ClearUVAssay,
 )
+
+#* Create folder to store all instruction files
+project = "Campaign1"
+project_desc = "col4"
+version_num = "v1"
+protocol_directory = os.path.join(os.path.abspath("."), f"{project}-{project_desc}-{version_num}")
+
+#* create new directory to hold new instructions 
+try: 
+    os.makedirs(protocol_directory, exist_ok=True)    
+except OSError as e: 
+    print (e)
 
 #* Program variables
 blowoff_volume = 20
@@ -50,7 +66,7 @@ antibiotic_mix_volume_s3 = 90
 destination_mix_volume_s3 = 100
 
 soloSoft = SoloSoft(
-    filename="steps_1_2_3.hso",
+    filename=os.path.join(protocol_directory, "steps_1_2_3.hso"),
     plateList=[
         "TipBox.200uL.Corning-4864.orangebox",
         "Empty",
@@ -233,8 +249,21 @@ soloSoft.shuckTip()
 soloSoft.savePipeline()
 
 # Add a run step with generated .hso file into SoftLinx and output .slvp and .ahk files
-softLinx = SoftLinx("Steps_1_2_3", "steps_1_2_3.slvp")
+softLinx = SoftLinx("Steps_1_2_3", os.path.join(protocol_directory, "steps_1_2_3.slvp"))
 softLinx.soloSoftResetTipCount(1)  # this forces SoloSoft to know tip box is full at start
-softLinx.soloSoftRun("C:\\labautomation\\instructions\\steps_1_2_3.hso")
+softLinx.soloSoftRun("C:\\labautomation\\instructions\\" + os.path.join(protocol_directory, "steps_1_2_3.hso"))
 softLinx.saveProtocol()
+
+# pass the new instructions folder path to lambda6_send_message.py
+child_message_sender = child_pid = Popen(["python", "/Users/cstone/Desktop/liquidhandling_Git_Clone/zeromq/test/lambda6_send_instructions.py", "-d", protocol_directory],
+            start_new_session=True
+            ).pid
+
+print("New instruction directory passed to lambda6_send_message.py")
+
+
+
+
+
+
 

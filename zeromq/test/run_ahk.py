@@ -85,6 +85,7 @@ def run_ahk(instructions_dir_path):  # the path to the folder containing the new
                         file_status += "1" 
                     else: 
                         error_log.write(f"\tRequired file not present: {each}\n")
+                        file_status += "0"
                     
                     # locate the AutoHotKey script for automatic protocol run
                     if each.endswith(".ahk"): 
@@ -107,3 +108,5 @@ def run_ahk(instructions_dir_path):  # the path to the folder containing the new
     #* Close log files
     run_log.close()
     error_log.close() 
+
+    exit()
