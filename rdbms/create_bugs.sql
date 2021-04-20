@@ -49,7 +49,7 @@ create table plate
  plate_id       int(11) PRIMARY KEY NOT NULL AUTO_INCREMENT,
  type     	VARCHAR(30),
  process_status VARCHAR(10) default 'new',
- barcode 	VARCHAR(255),
+ barcode 	VARCHAR(255) unique,
  name 		VARCHAR(255),
  format   	int(9),
  origin	  	VARCHAR(10)
@@ -106,8 +106,10 @@ create table source_plate
  *		Think AMR, it's the plate that we take absorbance readings on.
  * COLUMNS
  * 	type	The type of assay, for example dose_response
-        well	The well id
-	value	the measured value for that well
+ *      well	The well id
+ *      sample  The sample in the well, ideally comes from the source plate and
+ *              is an ID, but for now we'll just use the sample name.
+ *	value	the measured value for that well
 *------------------------------------------------------------------------------*/
 
 create table assay_plate
@@ -115,5 +117,6 @@ create table assay_plate
 	plate_id	int(11),
 	type		varchar(24),
 	well		varchar(10),
+	sample		varchar(256),
 	value		float
 );

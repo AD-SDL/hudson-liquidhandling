@@ -1,0 +1,49 @@
+Well	Sample	OD(590) Kinetic cycle #1	Blank-corrected OD(590) Kinetic cycle #1		Treatment	Conc
+A1	277 Δtdh ptac-thrABC ptac-asd	0.078	0.031		KAN	25
+A2	277 Δtdh ptac-thrABC ptac-asd	0.066	0.02		KAN	2.5
+A3	277 Δtdh ptac-thrABC ptac-asd	0.058	0.011		KAN	0.25
+A4	277 Δtdh ptac-thrABC ptac-asd	0.054	0.007		KAN	0.025
+A5	277 Δtdh ptac-thrABC ptac-asd	0.051	0.004		KAN	0.0025
+A6	277 Δtdh ptac-thrABC ptac-asd	0.045	0		KAN	0.00025
+B1	926 ΔlysC ptac-thrABC	0.066	0.019		KAN	25
+B2	926 ΔlysC ptac-thrABC	0.06	0.013		KAN	2.5
+B3	926 ΔlysC ptac-thrABC	0.054	0.007		KAN	0.25
+B4	926 ΔlysC ptac-thrABC	0.05	0.004		KAN	0.025
+B5	926 ΔlysC ptac-thrABC	0.049	0.003		KAN	0.0025
+B6	926 ΔlysC ptac-thrABC	0.043	0		KAN	0.00025
+C1	926 ΔdhaM ptac-thrABC ptac-asd	0.084	0.037		KAN	25
+C2	926 ΔdhaM ptac-thrABC ptac-asd	0.068	0.022		KAN	2.5
+C3	926 ΔdhaM ptac-thrABC ptac-asd	0.059	0.012		KAN	0.25
+C4	926 ΔdhaM ptac-thrABC ptac-asd	0.053	0.006		KAN	0.025
+C5	926 ΔdhaM ptac-thrABC ptac-asd	0.053	0.006		KAN	0.0025
+C6	926 ΔdhaM ptac-thrABC ptac-asd	0.055	0.008		KAN	0.00025
+D1	277 Δtdh DrhtA ptac-thrABC	0.115	0.069		KAN	25
+D2	277 Δtdh DrhtA ptac-thrABC	0.089	0.043		KAN	2.5
+D3	277 Δtdh DrhtA ptac-thrABC	0.072	0.025		KAN	0.25
+D4	277 Δtdh DrhtA ptac-thrABC	0.063	0.016		KAN	0.025
+D5	277 Δtdh DrhtA ptac-thrABC	0.063	0.017		KAN	0.0025
+D6	277 Δtdh DrhtA ptac-thrABC	0.044	0		KAN	0.00025
+E1	277 ΔdhaM ptac-thrABC	0.074	0.027		KAN	25
+E2	277 ΔdhaM ptac-thrABC	0.066	0.019		KAN	2.5
+E3	277 ΔdhaM ptac-thrABC	0.055	0.009		KAN	0.25
+E4	277 ΔdhaM ptac-thrABC	0.052	0.005		KAN	0.025
+E5	277 ΔdhaM ptac-thrABC	0.051	0.004		KAN	0.0025
+E6	277 ΔdhaM ptac-thrABC	0.043	0		KAN	0.00025
+F1	926fb1 ptac-asd	0.128	0.081		KAN	25
+F2	926fb1 ptac-asd	0.099	0.053		KAN	2.5
+F3	926fb1 ptac-asd	0.079	0.033		KAN	0.25
+F4	926fb1 ptac-asd	0.068	0.021		KAN	0.025
+F5	926fb1 ptac-asd	0.062	0.015		KAN	0.0025
+F6	926fb1 ptac-asd	0.072	0.025		KAN	0.00025
+G1	277 ΔdhaM ptac-thrABC ptac-asd	0.048	0.002		KAN	25
+G2	277 ΔdhaM ptac-thrABC ptac-asd	0.047	0.001		KAN	2.5
+G3	277 ΔdhaM ptac-thrABC ptac-asd	0.047	0		KAN	0.25
+G4	277 ΔdhaM ptac-thrABC ptac-asd	0.047	0		KAN	0.025
+G5	277 ΔdhaM ptac-thrABC ptac-asd	0.046	0		KAN	0.0025
+G6	277 ΔdhaM ptac-thrABC ptac-asd	0.048	0.001		KAN	0.00025
+H1	blank	0.045	0		KAN	25
+H2	blank	0.044	0		KAN	2.5
+H3	blank	0.05	0.003		KAN	0.25
+H4	blank	0.045	0		KAN	0.025
+H5	blank	0.045	0		KAN	0.0025
+H6	blank	0.051	0.004		KAN	0.00025
