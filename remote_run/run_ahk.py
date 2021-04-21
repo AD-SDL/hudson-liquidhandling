@@ -19,8 +19,14 @@ import time
 
 f = wmi.WMI()  # initialize windows management instrumentation
 
+print("IN REPO")
+
 #* Program variables
 instructions_folder_path = "C:\\labautomation\\instructions"
+log_path = "C:\\labautomation\\log\\"
+run_log_path = "C:\\labautomation\\log\\RUN_LOG.txt"
+remote_output = "C:\\Users\\svcaibio\\Dev\\remote_output.txt"
+
 is_already_running = False
 process_names = ["SOLOSoft.exe", "SoftLinxVProtocolEditor.exe"]   # SLinx.exe
 all_files_present = False
@@ -29,18 +35,21 @@ created_recently = False
 most_recent_txt_path = None   # path of most recent manifest file in labautomation\instuctions folder
 most_recent_txt_timestamp = None
 most_recent_ahk_path = None
-run_log_filename = instructions_folder_path + "\\RUN_LOG.txt"
 
-# print timestamp to log file 
-#time.sleep(5)  
-print(str(date.today()) + " " + str(datetime.now().time()))
+#run_log_filename = log_path + "\\RUN_LOG.txt"
+#print(run_log_filename)
+output_log = open(remote_output, "a+")
+
+output_log.write(str(date.today()) + " " + str(datetime.now().time()) + "\n")
+
 
 #* Check currently running processes for SoloSoft or SoftLinx .exe files  
 for process in f.Win32_Process():
     if process.Name in process_names:
         is_already_running = True
-        print("Process already running, cannot open .ahk file") 
-        print("\t" + f"{process.ProcessId:<10}  {process.Name}" + str(date.today()))
+        output_log.write("Process already running, cannot open .ahk file\n") 
+        output_log.write("\t" + f"{process.ProcessId:<10}  {process.Name}" + str(date.today()) + "\n")
+    
 
 #* Find most recent manifest file
 list_of_txt_files = glob.glob(instructions_folder_path + "\\*.txt")  # list of all .txt files
@@ -53,28 +62,39 @@ if not len(list_of_txt_files) == 0:
             try:  # is manifest file iff first line is timestamp
                 timestamp = float(first_line) 
                 if timestamp > max_timestamp:  # save most recent manifest details
+                    output_log.write(f".txt found is a manifest file: {txt_file}\n")
                     max_timestamp = timestamp
                     most_recent_txt_path = txt_file
             except ValueError:
-                print("The file run is not a manifest file")
+                output_log.write(f".txt found is not manifest file: {txt_file}\n")
     # save timestamp if there is a most recent manifest file
     if not max_timestamp == 0:
         most_recent_txt_timestamp = max_timestamp
 else: 
-    print("There are no .txt files in the labautomation instructions folder.")
+    output_log.write("There are no .txt files in the labautomation instructions folder.\n")
 
-#* Manifest File Checks -> created within last 20 minutes AND all required files in instructions folder
+#* Manifest File Checks -> created recently AND all required files in instructions folder
 if most_recent_txt_path: 
-    # check that manifest was created recently enough (within the last hour?)
+    # manifest created recently?
     if time.time() - 3600 <= most_recent_txt_timestamp:  
         created_recently = True
     else:
-        print("Most recent manifest file was not created in the last hour.")
+        output_log.write("Most recent manifest file was not created in the last hour.\n")
+
+    # create C:\labautomation\log directory if needed
+    if not os.path.exists(log_path):
+        try: 
+            os.makedirs(log_path)
+            output_log.write(f"log folder created: {log_path}\n")
+        except OSError as e: 
+            output_log.write(f"Could not create log folder: {e}\n")
 
     # check RUN_LOG.txt for record of most recent manifest file, if present don't run
-    if os.path.exists(run_log_filename):
-        print("RUN_LOG.txt exists in the labautomation/instructions folder")
-        with open(run_log_filename, 'r') as run_log: 
+    output_log.write(f"run log file name = {run_log_path}\n")
+
+    if os.path.exists(run_log_path):
+        output_log.write("RUN_LOG.txt exists in the labautomation/log folder\n")
+        with open(run_log_path, 'r') as run_log: 
             for log_line in run_log:
                 log_line_filename = log_line.split(", ")[0].strip()
                 log_line_timestamp = log_line.split(", ")[1].strip()
@@ -82,7 +102,7 @@ if most_recent_txt_path:
                     present_in_log = True
                     break  # stop searching log file once match found
     else: 
-        print("No RUN_LOG found. A new one will be created.")
+        output_log.write("No RUN_LOG found. A new one will be created.\n")
     
     if present_in_log == False:  # only if protocol is not present in log (not already run)
         # check that all required files are present
@@ -104,21 +124,26 @@ if most_recent_txt_path:
             # check that all files are present and flip the boolean
             if not "0" in file_present:
                 all_files_present = True
-                print("All required files are present.")
+                output_log.write("All required files are present.\n")
     else: 
-        print("Most recent manifest file was already run (record found in RUN_LOG.txt)")
+        output_log.write("Most recent manifest file was already run (record found in RUN_LOG.txt)\n")
 else: 
-    print("No recent manifest file in instructions folder")
+    output_log.write("No recent manifest file in instructions folder\n")
 
 #* Run .ahk file if everything is good to go
 if created_recently and all_files_present and not is_already_running: # ok becuase all files present only can be true only iff not present in log file
     os.startfile(most_recent_ahk_path)  
-    print("The .ahk file was opened.")
+    output_log.write(f"Running ahk file: {most_recent_ahk_path}\n")
 
-    # add name of manifest file and timestamp to run log 
-        # add human readable timestamp as well? 
-    with open(run_log_filename, 'a+') as run_log:
+    #add name of manifest file and timestamp to run log 
+    with open("C:\\labautomation\\log\\RUN_LOG.txt", 'a+') as run_log:
         run_log.write(most_recent_txt_path + ", " + str(most_recent_txt_timestamp) + "\n")
 
+    # with open(run_log_path, 'a+') as run_log:
+    #     run_log.write(most_recent_txt_path + ", " + str(most_recent_txt_timestamp) + "\n")
+    
+
 else:
-    print("Not running .ahk file")
+    output_log.write("Not running .ahk file\n")
+output_log.write("-------------------------------------\n")
+output_log.close()
