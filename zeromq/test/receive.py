@@ -14,7 +14,7 @@ socket.bind("tcp://*:5555")
 while True:
     #  Wait for next request from client
     message = bytes(socket.recv())
-    decoded = message.decode('utf-8')
+    decoded = message.decode("utf-8")
     print(f"Received request: {decoded}")
 
     #  Do some 'work'

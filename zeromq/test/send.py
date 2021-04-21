@@ -24,4 +24,3 @@ for request in range(10):
 socket.send(b"SHUTDOWN")
 repl = socket.recv()
 print(f"Got {repl}")
-

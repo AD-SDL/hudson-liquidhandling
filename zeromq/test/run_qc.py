@@ -1,14 +1,14 @@
-''' Module of qc methods '''
+""" Module of qc methods """
 import sys
 
 
 def run_qc(input):
-    ''' Runs qc on data from the lab '''
+    """ Runs qc on data from the lab """
 
     return_val = "PASS"
-    print(f'running qc on {input}')
+    print(f"running qc on {input}")
 
-    print(f'done running qc on {input}')
+    print(f"done running qc on {input}")
     return return_val
 
 

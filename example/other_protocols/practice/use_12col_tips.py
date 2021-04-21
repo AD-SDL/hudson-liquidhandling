@@ -1,7 +1,7 @@
 from liquidhandling import SoftLinx, SoloSoft
 
 soloSoft = SoloSoft(
-    filename="use_12col_tips.hso", 
+    filename="use_12col_tips.hso",
     plateList=[
         "TipBox.200uL.Corning-4864.orangebox",
         "Empty",
@@ -11,10 +11,10 @@ soloSoft = SoloSoft(
         "Empty",
         "Empty",
         "Empty",
-    ]
+    ],
 )
 
-for i in range(1,13):
+for i in range(1, 13):
     soloSoft.getTip()
 
 soloSoft.shuckTip()

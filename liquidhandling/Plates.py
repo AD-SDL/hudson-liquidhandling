@@ -74,7 +74,9 @@ class PlateDefinition:
             else:
                 raise ValueError("value must be a non-negative number")
         else:
-            raise ValueError("row must be a character in the range A-H, or a number 1-8")
+            raise ValueError(
+                "row must be a character in the range A-H, or a number 1-8"
+            )
         return self.plate
 
     def setColumn(self, column=1, value=0):
@@ -114,7 +116,9 @@ class PlateDefinition:
             else:
                 raise ValueError("value must be a non-negative number")
         else:
-            raise ValueError("row must be a character in the range A-H, or a number 1-8")
+            raise ValueError(
+                "row must be a character in the range A-H, or a number 1-8"
+            )
         return self.plate
 
     def setColumnAlternating(self, column=1, value=0, offset=0):
@@ -148,8 +152,11 @@ class PlateDefinition:
             else:
                 raise ValueError("value must be a non-negative number")
         else:
-            raise ValueError("row must be a character in the range A-H, or a number 1-8")
+            raise ValueError(
+                "row must be a character in the range A-H, or a number 1-8"
+            )
         return self.plate
+
 
 class GenericPlate96Well:
     def __new__(cls, plate=None):
