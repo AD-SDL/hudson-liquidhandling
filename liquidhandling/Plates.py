@@ -66,18 +66,15 @@ class PlateDefinition:
                 for i in range(self.columns):
                     self.plate[index][i] = value
             else:
-                print("value must be a non-negative number")
-                return
+                raise ValueError("value must be a non-negative number")
         elif row in range(1, self.rows + 1):
             if float(value) >= 0:
-                for i in range(12):
+                for i in range(self.columns):
                     self.plate[row][i] = value
             else:
-                print("value must be a non-negative number")
-                return
+                raise ValueError("value must be a non-negative number")
         else:
-            print("row must be a character in the range A-H, or a number 1-8")
-            return
+            raise ValueError("row must be a character in the range A-H, or a number 1-8")
         return self.plate
 
     def setColumn(self, column=1, value=0):
@@ -86,11 +83,9 @@ class PlateDefinition:
                 for row in range(self.rows):
                     self.plate[row][column - 1] = value
             else:
-                print("value must be a non-negative number")
-                return
+                raise ValueError("value must be a non-negative number")
         else:
-            print("column must be a number in the range 1-12 inclusive")
-            return
+            raise ValueError("column must be a number in the range 1-12 inclusive")
         return self.plate
 
     def setAll(self, value=0):
@@ -99,10 +94,62 @@ class PlateDefinition:
                 for column in range(self.columns):
                     self.plate[row][column] = value
         else:
-            print("value must be a non-negative number")
+            raise ValueError("value must be a non-negative number")
             return
         return self.plate
 
+    def setCell(self, row="A", column=1, value=0):
+        alpha_vals = list(string.ascii_uppercase)
+        if not (column in range(1, self.columns + 1)):
+            raise ValueError("column must be a number in the range 1-12 inclusive")
+        if str.upper(row) in alpha_vals[0 : self.rows]:
+            index = alpha_vals.index(str.upper(row))
+            if float(value) >= 0:
+                self.plate[index][column] = value
+            else:
+                raise ValueError("value must be a non-negative number")
+        elif row in range(1, self.rows + 1):
+            if float(value) >= 0:
+                self.plate[row][column] = value
+            else:
+                raise ValueError("value must be a non-negative number")
+        else:
+            raise ValueError("row must be a character in the range A-H, or a number 1-8")
+        return self.plate
+
+    def setColumnAlternating(self, column=1, value=0, offset=0):
+        if not (offset == 0 or offset == 1):
+            raise ValueError("Offset must be either 0 or 1")
+        if column in range(1, self.columns + 1):
+            if float(value) >= 0:
+                for row in range(self.rows, step=2):
+                    self.plate[row + offset][column - 1] = value
+            else:
+                raise ValueError("value must be a non-negative number")
+        else:
+            raise ValueError("column must be a number in the range 1-12 inclusive")
+        return self.plate
+
+    def setRowAlternating(self, row="A", value=0, offset=0):
+        if not (offset == 0 or offset == 1):
+            raise ValueError("Offset must be either 0 or 1")
+        alpha_vals = list(string.ascii_uppercase)
+        if str.upper(row) in alpha_vals[0 : self.rows]:
+            index = alpha_vals.index(str.upper(row))
+            if float(value) >= 0:
+                for i in range(self.columns, step=2):
+                    self.plate[index][i + offset] = value
+            else:
+                raise ValueError("value must be a non-negative number")
+        elif row in range(1, self.rows + 1):
+            if float(value) >= 0:
+                for i in range(self.columns, step=2):
+                    self.plate[row][i + offset] = value
+            else:
+                raise ValueError("value must be a non-negative number")
+        else:
+            raise ValueError("row must be a character in the range A-H, or a number 1-8")
+        return self.plate
 
 class GenericPlate96Well:
     def __new__(cls, plate=None):
