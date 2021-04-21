@@ -193,9 +193,7 @@ class SoftLinx:
         if inGripper:
             positionsFrom = ["SoftLinx.PlateCrane.Gripper"]
         if not isinstance(positionsFrom, list) or not isinstance(positionsTo, list):
-            raise ValueError(
-                    "positionsFrom and positionsTo must be Lists."
-                )
+            raise ValueError("positionsFrom and positionsTo must be Lists.")
         onEmptyStackDict = {
             "End Method": 0,
             "Post Message and Continue": 1,

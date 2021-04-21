@@ -30,7 +30,7 @@ from liquidhandling import SoloSoft, SoftLinx
 # softLinx.saveProtocol()
 
 # --------------------------------------------------------------------------------------------------------------
-#default_empty_tip = "TipBox.50uL.Axygen-EV-50-R-S.tealbox.empty"
+# default_empty_tip = "TipBox.50uL.Axygen-EV-50-R-S.tealbox.empty"
 tip_box_name = "TipBox.200uL.Corning-4864.orangebox"
 default_empty_tip_loc = "SoftLinx.Solo.Position6"
 default_empty_tip_storage = "SoftLinx.PlateCrane.Stack5"
@@ -38,14 +38,16 @@ default_full_tip_storage = "SoftLinx.PlateCrane.Stack4"
 
 # previously instantiated SoftLinx
 softLinx = SoftLinx("Tip Replacement Test Main", "tip_replacement_test_main.slvp")
-softLinx.setPlates({
-            default_full_tip_storage: tip_box_name,
-            default_empty_tip_loc: tip_box_name,
-        })
+softLinx.setPlates(
+    {
+        default_full_tip_storage: tip_box_name,
+        default_empty_tip_loc: tip_box_name,
+    }
+)
 
 # Replace Tips Method ----------------------------------------------------------------
-def replace_tips( 
-    current_softLinx, # required argument! -> can't run multiple .slvp files 
+def replace_tips(
+    current_softLinx,  # required argument! -> can't run multiple .slvp files
     empty_tip_location,  # "Position6" -> "SoftLinx.Solo.Position6"
     empty_tip_storage="SoftLinx.PlateCrane.Stack4",
     full_tip_storage="SoftLinx.PlateCrane.Stack5",
@@ -57,7 +59,7 @@ def replace_tips(
 
     # format empty tip location and determine tip type at that location
     empty_tip_location = "SoftLinx.Solo." + str(empty_tip_location)
-    print("Empty tip location: " +  str(empty_tip_location))
+    print("Empty tip location: " + str(empty_tip_location))
     tip_type = current_softLinx.plates[empty_tip_location]
     print("Tip type: " + str(tip_type))
 
@@ -65,19 +67,21 @@ def replace_tips(
     current_softLinx.plateCraneMovePlate(
         [empty_tip_location],
         [empty_tip_storage],
-        # hasLid = False <-- default setting 
+        # hasLid = False <-- default setting
     )
 
     # pick up the new tip box and place it in the correct location
     current_softLinx.plateCraneMovePlate(
         [full_tip_storage],
         [empty_tip_location],
-        hasLid=True, 
+        hasLid=True,
     )
-    #softLinx.saveProtocol()
+    # softLinx.saveProtocol()
+
+
 # ---------------------------------------------------------------------------------------------------
 
-#* Use all tips in a tip box
+# * Use all tips in a tip box
 softLinx.soloSoftResetTipCount(6)  # automatically reset the tip count (for testing)
 soloSoft = SoloSoft(
     filename="use_all_tips.hso",
@@ -90,14 +94,15 @@ soloSoft = SoloSoft(
         "TipBox.200uL.Corning-4864.orangebox",
         "Empty",
         "Empty",
-    ])
+    ],
+)
 
-for i in range(1,13):
+for i in range(1, 13):
     soloSoft.getTip("Position6")
 soloSoft.shuckTip()
 soloSoft.savePipeline()
 
-#* Test conditional recognition of empty tip box
+# * Test conditional recognition of empty tip box
 # softLinx.conditional(
 #     conditionalStatement="[SoftLinx.PlateCrane].Speed > 0",
 #     branchTrue=[
@@ -108,14 +113,10 @@ soloSoft.savePipeline()
 #     ],
 # )
 
-softLinx.conditional(
-    conditionalStatement="[SoftLinx.Solo].TipCount"
-)
+softLinx.conditional(conditionalStatement="[SoftLinx.Solo].TipCount")
 
 # add conditional here
 replace_tips(current_softLinx=softLinx, empty_tip_location="Position6")
 
 
 softLinx.saveProtocol()
-
-

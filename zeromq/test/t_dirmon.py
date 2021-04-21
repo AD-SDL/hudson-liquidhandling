@@ -7,4 +7,4 @@ t = 600
 new_files = checkDir(".", last_mtime=t)
 
 for f in new_files:
-    print ("new file {}".format(f))
+    print("new file {}".format(f))

@@ -1,4 +1,3 @@
-
 # Database variables
 DBNAME = "name"
 DBUSER = "user"

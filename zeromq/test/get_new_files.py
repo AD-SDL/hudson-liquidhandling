@@ -17,18 +17,16 @@ socket.bind("tcp://*:5555")
 while True:
     #  Wait for next request from client
     message = socket.recv()
-    decoded = message.decode('utf-8')
-    print("Received message\n",
-            json.dumps(json.loads(decoded), indent=4, sort_keys=True)
-            )
+    decoded = message.decode("utf-8")
+    print(
+        "Received message\n", json.dumps(json.loads(decoded), indent=4, sort_keys=True)
+    )
 
     #  Send reply back to client
     socket.send(b"World")
 
     #  Do some 'work'
-    child_pid = Popen(["python", "./run_qc.py", "myarg"],
-            start_new_session=True
-            ).pid
+    child_pid = Popen(["python", "./run_qc.py", "myarg"], start_new_session=True).pid
 
     # Shutdown if message is SHUTDOWN
     if message == b"SHUTDOWN":

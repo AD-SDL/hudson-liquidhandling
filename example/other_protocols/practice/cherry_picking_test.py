@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 from liquidhandling import SoftLinx, SoloSoft
 from liquidhandling import *
 
@@ -31,3 +32,6 @@ for i in range(3):
 
 soloSoft.shuckTip()
 soloSoft.savePipeline()
+=======
+# TODO
+>>>>>>> aa77a980c46cff96fcebaec843f58c4770edd472
