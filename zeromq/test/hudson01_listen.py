@@ -8,6 +8,7 @@ hudson01 listens for instruction files from lambda6 (Port 5556)
 
 import os
 import sys
+# from zeromq.test.hudson01_handle_message import hudson01_handle_message
 import zmq
 import time 
 import json
@@ -15,6 +16,8 @@ import _thread
 import threading
 from subprocess import Popen
 from hudson01_handle_message import hudson01_handle_message
+#from hudson01_handle_message import hudson01_handle_message
+#from hudson01_handle import hudson01_handle_message
 
 
 context = zmq.Context() 
@@ -32,8 +35,10 @@ while True:
 
     else:  
         # pass message to hudson01_handle_message (no need to worry about contents of message here)
-        child_message_handler = child_pid = Popen(["python", "./hudson01_handle_message.py", decoded],
-            start_new_session=True
-            ).pid
+        # child_message_handler = child_pid = Popen(["python", "C:\\Users\\svcaibio\\Dev\\liquidhandling\\zeromq\\test\\hudson01_handle.py", decoded],
+        #     start_new_session=True
+        #     ).pid
+        hudson01_handle_message(decoded)
+        socket.send(b"Hudson01 received instructions")
+
     
-    socket.send(b"Message received on hudson01")

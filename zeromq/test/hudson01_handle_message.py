@@ -88,11 +88,11 @@ def hudson01_handle_message(decoded_message):
     return return_val
 
 
-def main(args):
-    decoded_message = sys.argv[1]
-    hudson01_handle_message(decoded_message)
+# def main(args):
+#     decoded_message = sys.argv[1]
+#     hudson01_handle_message(decoded_message)
 
 
-if __name__ == "__main__":
-    # execute only if run as a script
-    main(sys.argv)
+# if __name__ == "__main__":
+#     # execute only if run as a script
+#     main(sys.argv)

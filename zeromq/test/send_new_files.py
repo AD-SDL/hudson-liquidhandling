@@ -35,7 +35,7 @@ if len(modified_files) > 0:
     # Create manifest
     data = {}
     for f in modified_files:
-        tmp = generateFileManifest(f)
+        tmp = generateFileManifest(f, "instructions")
         for key, value in tmp.items():
             data[key] = value 
     print (json.dumps(data, indent=4, sort_keys=True))

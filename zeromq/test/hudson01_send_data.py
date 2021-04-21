@@ -10,8 +10,8 @@ import time
 
 context = zmq.Context()
 socket = context.socket(zmq.REQ)
-socket.connect("tcp://localhost:5555")
-#socket.connect("tcp://lambda6.cels.anl.gov:5555") # want to send data back to lambda 6
+#socket.connect("tcp://localhost:5555")
+socket.connect("tcp://lambda6.cels.anl.gov:5555") # want to send data back to lambda 6
 
 # Parse args
 parser = argparse.ArgumentParser()

@@ -1,12 +1,12 @@
 import os
-# import wmi
-# import glob
+import wmi
+import glob
 from datetime import date, datetime
 import time
 
 def run_ahk(instructions_dir_path):  # the path to the folder containing the new protocol instructions to run
 
-    print(f"called run_ahk on new instructions")
+    print("run_ahk.py called on instructions: deciding if ok to run ahk")
 
     # save the name of the instructions (same as message address)
     if os.path.exists(os.path.dirname(instructions_dir_path)):
@@ -46,11 +46,13 @@ def run_ahk(instructions_dir_path):  # the path to the folder containing the new
     error_log.write("\t" + str(time.time()) + ", " + str(datetime.now()) + "\n")
 
     #* Check that SoloSoft and SoftLinx are not already running 
-    # for process in f.Win32_Process():
-    #     if process.Name in process_names:
-    #         is_already_running = True
-    #         error_log.write("\tProcess already running, cannot open .ahk file\n")
-    #         error_log.write("\t\t" + f"{process.ProcessId:<10}  {process.Name}" + str(date.today()) + "\n")
+    print("checking if SoloSoft or SoftLinx is already running")
+    f = wmi.WMI()  # initialize windows management instrumentation
+    for process in f.Win32_Process():
+        if process.Name in process_names:
+            is_already_running = True
+            error_log.write("\tProcess already running, cannot open .ahk file\n")
+            error_log.write("\t\t" + f"{process.ProcessId:<10}  {process.Name}" + str(date.today()) + "\n")
 
     #* Check that RUN_LOG does not already contain record of these instructions (have not been run before) 
     with open(run_log_path) as read_run_log:  
@@ -99,14 +101,13 @@ def run_ahk(instructions_dir_path):  # the path to the folder containing the new
 
     #* Run .ahk file if everything is good to go
     if ahk_file and all_files_present and not is_already_running and not present_in_log: # ok becuase all files present only can be true only iff not present in log file
-        #os.startfile(most_recent_ahk_path)  
+        #os.startfile(ahk_file)  
         run_log.write(f"\tSUCCESS. The .ahk file was opened ({ahk_file}), protocol executed in SoftLinx\n")
         error_log.write("\tNO ERRORS\n")
+        print(f"NO ERRORS, will run ahk {ahk_file}")
     else: 
         run_log.write("\tFAILURE: ahk file not opened\n")
 
     #* Close log files
     run_log.close()
     error_log.close() 
-
-    exit()

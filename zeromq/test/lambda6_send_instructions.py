@@ -14,10 +14,10 @@ def lamdba6_send_instructions(instructions_dir):
     context = zmq.Context()
     socket = context.socket(zmq.REQ)
     # socket.connect("tcp://localhost:5556")
-    socket.connect("tcp://hudson01.cels.anl.gov:5556") # to send instructions to hudson01
-
+    #socket.connect("tcp://hudson01.bio.anl.gov:5556") # to send instructions to hudson01
     
-
+    socket.connect("tcp://localhost:5556")
+   
     if os.path.isdir(instructions_dir):  
         instruction_files = os.listdir(instructions_dir)
 
@@ -44,7 +44,8 @@ def lamdba6_send_instructions(instructions_dir):
             repl = socket.recv()
             print(f"Got {repl}")
 
-    
+    socket.close()
+
     return return_val
 
 
