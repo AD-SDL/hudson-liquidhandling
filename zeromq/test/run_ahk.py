@@ -5,9 +5,7 @@ from datetime import date, datetime
 import time
 
 
-def run_ahk(
-    instructions_dir_path,
-):  # the path to the folder containing the new protocol instructions to run
+def run_ahk(instructions_dir_path):  # path to new instructions folder
 
     print("run_ahk.py called on instructions: deciding if ok to run ahk")
 
