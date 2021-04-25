@@ -11,7 +11,6 @@ import os
 import sys
 import json
 from run_ahk import run_ahk
-from test_run_ahk import test_run_ahk
 
 
 def hudson01_handle_message(decoded_message):
@@ -28,9 +27,6 @@ def hudson01_handle_message(decoded_message):
     #     print(item)
 
     hudosn01_instructions_path = "C:\\labautomation\\instructions"
-    test_hudson01_instructions_path = (
-        "/Users/cstone/Desktop/liquidhandling_Git_Clone/zeromq/test"
-    )
 
     # * assign path names (on lambda6 or running locally for testing?)
     if os.path.exists(hudosn01_instructions_path) or os.path.exists(
@@ -42,12 +38,6 @@ def hudson01_handle_message(decoded_message):
                 hudosn01_instructions_path, str(address) + "\\"
             )
             print("Running on hudson01")
-        elif os.path.exists(test_hudson01_instructions_path):  # if testing locally
-            log_dir_path = os.path.join(test_hudson01_instructions_path, "log/")
-            instructions_dir_path = os.path.join(
-                test_hudson01_instructions_path, str(address) + "/"
-            )
-            print("Running on local computer for testing")
 
         # * record in message_log.txt
         if not os.path.exists(os.path.dirname(log_dir_path)):
@@ -90,13 +80,7 @@ def hudson01_handle_message(decoded_message):
             print(f"Instructions copied to new directory: {instructions_dir_path}")
 
         # pass the new folder name to run_ahk (checks if ok to run on robot, if so runs .ahk file)
-        # if os.path.exists(hudosn01_instructions_path):
-        # run_ahk(instructions_dir_path)
-
         if os.path.exists(hudosn01_instructions_path):  # if running on hudson01
-            run_ahk(instructions_dir_path)
-        elif os.path.exists(test_hudson01_instructions_path):  # if running locally
-            # test_run_ahk(instructions_dir_path)
             run_ahk(instructions_dir_path)
 
     print(f"Done handling message on hudson01: {str(address)} \n")
