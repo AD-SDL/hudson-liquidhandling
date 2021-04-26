@@ -294,12 +294,7 @@ class SoftLinx:
             else:
                 self.protocolSteps.append(step)
         # * Add .hso filename to manifest list
-        if "\\" in filename:
-            hso_filename = filename.split("\\")[-1]
-        elif "/" in filename:
-            hso_filename = filename.split("/")[-1]
-        else:
-            hso_filename = filename
+        hso_filename = os.path.basename(filename)
         self.addToManifest(hso_filename)
 
         return step
