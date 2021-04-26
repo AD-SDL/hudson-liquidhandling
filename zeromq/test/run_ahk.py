@@ -92,9 +92,9 @@ def run_ahk(instructions_dir_path):  # path to new instructions folder
         # extract list of required files
         if manifest:
             with open(manifest, "r") as open_manifest:
-                required_files = [l.strip() for l in open_manifest.readlines()][
-                    2:
-                ]  # skips over the first two timestamp lines of manifest
+                 # skips over the first two timestamp lines of manifest
+                required_files = [l.strip() for l in open_manifest.readlines()][2:] 
+                print(f"required files: ")
 
                 # make sure all required files are present
                 file_status = ""
@@ -119,7 +119,7 @@ def run_ahk(instructions_dir_path):  # path to new instructions folder
     if (
         ahk_file and all_files_present and not is_already_running and not present_in_log
     ):  # ok becuase all files present only can be true only iff not present in log file
-        # os.startfile(ahk_file)
+        #os.startfile(ahk_file)
         run_log.write(
             f"\tSUCCESS. The .ahk file was opened ({ahk_file}), protocol executed in SoftLinx\n"
         )

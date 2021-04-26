@@ -300,29 +300,9 @@ softLinx.saveProtocol()
 #             start_new_session=True
 #             ).pid
 
-<<<<<<< HEAD
 # child_message_sender = child_pid = Popen(["python", "C:\\Users\\svcaibio\\Dev\\liquidhandling\\zeromq\\test\\lambda6_send_instructions.py", "-d", protocol_directory],
 #             start_new_session=True
 #             ).pid
 
 #print("New instruction directory passed to lambda6_send_message.py")
 
-
-
-
-
-
-
-=======
-child_message_sender = child_pid = Popen(
-    [
-        "python",
-        "C:\\Users\\svcaibio\\Dev\\liquidhandling\\zeromq\\test\\lambda6_send_instructions.py",
-        "-d",
-        protocol_directory,
-    ],
-    start_new_session=True,
-).pid
-
-print("New instruction directory passed to lambda6_send_message.py")
->>>>>>> aa77a980c46cff96fcebaec843f58c4770edd472
