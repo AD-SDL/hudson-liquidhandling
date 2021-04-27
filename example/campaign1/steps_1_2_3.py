@@ -296,17 +296,14 @@ softLinx.soloSoftRun(
 softLinx.saveProtocol()
 
 # pass the new instructions folder path to lambda6_send_message.py
-child_message_sender = child_pid = Popen(["python", "/Users/cstone/Desktop/liquidhandling_Git_Clone/zeromq/test/lambda6_send_instructions.py", "-d", protocol_directory],
-            start_new_session=True
-            ).pid
-
-# child_message_sender = child_pid = Popen(["python", "C:\\Users\\svcaibio\\Dev\\liquidhandling\\zeromq\\test\\lambda6_send_instructions.py", "-d", protocol_directory],
+# child_message_sender = child_pid = Popen(["python", "/Users/cstone/Desktop/liquidhandling_Git_Clone/zeromq/test/lambda6_send_instructions.py", "-d", protocol_directory],
 #             start_new_session=True
 #             ).pid
 
+child_message_sender = child_pid = Popen(["python", "C:\\Users\\svcaibio\\Dev\\liquidhandling\\zeromq\\test\\lambda6_send_instructions.py", "-d", protocol_directory],
+            start_new_session=True
+            ).pid
+
 #print("New instruction directory passed to lambda6_send_message.py")
 
-<<<<<<< Updated upstream
-=======
 print("New instruction directory passed to lambda6_send_message.py")
->>>>>>> Stashed changes
