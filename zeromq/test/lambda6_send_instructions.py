@@ -15,22 +15,16 @@ def lamdba6_send_instructions(instructions_dir):
     context = zmq.Context()
     socket = context.socket(zmq.REQ)
     # socket.connect("tcp://localhost:5556")
-    socket.connect("tcp://hudson01.bio.anl.gov:5556") # to send instructions to hudson01
+    socket.connect("tcp://hudson01.bio.anl.gov:5556")
 
     if os.path.isdir(instructions_dir):
         instruction_files = os.listdir(instructions_dir)
 
-        # if there are files in the directory to send...
+        # if there are files to send
         if len(instruction_files) > 0:
 
-            # create message address (folder name, timestamp, number files sent)
-            address = (
-                str(os.path.basename(instructions_dir))
-                + "-"
-                + (str(time.time())).split(".")[0]
-                + "-"
-                + str(len(instruction_files))
-            )
+            # message address = Protocol details and timestamp
+            address = os.path.basename(instructions_dir)
             print(f"Address: {address}")
 
             # create manifest
