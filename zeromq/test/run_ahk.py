@@ -18,7 +18,7 @@ def run_ahk(instructions_dir_path):  # new instructions folder path
     all_files_present = False
     present_in_log = False
 
-    manifest = None  
+    manifest = None
     ahk_file = None
 
     hudson01_instruction_dir = os.path.split(os.path.dirname(instructions_dir_path))[0]
@@ -47,7 +47,7 @@ def run_ahk(instructions_dir_path):  # new instructions folder path
 
     # * Check that SoloSoft and SoftLinx are not already running
     print("checking if SoloSoft or SoftLinx is already running")
-    f = wmi.WMI() 
+    f = wmi.WMI()
     for process in f.Win32_Process():
         if process.Name in process_names:
             is_already_running = True
@@ -77,7 +77,9 @@ def run_ahk(instructions_dir_path):  # new instructions folder path
             with open(txt_file_path, "r") as open_txt_file:
                 first_line = open_txt_file.readline().strip()
                 try:
-                    timestamp = float(first_line) # manifest will have timestamp on first line
+                    timestamp = float(
+                        first_line
+                    )  # manifest will have timestamp on first line
                     manifest = txt_file_path
                 except ValueError as e:
                     error_log.write(
@@ -88,8 +90,8 @@ def run_ahk(instructions_dir_path):  # new instructions folder path
         if manifest:
 
             with open(manifest, "r") as open_manifest:
-                 # skips over the first two timestamp lines of manifest
-                required_files = [l.strip() for l in open_manifest.readlines()][2:] 
+                # skips over the first two timestamp lines of manifest
+                required_files = [l.strip() for l in open_manifest.readlines()][2:]
 
                 # make sure all required files are present
                 file_status = ""
@@ -112,15 +114,15 @@ def run_ahk(instructions_dir_path):  # new instructions folder path
             error_log.write("\tManifest file not found\n")
 
     # * Run .ahk file if everything is good to go
-    if (ahk_file and all_files_present and not is_already_running and not present_in_log):  
-        try: 
-            #os.startfile(ahk_path) # WORKS
+    if ahk_file and all_files_present and not is_already_running and not present_in_log:
+        try:
+            # os.startfile(ahk_path) # WORKS
             run_log.write(
                 f"\tSUCCESS. The .ahk file was opened ({ahk_path}), protocol executed in SoftLinx\n"
             )
             error_log.write("\tNO ERRORS\n")
             print(f"NO ERRORS, will run ahk path {ahk_path}")
-        except OSError as e: 
+        except OSError as e:
             print(e)
             print("ERROR: could not open ahk file")
             run_log.write("\tFAILURE: ahk file not opened\n")

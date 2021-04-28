@@ -15,13 +15,10 @@ print(reply)
 # socket.bind("tcp://*:5556")
 
 
-# while True: 
+# while True:
 #     message = socket.recv()
 #     decoded = message.decode('utf-8')
-    
+
 #     print(f"Message received: {decoded}")
-    
+
 #     socket.send(b"Message received")
-    
- 
-    
