@@ -22,7 +22,7 @@ context = zmq.Context()
 socket = context.socket(zmq.REP)
 socket.bind(
     "tcp://*:5555"
-)  # why does this work but "tcp://localhost:5555" doesn't work?
+)  
 
 while True:
     message = socket.recv()
