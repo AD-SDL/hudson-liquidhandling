@@ -1,4 +1,4 @@
-from manifest import generateFileManifest
+from utils.manifest import generateFileManifest
 import argparse
 import json
 import zmq

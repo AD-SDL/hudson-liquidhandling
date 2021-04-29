@@ -11,7 +11,9 @@ import os
 import sys
 import json
 #from run_ahk import run_ahk
-from zeromq.utils.run_ahk import run_ahk
+from utils.run_ahk import run_ahk
+
+
 
 
 def hudson01_handle_message(decoded_message):
