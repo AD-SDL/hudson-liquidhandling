@@ -1,8 +1,8 @@
 # Monitors a directory and if it sees a file or files newer that some time,
 # create a manifest and send a message to the message queue.
 
-from dirmon import checkDir
-from manifest import generateFileManifest
+from utils.dirmon import checkDir
+from utils.manifest import generateFileManifest
 import argparse
 import json
 import zmq

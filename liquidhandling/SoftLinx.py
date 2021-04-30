@@ -23,6 +23,7 @@ class SoftLinx:
             "PlateCrane": False,
             "Plates": False,
             "Solo": False,
+            "Hidex": False,
             "RapidPick": False,
             "TorreyPinesRIC20": False,
         }
@@ -30,13 +31,15 @@ class SoftLinx:
             "PlateCrane": 0,
             "Plates": 1,
             "Solo": 2,
-            # "RapidPick": 3,
-            # "TorreyPinesRIC20": 4,
+            "Hidex": 3,
+            # "RapidPick": 4,
+            # "TorreyPinesRIC20": 5,
         }
         self.plugin_address = {
-            "PlateCrane": 3,
-            "Plates": 4,
-            "Solo": 5,
+            "PlateCrane": 4,
+            "Plates": 5,
+            "Solo": 6,
+            "Hidex": 7,
             # "RapidPick": 8,
             # "TorreyPinesRIC20": 9,
         }
@@ -294,12 +297,7 @@ class SoftLinx:
             else:
                 self.protocolSteps.append(step)
         # * Add .hso filename to manifest list
-        if "\\" in filename:
-            hso_filename = filename.split("\\")[-1]
-        elif "/" in filename:
-            hso_filename = filename.split("/")[-1]
-        else:
-            hso_filename = filename
+        hso_filename = os.path.basename(filename)
         self.addToManifest(hso_filename)
 
         return step
@@ -322,6 +320,64 @@ class SoftLinx:
             "args": [
                 ["x:String", str(position)],
             ],
+        }
+        if inplace:
+            if index != None:
+                self.protocolSteps.insert(index, step)
+            else:
+                self.protocolSteps.append(step)
+
+    # * Hidex Steps * #
+    def hidexRun(self, hidex_protocol, isActive=True, index=None, inplace=True):
+        if not isinstance(hidex_protocol, str):
+            raise TypeError(
+                "hidex_protocol must be a string corresponding to the name of an assay protocol"
+            )
+        step = {
+            "type": "Run",
+            "Command": "Run",
+            "Description": "Assay: " + hidex_protocol,
+            "SLXId": "8e5c1758-fa8b-43e2-87dc-c90431662395",
+            "ToolTip": "Assay: " + hidex_protocol,
+            "isActive": str(isActive),
+            "system": "Hidex",
+            "args": [
+                ["x:String", hidex_protocol],
+            ],
+        }
+        if inplace:
+            if index != None:
+                self.protocolSteps.insert(index, step)
+            else:
+                self.protocolSteps.append(step)
+
+    def hidexOpen(self, isActive=True, index=None, inplace=True):
+        step = {
+            "type": "Open Door",
+            "Command": "Open Door",
+            "Description": "",
+            "SLXId": "62c47122-48c6-413a-a41b-9ff35a0489fc",
+            "ToolTip": "",
+            "isActive": isActive,
+            "system": "Hidex",
+            "args": [],
+        }
+        if inplace:
+            if index != None:
+                self.protocolSteps.insert(index, step)
+            else:
+                self.protocolSteps.append(step)
+
+    def hidexClose(self, isActive=True, index=None, inplace=True):
+        step = {
+            "type": "Close Door",
+            "Command": "Close Door",
+            "Description": "",
+            "SLXId": "9d060013-be01-403d-b15a-b0ce9da34cb3",
+            "ToolTip": "",
+            "isActive": isActive,
+            "system": "Hidex",
+            "args": [],
         }
         if inplace:
             if index != None:
@@ -406,6 +462,7 @@ class SoftLinx:
         self.generatePluginInterface(scg_dict, "PlateCrane")
         self.generatePluginInterface(scg_dict, "Plates")
         self.generatePluginInterface(scg_dict, "Solo")
+        self.generatePluginInterface(scg_dict, "Hidex")
         # self.generatePluginInterface(interfaces, "PlateCrane")
         # self.generatePluginInterface(interfaces, "Plates")
         # self.generatePluginInterface(interfaces, "RapidPick")
@@ -428,6 +485,7 @@ class SoftLinx:
         self.generatePluginVariables(variableList, "PlateCrane")
         self.generatePluginVariables(variableList, "Plates")
         # self.generatePluginVariables(variableList, "RapidPick")
+        self.generatePluginVariables(variableList, "Hidex")
         self.generatePluginVariables(variableList, "Solo")
         # self.generatePluginVariables(variableList, "TorreyPinesRIC20")
 
