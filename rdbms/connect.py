@@ -1,6 +1,10 @@
 import sys
-import config
 import mysql.connector
+from pathlib import Path
+
+# this is needed to find config.py outside of the repo
+home = str(Path.home())
+import config
 
 
 def connect():
