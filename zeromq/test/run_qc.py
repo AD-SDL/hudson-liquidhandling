@@ -6,36 +6,66 @@ sys.path.append('../../rdbms/')
 from rdbms.connect import connect
 from rdbms import config
 
+import csv
+import pandas as pd
+
 # cnx is global to this file
 cnx = connect()
 
-def run_qc(filename):
+def parse(filename):
+    ''' parses the Hidex csv file
+
+    Params:
+        filename: the complete path and name of the Hidex cvs file
+
+    Returns:
+        df: a pandas data frame
+
+    Description:
+
+
+    '''
+    df = pd.DataFrame()
+
+    DATA=False
+    with open(filename, newline='') as csvfile:
+        csv.QUOTE_NONNUMERIC=True
+        reader = csv.reader(csvfile)
+        for row in reader:
+            if len(row) > 0 and row[0] == "Well":
+                df = pd.DataFrame(columns=row)
+                DATA=True
+                continue
+            if DATA==True:
+                df.loc[len(df.index)+1] = row
+
+    return df
+
+
+def run_qc(values):
     ''' Runs qc on data from the lab.
 
         Params:
-            input - the name of an input file
+            values - A 1-dimensional array of values
 
         Returns:
             boolean - based on if qc rules passed
 
         Description:
-            The basic idea is that this method takes as input a file name that has hidex data.
+            The basic idea is that this method takes as input a file
+            name that has hidex data.
 
-            A list of values associated with the blanks in the file is constructed and z-scores
-            are computed against all blanks in the database.
+            A list of values associated with the blanks in the file
+            is constructed and z-scores are computed against all blanks
+            in the database.
 
             If any z_score is greater than 1.5, then the plate fails.
     '''
 
 
     return_val = "PASS"
-    print(f'running qc on {input}')
-
-    # get values of blank wells from filename
-    values = [2,3,4,5.5]
 
     z_scores = z_score(values)
-
     for z in z_scores:
         if z >= 1.5:
             print ('FAIL sample has z_xcore {} >= 1.5'.format(z))
@@ -56,14 +86,18 @@ def z_score(values):
     z_scores = []
     for val in values:
         z_scores.append((val - avg)/std)
+    print("z-scores: {}".format(z_scores))
 
     return z_scores
         
 def main(args):
-    input = sys.argv[1]
-    run_qc(input)
+    filename = args[0] 
+    df = parse(filename)
+    values = df.loc[df['Sample'] == 'Blank' ].to_numpy()[:,3].astype(float)
+    result = run_qc(values)
+    print ('result: {}'.format(result))
 
 
 if __name__ == "__main__":
     # execute only if run as a script
-    main([float(sys.argv[1])])
+    main([(sys.argv[1])])
