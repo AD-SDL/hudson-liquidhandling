@@ -13,9 +13,6 @@ import json
 def lambda6_handle_message(decoded_message):
 
     lambda6_data_path = "/lambda_stor/data/hudson/data/"
-    test_lambda6_data_path = (
-        "/Users/cstone/Desktop/liquidhandling_Git_Clone/zeromq/test/"
-    )
 
     # * extract message address and body
     address, message_body = decoded_message.split("***")
@@ -24,29 +21,14 @@ def lambda6_handle_message(decoded_message):
     return_val = "PASS"
     print(f"Handling message: {str(address)}")
 
-    # for debugging --> print out message
-    # for item in json_decoded.items():
-    #     print(item)
-    # for key,value in json_decoded.items():
-    #     print(key)    # filenames
-    #     for value_k,value_v in value.items():
-    #         print("\t" + str(value_k))
-    #         for each in value_v:
-    #             print("\t\t" + str(each.strip()))
-
     # * assign path names (on lambda6 or running locally for testing?)
-    if os.path.exists(lambda6_data_path) or os.path.exists(test_lambda6_data_path):
-        if os.path.exists(lambda6_data_path):  # if running on lambda6
-            log_dir_path = os.path.join(lambda6_data_path, "log/")
-            data_dir_path = os.path.join(lambda6_data_path, str(address) + "/")
-            print("Running on lambda6")
-        elif os.path.exists(test_lambda6_data_path):  # if testing locally
-            log_dir_path = os.path.join(test_lambda6_data_path, "log/")
-            data_dir_path = os.path.join(test_lambda6_data_path, str(address) + "/")
-            print("Running on local computer for testing")
+    if os.path.exists(lambda6_data_path):
+        # format log and data directory paths
+        log_dir_path = os.path.join(lambda6_data_path, "log/")
+        data_dir_path = os.path.join(lambda6_data_path, str(address) + "/")
 
         # * record in message_log.txt
-        if not os.path.exists(os.path.dirname(log_dir_path)):
+        if not os.path.exists(os.path.dirname(log_dir_path)):  
             try:
                 os.makedirs(os.path.dirname(log_dir_path))
             except OSError as exc:

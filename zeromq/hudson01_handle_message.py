@@ -10,10 +10,7 @@
 import os
 import sys
 import json
-#from run_ahk import run_ahk
 from utils.run_ahk import run_ahk
-
-
 
 
 def hudson01_handle_message(decoded_message):
@@ -25,22 +22,14 @@ def hudson01_handle_message(decoded_message):
     return_val = "PASS"
     print(f"Handling message on hudson01 : {str(address)}")
 
-    # for debugging --> print out message
-    # for item in json_decoded.items():
-    #     print(item)
+    hudson01_instructions_path = "C:\\labautomation\\instructions"
 
-    hudosn01_instructions_path = "C:\\labautomation\\instructions"
-
-    # * assign path names (on lambda6 or running locally for testing?)
-    if os.path.exists(hudosn01_instructions_path) or os.path.exists(
-        test_hudson01_instructions_path
-    ):
-        if os.path.exists(hudosn01_instructions_path):  # if running on lambda6
-            log_dir_path = os.path.join(hudosn01_instructions_path, "log\\")
-            instructions_dir_path = os.path.join(
-                hudosn01_instructions_path, str(address) + "\\"
-            )
-            print("Running on hudson01")
+    # * assign log and instructions directory path names 
+    if os.path.exists(hudson01_instructions_path): 
+        log_dir_path = os.path.join(hudson01_instructions_path, "log\\")
+        instructions_dir_path = os.path.join(
+            hudson01_instructions_path, str(address) + "\\"
+        )
 
         # * record in message_log.txt
         if not os.path.exists(os.path.dirname(log_dir_path)):
@@ -83,7 +72,7 @@ def hudson01_handle_message(decoded_message):
             print(f"Instructions copied to new directory: {instructions_dir_path}")
 
         # pass the new folder name to run_ahk (checks if ok to run on robot, if so runs .ahk file)
-        if os.path.exists(hudosn01_instructions_path):  # if running on hudson01
+        if os.path.exists(hudson01_instructions_path):  # if running on hudson01
             run_ahk(instructions_dir_path)
 
     print(f"Done handling message on hudson01: {str(address)} \n")
