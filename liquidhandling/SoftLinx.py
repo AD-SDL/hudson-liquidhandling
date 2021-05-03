@@ -358,7 +358,7 @@ class SoftLinx:
             "Description": "",
             "SLXId": "62c47122-48c6-413a-a41b-9ff35a0489fc",
             "ToolTip": "",
-            "isActive": isActive,
+            "isActive": str(isActive),
             "system": "Hidex",
             "args": [],
         }
@@ -375,7 +375,7 @@ class SoftLinx:
             "Description": "",
             "SLXId": "9d060013-be01-403d-b15a-b0ce9da34cb3",
             "ToolTip": "",
-            "isActive": isActive,
+            "isActive": str(isActive),
             "system": "Hidex",
             "args": [],
         }
