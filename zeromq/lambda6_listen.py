@@ -25,22 +25,14 @@ socket.bind("tcp://*:5555")
 while True:
     message = socket.recv()
     decoded = message.decode("utf-8")
-    # json_decoded = json.loads(decoded)
-
-    # print("Received message\n",
-    #     json.dumps(json.loads(decoded), indent=4, sort_keys=True)
-    #     )
-    # print("Received message: " + str(decoded))
 
     if message == b"SHUTDOWN":
         socket.send(b"Shutting down")
         break
 
-    else:  # if the message was not shut down
-
-        # pass the message off to a message handler and keep listening (don't worry about message contents here)
-        child_message_handler = child_pid = Popen(
+    else: 
+        # immediately pass the message off to message handler and keep listening 
+        child_message_handler = Popen(
             ["python", "./lambda6_handle_message.py", decoded], start_new_session=True
         ).pid
-
-    socket.send(b"Message received and passed to lambda6_handle_message")
+        socket.send(b"Message received and passed to lambda6_handle_message")

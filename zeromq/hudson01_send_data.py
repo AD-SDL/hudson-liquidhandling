@@ -10,8 +10,7 @@ import time
 
 context = zmq.Context()
 socket = context.socket(zmq.REQ)
-# socket.connect("tcp://localhost:5555")
-socket.connect("tcp://lambda6.cels.anl.gov:5555")  # want to send data back to lambda 6
+socket.connect("tcp://lambda6.cels.anl.gov:5555")  
 
 # Parse args
 parser = argparse.ArgumentParser()
@@ -21,7 +20,6 @@ parser.add_argument(
 parser.add_argument("-d", "--dir", help="Directory to look in", required=True, type=str)
 args = vars(parser.parse_args())
 print("time = {}, dir = {}".format(args["time"], args["dir"]))
-
 
 # Check dir for modified files
 modified_files = checkDir(args["dir"], last_mtime=args["time"])
@@ -41,12 +39,11 @@ if len(modified_files) > 0:
     print(json.dumps(data, indent=4, sort_keys=True))
 
     # Send message to queue
-    # socket.send_string(json.dumps(data))
     socket.send_string(
         address + "***" + json.dumps(data)
-    )  # find a better way to separate address from json data?
-    # socket.send_json(data)
+    )  
     repl = socket.recv()
     print(f"Got {repl}")
 
+socket.close()
 # Done

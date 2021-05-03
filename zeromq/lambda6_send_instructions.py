@@ -14,11 +14,10 @@ def lamdba6_send_instructions(instructions_dir):
     # * connect to port on hudson01
     context = zmq.Context()
     socket = context.socket(zmq.REQ)
-    # socket.connect("tcp://localhost:5556")
     socket.connect("tcp://hudson01.bio.anl.gov:5556")
 
     if os.path.isdir(instructions_dir):
-        instruction_files = os.listdir(instructions_dir)
+        instruction_files = os.listdir(instructions_dir) 
 
         # if there are files to send
         if len(instruction_files) > 0:
@@ -34,7 +33,6 @@ def lamdba6_send_instructions(instructions_dir):
                 tmp = generateFileManifest(f_path, "instructions")
                 for key, value in tmp.items():
                     data[key] = value
-            # print(json.dumps(data, indent=4, sort_keys=True))
 
             # Send message to queue
             socket.send_string(address + "***" + json.dumps(data))
