@@ -17,7 +17,7 @@ def lamdba6_send_instructions(instructions_dir):
     socket.connect("tcp://hudson01.bio.anl.gov:5556")
 
     if os.path.isdir(instructions_dir):
-        instruction_files = os.listdir(instructions_dir) 
+        instruction_files = os.listdir(instructions_dir)
 
         # if there are files to send
         if len(instruction_files) > 0:

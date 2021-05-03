@@ -30,8 +30,8 @@ while True:
         socket.send(b"Shutting down")
         break
 
-    else: 
-        # immediately pass the message off to message handler and keep listening 
+    else:
+        # immediately pass the message off to message handler and keep listening
         child_message_handler = Popen(
             ["python", "./lambda6_handle_message.py", decoded], start_new_session=True
         ).pid

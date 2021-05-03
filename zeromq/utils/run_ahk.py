@@ -126,7 +126,7 @@ def run_ahk(instructions_dir_path):  # new instructions folder path
             print(e)
             error_log.write(f"\tERROR: could not open ahk file. {e}\n")
             run_log.write("\tFAILURE: ahk file not opened\n")
-    else: 
+    else:
         run_log.write("\tDid not start protocol\n")
 
     # * Close log files

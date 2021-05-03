@@ -32,7 +32,7 @@ while True:
         break
 
     else:
-        # pass message to hudson01_handle_message 
+        # pass message to hudson01_handle_message
         # child_message_handler = child_pid = Popen(["python", "C:\\Users\\svcaibio\\Dev\\liquidhandling\\zeromq\\test\\hudson01_handle.py", decoded],
         #     start_new_session=True
         #     ).pid

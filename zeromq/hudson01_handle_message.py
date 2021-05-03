@@ -12,6 +12,7 @@ import sys
 import json
 from utils.run_ahk import run_ahk
 
+
 def hudson01_handle_message(decoded_message):
 
     # * extract message address and body
@@ -23,8 +24,8 @@ def hudson01_handle_message(decoded_message):
 
     hudson01_instructions_path = "C:\\labautomation\\instructions"
 
-    # * assign log and instructions directory path names 
-    if os.path.exists(hudson01_instructions_path): 
+    # * assign log and instructions directory path names
+    if os.path.exists(hudson01_instructions_path):
         log_dir_path = os.path.join(hudson01_instructions_path, "log\\")
         instructions_dir_path = os.path.join(
             hudson01_instructions_path, str(address) + "\\"

@@ -28,7 +28,7 @@ def lambda6_handle_message(decoded_message):
         data_dir_path = os.path.join(lambda6_data_path, str(address) + "/")
 
         # * record in message_log.txt
-        if not os.path.exists(os.path.dirname(log_dir_path)):  
+        if not os.path.exists(os.path.dirname(log_dir_path)):
             try:
                 os.makedirs(os.path.dirname(log_dir_path))
             except OSError as exc:
