@@ -12,7 +12,6 @@ import sys
 import json
 from utils.run_ahk import run_ahk
 
-
 def hudson01_handle_message(decoded_message):
 
     # * extract message address and body
