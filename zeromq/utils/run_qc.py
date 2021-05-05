@@ -5,43 +5,14 @@ sys.path.append("../../")
 sys.path.append("../../rdbms/")
 
 from rdbms.connect import connect
-from rdbms import config
+import config
+from data_utils import parse_hidex
 
 import csv
 import pandas as pd
 
-# cnx is global to this file
+# connect to mysql, cnx is global to this file
 cnx = connect()
-
-
-def parse(filename):
-    """parses the Hidex csv file
-
-    Params:
-        filename: the complete path and name of the Hidex cvs file
-
-    Returns:
-        df: a pandas data frame
-
-    Description:
-
-
-    """
-    df = pd.DataFrame()
-
-    DATA = False
-    with open(filename, newline="") as csvfile:
-        csv.QUOTE_NONNUMERIC = True
-        reader = csv.reader(csvfile)
-        for row in reader:
-            if len(row) > 0 and row[0] == "Well":
-                df = pd.DataFrame(columns=row)
-                DATA = True
-                continue
-            if DATA == True:
-                df.loc[len(df.index) + 1] = row
-
-    return df
 
 
 def run_qc(values):
@@ -97,7 +68,7 @@ def z_score(values):
 
 def main(args):
     filename = args[0]
-    df = parse(filename)
+    df = parse_hidex(filename)
     values = df.loc[df["Sample"] == "Blank"].to_numpy()[:, 3].astype(float)
     result = run_qc(values)
     print("result: {}".format(result))
