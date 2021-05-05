@@ -35,6 +35,7 @@ def generateFileManifest(filename, purpose, manifest_filename=None):
 
         # * Construct message
         data[os.path.basename(filename)] = {
+            "path": [str(f.resolve())],
             "purpose": [purpose],
             "type": [(os.path.splitext(filename)[1]).replace(".", "")],
             "ctime": [
