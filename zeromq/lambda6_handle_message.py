@@ -86,7 +86,7 @@ def _run_qc(file_name):
     if ret_val == 'PASS':
         context, socket = zmq_connect(port=5556, pattern='REQ')
         basename = os.path.basename(file_name)
-        message = {basename : {'path' : [filename], 
+        message = {basename : {'path' : [file_name], 
             'purpose' : ['build_dataframe'], 'type' : ['JSON'] }
             }
         socket.send_string(json.dumps(message))
