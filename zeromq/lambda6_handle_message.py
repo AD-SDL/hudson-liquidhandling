@@ -76,7 +76,8 @@ def _run_qc(file_name):
 
     # perform the quality control on hidex file
     df = parse_hidex(file_name)
-    values = df.loc[df["Sample"] == "Blank"].to_numpy()[:, 3].astype(float)
+    # values = df.loc[df["Sample"] == "Blank"].to_numpy()[:, 3].astype(float)
+    values = df.loc[df["Well"] == "H1"].to_numpy()[:, -1].astype(float)
     ret_val = run_qc(values)
     print(f"result: {ret_val}")
 
