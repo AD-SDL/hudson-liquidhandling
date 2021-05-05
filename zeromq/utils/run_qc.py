@@ -1,15 +1,19 @@
 """ Module of qc methods """
 import sys
 
-sys.path.append("../../")
-sys.path.append("../../rdbms/")
+sys.path.append('../utils/')
+sys.path.append('./utils/')
+sys.path.append('../../../rdbms')
 
-from rdbms.connect import connect
-import config
 from data_utils import parse_hidex
-
 import csv
 import pandas as pd
+
+
+sys.path.append("../rdbms/")
+sys.path.append("../../rdbms/")
+from connect import connect
+
 
 # connect to mysql, cnx is global to this file
 cnx = connect()
@@ -68,7 +72,7 @@ def z_score(values):
 
 def main(args):
     filename = args[0]
-    df = parse_hidex(filename)
+    df = data_utils.parse_hidex(filename)
     values = df.loc[df["Sample"] == "Blank"].to_numpy()[:, 3].astype(float)
     result = run_qc(values)
     print("result: {}".format(result))
