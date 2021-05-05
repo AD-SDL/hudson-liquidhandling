@@ -8,7 +8,10 @@
 import os
 import sys
 import json
-
+import pandas as pd
+from utils.data_utils import parse_hidex
+from utils.run_qc import run_qc
+from utils.zmq_connection import zmq_connect
 
 def lambda6_handle_message(decoded_message):
 
@@ -72,7 +75,7 @@ def lambda6_handle_message(decoded_message):
 def _run_qc(file_name):
 
     # perform the quality control on hidex file
-    df = pd.parse_hidex(file_name)
+    df = parse_hidex(file_name)
     values = df.loc[df["Sample"] == "Blank"].to_numpy()[:, 3].astype(float)
     ret_val = run_qc(values)
     print(f"result: {ret_val}")
@@ -81,7 +84,7 @@ def _run_qc(file_name):
 
     # send message to build_dataframe if the data is good
     if ret_val == 'PASS':
-        context, socket = connect(port=5556, pattern='REQ')
+        context, socket = zmq_connect(port=5556, pattern='REQ')
         basename = os.path.basename(file_name)
         message = {basename : {'path' : [filename], 
             'purpose' : ['build_dataframe'], 'type' : ['JSON'] }
