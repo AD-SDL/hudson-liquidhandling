@@ -7,7 +7,7 @@ import zmq
     managing connections to zmq sockets
 '''
 
-def connect(port=None, pattern='REQ'):
+def zmq_connect(port=None, pattern='REQ'):
     ''' 
     Connects to a queue on a given port using a 
     given communication pattern
