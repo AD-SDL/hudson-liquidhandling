@@ -9,6 +9,7 @@ import os
 import sys
 import json
 import pandas as pd
+import numpy as np
 from utils.data_utils import parse_hidex
 from utils.run_qc import run_qc
 from utils.zmq_connection import zmq_connect
@@ -72,12 +73,25 @@ def lambda6_handle_message(decoded_message):
     print(f"Done handling message: {str(address)}")
     return return_val
 
+def od_blank_adjusted (arr):
+    reg_array = arr.tolist()
+    mean = float(np.mean(arr))
+    for i in range(len(reg_array)):
+        diff = float(reg_array[i] - mean)
+        if diff > 0:
+            reg_array[i] = diff
+        else:
+            reg_array[i] = 0.0
+    return np.array(reg_array).astype(float)
+    
+
 def _run_qc(file_name):
 
     # perform the quality control on hidex file
     df = parse_hidex(file_name)
     # values = df.loc[df["Sample"] == "Blank"].to_numpy()[:, 3].astype(float)
     values = df.loc[df["Well"] == "H1"].to_numpy()[:, -1].astype(float)
+    values = od_blank_adjusted(values)
     ret_val = run_qc(values)
     print(f"result: {ret_val}")
 
@@ -94,7 +108,7 @@ def _run_qc(file_name):
         repl = socket.recv()
         print(f"Got {repl}")
     else:
-        print(f'qc failed on {filename}')
+        print(f'qc failed on {file_name}')
 
     return ret_val
 

@@ -21,10 +21,12 @@ def parse_hidex(filename):
 
     DATA = False
     with open(filename, newline="") as csvfile:
+        print(f'opened {filename}')
         csv.QUOTE_NONNUMERIC = True
         reader = csv.reader(csvfile)
         for row in reader:
-            if len(row) > 0 and row[0] == "Well":
+            row = [x.strip() for x in row]
+            if len(row) > 0 and row[0] == "Plate #":
                 df = pd.DataFrame(columns=row)
                 DATA = True
                 continue

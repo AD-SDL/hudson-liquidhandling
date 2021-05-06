@@ -10,7 +10,7 @@ sys.path.append("../../rdbms/")
 
 import csv
 import pandas as pd
-from data_utils import parse_hidex
+from utils.data_utils import parse_hidex
 
 def build_dataframe(filenames, basename=None):
     """Builds a dataframe using one or more Hidex files..
@@ -37,16 +37,18 @@ def build_dataframe(filenames, basename=None):
     # set up rows, cols and data variables
     cols = ['Blank-corrected OD(590) Kinetic cycle #1']
     rows = pd.DataFrame()
-    data = pd.DataFrame(columns=cols)
+    data = pd.DataFrame()
 
     # loop over the set if filenames appending to samples and data
     for f in filenames:
         print('parsing {}'.format(f))
         df =  parse_hidex(f)
-        data = data.append( df[cols] )
-        rows = rows.append( df[['Sample']], ignore_index=True )
+        print(df)
+        data = data.append( df.iloc[:,-1:] )
+        rows = rows.append( df[['Well']], ignore_index=True )
 
     # save the files and return the file basename
+    print(f'writing files to {return_val}')
     data.to_csv(return_val+"_data.csv", sep=',', header=None, index=None)
     rows.to_csv(return_val+'_rows.csv', sep=',', header=None, index=None)
     pd.DataFrame(cols).to_csv(return_val+'_cols.csv', sep=',', header=None, index=None)
