@@ -116,7 +116,7 @@ def run_ahk(instructions_dir_path):  # new instructions folder path
     # * Run .ahk file if everything is good to go
     if ahk_file and all_files_present and not is_already_running and not present_in_log:
         try:
-            # os.startfile(ahk_path) # WORKS
+            os.startfile(ahk_path) # WORKS
             run_log.write(
                 f"\tSUCCESS. The .ahk file was opened ({ahk_path}), protocol executed in SoftLinx\n"
             )

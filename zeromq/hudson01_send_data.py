@@ -3,10 +3,12 @@
 
 from utils.dirmon import checkDir
 from utils.manifest import generateFileManifest
+from utils.data_utils import excel_to_csv
 import argparse
 import json
 import zmq
 import time
+import os
 
 context = zmq.Context()
 socket = context.socket(zmq.REQ)
@@ -29,11 +31,18 @@ if len(modified_files) > 0:
 
     # address = {timestamp}-{numFiles}-{R(received) or S(sent)}
     address = str(time.time()).split(".")[0] + "-" + str(len(modified_files))
+    print(f"Address: {address}")
 
     # Create manifest
     data = {}
     for f in modified_files:
-        tmp = generateFileManifest(f, "data")
+
+        if os.path.splitext(os.path.basename(f))[1] == ".xlsx": # convert if excel file 
+            csv_filepath = excel_to_csv(f)
+            tmp = generateFileManifest(csv_filepath, "data")
+        else:  
+            tmp = generateFileManifest(f, "data")
+
         for key, value in tmp.items():
             data[key] = value
     print(json.dumps(data, indent=4, sort_keys=True))
