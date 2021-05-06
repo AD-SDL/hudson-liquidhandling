@@ -20,8 +20,8 @@ def checkDir(dir, last_mtime=0):
     ctime = time.time()
     ptime = ctime - last_mtime
 
-    file_list = [f for f in os.listdir(dir) if not f.startswith(".")]
-    file_list = [f for f in file_list if not os.path.isdir(f)]
+    _file_list = [f for f in os.listdir(dir) if not f.startswith(".")]
+    file_list = [f for f in _file_list if not os.path.isdir(f)]
     # save the absolute path instead of just filename
     file_list = [
         os.path.join(os.path.abspath(dir), f)
