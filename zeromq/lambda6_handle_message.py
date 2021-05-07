@@ -69,6 +69,7 @@ def lambda6_handle_message(decoded_message):
                 ) as data_file:
                     data_file.writelines(data)
 
+    print (f'calling qc on {file_name}')
     _run_qc(os.path.join(data_dir_path, os.path.basename(file_name)))
     print(f"Done handling message: {str(address)}")
     return return_val
@@ -89,6 +90,7 @@ def _run_qc(file_name):
 
     # perform the quality control on hidex file
     df = parse_hidex(file_name)
+    print(df)
     # values = df.loc[df["Sample"] == "Blank"].to_numpy()[:, 3].astype(float)
     values = df.loc[df["Well"] == "H1"].to_numpy()[:, -1].astype(float)
     values = od_blank_adjusted(values)
@@ -101,6 +103,8 @@ def _run_qc(file_name):
     if ret_val == 'PASS':
         context, socket = zmq_connect(port=5556, pattern='REQ')
         basename = os.path.basename(file_name)
+        print("got basename {} for filename {}".format (
+            basename, file_name))
         message = {basename : {'path' : [file_name], 
             'purpose' : ['build_dataframe'], 'type' : ['JSON'] }
             }
