@@ -4,6 +4,7 @@
 from utils.dirmon import checkDir
 from utils.manifest import generateFileManifest
 from utils.data_utils import excel_to_csv
+from utils.archive import archive
 import argparse
 import json
 import zmq
@@ -49,15 +50,15 @@ def hudson01_send_data(directory, lookback_time):
         print(json.dumps(data, indent=4, sort_keys=True))
 
         # Send message to queue
-        #socket.send_string(address + "***" + json.dumps(data))
-        #repl = socket.recv()
+        socket.send_string(address + "***" + json.dumps(data))
+        repl = socket.recv()
+        print(f"Got {repl}")
 
         # move used files to archive after reply received
         archive(files_to_archive, directory)
 
-        #print(f"Got {repl}")
-
     socket.close()
+    return return_val
     # Done
 
 
@@ -78,31 +79,6 @@ if __name__ == "__main__":
     # execute only if run as a script
     main(sys.argv)
 
-
-def archive(filenames, directory):  
-    """
-    filenames = list of files to archive, [filepath1, filepath2, ect. ]
-    directory = path to directory which will contain archive folder
-    """
-    try: 
-        # create archive folder of doesn't exist
-        archive_path = os.path.join(directory, "archive\\")
-        if not os.path.exists(os.path.dirname(archive_path)): 
-            os.makedirs(archive_path)
-
-        # move each file into archive folder 
-        for i in range(len(filenames)): 
-            new_filename = os.path.join(archive_path, os.path.basename(filenames[i]))
-
-            # if file already exists in archive, force overwrite (for testing)
-            if os.path.exists(new_filename): 
-                os.remove(new_filename)
-            
-            os.rename(filenames[i], new_filename)
-
-    except OSError as e:
-        print("Error: could not archive sent files")
-        print(e)
 
 
 
