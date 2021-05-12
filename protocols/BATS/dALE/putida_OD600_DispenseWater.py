@@ -75,6 +75,6 @@ soloSoft.savePipeline()
 
 softLinx = SoftLinx("Putida.OD600.DispenseWater", "putida_OD600_DispenseWater.slvp")
 softLinx.soloSoftRun(
-    "C:\\Users\\svcaibio\\Dev\\liquidhandling\\example\\BATS\\dALE\\putida_OD600_DispenseWater.hso"
+    "C:\\Users\\svcaibio\\Dev\\liquidhandling\\protocols\\BATS\\dALE\\putida_OD600_DispenseWater.hso"
 )
 softLinx.saveProtocol()

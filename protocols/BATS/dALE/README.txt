@@ -25,7 +25,7 @@ HOW TO RUN THESE PROTOCOLS:
 
     If you prefer to use SoftLinx:
         - make sure that you cd into the correct folder...
-           'cd C:\Users\svcaibio\Dev\liquidhandling\example\BATS\dALE'
+           'cd C:\Users\svcaibio\Dev\liquidhandling\protocols\BATS\dALE'
         - run the python file corresponding to the step you wish to run 
             example -> 'python putida_OD600_steps1and2_DispenseAll.py'
         - matching .hso, .slvp, and .hso files will appear in the BATS/dALE folder

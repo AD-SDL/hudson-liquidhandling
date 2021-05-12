@@ -74,6 +74,6 @@ softLinx = SoftLinx(
     "Putida.OD600.step3.TransferBacteria", "putida_OD600_step3_TransferBacteria.slvp"
 )
 softLinx.soloSoftRun(
-    "C:\\Users\\svcaibio\\Dev\\liquidhandling\\example\\BATS\\dALE\\putida_OD600_step3_TransferBacteria.hso"
+    "C:\\Users\\svcaibio\\Dev\\liquidhandling\\protocols\\BATS\\dALE\\putida_OD600_step3_TransferBacteria.hso"
 )
 softLinx.saveProtocol()

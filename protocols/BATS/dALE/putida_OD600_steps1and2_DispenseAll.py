@@ -96,7 +96,7 @@ softLinx = SoftLinx(
     "Putida.OD600.Steps1and2.DispenseAll", "putida.OD600.Steps1and2.DispenseAll.slvp"
 )
 softLinx.soloSoftRun(
-    "C:\\Users\\svcaibio\\Dev\\liquidhandling\\example\\BATS\\dALE\\putida_OD600_steps1and2_DispenseAll.hso"
+    "C:\\Users\\svcaibio\\Dev\\liquidhandling\\protocols\\BATS\\dALE\\putida_OD600_steps1and2_DispenseAll.hso"
 )
 softLinx.saveProtocol()
 

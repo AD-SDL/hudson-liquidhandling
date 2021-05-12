@@ -76,6 +76,6 @@ soloSoft.savePipeline()
 # add .hso file to SoftLinx .slvp file
 softLinx = SoftLinx("day2_step1_AddLysisBuffer", "day2_step1_AddLysisBuffer.slvp")
 softLinx.soloSoftRun(
-    "C:\\Users\\svcaibio\\Dev\\liquidhandling\\example\\campaign2\\day2_step1_AddLysisBuffer.hso"
+    "C:\\Users\\svcaibio\\Dev\\liquidhandling\\protocols\\campaign2\\day2_step1_AddLysisBuffer.hso"
 )
 softLinx.saveProtocol()

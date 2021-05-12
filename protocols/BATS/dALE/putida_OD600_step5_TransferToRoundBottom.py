@@ -74,6 +74,6 @@ softLinx = SoftLinx(
     "putida_OD600_step5_TransferToRoundBottom.slvp",
 )
 softLinx.soloSoftRun(
-    "C:\\Users\\svcaibio\\Dev\\liquidhandling\\example\\BATS\\dALE\\putida_OD600_step5_TransferToRoundBottom.hso"
+    "C:\\Users\\svcaibio\\Dev\\liquidhandling\\protocols\\BATS\\dALE\\putida_OD600_step5_TransferToRoundBottom.hso"
 )
 softLinx.saveProtocol()

@@ -257,12 +257,12 @@ soloSoft.savePipeline()
 # * Add Steps 1-3 .hso files to SofltLinx .slvp file (and generate .ahk and manifest .txt files)
 softLinx = SoftLinx("day1_cells_glucose_muconate", "day1_cells_glucose_muconate.slvp")
 softLinx.soloSoftRun(
-    "C:\\Users\\svcaibio\\Dev\\liquidhandling\\example\\campaign2\\day1_step1_TransferCells.hso"
+    "C:\\Users\\svcaibio\\Dev\\liquidhandling\\protocols\\campaign2\\day1_step1_TransferCells.hso"
 )  # add the correct paths of the .hso files
 softLinx.soloSoftRun(
-    "C:\\Users\\svcaibio\\Dev\\liquidhandling\\example\\campaign2\\day1_step2_DiluteMuconate.hso"
+    "C:\\Users\\svcaibio\\Dev\\liquidhandling\\protocols\\campaign2\\day1_step2_DiluteMuconate.hso"
 )  # assume transfered from lambda 6 or run locally for prep on hudson01?
 softLinx.soloSoftRun(
-    "C:\\Users\\svcaibio\\Dev\\liquidhandling\\example\\campaign2\\day1_step3_CombineCellsGlucoseMuconate.hso"
+    "C:\\Users\\svcaibio\\Dev\\liquidhandling\\protocols\\campaign2\\day1_step3_CombineCellsGlucoseMuconate.hso"
 )
 softLinx.saveProtocol()

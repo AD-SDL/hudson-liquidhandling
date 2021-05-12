@@ -70,6 +70,6 @@ soloSoft.savePipeline()
 
 softLinx = SoftLinx("Putida.OD600.DispenseBuffer", "putida_OD600_DispenseBuffer.slvp")
 softLinx.soloSoftRun(
-    "C:\\Users\\svcaibio\\Dev\\liquidhandling\\example\\BATS\\dALE\\putida_OD600_DispenseBuffer.hso"
+    "C:\\Users\\svcaibio\\Dev\\liquidhandling\\protocols\\BATS\\dALE\\putida_OD600_DispenseBuffer.hso"
 )
 softLinx.saveProtocol()

@@ -70,6 +70,6 @@ softLinx = SoftLinx(
     "putida_OD600_step4_ClearUVToPlateOneVBottom.slvp",
 )
 softLinx.soloSoftRun(
-    "C:\\Users\\svcaibio\\Dev\\liquidhandling\\example\\BATS\\dALE\\putida_OD600_step4_ClearUVToPlateOneVBottom.hso"
+    "C:\\Users\\svcaibio\\Dev\\liquidhandling\\protocols\\BATS\\dALE\\putida_OD600_step4_ClearUVToPlateOneVBottom.hso"
 )
 softLinx.saveProtocol()
