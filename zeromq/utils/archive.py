@@ -8,7 +8,7 @@ def archive(filenames, directory):
     """
     try: 
         # create archive folder if doesn't exist
-        archive_path = os.path.join(directory, "archive\\")
+        archive_path = os.path.join(directory, "archive" + os.path.sep)
         if not os.path.exists(os.path.dirname(archive_path)): 
             os.makedirs(archive_path)
 

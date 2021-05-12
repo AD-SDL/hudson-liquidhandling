@@ -1,4 +1,5 @@
 from utils.manifest import generateFileManifest
+from utils.archive import archive
 import argparse
 import json
 import zmq
@@ -40,6 +41,9 @@ def lamdba6_send_instructions(instructions_dir):
 
             repl = socket.recv()
             print(f"Got {repl}")
+            
+            # archive instructions once sent correctly
+            archive([instructions_dir], "/lambda_stor/data/hudson/instructions/")
 
     socket.close()
 
