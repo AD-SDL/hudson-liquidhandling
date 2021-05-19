@@ -1,6 +1,6 @@
 from setuptools import setup
 import os
-from .liquidhandling.Properties import Properties
+from liquidhandling.Properties import Properties
 
 
 # Utility function to read the README file.
