@@ -14,6 +14,7 @@ from utils.data_utils import parse_hidex
 from utils.run_qc import run_qc
 from utils.zmq_connection import zmq_connect
 
+
 def lambda6_handle_message(decoded_message):
 
     lambda6_data_path = "/lambda_stor/data/hudson/data/"
@@ -69,12 +70,13 @@ def lambda6_handle_message(decoded_message):
                 ) as data_file:
                     data_file.writelines(data)
 
-    print (f'calling qc on {file_name}')
+    print(f"calling qc on {file_name}")
     _run_qc(os.path.join(data_dir_path, os.path.basename(file_name)))
     print(f"Done handling message: {str(address)}")
     return return_val
 
-def od_blank_adjusted (arr):
+
+def od_blank_adjusted(arr):
     reg_array = arr.tolist()
     mean = float(np.mean(arr))
     for i in range(len(reg_array)):
@@ -84,7 +86,7 @@ def od_blank_adjusted (arr):
         else:
             reg_array[i] = 0.0
     return np.array(reg_array).astype(float)
-    
+
 
 def _run_qc(file_name):
 
@@ -100,21 +102,25 @@ def _run_qc(file_name):
     # TODO update database with results
 
     # send message to build_dataframe if the data is good
-    if ret_val == 'PASS':
-        context, socket = zmq_connect(port=5556, pattern='REQ')
+    if ret_val == "PASS":
+        context, socket = zmq_connect(port=5556, pattern="REQ")
         basename = os.path.basename(file_name)
-        print("got basename {} for filename {}".format (
-            basename, file_name))
-        message = {basename : {'path' : [file_name], 
-            'purpose' : ['build_dataframe'], 'type' : ['JSON'] }
+        print("got basename {} for filename {}".format(basename, file_name))
+        message = {
+            basename: {
+                "path": [file_name],
+                "purpose": ["build_dataframe"],
+                "type": ["JSON"],
             }
+        }
         socket.send_string(json.dumps(message))
         repl = socket.recv()
         print(f"Got {repl}")
     else:
-        print(f'qc failed on {file_name}')
+        print(f"qc failed on {file_name}")
 
     return ret_val
+
 
 def main(args):
     decoded_message = sys.argv[1]

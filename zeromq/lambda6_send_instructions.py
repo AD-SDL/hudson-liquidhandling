@@ -41,7 +41,7 @@ def lamdba6_send_instructions(instructions_dir):
 
             repl = socket.recv()
             print(f"Got {repl}")
-            
+
             # archive instructions once sent correctly
             archive([instructions_dir], "/lambda_stor/data/hudson/instructions/")
 

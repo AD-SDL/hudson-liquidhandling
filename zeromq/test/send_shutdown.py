@@ -10,20 +10,13 @@ import zmq
 
 # Parse args
 parser = argparse.ArgumentParser()
-parser.add_argument(
-        "-p", "--port",
-        help="Port to connect to",
-        required=True, 
-        type=int )
-parser.add_argument("--host",
-        help="host to connect to",
-        required=True,
-        type=str )
+parser.add_argument("-p", "--port", help="Port to connect to", required=True, type=int)
+parser.add_argument("--host", help="host to connect to", required=True, type=str)
 args = vars(parser.parse_args())
 
 context = zmq.Context()
 socket = context.socket(zmq.REQ)
-socket.connect('tcp://' + args['host'] + ':' + str(args['port']))
+socket.connect("tcp://" + args["host"] + ":" + str(args["port"]))
 
 socket.send(b"SHUTDOWN")
 repl = socket.recv()

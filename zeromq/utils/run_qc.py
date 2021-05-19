@@ -1,9 +1,9 @@
 """ Module of qc methods """
 import sys
 
-sys.path.append('../utils/')
-sys.path.append('./utils/')
-sys.path.append('../../../rdbms')
+sys.path.append("../utils/")
+sys.path.append("./utils/")
+sys.path.append("../../../rdbms")
 
 from data_utils import parse_hidex
 import csv

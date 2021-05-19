@@ -5,7 +5,7 @@ import argparse
 import json
 from zmq_connection import connect
 
-context, socket = connect(port=5556, pattern='REQ')
+context, socket = connect(port=5556, pattern="REQ")
 
 # Parse args
 parser = argparse.ArgumentParser()
@@ -16,7 +16,7 @@ args = vars(parser.parse_args())
 print("json file = {}".format(args["json_file"]))
 
 
-with open (args['json_file'], 'r') as f:
+with open(args["json_file"], "r") as f:
     data = f.read()
 
 # If data is not empty

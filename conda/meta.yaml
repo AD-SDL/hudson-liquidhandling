@@ -1,5 +1,5 @@
 {% set name = "liquidhandling" %}
-{% set version = "0.1.16" %}
+{% set version = "0.1.17" %}
 
 package:
   name: "{{ name|lower }}"
@@ -19,11 +19,17 @@ requirements:
     - pip
     - pytest
     - python
+    - pandas
+    - path
+    - openpyxl
   run:
     - jsonref
     - jsonschema
     - pytest
     - python
+    - pandas
+    - path
+    - openpyxl
 
 test:
   imports:

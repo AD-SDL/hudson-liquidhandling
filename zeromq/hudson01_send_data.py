@@ -12,7 +12,8 @@ import time
 import os
 import sys
 
-def hudson01_send_data(directory, lookback_time): 
+
+def hudson01_send_data(directory, lookback_time):
     return_val = "PASS"
 
     context = zmq.Context()
@@ -34,13 +35,15 @@ def hudson01_send_data(directory, lookback_time):
         files_to_archive = []
         for f in modified_files:
 
-            if os.path.basename(f) == "archive": # ignore archive folder
+            if os.path.basename(f) == "archive":  # ignore archive folder
                 continue
-            elif os.path.splitext(os.path.basename(f))[1] == ".xlsx": # convert if excel file 
+            elif (
+                os.path.splitext(os.path.basename(f))[1] == ".xlsx"
+            ):  # convert if excel file
                 csv_filepath = excel_to_csv(f)
                 tmp = generateFileManifest(csv_filepath, "data")
                 files_to_archive.extend([f, csv_filepath])
-            else:  
+            else:
                 tmp = generateFileManifest(f, "data")
                 files_to_archive.append(f)
 
@@ -62,24 +65,21 @@ def hudson01_send_data(directory, lookback_time):
     # Done
 
 
-def main(args): 
+def main(args):
     # Parse args
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "-t", "--time", help="Seconds to look back", required=True, type=int
     )
-    parser.add_argument("-d", "--dir", help="Directory to look in", required=True, type=str)
+    parser.add_argument(
+        "-d", "--dir", help="Directory to look in", required=True, type=str
+    )
     args = vars(parser.parse_args())
     print("time = {}, dir = {}".format(args["time"], args["dir"]))
 
-    hudson01_send_data(args["dir"], args["time"])  
+    hudson01_send_data(args["dir"], args["time"])
 
 
 if __name__ == "__main__":
     # execute only if run as a script
     main(sys.argv)
-
-
-
-
-

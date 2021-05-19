@@ -505,4 +505,3 @@ softLinx.soloSoftRun(
 softLinx.saveProtocol()
 # # open the .ahk file to remotely start the program
 # os.startfile("C:\\Users\\svcaibio\\Dev\\liquidhandling\\protocols\\campaign1\\generate_protocol.ahk")
-

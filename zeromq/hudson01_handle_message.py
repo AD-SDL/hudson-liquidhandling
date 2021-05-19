@@ -75,9 +75,9 @@ def hudson01_handle_message(decoded_message):
         # pass the new folder name to run_ahk (checks if ok to run on robot, if so runs .ahk file)
         if os.path.exists(hudson01_instructions_path):  # if running on hudson01
             run_ahk(instructions_dir_path)
-            
+
             # archive the instructions after run (must wait for softLinx to finish before moving files?) # TODO: test this
-            #archive([instructions_dir_path], hudson01_instructions_path)
+            # archive([instructions_dir_path], hudson01_instructions_path)
 
     print(f"Done handling message on hudson01: {str(address)} \n")
     return return_val

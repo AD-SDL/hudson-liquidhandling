@@ -11,6 +11,7 @@ import json
 from path import Path
 from utils.build_dataframe import build_dataframe
 
+
 def lambda6_handle_message(decoded_message):
 
     lambda6_data_path = "/lambda_stor/data/hudson/data/"
@@ -21,11 +22,11 @@ def lambda6_handle_message(decoded_message):
     return_val = "PASS"
     print(f"Handling message: {json_decoded}")
 
-    print (json_decoded)
+    print(json_decoded)
     for k in json_decoded:
         file_data = json_decoded[k]
-        filename = file_data['path']
-        print(f'filename {filename[0]}')
+        filename = file_data["path"]
+        print(f"filename {filename[0]}")
         df = build_dataframe(filename)
         print(f"data frame basename {df}")
 
