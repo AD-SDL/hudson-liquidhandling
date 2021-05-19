@@ -1,6 +1,5 @@
 from setuptools import setup
 import os
-from liquidhandling.Properties import Properties
 
 
 # Utility function to read the README file.
@@ -13,7 +12,7 @@ def read(fname):
 
 setup(
     name="liquidhandling",
-    version=Properties.SPEC_VERSION,
+    version="0.1.17",
     description="A python library developed to allow programmatic control of the Hudson Robotics systems installed in Argonne National Laboratory's Secure BIO Lab. ",
     url="http://github.com/luckierdodge/liquidhandling",
     author="Ryan D. Lewis",
