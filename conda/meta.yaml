@@ -1,5 +1,5 @@
 {% set name = "liquidhandling" %}
-{% set version = "0.1.17" %}
+{% set version = "0.1.18" %}
 
 package:
   name: "{{ name|lower }}"
@@ -22,6 +22,8 @@ requirements:
     - pandas
     - path
     - openpyxl
+    - mysql-connector-python
+    - zmq
   run:
     - jsonref
     - jsonschema
@@ -30,6 +32,8 @@ requirements:
     - pandas
     - path
     - openpyxl
+    - mysql-connector-python
+    - zmq
 
 test:
   imports:

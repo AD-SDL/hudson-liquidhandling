@@ -589,8 +589,8 @@ class SoftLinx:
                 + softlinx_filename
                 + "\n"
             )
-            file.write("WinActivate, SoftLinx V\n")
             file.write("Sleep, 5000\n")
+            file.write("WinActivate, SoftLinx V\n")
             file.write("MouseClick, Left, 300, 45\n")
             file.write("Sleep, 1000\n")
             file.write('if WinActive("Not Saved") {\n')

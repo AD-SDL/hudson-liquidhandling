@@ -12,7 +12,7 @@ def read(fname):
 
 setup(
     name="liquidhandling",
-    version="0.1.17",
+    version="0.1.18",
     description="A python library developed to allow programmatic control of the Hudson Robotics systems installed in Argonne National Laboratory's Secure BIO Lab. ",
     url="http://github.com/luckierdodge/liquidhandling",
     author="Ryan D. Lewis",
@@ -22,7 +22,16 @@ setup(
     keywords="robotics laboratory automation biology",
     long_description=read("README.md"),
     long_description_content_type="text/markdown",
-    install_requires=["jsonref", "jsonschema", "pytest", "path", "pandas", "openpyxl"],
+    install_requires=[
+        "jsonref",
+        "jsonschema",
+        "pytest",
+        "path",
+        "pandas",
+        "openpyxl",
+        "mysql-connector-python",
+        "zmq",
+    ],
     zip_safe=False,
     python_requires=">=3.8.5",
 )
