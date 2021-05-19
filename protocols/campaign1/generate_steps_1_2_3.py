@@ -9,7 +9,8 @@ from liquidhandling import DeepBlock_96VWR_75870_792_sterile
 from liquidhandling import Reservoir_12col_Agilent_201256_100_BATSgroup
 from liquidhandling import Plate_96_Corning_3635_ClearUVAssay
 
-def generate_steps_1_2_3(treatment, predicted_IC50 = None): 
+
+def generate_steps_1_2_3(treatment, predicted_IC50=None):
 
     return_val = "PASS"
 
@@ -33,8 +34,12 @@ def generate_steps_1_2_3(treatment, predicted_IC50 = None):
     growth_plate_mix_volume_s1 = 40
 
     # Step 2 variables
-    media_transfer_volume_s2 = 108 # two times = 216 uL (will add 24 uL antibiotic for 1:10 dilution)
-    first_column_transfer_volume_s2 = 120 # two times = 240uL (to equal volume in 1:10 dilution wells)
+    media_transfer_volume_s2 = (
+        108  # two times = 216 uL (will add 24 uL antibiotic for 1:10 dilution)
+    )
+    first_column_transfer_volume_s2 = (
+        120  # two times = 240uL (to equal volume in 1:10 dilution wells)
+    )
     serial_antibiotic_transfer_volume_s2 = 24
     serial_source_mixing_volume_s2 = 100
     serial_source_num_mixes_s2 = 10
@@ -50,11 +55,11 @@ def generate_steps_1_2_3(treatment, predicted_IC50 = None):
         treatment_plate_loc, treatment_column = find_treatment_loc(treatment)
     except Error as e:
         print(f"Unale to locate treatment {treatment}")
-        raise   # need to know locaton of treatment, rest of protocol useless if not specified
-        
-    #* TODO: handle predicted IC50
+        raise  # need to know locaton of treatment, rest of protocol useless if not specified
 
-    #* Create folder to store all instruction files 
+    # * TODO: handle predicted IC50
+
+    # * Create folder to store all instruction files
     project = "Campaign1"
     project_desc = "col" + str(culture_plate_column_num)
     version_num = "v1"
@@ -300,12 +305,14 @@ def generate_steps_1_2_3(treatment, predicted_IC50 = None):
             dispense_shift=[0, 0, 2],
             blowoff=blowoff_volume,
         )
-        
-       # * Transfer undiluted treatment stock solution (12 channel in Position 3, 2rd row) into empty first row of serial dilution plate
+
+    # * Transfer undiluted treatment stock solution (12 channel in Position 3, 2rd row) into empty first row of serial dilution plate
     for i in range(2):
         soloSoft.aspirate(
             position=treatment_plate_loc,
-            aspirate_volumes=Reservoir_12col_Agilent_201256_100_BATSgroup().setColumn(treatment_column, first_column_transfer_volume_s2),
+            aspirate_volumes=Reservoir_12col_Agilent_201256_100_BATSgroup().setColumn(
+                treatment_column, first_column_transfer_volume_s2
+            ),
             pre_aspirate=blowoff_volume,
             mix_at_start=True,
             mix_cycles=serial_source_num_mixes_s2,
@@ -442,9 +449,11 @@ def generate_steps_1_2_3(treatment, predicted_IC50 = None):
     )
 
     # restock growth assay plate before run
-    softLinx.plateCraneMovePlate(["SoftLinx.PlateCrane.Stack5"], ["SoftLinx.Solo.Position4"]) 
-    softLinx.plateCraneMoveCrane("SoftLinx.PlateCrane.Safe") 
-    
+    softLinx.plateCraneMovePlate(
+        ["SoftLinx.PlateCrane.Stack5"], ["SoftLinx.Solo.Position4"]
+    )
+    softLinx.plateCraneMoveCrane("SoftLinx.PlateCrane.Safe")
+
     # run all three liquid handling steps (with paths to .hso files on hudson01)
     softLinx.soloSoftResetTipCount(1)  # SoloSoft will reset to full tip box before run
     softLinx.soloSoftRun(
@@ -503,10 +512,12 @@ def find_treatment_loc(treatment_name):
     """
     Connect to SQL database and determine plate # and well location of desired treatment
     (for now, these locations will be hardcoded (plate assumed to be on Solo deck))
-    
+
     """
-    # {treatment_name: [Plate location, column number], ... } 
-    treatment_locations = {"KAN": ["Position3", 3], } 
+    # {treatment_name: [Plate location, column number], ... }
+    treatment_locations = {
+        "KAN": ["Position3", 3],
+    }
 
     return treatment_locations[treatment_name]
 
