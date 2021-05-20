@@ -30,6 +30,7 @@ while True:
 
     else:
         # immediately pass the message off to message handler and keep listening
+        print(f"sending decoded_message: {decoded}")
         child_message_handler = Popen(
             ["python", "./lambda6_handle_message_5556.py", decoded],
             start_new_session=True,
