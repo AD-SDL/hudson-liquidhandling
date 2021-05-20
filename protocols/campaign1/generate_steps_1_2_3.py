@@ -16,13 +16,13 @@ def generate_steps_1_2_3(treatment, predicted_IC50=None):
 
     # * Program variables
     blowoff_volume = 10
-    num_mixes = 5
+    num_mixes = 3
     current_media_reservoir_volume = media_reservoir_volume = 7000
     reservoir_z_shift = 0.5  # z shift for deep blocks (Deck Positions 3 and 5)
     lambda6_path = "/lambda_stor/data/hudson/instructions/"
 
     # Step 1 variables
-    culture_plate_column_num = 6  # Changed to column 6 for test on week of 05/17/21
+    culture_plate_column_num = 6  # Changed to column 6 for test on 05/19/21
     media_transfer_volume_s1 = 60
     culture_transfer_volume_s1 = 30
     # dilution_media_volume = 198
@@ -41,8 +41,8 @@ def generate_steps_1_2_3(treatment, predicted_IC50=None):
         120  # two times = 240uL (to equal volume in 1:10 dilution wells)
     )
     serial_antibiotic_transfer_volume_s2 = 24
-    serial_source_mixing_volume_s2 = 100
-    serial_source_num_mixes_s2 = 10
+    serial_source_mixing_volume_s2 = 80
+    serial_source_num_mixes_s2 = 8
     serial_destination_mixing_volume_s2 = 100
 
     # Step 3 variables
@@ -176,7 +176,7 @@ def generate_steps_1_2_3(treatment, predicted_IC50=None):
             mix_cycles=num_mixes,
             mix_volume=culture_plate_mix_volume_s1,
             dispense_height=2,
-            pre_aspirate=blowoff_volume,
+            #pre_aspirate=blowoff_volume,
             syringe_speed=25,
         )
         soloSoft.dispense(
@@ -190,7 +190,7 @@ def generate_steps_1_2_3(treatment, predicted_IC50=None):
             mix_volume=culture_plate_mix_volume_s1,
             aspirate_height=2,
             syringe_speed=25,
-            blowoff=blowoff_volume,
+            #blowoff=blowoff_volume,
         )
 
     # * Add bacteria from 10 fold diluted culture plate (Position 7, column 1 and 2) to growth plate with fresh media (both halves)
@@ -278,7 +278,7 @@ def generate_steps_1_2_3(treatment, predicted_IC50=None):
                 1, media_transfer_volume_s2
             ),
             aspirate_shift=[0, 0, reservoir_z_shift],
-            pre_aspirate=blowoff_volume,
+            #pre_aspirate=blowoff_volume,
         )
         soloSoft.dispense(
             position="Position6",
@@ -286,7 +286,7 @@ def generate_steps_1_2_3(treatment, predicted_IC50=None):
                 i, media_transfer_volume_s2
             ),
             dispense_shift=[0, 0, 2],
-            blowoff=blowoff_volume,
+            #blowoff=blowoff_volume,
         )
 
         soloSoft.aspirate(  # second lb media well
@@ -295,7 +295,7 @@ def generate_steps_1_2_3(treatment, predicted_IC50=None):
                 2, media_transfer_volume_s2
             ),
             aspirate_shift=[0, 0, reservoir_z_shift],
-            pre_aspirate=blowoff_volume,
+            #pre_aspirate=blowoff_volume,
         )
         soloSoft.dispense(
             position="Position6",
@@ -303,7 +303,7 @@ def generate_steps_1_2_3(treatment, predicted_IC50=None):
                 i, media_transfer_volume_s2
             ),
             dispense_shift=[0, 0, 2],
-            blowoff=blowoff_volume,
+            #blowoff=blowoff_volume,
         )
 
     # * Transfer undiluted treatment stock solution (12 channel in Position 3, 2rd row) into empty first row of serial dilution plate
@@ -327,14 +327,16 @@ def generate_steps_1_2_3(treatment, predicted_IC50=None):
             ),
             dispense_shift=[0, 0, 2],
             blowoff=blowoff_volume,
-            mix_at_finish=True,
-            mix_cycles=num_mixes,
-            mix_volume=serial_destination_mixing_volume_s2,
+            #mix_at_finish=True,
+            #mix_cycles=num_mixes,
+            #mix_volume=serial_destination_mixing_volume_s2,
             aspirate_height=2,
         )
 
     # * Serial dilution within Generic 96 well plate (Corning or Falcon) - mix 5 times before and after transfer
     for i in range(1, 6):
+        if i == 4:  # switch tips half way through to reduce error
+            soloSoft.getTip()
         soloSoft.aspirate(
             position="Position6",
             aspirate_volumes=Plate_96_Corning_3635_ClearUVAssay().setColumn(
@@ -383,8 +385,10 @@ def generate_steps_1_2_3(treatment, predicted_IC50=None):
         ],
     )
 
-    soloSoft.getTip()  # don't need to get tips here but good idea, just in case one of tips messed up in dilution step
+    soloSoft.getTip()  
     for i in range(6, 0, -1):  # first half of plate
+        if i == 3:   # switch tips half way through to reduce error
+            soloSoft.getTip()
         soloSoft.aspirate(
             position="Position6",
             aspirate_volumes=Plate_96_Corning_3635_ClearUVAssay().setColumn(
@@ -407,9 +411,12 @@ def generate_steps_1_2_3(treatment, predicted_IC50=None):
             aspirate_height=2,
             dispense_shift=[0, 0, 2],
         )
+        
 
     soloSoft.getTip()
     for i in range(6, 0, -1):  # second half of plate
+        if i == 3:   # switch tips half way through to reduce error
+            soloSoft.getTip() 
         soloSoft.aspirate(
             position="Position6",
             aspirate_volumes=Plate_96_Corning_3635_ClearUVAssay().setColumn(
@@ -439,7 +446,6 @@ def generate_steps_1_2_3(treatment, predicted_IC50=None):
     """
     ADD ALL STEPS TO SOFTLINX PROTOCOL AND SEND TO HUDSON01 -----------------------------------------------------------------------
     """
-
     # initialize softLinx
     softLinx = SoftLinx("Steps_1_2_3", os.path.join(directory_path, "steps_1_2_3.slvp"))
 
@@ -514,10 +520,8 @@ def find_treatment_loc(treatment_name):
     (for now, these locations will be hardcoded (plate assumed to be on Solo deck))
 
     """
-    # {treatment_name: [Plate location, column number], ... }
-    treatment_locations = {
-        "KAN": ["Position3", 3],
-    }
+    # {treatment_name: [Plate location, column number], ... } 
+    treatment_locations = {"KAN": ["Position3", 3], "peptide1": ["Position3", 3]} 
 
     return treatment_locations[treatment_name]
 

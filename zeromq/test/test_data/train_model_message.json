@@ -1,10 +1,10 @@
 {
-    "Campaign1_20210505_191201_RawOD.csv": {
+    "basename_data.csv": {
         "path": [
-            "/home/brettin/liquidhandling/zeromq/test/test_data/Campaign1_20210505_191201_RawOD.csv"
+            "/lambda_stor/data/hudson/data/dataframes/basename_data.csv"
         ],
         "purpose": [
-            "build_dataframe"
+            "train_model"
         ],
         "type": [
             "py"

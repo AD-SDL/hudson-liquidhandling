@@ -1,61 +1,59 @@
-""" Lambda6 message handler 
+""" Generic message handler 
 - write message received to log
 - determine if message is formatted correctly
-- write contents of message to approptiate numer of files on lambda 6
-- call QC module on data files 
+- call train_model  module on data files 
 """
 
 import os
 import sys
-import inspect
 import json
+import inspect
 from path import Path
 from utils.zmq_connection import zmq_connect
-from utils.build_dataframe import build_dataframe
-from utils.manifest import generateFileManifest
+from utils.train_model import train_model
 
 def _do_work(filenames):
-    new_filenames = build_dataframe(filenames)
+    # This is the only unique thing to the handler. You have to
+    # implement the method that operates on a file.
+    new_filenames = train_model(filenames)
 
+    data = []
     if len(new_filenames) > 0:
-        multi_file_manifest = {}
-        context, socket = zmq_connect(port=5557, pattern="REQ")
-        for f in new_filenames:
-            single_file_manifest  = generateFileManifest(f, purpose="train_model")
-            for k in single_file_manifest:
-                multi_file_manifest[k] = single_file_manifest[k]
+        context, socket = zmq_connect(port=5558, pattern="REQ")
 
-        socket.send_string(json.dumps(multi_file_manifest))
-        repl = socket.recv()
-        print(f"Got {repl}")
+        # implement message construction and send to listener
+        message = {
+                "path": ['/path/to/file'],
+                "purpose":["work"],
+                "type":["JSON"]
+                }
+
+        # socket.send_string(json.dumps(message))
+        # repl = socket.recv()
+        # print(f"Got {repl}")
     else:
-        print("new_filenames is empty")
         n = inspect.stack()[0][3]
         print(f"{n} failed on {file_name}")
 
     return new_filenames
 
-
-def lambda6_handle_message(json_string):
-
-    lambda6_data_path = "/lambda_stor/data/hudson/data/"
-
-    # * extract message address and body
-    json_decoded = json.loads(json_string)
-
+def lambda6_handle_message(decoded_message):
+    print(f'\nHandling decoded_message: {decoded_message}')
+    json_decoded = json.loads(decoded_message)
+    print(f"\nHandling json_decoded: {json_decoded}")
     return_val = "PASS"
-    print(f"Handling message: {json_decoded}")
 
     filenames = []
     for k in json_decoded:
         file_data = json_decoded[k]
         filename = file_data["path"][0]
-        print(f"filename: {filename}")
+        print(f"filename {filename}")
         filenames.append(filename)
 
-    new_filenames = _do_work(filenames)
+    model_filenames = _do_work(filenames)
+    print(f"\nnew files {model_filenames}")
     print(f"\nDone handling message: {json_decoded}")
-    return return_val
+    return model_filenames
 
 
 def main(json_string):
@@ -64,6 +62,7 @@ def main(json_string):
         Therefore, when testing, make the json string in the if __main__ block.
     """
 
+    print(f"calling handle message on {json_string}")
     lambda6_handle_message(json_string)
 
 
