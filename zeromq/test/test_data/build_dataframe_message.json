@@ -1,7 +1,7 @@
 {
-    "Campaign1_hidex1_04_22_21_20210422_115215.csv": {
+    "Campaign1_20210505_191201_RawOD.csv": {
         "path": [
-            "/home/brettin/liquidhandling/zeromq/test/test_data/Campaign1_hidex1_04_22_21_20210422_115215.csv"
+            "/home/brettin/liquidhandling/zeromq/test/test_data/Campaign1_20210505_191201_RawOD.csv"
         ],
         "purpose": [
             "build_dataframe"
