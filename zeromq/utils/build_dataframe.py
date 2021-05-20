@@ -31,9 +31,7 @@ def build_dataframe(filenames, basename=None):
 
     # define data frame file name
     if basename == None:
-        return_val = "basename"
-    else:
-        return_val = basename
+        basename = "basename"
 
     # set up rows, cols and data variables
     cols = ["Blank-corrected OD(590) Kinetic cycle #1"]
@@ -49,14 +47,14 @@ def build_dataframe(filenames, basename=None):
         rows = rows.append(df[["Well"]], ignore_index=True)
 
     # save the files and return the file basename
-    print(f"writing files to {return_val}")
-    data.to_csv(return_val + "_data.csv", sep=",", header=None, index=None)
-    rows.to_csv(return_val + "_rows.csv", sep=",", header=None, index=None)
+    print(f"writing files to {basename}")
+    data.to_csv(basename + "_data.csv", sep=",", header=None, index=None)
+    rows.to_csv(basename + "_rows.csv", sep=",", header=None, index=None)
     pd.DataFrame(cols).to_csv(
-        return_val + "_cols.csv", sep=",", header=None, index=None
+        basename + "_cols.csv", sep=",", header=None, index=None
     )
 
-    return return_val
+    return [basename + "_data.csv"]
 
 
 def main(args):
