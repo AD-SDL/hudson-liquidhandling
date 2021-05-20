@@ -151,6 +151,49 @@ class SoftLinx:
                 self.protocolSteps.append(step)
         return step
 
+    def runProgram(
+        self,
+        command="",
+        variable_name="",
+        hide_prompt=False,
+        is_variable=False,
+        is_constant=True,
+        wait_for_complete=False,
+        arguments="",
+        isActive=True,
+        index=None,
+        inplace=True,
+    ):
+        if not isinstance(hide_prompt, bool):
+            raise TypeError("hide_prompt should be a boolean.")
+        if not isinstance(is_variable, bool):
+            raise TypeError("is_variable should be a boolean.")
+        if not isinstance(is_constant, bool):
+            raise TypeError("is_constant should be a boolean.")
+        if not isinstance(wait_for_complete, bool):
+            raise TypeError("wait_for_complete should be a boolean.")
+        step = {
+            "type": "RunProgramActivity",
+            "CommandLine": "",
+            "Description": "Run: '%s'" % str(command),
+            "Command": str(command),
+            "VariableName": str(variable_name),
+            "HidePrompt": bool(hide_prompt),
+            "IsVariable": bool(is_variable),
+            "IsConstant": bool(is_constant),
+            "Arguments": str(arguments),
+            "WaitForComplete": bool(wait_for_complete),
+            "SLXId": "aa9c6603-467b-4c4f-81b3-49bb7dd0f768",
+            "ToolTip": "Run: '%s'" % str(command),
+            "isActive": str(isActive),
+        }
+        if inplace:
+            if index != None:
+                self.protocolSteps.insert(index, step)
+            else:
+                self.protocolSteps.append(step)
+        return step
+
     # * Plate Crane Steps * #
     def plateCraneMoveCrane(
         self,
@@ -712,10 +755,54 @@ class SoftLinx:
                 "Capacity": "0",
             },
         )
+    
+    def generateRunProgramXML(self, parent, step):
+        activity_dict = {
+            "CommandLine": step["CommandLine"],
+            "Description": step["Description"],
+            "DisplayName": "Run Program",
+            "HasConstraints": "False",
+            "SLXId": step["SLXId"],
+            "ToolTip": step["ToolTip"],
+            "UserComments": "",
+            "isActive": step["isActive"],
+            "isCanceled": "False",
+            "isSetup": "True",
+        }
+        run_xml = ET.SubElement(parent, "RunProgramActivity", activity_dict)
+        run_arguments = ET.SubElement(run_xml, "RunProgramActivity.Arguments")
+        ET.SubElement(
+            run_arguments,
+            "RunProgramActivityArguments",
+            {
+            "Command": str(step["Command"]),
+            "VariableName": str(step["VariableName"]),
+            "HidePrompt": str(step["HidePrompt"]),
+            "IsVariable": str(step["IsVariable"]),
+            "IsConstant": str(step["IsConstant"]),
+            "Arguments": str(step["Arguments"]),
+            "WaitForComplete": str(step["WaitForComplete"]),
+            },
+        )
+        run_timeconstraints = ET.SubElement(
+            run_xml, "RunProgramActivity.TimeConstraints"
+        )
+        ET.SubElement(
+            run_timeconstraints,
+            "scg:List",
+            {
+                "x:TypeArguments": "hwab:TimeConstraint",
+                "Capacity": "0",
+            },
+        )
+
 
     def generateStepXML(self, scg_list, step):
         if step["type"] == "IfElseActivity":
             self.generateConditionalXML(scg_list, step)
+            return
+        if step["type"] == "RunProgramActivity":
+            self.generateRunProgramXML(scg_list, step)
             return
         self.plugin_flags[step["system"]] = True
         activity_dict = {
