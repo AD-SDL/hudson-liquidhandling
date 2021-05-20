@@ -30,8 +30,8 @@ def _do_work(filenames):
         repl = socket.recv()
         print(f"Got {repl}")
     else:
-        print("new_filenames is empty")
         n = inspect.stack()[0][3]
+        print("new_filenames is empty")
         print(f"{n} failed on {file_name}")
 
     return new_filenames
