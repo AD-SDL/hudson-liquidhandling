@@ -176,7 +176,7 @@ def generate_steps_1_2_3(treatment, predicted_IC50=None):
             mix_cycles=num_mixes,
             mix_volume=culture_plate_mix_volume_s1,
             dispense_height=2,
-            #pre_aspirate=blowoff_volume,
+            # pre_aspirate=blowoff_volume,
             syringe_speed=25,
         )
         soloSoft.dispense(
@@ -190,7 +190,7 @@ def generate_steps_1_2_3(treatment, predicted_IC50=None):
             mix_volume=culture_plate_mix_volume_s1,
             aspirate_height=2,
             syringe_speed=25,
-            #blowoff=blowoff_volume,
+            # blowoff=blowoff_volume,
         )
 
     # * Add bacteria from 10 fold diluted culture plate (Position 7, column 1 and 2) to growth plate with fresh media (both halves)
@@ -278,7 +278,7 @@ def generate_steps_1_2_3(treatment, predicted_IC50=None):
                 1, media_transfer_volume_s2
             ),
             aspirate_shift=[0, 0, reservoir_z_shift],
-            #pre_aspirate=blowoff_volume,
+            # pre_aspirate=blowoff_volume,
         )
         soloSoft.dispense(
             position="Position6",
@@ -286,7 +286,7 @@ def generate_steps_1_2_3(treatment, predicted_IC50=None):
                 i, media_transfer_volume_s2
             ),
             dispense_shift=[0, 0, 2],
-            #blowoff=blowoff_volume,
+            # blowoff=blowoff_volume,
         )
 
         soloSoft.aspirate(  # second lb media well
@@ -295,7 +295,7 @@ def generate_steps_1_2_3(treatment, predicted_IC50=None):
                 2, media_transfer_volume_s2
             ),
             aspirate_shift=[0, 0, reservoir_z_shift],
-            #pre_aspirate=blowoff_volume,
+            # pre_aspirate=blowoff_volume,
         )
         soloSoft.dispense(
             position="Position6",
@@ -303,7 +303,7 @@ def generate_steps_1_2_3(treatment, predicted_IC50=None):
                 i, media_transfer_volume_s2
             ),
             dispense_shift=[0, 0, 2],
-            #blowoff=blowoff_volume,
+            # blowoff=blowoff_volume,
         )
 
     # * Transfer undiluted treatment stock solution (12 channel in Position 3, 2rd row) into empty first row of serial dilution plate
@@ -327,9 +327,9 @@ def generate_steps_1_2_3(treatment, predicted_IC50=None):
             ),
             dispense_shift=[0, 0, 2],
             blowoff=blowoff_volume,
-            #mix_at_finish=True,
-            #mix_cycles=num_mixes,
-            #mix_volume=serial_destination_mixing_volume_s2,
+            # mix_at_finish=True,
+            # mix_cycles=num_mixes,
+            # mix_volume=serial_destination_mixing_volume_s2,
             aspirate_height=2,
         )
 
@@ -385,9 +385,9 @@ def generate_steps_1_2_3(treatment, predicted_IC50=None):
         ],
     )
 
-    soloSoft.getTip()  
+    soloSoft.getTip()
     for i in range(6, 0, -1):  # first half of plate
-        if i == 3:   # switch tips half way through to reduce error
+        if i == 3:  # switch tips half way through to reduce error
             soloSoft.getTip()
         soloSoft.aspirate(
             position="Position6",
@@ -411,12 +411,11 @@ def generate_steps_1_2_3(treatment, predicted_IC50=None):
             aspirate_height=2,
             dispense_shift=[0, 0, 2],
         )
-        
 
     soloSoft.getTip()
     for i in range(6, 0, -1):  # second half of plate
-        if i == 3:   # switch tips half way through to reduce error
-            soloSoft.getTip() 
+        if i == 3:  # switch tips half way through to reduce error
+            soloSoft.getTip()
         soloSoft.aspirate(
             position="Position6",
             aspirate_volumes=Plate_96_Corning_3635_ClearUVAssay().setColumn(
@@ -520,8 +519,8 @@ def find_treatment_loc(treatment_name):
     (for now, these locations will be hardcoded (plate assumed to be on Solo deck))
 
     """
-    # {treatment_name: [Plate location, column number], ... } 
-    treatment_locations = {"KAN": ["Position3", 3], "peptide1": ["Position3", 3]} 
+    # {treatment_name: [Plate location, column number], ... }
+    treatment_locations = {"KAN": ["Position3", 3], "peptide1": ["Position3", 3]}
 
     return treatment_locations[treatment_name]
 

@@ -50,9 +50,7 @@ def build_dataframe(filenames, basename=None):
     print(f"writing files to {basename}")
     data.to_csv(basename + "_data.csv", sep=",", header=None, index=None)
     rows.to_csv(basename + "_rows.csv", sep=",", header=None, index=None)
-    pd.DataFrame(cols).to_csv(
-        basename + "_cols.csv", sep=",", header=None, index=None
-    )
+    pd.DataFrame(cols).to_csv(basename + "_cols.csv", sep=",", header=None, index=None)
 
     return [basename + "_data.csv"]
 

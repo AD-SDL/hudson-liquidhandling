@@ -32,6 +32,6 @@ while True:
         # immediately pass the message off to message handler and keep listening
         child_message_handler = Popen(
             ["python", "./lambda6_handle_message_5557.py", decoded],
-            #start_new_session=True,
+            # start_new_session=True,
         ).pid
         socket.send(b"Message received and passed to lambda6_handle_message")

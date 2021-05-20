@@ -755,7 +755,7 @@ class SoftLinx:
                 "Capacity": "0",
             },
         )
-    
+
     def generateRunProgramXML(self, parent, step):
         activity_dict = {
             "CommandLine": step["CommandLine"],
@@ -775,13 +775,13 @@ class SoftLinx:
             run_arguments,
             "RunProgramActivityArguments",
             {
-            "Command": str(step["Command"]),
-            "VariableName": str(step["VariableName"]),
-            "HidePrompt": str(step["HidePrompt"]),
-            "IsVariable": str(step["IsVariable"]),
-            "IsConstant": str(step["IsConstant"]),
-            "Arguments": str(step["Arguments"]),
-            "WaitForComplete": str(step["WaitForComplete"]),
+                "Command": str(step["Command"]),
+                "VariableName": str(step["VariableName"]),
+                "HidePrompt": str(step["HidePrompt"]),
+                "IsVariable": str(step["IsVariable"]),
+                "IsConstant": str(step["IsConstant"]),
+                "Arguments": str(step["Arguments"]),
+                "WaitForComplete": str(step["WaitForComplete"]),
             },
         )
         run_timeconstraints = ET.SubElement(
@@ -795,7 +795,6 @@ class SoftLinx:
                 "Capacity": "0",
             },
         )
-
 
     def generateStepXML(self, scg_list, step):
         if step["type"] == "IfElseActivity":
