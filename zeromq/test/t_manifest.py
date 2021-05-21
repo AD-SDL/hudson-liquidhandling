@@ -1,10 +1,10 @@
 import sys
 
-sys.path.append(".")
+sys.path.append("../utils")
 
 from manifest import generateFileManifest
 
 text = generateFileManifest(
-    "manifest.py", purpose="build_dataframe", manifest_filename="manifest.txt"
+    sys.argv[1], purpose=sys.argv[2], manifest_filename=sys.argv[3]
 )
 print(text)
