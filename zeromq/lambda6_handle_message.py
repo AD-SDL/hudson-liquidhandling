@@ -122,11 +122,16 @@ def _run_qc(file_name):
     return ret_val
 
 
-def main(args):
-    decoded_message = sys.argv[1]
-    lambda6_handle_message(decoded_message)
+def main(json_string):
+    lambda6_handle_message(json_string)
 
 
 if __name__ == "__main__":
     # execute only if run as a script
-    main(sys.argv)
+    if os.path.isfile(sys.argv[1]):
+        with open(sys.argv[1], "r") as file:
+            json_string = file.read()
+    else:
+        json_string = sys.argv[1]
+
+    main(json_string)
