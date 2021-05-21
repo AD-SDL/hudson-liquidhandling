@@ -10,11 +10,13 @@ import json
 import inspect
 from path import Path
 from utils.zmq_connection import zmq_connect
+from utils.manifest import generateFileManifest
 from utils.train_model import train_model
 
 def _do_work(filenames):
     # This is the only unique thing to the handler. You have to
     # implement the method that operates on a file.
+    new_filenames = []
     new_filenames = train_model(filenames)
 
     data = []
@@ -22,18 +24,19 @@ def _do_work(filenames):
         context, socket = zmq_connect(port=5558, pattern="REQ")
 
         # implement message construction and send to listener
-        message = {
-                "path": ['/path/to/file'],
-                "purpose":["work"],
-                "type":["JSON"]
-                }
+        multi_file_manifest = {}
+        for f in new_filenames:
+            single_file_manifest  = generateFileManifest(f, purpose="run_inferencing")
+            for k in single_file_manifest:
+                multi_file_manifest[k] = single_file_manifest[k]
 
-        # socket.send_string(json.dumps(message))
-        # repl = socket.recv()
-        # print(f"Got {repl}")
+        socket.send_string(json.dumps(multi_file_manifest))
+        repl = socket.recv()
+        print(f"\nGot {repl}")
     else:
         n = inspect.stack()[0][3]
-        print(f"{n} failed on {file_name}")
+        print("\nnew_filenames is empty")
+        print(f"{n} failed on {filenames}")
 
     return new_filenames
 
@@ -47,7 +50,7 @@ def lambda6_handle_message(decoded_message):
     for k in json_decoded:
         file_data = json_decoded[k]
         filename = file_data["path"][0]
-        print(f"filename {filename}")
+        print(f"\nfilename {filename}")
         filenames.append(filename)
 
     model_filenames = _do_work(filenames)
@@ -62,7 +65,7 @@ def main(json_string):
         Therefore, when testing, make the json string in the if __main__ block.
     """
 
-    print(f"calling handle message on {json_string}")
+    print(f"\ncalling handle message on {json_string}")
     lambda6_handle_message(json_string)
 
 
