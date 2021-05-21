@@ -15,6 +15,7 @@ from utils.build_dataframe import build_dataframe
 from utils.manifest import generateFileManifest
 
 def _do_work(filenames):
+    new_filenames = []
     new_filenames = build_dataframe(filenames)
 
     if len(new_filenames) > 0:
@@ -31,7 +32,7 @@ def _do_work(filenames):
     else:
         print("new_filenames is empty")
         n = inspect.stack()[0][3]
-        print(f"{n} failed on {file_name}")
+        print(f"{n} failed on {filenames}")
 
     return new_filenames
 
@@ -54,6 +55,7 @@ def lambda6_handle_message(json_string):
         filenames.append(filename)
 
     new_filenames = _do_work(filenames)
+    print(f"\nnew files {new_filenames}")
     print(f"\nDone handling message: {json_decoded}")
     return return_val
 
