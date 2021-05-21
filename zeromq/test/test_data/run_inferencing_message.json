@@ -1,0 +1,22 @@
+{
+    "basename_model.h5": {
+        "path": [
+            "/lambda_stor/data/hudson/data/dataframes/basename_model.h5"
+        ],
+        "purpose": [
+            "run_inferencing"
+        ],
+        "type": [
+            "model"
+        ],
+        "ctime": [
+            "1620174470.102886",
+            "2021-05-04 19:27:50.102886"
+        ],
+        "mtime": [
+            "1620174345.2378626",
+            "2021-05-04 19:25:45.237863"
+        ],
+        "data": "TODO: CONTENTS OF NEITHER CSV OR EXCEL FILE"
+    }
+}
