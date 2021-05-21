@@ -14,6 +14,7 @@ from utils.zmq_connection import zmq_connect
 from utils.build_dataframe import build_dataframe
 from utils.manifest import generateFileManifest
 
+
 def _do_work(filenames):
     new_filenames = []
     new_filenames = build_dataframe(filenames)
@@ -22,7 +23,7 @@ def _do_work(filenames):
         multi_file_manifest = {}
         context, socket = zmq_connect(port=5557, pattern="REQ")
         for f in new_filenames:
-            single_file_manifest  = generateFileManifest(f, purpose="train_model")
+            single_file_manifest = generateFileManifest(f, purpose="train_model")
             for k in single_file_manifest:
                 multi_file_manifest[k] = single_file_manifest[k]
 
@@ -61,9 +62,9 @@ def lambda6_handle_message(json_string):
 
 
 def main(json_string):
-    """ main gets invoked because the listener does a system call to it.
-        The listener passes to main the json string.
-        Therefore, when testing, make the json string in the if __main__ block.
+    """main gets invoked because the listener does a system call to it.
+    The listener passes to main the json string.
+    Therefore, when testing, make the json string in the if __main__ block.
     """
 
     lambda6_handle_message(json_string)
@@ -72,7 +73,7 @@ def main(json_string):
 if __name__ == "__main__":
     # execute only if run as a script
     if os.path.isfile(sys.argv[1]):
-        with open(sys.argv[1], 'r') as file:
+        with open(sys.argv[1], "r") as file:
             json_string = file.read()
     else:
         json_string = sys.argv[1]

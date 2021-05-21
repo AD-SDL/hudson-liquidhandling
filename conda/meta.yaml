@@ -23,7 +23,6 @@ requirements:
     - path
     - openpyxl
     - mysql-connector-python
-    - zmq
   run:
     - jsonref
     - jsonschema
@@ -33,7 +32,6 @@ requirements:
     - path
     - openpyxl
     - mysql-connector-python
-    - zmq
 
 test:
   imports:
