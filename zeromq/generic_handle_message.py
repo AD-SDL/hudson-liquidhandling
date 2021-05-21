@@ -10,11 +10,13 @@ import json
 import inspect
 from path import Path
 from utils.zmq_connection import zmq_connect
+from utils.manifest import generateFileManifest
 from utils.train_model import train_model
 
 def _do_work(filenames):
     # This is the only unique thing to the handler. You have to
     # implement the method that operates on a file.
+    new_filenames = []
     new_filenames = train_model(filenames)
 
     data = []
@@ -28,29 +30,29 @@ def _do_work(filenames):
 
         socket.send_string(json.dumps(multi_file_manifest))
         repl = socket.recv()
-        print(f"Got {repl}")
+        print(f"\nGot {repl}")
     else:
         n = inspect.stack()[0][3]
-        print("new_filenames is empty")
-        print(f"{n} failed on {file_name}")
+        print("\nnew_filenames is empty")
+        print(f"{n} failed on {filenames}")
 
     return new_filenames
 
 def lambda6_handle_message(decoded_message):
     json_decoded = json.loads(decoded_message)
-    print(f"Handling message: {json_decoded}")
+    print(f"\nHandling message: {json_decoded}")
     print(json_decoded)
 
     filenames = []
     for k in json_decoded:
         file_data = json_decoded[k]
         filename = file_data["path"][0]
-        print(f"filename {filename}")
+        print(f"\nfilename {filename}")
         filenames.append(filename)
     
     new_filenames = _do_work(filename)
-    print(f"\nnew files {filenames}")
-    print(f"Done handling message: {json_decoded}")
+    print(f"\nnew files {new_filenames}")
+    print(f"\nDone handling message: {json_decoded}")
     return new_filenames 
 
 
