@@ -27,7 +27,7 @@ def _do_work(filenames):
         # implement message construction and send to listener
         multi_file_manifest = {}
         for f in new_filenames:
-            single_file_manifest  = generateFileManifest(f, purpose="run_inferencing")
+            single_file_manifest = generateFileManifest(f, purpose="run_inferencing")
             for k in single_file_manifest:
                 multi_file_manifest[k] = single_file_manifest[k]
 

@@ -13,6 +13,7 @@ from utils.zmq_connection import zmq_connect
 from utils.manifest import generateFileManifest
 from utils.run_inferencing import run_inferencing
 
+
 def _do_work(filenames):
     # This is the only unique thing to the handler. You have to
     # implement the method that operates on a file.
@@ -23,7 +24,9 @@ def _do_work(filenames):
         multi_file_manifest = {}
         context, socket = zmq_connect(port=5559, pattern="REQ")
         for f in new_filenames:
-            single_file_manifest  = generateFileManifest(f, purpose="generate_instructions")
+            single_file_manifest = generateFileManifest(
+                f, purpose="generate_instructions"
+            )
             for k in single_file_manifest:
                 multi_file_manifest[k] = single_file_manifest[k]
 
@@ -37,6 +40,7 @@ def _do_work(filenames):
 
     return new_filenames
 
+
 def lambda6_handle_message(decoded_message):
     json_decoded = json.loads(decoded_message)
     print(f"\nHandling message: {json_decoded}")
@@ -48,11 +52,11 @@ def lambda6_handle_message(decoded_message):
         filename = file_data["path"][0]
         print(f"\nfilename {filename}")
         filenames.append(filename)
-    
+
     new_filenames = _do_work(filename)
     print(f"\nnew files {new_filenames}")
     print(f"\nDone handling message: {json_decoded}")
-    return new_filenames 
+    return new_filenames
 
 
 def main(json_string):
@@ -67,7 +71,7 @@ def main(json_string):
 if __name__ == "__main__":
     # execute only if run as a script
     if os.path.isfile(sys.argv[1]):
-        with open(sys.argv[1], 'r') as file:
+        with open(sys.argv[1], "r") as file:
             json_string = file.read()
     else:
         json_string = sys.argv[1]
