@@ -10,8 +10,6 @@ import sys
 
 def lamdba6_send_instructions(instructions_dir):
 
-    return_val = "PASS"
-
     # * connect to port on hudson01
     context = zmq.Context()
     socket = context.socket(zmq.REQ)
@@ -46,8 +44,6 @@ def lamdba6_send_instructions(instructions_dir):
             archive([instructions_dir], "/lambda_stor/data/hudson/instructions/")
 
     socket.close()
-
-    return return_val
 
 
 def main(args):
