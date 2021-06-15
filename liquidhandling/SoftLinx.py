@@ -317,6 +317,110 @@ class SoftLinx:
                 self.protocolSteps.append(step)
         return step
 
+    def plateCraneRemoveLid(
+        self,
+        positionsFrom=["SoftLinx.PlateCrane.Stack1"],
+        positionsTo=["SoftLinx.PlateCrane.Stack2"],
+        onEmptyStack="End Method",
+        moveUpAndHoldLid=False,
+        moveUpAmount=10,
+        checkForPlatesInAllStacks=False,
+        isActive=True,
+        index=None,
+        inplace=True,
+    ):
+        if not isinstance(positionsFrom, list) or not isinstance(positionsTo, list):
+            raise ValueError("positionsFrom and positionsTo must be Lists.")
+        onEmptyStackDict = {
+            "End Method": 0,
+            "Post Message and Continue": 1,
+        }
+        if isinstance(onEmptyStack, str):
+            try:
+                onEmptyStackVal = onEmptyStackDict[onEmptyStack]
+            except:
+                raise ValueError(
+                    "onEmptyStack must be one of the following:"
+                    + str([key + ", " for key in onEmptyStackDict])
+                )
+        else:
+            raise ValueError(
+                "onEmptyStack must be one of the following:"
+                + str([key + ", " for key in onEmptyStackDict])
+            )
+        if checkForPlatesInAllStacks:
+            onEmptyStackVal += 240
+        if moveUpAndHoldLid:
+            if not isinstance(moveUpAmount, int):
+                raise ValueError("moveUp must be an integer")
+        else:
+            moveUpAmount = 0
+
+        step = {
+            "type": "RemoveLid",
+            "Command": "Remove Lid",
+            "Description": "RemoveLid from: %s" % ",".join(positionsFrom)
+            + " to %s" % ",".join(positionsTo),
+            "SLXId": "99bd7bce-806b-416b-9458-c39afda998d8",
+            "ToolTip": "RemoveLid from: %s" % ",".join(positionsFrom)
+            + " to %s" % ",".join(positionsTo),
+            "isActive": str(isActive),
+            "system": "PlateCrane",
+            "args": [
+                ["x:String", ",".join(positionsFrom)],
+                ["x:String", ",".join(positionsTo)],
+                ["x:String", str(moveUpAmount)],
+                ["x:String", str(onEmptyStackVal)],
+                ["x:String", " "],
+            ],
+        }
+
+        if inplace:
+            if index != None:
+                self.protocolSteps.insert(index, step)
+            else:
+                self.protocolSteps.append(step)
+        return step
+
+    def plateCraneReplaceLid(
+        self,
+        positionsFrom=["SoftLinx.PlateCrane.Stack1"],
+        positionsTo=["SoftLinx.PlateCrane.Stack2"],
+        lidInGripper=False,
+        isActive=True,
+        index=None,
+        inplace=True,
+    ):
+        if lidInGripper:
+            positionsFrom = [" "]
+        if not isinstance(positionsFrom, list) or not isinstance(positionsTo, list):
+            raise ValueError("positionsFrom and positionsTo must be Lists.")
+
+        step = {
+            "type": "ReplaceLid",
+            "Command": "Replace Lid",
+            "Description": "ReplaceLid from: %s" % ",".join(positionsFrom)
+            + " onto Plate in %s" % ",".join(positionsTo),
+            "SLXId": "99bd7bce-806b-416b-9458-c39afda998d8",
+            "ToolTip": "ReplaceLid from: %s" % ",".join(positionsFrom)
+            + " onto Plate in %s" % ",".join(positionsTo),
+            "isActive": str(isActive),
+            "system": "PlateCrane",
+            "args": [
+                ["x:String", ",".join(positionsFrom)],
+                ["x:String", ",".join(positionsTo)],
+                ["x:String", "False"],
+                ["x:String", " "],
+            ],
+        }
+
+        if inplace:
+            if index != None:
+                self.protocolSteps.insert(index, step)
+            else:
+                self.protocolSteps.append(step)
+        return step
+
     # * SoloSoft Steps * #
     def soloSoftRun(
         self, filename="protocol.hso", isActive=True, index=None, inplace=True
@@ -329,9 +433,7 @@ class SoftLinx:
             "ToolTip": "Protocol: " + filename,
             "isActive": str(isActive),
             "system": "Solo",
-            "args": [
-                ["x:String", filename],
-            ],
+            "args": [["x:String", filename],],
         }
 
         if inplace:
@@ -365,9 +467,7 @@ class SoftLinx:
             "ToolTip": "Position:		" + str(position),
             "isActive": str(isActive),
             "system": "Solo",
-            "args": [
-                ["x:String", str(position)],
-            ],
+            "args": [["x:String", str(position)],],
         }
         if inplace:
             if index != None:
@@ -389,9 +489,7 @@ class SoftLinx:
             "ToolTip": "Assay: " + hidex_protocol,
             "isActive": str(isActive),
             "system": "Hidex",
-            "args": [
-                ["x:String", hidex_protocol],
-            ],
+            "args": [["x:String", hidex_protocol],],
         }
         if inplace:
             if index != None:
@@ -469,29 +567,19 @@ class SoftLinx:
             "xmlns:scg": "clr-namespace:System.Collections.Generic;assembly=mscorlib",
             "xmlns:x": "http://schemas.microsoft.com/winfx/2006/xaml",
         }
-        protocol = ET.Element(
-            "Protocol",
-            protocol_dict,
-        )
+        protocol = ET.Element("Protocol", protocol_dict,)
 
         # *Activities
         activities = ET.SubElement(protocol, "Protocol.Activities")
         scg_list = ET.SubElement(
-            activities,
-            "scg:List",
-            {
-                "x:TypeArguments": "p:Activity",
-                "Capacity": "4",
-            },
+            activities, "scg:List", {"x:TypeArguments": "p:Activity", "Capacity": "4",},
         )
         # *Add each step in the protocol
         for step in self.protocolSteps:
             self.generateStepXML(scg_list, step)
         activities2 = ET.SubElement(protocol, "Protocol.Activities2")
         scg_list = ET.SubElement(
-            activities2,
-            "scg:List",
-            {"x:TypeArguments": "p:Activity", "Capacity": "0"},
+            activities2, "scg:List", {"x:TypeArguments": "p:Activity", "Capacity": "0"},
         )
         initialValues = ET.SubElement(protocol, "Protocol.InitialValues")
         scg_dict = ET.SubElement(
@@ -720,10 +808,7 @@ class SoftLinx:
         scg_list = ET.SubElement(
             ifelse_activities,
             "scg:List",
-            {
-                "x:TypeArguments": "p:Activity",
-                "Capacity": "4",
-            },
+            {"x:TypeArguments": "p:Activity", "Capacity": "4",},
         )
         for substep in step["branchTrue"]:
             self.generateStepXML(scg_list, substep)
@@ -731,10 +816,7 @@ class SoftLinx:
         scg_list = ET.SubElement(
             ifelse_activities2,
             "scg:List",
-            {
-                "x:TypeArguments": "p:Activity",
-                "Capacity": "4",
-            },
+            {"x:TypeArguments": "p:Activity", "Capacity": "4",},
         )
         for substep in step["branchFalse"]:
             self.generateStepXML(scg_list, substep)
@@ -750,10 +832,7 @@ class SoftLinx:
         ET.SubElement(
             ifelse_timeconstraints,
             "scg:List",
-            {
-                "x:TypeArguments": "hwab:TimeConstraint",
-                "Capacity": "0",
-            },
+            {"x:TypeArguments": "hwab:TimeConstraint", "Capacity": "0",},
         )
 
     def generateRunProgramXML(self, parent, step):
@@ -790,10 +869,7 @@ class SoftLinx:
         ET.SubElement(
             run_timeconstraints,
             "scg:List",
-            {
-                "x:TypeArguments": "hwab:TimeConstraint",
-                "Capacity": "0",
-            },
+            {"x:TypeArguments": "hwab:TimeConstraint", "Capacity": "0",},
         )
 
     def generateStepXML(self, scg_list, step):
@@ -850,10 +926,7 @@ class SoftLinx:
         constraint_list = ET.SubElement(
             time_constraints,
             "scg:List",
-            {
-                "x:TypeArguments": "hwab:TimeConstraint",
-                "Capacity": "0",
-            },
+            {"x:TypeArguments": "hwab:TimeConstraint", "Capacity": "0",},
         )
         workflowViewState = ET.SubElement(step_xml, "sap2010:WorkflowViewState.IdRef")
         workflowViewState.text = "InstrumentActivity_1"

@@ -1,0 +1,98 @@
+plate_id=1622241250
+well,strain
+A1,277 ∆lysA ptac-thrABC ptac-asd
+A2,277 ∆lysC ptac-thrABC ptac-asd
+A3,277 ∆tdh ptac-thrABC ptac-asd
+A4,277 ∆tdh ∆rhtA ptac-thrABC ptac-asd
+A5,926 ∆tdh ∆lysC ptac-thrABC
+A6,926 Δtdh ΔmetL ptac-thrABC
+A7,277 ΔlysA ptac-thrABC ptac-asd
+A8,277 ΔlysA ptac-thrABC ptac-asd
+A9,277 Δtdh ptac-thrABC ptac-asd
+A10,277 Δtdh ptac-thrABC ptac-asd
+A11,277 Δtdh ptac-thrABC ptac-asd
+A12,926 Δtdh ΔmetL ptac-thrABC
+B1,926 Δtdh ΔptsG ptac-thrABC
+B2,926 Δtdh ΔlysA ptac-thrABC
+B3,926 ΔlysC ptac-thrABC 
+B4,926 Δtdh ptac-thrABC 
+B5,926 ∆dhaM ptac-thrABC 
+B6,926 ΔlysA ptac-thrABC 
+B7,926 Δtdh DptsG ptac-thrABC 
+B8,926 Δtdh DlysA ptac-thrABC 
+B9,926 ΔlysC ptac-thrABC 
+B10,926 Δtdh ptac-thrABC 
+B11,926 ΔdhaM ptac-thrABC 
+B12,926 ΔlysA ptac-thrABC 
+C1,926 ΔlysC ptac-thrABC ptac-asd
+C2,926 ΔlysA ptac-thrABC ptac-asd
+C3,926 ΔdhaM ptac-thrABC ptac-asd
+C4,926 Δtdh ΔmetL ptac-thrABC ptac-asd
+C5,926 ∆rhtA ptac-thrABC ptac-asd
+C6,926 ΔptsG ptac-thrABC ptac-asd
+C7,926 ΔlysC ptac-thrABC ptac-asd
+C8,926 ΔlysA ptac-thrABC ptac-asd
+C9,926 ΔdhaM ptac-thrABC ptac-asd
+C10,926 Δtdh ΔmetL ptac-thrABC ptac-asd
+C11,926 ΔrhtA ptac-thrABC ptac-asd
+C12,926 ΔptsG ptac-thrABC ptac-asd
+D1,277 ΔlysC ptac-thrABC
+D2,277 Δtdh ptac-thrABC
+D3,277 Δtdh ΔrhtA ptac-thrABC
+D4,277 ptac-thrABC 277-14
+D5,926 ∆ptsG ptac-thrABC
+D6,926 ΔrhtA ptac-thrABC
+D7,277 ΔlysC ptac-thrABC
+D8,277 Δtdh ptac-thrABC
+D9,277 Δtdh ΔrhtA ptac-thrABC
+D10,277 ptac-thrABC 277-14
+D11,926 ΔptsG ptac-thrABC
+D12,926 ΔrhtA ptac-thrABC 
+E1,277 ΔptsG ptac-thrABC
+E2,277 ΔrhtA ptac-thrABC
+E3,277 ΔdhaM ptac-thrABC
+E4,277 ΔlysA ptac-thrABC
+E5,926 ∆tdh ∆ptsG ptac-thrABC ptac-asd
+E6,926 Δtdh ptac-thrABC ptac-asd
+E7,277 ΔptsG ptac-thrABC
+E8,277 ΔrhtA ptac-thrABC
+E9,277 ΔdhaM ptac-thrABC
+E10,277 ΔlysA ptac-thrABC
+E11,926 Δtdh ΔptsG ptac-thrABC ptac-asd
+E12,926 Δtdh ptac-thrABC ptac-asd
+F1,277wt1 ptac-asd
+F2,277-14 ptac-asd
+F3,926fb1 ptac-asd
+F4,926-44 ptac-asd
+F5,926 ∆tdh ∆lysA ptac-thrABC ptac-asd
+F6,926 Δtdh ΔlysC ptac-thrABC ptac-asd
+F7,277wt1 ptac-asd
+F8,277-14 ptac-asd
+F9,926fb1 ptac-asd
+F10,926-44 ptac-asd
+F11,926 Dtdh DlysA ptac-thrABC ptac-asd
+F12,926 Dtdh DlysC ptac-thrABC ptac-asd
+G1,277 DptsG ptac-thrABC ptac-asd
+G2,277 DrhtA ptac-thrABC ptac-asd
+G3,277 DdhaM ptac-thrABC ptac-asd
+G4,926-41
+G5,926fb1
+G6,277w1
+G7,277 DptsG ptac-thrABC ptac-asd
+G8,277 DrhtA ptac-thrABC ptac-asd
+G9,277 DdhaM ptac-thrABC ptac-asd
+G10,926-41
+G11,926fb1
+G12,277w1
+H1,blank
+H2,blank
+H3,blank
+H4,blank
+H5,blank
+H6,blank
+H7,blank
+H8,blank
+H9,blank
+H10,blank
+H11,blank
+H12,blank

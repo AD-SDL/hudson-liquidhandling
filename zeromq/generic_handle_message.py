@@ -55,7 +55,7 @@ def lambda6_handle_message(decoded_message):
     new_filenames = _do_work(filename)
     print(f"\nnew files {new_filenames}")
     print(f"\nDone handling message: {json_decoded}")
-    return new_filenames 
+    return new_filenames
 
 
 def main(json_string):
