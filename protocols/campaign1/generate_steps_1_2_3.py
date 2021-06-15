@@ -22,7 +22,7 @@ def generate_steps_1_2_3(treatment, predicted_IC50=None):
     lambda6_path = "/lambda_stor/data/hudson/instructions/"
 
     # Step 1 variables
-    culture_plate_column_num = 6  # Changed to column 6 for test on 05/19/21
+    culture_plate_column_num = 7  # Changed to column 7 for test on 06/15/21
     media_transfer_volume_s1 = 60
     culture_transfer_volume_s1 = 30
     # dilution_media_volume = 198
