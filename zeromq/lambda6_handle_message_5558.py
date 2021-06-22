@@ -60,9 +60,9 @@ def lambda6_handle_message(decoded_message):
 
 
 def main(json_string):
-    """ main gets invoked because the listener does a system call to it.
-        The listener passes to main the json string.
-        Therefore, when testing, make the json string in the if __main__ block.
+    """main gets invoked because the listener does a system call to it.
+    The listener passes to main the json string.
+    Therefore, when testing, make the json string in the if __main__ block.
     """
 
     lambda6_handle_message(json_string)

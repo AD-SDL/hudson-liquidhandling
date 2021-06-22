@@ -13,9 +13,9 @@ cnx = connect()
 
 
 def run_inferencing(filenames):
-    """ run model in inferencing mode (predict)
-        params: model file name and sample dataframe
-        return: a file of predictions
+    """run model in inferencing mode (predict)
+    params: model file name and sample dataframe
+    return: a file of predictions
     """
 
     print(f"\ninferring using filenames: {filenames}")
