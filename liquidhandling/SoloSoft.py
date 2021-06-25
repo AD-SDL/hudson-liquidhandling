@@ -107,7 +107,7 @@ class SoloSoft:
                     else:
                         file.write(str(item) + "\n")
 
-    def pipelineToJSON(self, json_file=None, pipeline=None, plateList=None):
+    def pipelineToJSON(self, pipeline=None, plateList=None):
         if pipeline != None:
             if not isinstance(pipeline, list):
                 raise TypeError("pipeline should be a list")
