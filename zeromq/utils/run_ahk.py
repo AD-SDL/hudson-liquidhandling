@@ -46,7 +46,6 @@ def run_ahk(instructions_dir_path):  # new instructions folder path
     error_log.write("\t" + str(time.time()) + ", " + str(datetime.now()) + "\n")
 
     # * Check that SoloSoft and SoftLinx are not already running
-    print("checking if SoloSoft or SoftLinx is already running")
     f = wmi.WMI()
     for process in f.Win32_Process():
         if process.Name in process_names:
