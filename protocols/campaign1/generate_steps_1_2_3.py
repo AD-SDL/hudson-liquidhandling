@@ -22,7 +22,7 @@ def generate_steps_1_2_3(treatment, predicted_IC50=None):
     lambda6_path = "/lambda_stor/data/hudson/instructions/"
 
     # Step 1 variables
-    culture_plate_column_num = 7  # Changed to column 7 for test on 06/15/21
+    culture_plate_column_num = 8  # Changed to column 8 for test on 07/02/21
     media_transfer_volume_s1 = 60
     culture_transfer_volume_s1 = 30
     # dilution_media_volume = 198
@@ -306,7 +306,7 @@ def generate_steps_1_2_3(treatment, predicted_IC50=None):
             # blowoff=blowoff_volume,
         )
 
-    # * Transfer undiluted treatment stock solution (12 channel in Position 3, 2rd row) into empty first row of serial dilution plate
+    # * Transfer undiluted treatment stock solution (12 channel in Position 3, 3rd row) into empty first row of serial dilution plate
     for i in range(2):
         soloSoft.aspirate(
             position=treatment_plate_loc,

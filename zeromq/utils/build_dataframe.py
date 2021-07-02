@@ -31,7 +31,7 @@ def build_dataframe(filenames, basename=None):
 
     # define data frame file name
     if basename == None:
-        basename = "basename"
+        basename = "BASENAME"
 
     # set up rows, cols and data variables
     cols = ["Blank-corrected OD(590) Kinetic cycle #1"]
