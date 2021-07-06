@@ -16,6 +16,8 @@ import sys
 def hudson01_send_data(directory, lookback_time=None, extension=""):
     """Sends most recent file in data folder to compute cell (lambda6)"""
 
+    time.sleep(5)  # wait 5 seconds before sending the data
+
     return_val = "PASS"
     context = zmq.Context()
     socket = context.socket(zmq.REQ)
