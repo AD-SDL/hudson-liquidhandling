@@ -1,6 +1,6 @@
 # SoloSoft
 
-The library for interfacing with the [Hudson Robotics Solo Liquid Handler](https://hudsonrobotics.com/products/liquid-handling/solo-liquid-handling/) is available in [`SoloSoft.py`](../liquidhandling/SoloSoft.py).
+The library for interfacing with the [Hudson Robotics Solo Liquid Handler](https://hudsonrobotics.com/products/liquid-handling/solo-liquid-handling/) is available in [`SoloSoft.py`](../liquidhandling/hudson/SoloSoft.py).
 
 ## To Use
 
@@ -72,3 +72,123 @@ Note: each of the following functions comes with a companion `jsonify...` step, 
 ### NOT IMPLEMENTED
 
 * `HitPicking`: we have a custom implementation of [Cherry Picking](../liquidhandling/hudson/CherryPicking.py), which should be used in place of the `HitPicking` step provided by SOLOSoft.
+
+# Examples and Usage
+
+Basic Example:
+
+```python
+import sys
+import os
+from liquidhandling import SoloSoft
+
+soloSoft = SoloSoft(
+    filename="example.hso",
+    plateList=[
+        "TipBox-Corning 200uL",
+        "Corning 3383",
+        "Corning 3383",
+        "Corning 3383",
+        "Corning 3383",
+        "Corning 3383",
+        "Corning 3383",
+        "Corning 3383",
+    ],
+)
+
+soloSoft.getTip()
+soloSoft.loop(1)
+soloSoft.aspirate()
+soloSoft.dispense()
+soloSoft.endLoop()
+soloSoft.moveArm()
+
+soloSoft.savePipeline(CRLF=True)
+```
+
+Agilent Reservoir Example:
+
+```python
+import sys
+import json
+import jsonref
+import os
+from json import dump
+import errno
+from jsonschema import validate
+from liquidhandling import SoloSoft
+from liquidhandling import GenericPlate96Well
+
+soloSoft = SoloSoft.SoloSoft(
+    filename="agilent_rese.hso",
+    plateList=[
+        "TipBox-Corning 200uL",
+        "Corning 3383",
+        "Corning 3383",
+        "Corning 3383",
+        "Corning 3383",
+        "Z_Agilent_Reservoir_1row",
+        "Corning 3383",
+        "Corning 3635",
+    ],
+)
+
+soloSoft.loop(6)
+soloSoft.getTip()
+# Add 6 aspirate/dispense cycles
+for i in range(1, 7):
+    soloSoft.aspirate(
+        position="Position6",
+        aspirate_shift=[0, 0, 2],
+        aspirate_volumes=GenericPlate96Well().setColumn(6, 180),
+    )
+    soloSoft.dispense(
+        position="Position8",
+        dispense_shift=[0, 0, 2],
+        dispense_volumes=GenericPlate96Well().setColumn(i, 180),
+    )
+soloSoft.shuckTip()
+soloSoft.getTip()
+# Add 6 aspirate/dispense cycles
+for i in range(1, 7):
+    soloSoft.aspirate(
+        position="Position6",
+        aspirate_shift=[0, 0, 2],
+        aspirate_volumes=GenericPlate96Well().setColumn(8, 180),
+    )
+    soloSoft.dispense(
+        position="Position8",
+        dispense_shift=[0, 0, 2],
+        dispense_volumes=GenericPlate96Well().setColumn(i + 6, 180),
+    )
+soloSoft.shuckTip()
+soloSoft.pause(
+    pause_message="Finished plate. Reload buffers and destination plate. Please give me a break, humans!",
+    allow_end_run=True,
+)
+soloSoft.endLoop()
+soloSoft.moveArm()
+
+jsonified_pipeline = soloSoft.pipelineToJSON()
+current_directory = os.path.abspath(os.path.dirname(__file__))
+schema_file_path = os.path.join(
+    current_directory, "../src/json_schema/SoloSoft/pipeline.json"
+)
+json_schema_path = os.path.join(current_directory, "../src/json_schema/SoloSoft")
+
+if os.name == "nt":
+    base_uri = "file:///{}/".format(json_schema_path)
+else:
+    base_uri = "file://{}/".format(json_schema_path)
+
+with open(os.path.join(os.path.dirname(__file__), "test.json"), "w") as f:
+    json.dump(jsonified_pipeline, f, indent=4, sort_keys=True)
+
+with open(schema_file_path) as schema_file:
+    my_schema = jsonref.load(schema_file, base_uri=base_uri, jsonschema=True)
+
+    validate(instance=jsonified_pipeline, schema=my_schema)
+
+soloSoft.savePipeline()
+
+```
