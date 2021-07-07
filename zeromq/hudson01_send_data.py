@@ -24,8 +24,10 @@ def hudson01_send_data(directory, lookback_time=None, extension=""):
     socket.connect("tcp://lambda6.cels.anl.gov:5555")
 
     # Check for most recent excel data (hidex data)
-    modified_files = [find_most_recent(directory, extension=extension)]  # now finds only most recent file  
-    #modified_files = checkDir(directory, last_mtime=lookback_time)
+    modified_files = [
+        find_most_recent(directory, extension=extension)
+    ]  # now finds only most recent file
+    # modified_files = checkDir(directory, last_mtime=lookback_time)
 
     # If modified files
     if len(modified_files) > 0:
@@ -82,7 +84,9 @@ def main(args):
         "-e", "--ext", help="File extension to check for", required=False, type=str
     )
     args = vars(parser.parse_args())
-    print("time = {}, dir = {}, ext = {}".format(args["time"], args["dir"], args["ext"]))
+    print(
+        "time = {}, dir = {}, ext = {}".format(args["time"], args["dir"], args["ext"])
+    )
 
     hudson01_send_data(args["dir"], args["time"], args["ext"])
 

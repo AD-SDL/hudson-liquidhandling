@@ -48,7 +48,7 @@ def excel_to_csv(filename):
     """
     csv_filename = None
 
-    if os.path.exists(filename): 
+    if os.path.exists(filename):
         excel_basename = os.path.splitext(os.path.basename(filename))[0]
         csv_filename = excel_basename + "_RawOD.csv"
         csv_filepath = filename.replace(os.path.basename(filename), csv_filename)
@@ -57,7 +57,8 @@ def excel_to_csv(filename):
     excel_OD_data = pd.read_excel(filename, sheet_name="Raw OD(590)", index_col=None)
     excel_OD_data.to_csv(csv_filepath, encoding="utf-8", index=False)
 
-    return csv_filepath 
+    return csv_filepath
+
 
 def test(filename):
     df = parse_hidex(filename)

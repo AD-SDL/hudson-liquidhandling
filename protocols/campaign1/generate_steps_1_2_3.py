@@ -491,7 +491,9 @@ def generate_steps_1_2_3(treatment, predicted_IC50=None):
     softLinx.hidexRun("Campaign1")
 
     # Transfer Hidex data from C:\labautomation\data to compute cell (lambda6)
-    softLinx.runProgram("C:\\Users\\svcaibio\\Dev\\liquidhandling\\zeromq\\utils\\send_data.bat")
+    softLinx.runProgram(
+        "C:\\Users\\svcaibio\\Dev\\liquidhandling\\zeromq\\utils\\send_data.bat"
+    )
 
     # save protocol to write instructions to .slvp file, create .txt manifest, and .ahk remote start file
     softLinx.saveProtocol()
@@ -518,7 +520,7 @@ def generate_steps_1_2_3(treatment, predicted_IC50=None):
     return return_val
 
 
-def find_treatment_loc(treatment_name):  #TODO: Move this method out of protocol file
+def find_treatment_loc(treatment_name):  # TODO: Move this method out of protocol file
     """
     Connect to SQL database. Determine plate # and well location of desired treatment
     (for now, these locations will be hardcoded (plate assumed to be on Solo deck))
