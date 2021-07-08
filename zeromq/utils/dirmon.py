@@ -43,7 +43,7 @@ def checkDir(dir, last_mtime=0):
     return new_files
 
 
-def find_most_recent(dir_path, extension=""):  
+def find_most_recent(dir_path, extension=""):
     """
     returns most recent file (by mtime) in given directory with a certain extension
 
@@ -60,22 +60,20 @@ def find_most_recent(dir_path, extension=""):
     newest_mtime = None
     try:
         for filename in os.listdir(dir_path):
-            if not filename.endswith(extension): # check for correct extension
+            if not filename.endswith(extension):  # check for correct extension
                 continue
-            elif filename.startswith("~"): # ignore hidden files
+            elif filename.startswith("~"):  # ignore hidden files
                 continue
-            else: 
+            else:
                 file_path = os.path.join(dir_path, filename)
                 obj = pathlib.Path(file_path)
                 mtime = obj.stat().st_mtime
-                if newest_mtime == None: # set variables in first loop
+                if newest_mtime == None:  # set variables in first loop
                     newest_file_path = file_path
                     newest_mtime = mtime
-                if mtime > newest_mtime: # keep track of newest file
+                if mtime > newest_mtime:  # keep track of newest file
                     newest_file_path = file_path
                     newest_mtime = mtime
         return newest_file_path
-    except OSError as e: 
+    except OSError as e:
         print(e)
-
-

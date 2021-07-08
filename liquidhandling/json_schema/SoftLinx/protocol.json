@@ -1,6 +1,6 @@
 {
     "$schema": "http://json-schema.org/draft-07/schema",
-    "title": "Schema for SoloSoft Pipeline",
+    "title": "Schema for SoftLinx Protocol",
     "type": "object",
     "properties": {
         "metadata": {
@@ -8,33 +8,37 @@
         },
         "type": {
             "type": "string",
-            "const": "SoloSoft Pipeline"
+            "const": "SoftLinx Protocol"
         },
-        "pipeline_name": {
+        "protocol_name": {
             "type": "string"
         },
         "steps": {
             "type": "array",
             "items": {
-                "$ref": "steps/step.json"
+                "$ref": "steps/steps.json"
             },
             "additionalItems": false,
             "minimum": 1
         },
-        "platelist": {
+        "plugins": {
             "type": "array",
             "items": {
-                "type": "string"
+                "$ref": "plugins/plugin.json"
             },
             "additionalItems": false
+        },
+        "plates": {
+            "$ref": "plates.json"
         }
     },
     "required": [
         "metadata",
         "type",
-        "pipeline_name",
+        "protocol",
         "steps",
-        "platelist"
+        "plugins",
+        "plates"
     ],
     "additionalProperties": false
 }
