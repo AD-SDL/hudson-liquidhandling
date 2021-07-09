@@ -26,11 +26,9 @@ Documentation for the interfaces contained in this library can be found in the `
 
 1. Install [Python 3.8.5+](https://www.python.org/downloads/), making sure to include pip in the install
 1. Git clone this repository:
-    1. Either `git clone https://xgitlab.cels.anl.gov/rarvind/liquidhandling.git`
-    1. or `git clone https://github.com/LuckierDodge/liquidhandling.git`
+    1. `git clone https://github.com/AD-SDL/hudson-liquidhandling.git`
 1. Run `pip install -r requirements.txt` in the repository root
 1. Run `pip install -e .` in the repository root
-1. Use python to run the `./example/solosoft/solo_soft_example.py` and open the `example.hso` file it generates in SoloSoft to test that your setup is functioning properly.
 
 ### Tests
 
