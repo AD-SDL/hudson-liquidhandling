@@ -17,7 +17,20 @@ from utils.run_inferencing import run_inferencing
 def _do_work(filenames):
     # This is the only unique thing to the handler. You have to
     # implement the method that operates on a file.
-    new_filenames = run_inferencing(filenames)
+    
+    # TODO filenames is a string here, not list. Fix this
+    
+    # TODO: decide basename, don't repeat in every handle message file
+    try:  
+        basename = os.path.splitext(os.path.basename(filenames))[0]
+        if "_model" in basename:
+            basename = basename.replace("_model", "")
+    except Error as e:
+        basename = "basename"
+        print(e)
+    print(len(filenames))
+    print(f"5558 BASENAME: {basename}")    
+    new_filenames = run_inferencing(filenames, basename)
 
     data = []
     if len(new_filenames) > 0:
