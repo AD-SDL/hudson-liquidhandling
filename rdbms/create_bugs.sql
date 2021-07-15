@@ -1,5 +1,6 @@
-create database bugs;
-use bugs;
+create database test_bugs;
+
+use test_bugs;
 
 /*------------------------------------------------------------------------------
  *
@@ -36,6 +37,8 @@ create table project
  *
  * COLUMNS:     plate_id	A Unique identifier for the plate
  *              type		The type of plate:
+					assay
+					source
  *      	process_status  Where the plate is in the sequencing process
  *		barcode		barcode for the plate
  *		name		name string for the plate
@@ -84,6 +87,7 @@ create table plate_quality
  *
  * COLUMNS:     plate_id     	Unique identifier for this plate
  *		type		the type of source plate
+ *              well		the well id
  *		location_serial_num
  *              availability  	Indicates status of the plate - available, unusable...
  *
@@ -94,8 +98,10 @@ create table source_plate
 (
  plate_id       	int(11),
  type			varchar(24),
+ well			varchar(10),
  location_serial_num    int(11)    ,
- availability   	VARCHAR(10)
+ availability   	VARCHAR(10),
+ name			VARCHAR(256)
 );
 
 

@@ -1,0 +1,24 @@
+# For plate records
+# 
+# When inserting a source plate, here are the things to 
+# consider.
+# 
+# - It only has to be inserted once. This is the persistent 
+#   record of what is in that source plate.
+# 
+# - The plate table is updated
+#         plate id = insert into plate type=source
+#         barcode = 'filename' thus a file name must be unique
+#                   to one plate
+# - The source_plate table is updated for each well
+#         insert into source_plate type='bacteria' 
+#                   Shared connection to lambda6.cels.anl.gov closed.
+# 
+
+mysql> SET GLOBAL local_infile=1;
+mysql> exit;
+
+# For plate record
+mysqlimport -u root -p --fields-terminated-by=, -h localhost --local test_bugs plate
+# For source_plate records
+mysqlimport -u root -p --fields-terminated-by=, -h localhost --local test_bugs source_plate 
