@@ -151,6 +151,51 @@ class SoftLinx:
                 self.protocolSteps.append(step)
         return step
 
+    def parallel(
+        self,
+        branches=[[]],
+        isActive=True,
+        displayName="Parallel Activity",
+        orderByVariable=False,
+        orderVariable="",
+        fixedOrder=[],
+        index=None,
+        inplace=True,
+    ):
+        if not isinstance(branches, list) or not all(
+            [isinstance(branch, list) for branch in branches]
+        ):
+            raise ValueError("branches must be a list of lists.")
+        step = {
+            "type": "ParallelActivity",
+            "DisplayName": str(displayName),
+            "Command": "ParallelActivity",
+            "ToolTip": "",
+            "SLXId": "0ed9f8ba-5f2b-4f1c-a33a-edaec93b23c",
+            "isActive": str(isActive),
+            "branches": branches,
+            "branchOrder": str(fixedOrder),
+            "orderVariable": orderVariable,
+        }
+        if not orderByVariable and fixedOrder == []:
+            step["IsStandard"] = "True"
+        else:
+            step["IsStandard"] = "False"
+        if orderByVariable:
+            step["IsByVariable"] = "True"
+        else:
+            step["IsByVariable"] = "False"
+        if fixedOrder != []:
+            step["IsOrdered"] = "True"
+        else:
+            step["IsOrdered"] = "False"
+        if inplace:
+            if index != None:
+                self.protocolSteps.insert(index, step)
+            else:
+                self.protocolSteps.append(step)
+        return step
+
     def runProgram(
         self,
         command="",
@@ -433,7 +478,9 @@ class SoftLinx:
             "ToolTip": "Protocol: " + filename,
             "isActive": str(isActive),
             "system": "Solo",
-            "args": [["x:String", filename],],
+            "args": [
+                ["x:String", filename],
+            ],
         }
 
         if inplace:
@@ -467,7 +514,9 @@ class SoftLinx:
             "ToolTip": "Position:		" + str(position),
             "isActive": str(isActive),
             "system": "Solo",
-            "args": [["x:String", str(position)],],
+            "args": [
+                ["x:String", str(position)],
+            ],
         }
         if inplace:
             if index != None:
@@ -489,7 +538,9 @@ class SoftLinx:
             "ToolTip": "Assay: " + hidex_protocol,
             "isActive": str(isActive),
             "system": "Hidex",
-            "args": [["x:String", hidex_protocol],],
+            "args": [
+                ["x:String", hidex_protocol],
+            ],
         }
         if inplace:
             if index != None:
@@ -567,19 +618,29 @@ class SoftLinx:
             "xmlns:scg": "clr-namespace:System.Collections.Generic;assembly=mscorlib",
             "xmlns:x": "http://schemas.microsoft.com/winfx/2006/xaml",
         }
-        protocol = ET.Element("Protocol", protocol_dict,)
+        protocol = ET.Element(
+            "Protocol",
+            protocol_dict,
+        )
 
         # *Activities
         activities = ET.SubElement(protocol, "Protocol.Activities")
         scg_list = ET.SubElement(
-            activities, "scg:List", {"x:TypeArguments": "p:Activity", "Capacity": "4",},
+            activities,
+            "scg:List",
+            {
+                "x:TypeArguments": "p:Activity",
+                "Capacity": "4",
+            },
         )
         # *Add each step in the protocol
         for step in self.protocolSteps:
             self.generateStepXML(scg_list, step)
         activities2 = ET.SubElement(protocol, "Protocol.Activities2")
         scg_list = ET.SubElement(
-            activities2, "scg:List", {"x:TypeArguments": "p:Activity", "Capacity": "0"},
+            activities2,
+            "scg:List",
+            {"x:TypeArguments": "p:Activity", "Capacity": "0"},
         )
         initialValues = ET.SubElement(protocol, "Protocol.InitialValues")
         scg_dict = ET.SubElement(
@@ -808,7 +869,10 @@ class SoftLinx:
         scg_list = ET.SubElement(
             ifelse_activities,
             "scg:List",
-            {"x:TypeArguments": "p:Activity", "Capacity": "4",},
+            {
+                "x:TypeArguments": "p:Activity",
+                "Capacity": "4",
+            },
         )
         for substep in step["branchTrue"]:
             self.generateStepXML(scg_list, substep)
@@ -816,7 +880,10 @@ class SoftLinx:
         scg_list = ET.SubElement(
             ifelse_activities2,
             "scg:List",
-            {"x:TypeArguments": "p:Activity", "Capacity": "4",},
+            {
+                "x:TypeArguments": "p:Activity",
+                "Capacity": "4",
+            },
         )
         for substep in step["branchFalse"]:
             self.generateStepXML(scg_list, substep)
@@ -832,7 +899,122 @@ class SoftLinx:
         ET.SubElement(
             ifelse_timeconstraints,
             "scg:List",
-            {"x:TypeArguments": "hwab:TimeConstraint", "Capacity": "0",},
+            {
+                "x:TypeArguments": "hwab:TimeConstraint",
+                "Capacity": "0",
+            },
+        )
+
+    def generateParallelXML(self, parent, step):
+        activity_dict = {
+            "Text": "{x:Null}",
+            "ActivityLabel": "",
+            "DisplayName": step["DisplayName"],
+            "HasConstraints": "False",
+            "SLXId": step["SLXId"],
+            "ToolTip": step["ToolTip"],
+            "UserComments": "",
+            "isActive": step["isActive"],
+            "isSetup": "True",
+        }
+        parallel_xml = ET.SubElement(parent, "ParallelActivity", activity_dict)
+        parallelactivity_activities = ET.SubElement(
+            parallel_xml, "ParallelActivity.Activities"
+        )
+        scg_list = ET.SubElement(
+            parallelactivity_activities,
+            "scg:List",
+            {
+                "x:TypeArguments": "p:Activity",
+                "Capacity": "4",
+            },
+        )
+        branch_count = 0
+        for branch in step["branches"]:
+            branch_count += 1
+            branch_activity = ET.SubElement(
+                scg_list,
+                "BranchActivity",
+                {
+                    "ActivityLabel": "",
+                    "DisplayName": "Branch " + str(branch_count),
+                    "HasConstraints": "False",
+                    "SLXId": "38784045-5053-4b14-bbc1-cf98a8b35a23",
+                    "ToolTip": "",
+                    "UserComments": "",
+                    "isActive": "True",
+                    "isSetup": "True",
+                },
+            )
+            branch_activity_activities = ET.SubElement(
+                branch_activity, "BranchActivity.Activities"
+            )
+            branch_scg_list = ET.SubElement(
+                branch_activity_activities,
+                "scg:List",
+                {
+                    "x:TypeArguments": "p:Activity",
+                    "Capacity": "4",
+                },
+            )
+            for substep in branch:
+                self.generateStepXML(branch_scg_list, substep)
+            branch_activity_activities2 = ET.SubElement(
+                branch_activity, "BranchActivity.Activities2"
+            )
+            branch_scg_list2 = ET.SubElement(
+                branch_activity_activities2,
+                "scg:List",
+                {
+                    "x:TypeArguments": "p:Activity",
+                    "Capacity": "0",
+                },
+            )
+            branch_time_constraints = ET.SubElement(
+                branch_activity, "BranchActivity.TimeConstraints"
+            )
+            time_scg_list = ET.SubElement(
+                branch_time_constraints,
+                "scg:List",
+                {
+                    "x:TypeArguments": "hwab:TimeConstraint",
+                    "Capacity": "0",
+                },
+            )
+
+        parallel_activities2 = ET.SubElement(
+            parallel_xml, "ParallelActivity.Activities2"
+        )
+        scg_list = ET.SubElement(
+            parallel_activities2,
+            "scg:List",
+            {
+                "x:TypeArguments": "p:Activity",
+                "Capacity": "0",
+            },
+        )
+        parallel_arguments = ET.SubElement(parallel_xml, "ParallelActivity.Arguments")
+        ET.SubElement(
+            parallel_arguments,
+            "ParallelActivityArguments",
+            {
+                "BranchOrder": step["branchOrder"],
+                "IsByVariable": step["IsByVariable"],
+                "IsOrdered": step["IsOrdered"],
+                "IsStandard": step["IsStandard"],
+                "VariableName": step["orderVariable"],
+            },
+        )
+        parallel_timeconstraints = ET.SubElement(
+            parallel_xml, "ParallelActivity.TimeConstraints"
+        )
+        ET.SubElement(
+            parallel_timeconstraints,
+            "scg:List",
+            {
+                "x:TypeArguments": "hwab:TimeConstraint",
+                "Capacity": "0",
+            },
         )
 
     def generateRunProgramXML(self, parent, step):
@@ -869,12 +1051,18 @@ class SoftLinx:
         ET.SubElement(
             run_timeconstraints,
             "scg:List",
-            {"x:TypeArguments": "hwab:TimeConstraint", "Capacity": "0",},
+            {
+                "x:TypeArguments": "hwab:TimeConstraint",
+                "Capacity": "0",
+            },
         )
 
     def generateStepXML(self, scg_list, step):
         if step["type"] == "IfElseActivity":
             self.generateConditionalXML(scg_list, step)
+            return
+        if step["type"] == "IfElseActivity":
+            self.generateParallelXML(scg_list, step)
             return
         if step["type"] == "RunProgramActivity":
             self.generateRunProgramXML(scg_list, step)
@@ -926,7 +1114,10 @@ class SoftLinx:
         constraint_list = ET.SubElement(
             time_constraints,
             "scg:List",
-            {"x:TypeArguments": "hwab:TimeConstraint", "Capacity": "0",},
+            {
+                "x:TypeArguments": "hwab:TimeConstraint",
+                "Capacity": "0",
+            },
         )
         workflowViewState = ET.SubElement(step_xml, "sap2010:WorkflowViewState.IdRef")
         workflowViewState.text = "InstrumentActivity_1"

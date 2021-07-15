@@ -26,5 +26,5 @@ def archive(filenames, directory):
             shutil.move(filenames[i], archive_path)
 
     except OSError as e:
-        print("Error: could not archive sent files")
+        print("Error: could not archive files")
         print(e)

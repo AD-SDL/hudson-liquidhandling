@@ -22,7 +22,7 @@ def generate_steps_1_2_3(treatment, predicted_IC50=None):
     lambda6_path = "/lambda_stor/data/hudson/instructions/"
 
     # Step 1 variables
-    culture_plate_column_num = 7  # Changed to column 7 for test on 06/15/21
+    culture_plate_column_num = 1  # Changed to column 1 for test on 07/14/21
     media_transfer_volume_s1 = 60
     culture_transfer_volume_s1 = 30
     # dilution_media_volume = 198
@@ -306,7 +306,7 @@ def generate_steps_1_2_3(treatment, predicted_IC50=None):
             # blowoff=blowoff_volume,
         )
 
-    # * Transfer undiluted treatment stock solution (12 channel in Position 3, 2rd row) into empty first row of serial dilution plate
+    # * Transfer undiluted treatment stock solution (12 channel in Position 3, 3rd row) into empty first row of serial dilution plate
     for i in range(2):
         soloSoft.aspirate(
             position=treatment_plate_loc,
@@ -486,13 +486,20 @@ def generate_steps_1_2_3(treatment, predicted_IC50=None):
     )  # no need to open hidex
     softLinx.hidexClose()
     softLinx.plateCraneMoveCrane("SoftLinx.PlateCrane.Safe")
+
+    # Run Hidex Protocol
     softLinx.hidexRun("Campaign1")
+
+    # Transfer Hidex data from C:\labautomation\data to compute cell (lambda6)
+    softLinx.runProgram(
+        "C:\\Users\\svcaibio\\Dev\\liquidhandling\\zeromq\\utils\\send_data.bat"
+    )
 
     # save protocol to write instructions to .slvp file, create .txt manifest, and .ahk remote start file
     softLinx.saveProtocol()
 
     """
-    SEND NEW INSTRUCTIONS TO WORK CELL (HUDSON01) ------------------------------------------------------------------
+    SEND NEW PROTOCOL TO WORK CELL (HUDSON01) ------------------------------------------------------------------
     """
     try:
         # TODO: change to full path on lambda6
@@ -513,9 +520,9 @@ def generate_steps_1_2_3(treatment, predicted_IC50=None):
     return return_val
 
 
-def find_treatment_loc(treatment_name):
+def find_treatment_loc(treatment_name):  # TODO: Move this method out of protocol file
     """
-    Connect to SQL database and determine plate # and well location of desired treatment
+    Connect to SQL database. Determine plate # and well location of desired treatment
     (for now, these locations will be hardcoded (plate assumed to be on Solo deck))
 
     """

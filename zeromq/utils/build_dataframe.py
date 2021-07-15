@@ -28,7 +28,6 @@ def build_dataframe(filenames, basename=None):
 
         Writes out data, cols, rows, labels files using
     """
-
     # define data frame file name
     if basename == None:
         basename = "basename"

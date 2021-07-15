@@ -1,4 +1,5 @@
 import sys
+import os
 
 sys.path.append("../utils/")
 sys.path.append("./utils/")
@@ -12,7 +13,7 @@ from connect import connect
 cnx = connect()
 
 
-def train_model(filenames):
+def train_model(filenames, basename=None):
     """trains a model
     params: list of data frame file names
     return: list of model file names
@@ -21,7 +22,10 @@ def train_model(filenames):
     print(f"\ntraining model on {filenames}")
 
     # stub - implement this when we have a model to train
-    basename = "basename"
+    
+    if basename == None:
+        basename = "basename"
+        
     with open(basename + "_model.h5", "w") as f:
         f.write("PASS")
     new_files = [basename + "_model.h5"]
