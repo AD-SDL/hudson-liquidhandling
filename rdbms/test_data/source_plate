@@ -1,0 +1,96 @@
+9,bacteria,A1,,available,277 ∆lysA ptac-thrABC ptac-asd
+9,bacteria,A2,,available,277 ∆lysC ptac-thrABC ptac-asd
+9,bacteria,A3,,available,277 ∆tdh ptac-thrABC ptac-asd
+9,bacteria,A4,,available,277 ∆tdh ∆rhtA ptac-thrABC ptac-asd
+9,bacteria,A5,,available,926 ∆tdh ∆lysC ptac-thrABC
+9,bacteria,A6,,available,926 Δtdh ΔmetL ptac-thrABC
+9,bacteria,A7,,available,277 ΔlysA ptac-thrABC ptac-asd
+9,bacteria,A8,,available,277 ΔlysA ptac-thrABC ptac-asd
+9,bacteria,A9,,available,277 Δtdh ptac-thrABC ptac-asd
+9,bacteria,A10,,available,277 Δtdh ptac-thrABC ptac-asd
+9,bacteria,A11,,available,277 Δtdh ptac-thrABC ptac-asd
+9,bacteria,A12,,available,926 Δtdh ΔmetL ptac-thrABC
+9,bacteria,B1,,available,926 Δtdh ΔptsG ptac-thrABC
+9,bacteria,B2,,available,926 Δtdh ΔlysA ptac-thrABC
+9,bacteria,B3,,available,926 ΔlysC ptac-thrABC 
+9,bacteria,B4,,available,926 Δtdh ptac-thrABC 
+9,bacteria,B5,,available,926 ∆dhaM ptac-thrABC 
+9,bacteria,B6,,available,926 ΔlysA ptac-thrABC 
+9,bacteria,B7,,available,926 Δtdh DptsG ptac-thrABC 
+9,bacteria,B8,,available,926 Δtdh DlysA ptac-thrABC 
+9,bacteria,B9,,available,926 ΔlysC ptac-thrABC 
+9,bacteria,B10,,available,926 Δtdh ptac-thrABC 
+9,bacteria,B11,,available,926 ΔdhaM ptac-thrABC 
+9,bacteria,B12,,available,926 ΔlysA ptac-thrABC 
+9,bacteria,C1,,available,926 ΔlysC ptac-thrABC ptac-asd
+9,bacteria,C2,,available,926 ΔlysA ptac-thrABC ptac-asd
+9,bacteria,C3,,available,926 ΔdhaM ptac-thrABC ptac-asd
+9,bacteria,C4,,available,926 Δtdh ΔmetL ptac-thrABC ptac-asd
+9,bacteria,C5,,available,926 ∆rhtA ptac-thrABC ptac-asd
+9,bacteria,C6,,available,926 ΔptsG ptac-thrABC ptac-asd
+9,bacteria,C7,,available,926 ΔlysC ptac-thrABC ptac-asd
+9,bacteria,C8,,available,926 ΔlysA ptac-thrABC ptac-asd
+9,bacteria,C9,,available,926 ΔdhaM ptac-thrABC ptac-asd
+9,bacteria,C10,,available,926 Δtdh ΔmetL ptac-thrABC ptac-asd
+9,bacteria,C11,,available,926 ΔrhtA ptac-thrABC ptac-asd
+9,bacteria,C12,,available,926 ΔptsG ptac-thrABC ptac-asd
+9,bacteria,D1,,available,277 ΔlysC ptac-thrABC
+9,bacteria,D2,,available,277 Δtdh ptac-thrABC
+9,bacteria,D3,,available,277 Δtdh ΔrhtA ptac-thrABC
+9,bacteria,D4,,available,277 ptac-thrABC 277-14
+9,bacteria,D5,,available,926 ∆ptsG ptac-thrABC
+9,bacteria,D6,,available,926 ΔrhtA ptac-thrABC
+9,bacteria,D7,,available,277 ΔlysC ptac-thrABC
+9,bacteria,D8,,available,277 Δtdh ptac-thrABC
+9,bacteria,D9,,available,277 Δtdh ΔrhtA ptac-thrABC
+9,bacteria,D10,,available,277 ptac-thrABC 277-14
+9,bacteria,D11,,available,926 ΔptsG ptac-thrABC
+9,bacteria,D12,,available,926 ΔrhtA ptac-thrABC 
+9,bacteria,E1,,available,277 ΔptsG ptac-thrABC
+9,bacteria,E2,,available,277 ΔrhtA ptac-thrABC
+9,bacteria,E3,,available,277 ΔdhaM ptac-thrABC
+9,bacteria,E4,,available,277 ΔlysA ptac-thrABC
+9,bacteria,E5,,available,926 ∆tdh ∆ptsG ptac-thrABC ptac-asd
+9,bacteria,E6,,available,926 Δtdh ptac-thrABC ptac-asd
+9,bacteria,E7,,available,277 ΔptsG ptac-thrABC
+9,bacteria,E8,,available,277 ΔrhtA ptac-thrABC
+9,bacteria,E9,,available,277 ΔdhaM ptac-thrABC
+9,bacteria,E10,,available,277 ΔlysA ptac-thrABC
+9,bacteria,E11,,available,926 Δtdh ΔptsG ptac-thrABC ptac-asd
+9,bacteria,E12,,available,926 Δtdh ptac-thrABC ptac-asd
+9,bacteria,F1,,available,277wt1 ptac-asd
+9,bacteria,F2,,available,277-14 ptac-asd
+9,bacteria,F3,,available,926fb1 ptac-asd
+9,bacteria,F4,,available,926-44 ptac-asd
+9,bacteria,F5,,available,926 ∆tdh ∆lysA ptac-thrABC ptac-asd
+9,bacteria,F6,,available,926 Δtdh ΔlysC ptac-thrABC ptac-asd
+9,bacteria,F7,,available,277wt1 ptac-asd
+9,bacteria,F8,,available,277-14 ptac-asd
+9,bacteria,F9,,available,926fb1 ptac-asd
+9,bacteria,F10,,available,926-44 ptac-asd
+9,bacteria,F11,,available,926 Dtdh DlysA ptac-thrABC ptac-asd
+9,bacteria,F12,,available,926 Dtdh DlysC ptac-thrABC ptac-asd
+9,bacteria,G1,,available,277 DptsG ptac-thrABC ptac-asd
+9,bacteria,G2,,available,277 DrhtA ptac-thrABC ptac-asd
+9,bacteria,G3,,available,277 DdhaM ptac-thrABC ptac-asd
+9,bacteria,G4,,available,926-41
+9,bacteria,G5,,available,926fb1
+9,bacteria,G6,,available,277w1
+9,bacteria,G7,,available,277 DptsG ptac-thrABC ptac-asd
+9,bacteria,G8,,available,277 DrhtA ptac-thrABC ptac-asd
+9,bacteria,G9,,available,277 DdhaM ptac-thrABC ptac-asd
+9,bacteria,G10,,available,926-41
+9,bacteria,G11,,available,926fb1
+9,bacteria,G12,,available,277w1
+9,bacteria,H1,,available,blank
+9,bacteria,H2,,available,blank
+9,bacteria,H3,,available,blank
+9,bacteria,H4,,available,blank
+9,bacteria,H5,,available,blank
+9,bacteria,H6,,available,blank
+9,bacteria,H7,,available,blank
+9,bacteria,H8,,available,blank
+9,bacteria,H9,,available,blank
+9,bacteria,H10,,available,blank
+9,bacteria,H11,,available,blank
+9,bacteria,H12,,available,blank
