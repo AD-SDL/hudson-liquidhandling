@@ -11,13 +11,17 @@ import zmq
 import time
 import os
 import sys
+import datetime
 
 
 def hudson01_send_data(directory, lookback_time=None, extension=""):
     """Sends most recent file in data folder to compute cell (lambda6)"""
 
-    time.sleep(120)  # wait 2 minutes before sending the data
+    date = datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%S.%f")
+    print(date)
 
+    time.sleep(120)  # wait 2 minutes before sending the data
+    
     return_val = "PASS"
     context = zmq.Context()
     socket = context.socket(zmq.REQ)
@@ -72,7 +76,6 @@ def hudson01_send_data(directory, lookback_time=None, extension=""):
 
 def main(args):
     # Parse args
-    print("running hudson_send_data")
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "-t", "--time", help="Seconds to look back", required=False, type=int
@@ -84,9 +87,9 @@ def main(args):
         "-e", "--ext", help="File extension to check for", required=False, type=str
     )
     args = vars(parser.parse_args())
-    print(
-        "time = {}, dir = {}, ext = {}".format(args["time"], args["dir"], args["ext"])
-    )
+    # print(
+    #     "time = {}, dir = {}, ext = {}".format(args["time"], args["dir"], args["ext"])
+    # )
 
     hudson01_send_data(args["dir"], args["time"], args["ext"])
 
