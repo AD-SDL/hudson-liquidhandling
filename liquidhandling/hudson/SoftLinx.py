@@ -772,27 +772,66 @@ class SoftLinx:
                 "Cannot generate AutoHotKey script without a softlinx filename."
             )
         with open(ahk_filename, "w") as file:
-            file.write("#SingleInstance, Force\n")
-            file.write("SendMode Input\n")
-            file.write("SetWorkingDir, %A_ScriptDir%\n")
-            file.write("\n")
             file.write(
-                'Run, "C:\Program Files (x86)\Hudson Robotics\SoftLinx V\SoftLinxVProtocolEditor.exe" %A_ScriptDir%\\'
-                + softlinx_filename
-                + "\n"
+                """
+#SingleInstance, Force
+#WinActivateForce
+SendMode Input
+SetWorkingDir, %%A_ScriptDir%%
+SetTitleMatchMode, 2
+
+if WinExist("User Cancelled Run")
+{
+    WinActivate
+    Send, {Enter}
+    Sleep, 500
+}
+if WinExist("ahk_exe SoftLinxVProtocolEditor.exe")
+{
+    WinClose
+    Sleep, 1000
+    if WinExist("ahk_exe SoftLinxVProtocolEditor.exe")
+    {
+        MsgBox, Couldn't close SoftLinx V, please close it manually and restart this run.
+        return
+    }
+}
+if WinExist("ahk_exe SOLOSoft.exe")
+{
+    MsgBox, SOLOSoft is still running. Please kill it, then press "OK" below to resume execution.
+    if WinExist("ahk_exe SOLOSoft.exe")
+    {
+        MsgBox, SOLOSoft is still running, please close it manually and restart this run.
+        return
+    }
+}
+Sleep, 1000
+Run, "C:\Program Files (x86)\Hudson Robotics\SoftLinx V\SoftLinxVProtocolEditor.exe" %%A_ScriptDir%%\\%s
+WinWaitActive, SoftLinx V,,10
+if ErrorLevel
+{
+    WinGetActiveTitle, Title
+    MsgBox, Couldn't find SoftLinx V window. The active window is "%%Title%%".
+    return
+}
+Sleep, 5000
+MouseClick, Left, 300, 45
+Sleep, 1000
+if WinActive("Not Saved") {
+    Send, {Tab}{Enter}
+    Sleep, 5000
+}
+if WinActive("Start Now?") {
+    Send, {Enter}
+    Sleep, 5000
+}
+else
+{
+    MsgBox, Error starting run.
+    return
+}
+                """ % softlinx_filename
             )
-            file.write("Sleep, 5000\n")
-            file.write("WinActivate, SoftLinx V\n")
-            file.write("MouseClick, Left, 300, 45\n")
-            file.write("Sleep, 1000\n")
-            file.write('if WinActive("Not Saved") {\n')
-            file.write("\tSend, {Tab}{Enter}\n")
-            file.write("\tSleep, 5000\n")
-            file.write("}\n")
-            file.write('if WinActive("Start Now?") {\n')
-            file.write("\tSend, {Enter}\n")
-            file.write("\tSleep, 5000\n")
-            file.write("}\n")
 
     def generatePluginVariables(self, parentXML, system):
         variable = ET.SubElement(
