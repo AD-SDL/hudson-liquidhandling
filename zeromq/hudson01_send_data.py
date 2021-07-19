@@ -21,7 +21,7 @@ def hudson01_send_data(directory, lookback_time=None, extension=""):
     print(date)
 
     time.sleep(120)  # wait 2 minutes before sending the data
-    
+
     return_val = "PASS"
     context = zmq.Context()
     socket = context.socket(zmq.REQ)

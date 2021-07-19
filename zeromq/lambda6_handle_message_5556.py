@@ -16,13 +16,13 @@ from utils.manifest import generateFileManifest
 
 
 def _do_work(filenames):
-    
+
     # TODO: decide basename, don't repeat in every handle message file
-    if len(filenames) == 1: 
+    if len(filenames) == 1:
         basename = os.path.splitext(os.path.basename(filenames[0]))[0]
     else:
-        basename = "basename" 
-        
+        basename = "basename"
+
     new_filenames = []
     new_filenames = build_dataframe(filenames, basename)
 
@@ -33,7 +33,7 @@ def _do_work(filenames):
             single_file_manifest = generateFileManifest(f, purpose="train_model")
             for k in single_file_manifest:
                 multi_file_manifest[k] = single_file_manifest[k]
-                
+
         print(f"MULTI FILE MANIFEST: {multi_file_manifest}")
 
         socket.send_string(json.dumps(multi_file_manifest))

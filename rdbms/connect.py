@@ -20,7 +20,7 @@ def connect():
             database=config.DBNAME,
         )
     except mysql.connector.Error as err:
-        print('unable to commect')
+        print("unable to commect")
         print(err)
 
     return cnx

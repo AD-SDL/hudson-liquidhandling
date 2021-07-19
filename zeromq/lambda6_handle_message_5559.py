@@ -18,15 +18,15 @@ from utils.manifest import generateFileManifest
 def _do_work(filenames):
     # This is the only unique thing to the handler. You have to
     # implement the method that operates on a file.
-    
+
     # TODO: decide basename, don't repeat in every handle message file
-    if len(filenames) == 1: 
+    if len(filenames) == 1:
         basename = os.path.splitext(os.path.basename(filenames[0]))[0]
         if "_predictions" in basename:
             basename = basename.replace("_predictions", "")
     else:
         basename = "basename"
-    
+
     new_filenames = []
     # new_filenames = train_model(filenames)
     # new_filenames = train_model(filenames, basename) ## use this one

@@ -17,15 +17,15 @@ from utils.train_model import train_model
 def _do_work(filenames):
     # This is the only unique thing to the handler. You have to
     # implement the method that operates on a file.
-    
+
     # TODO: decide basename, don't repeat in every handle message file
-    if len(filenames) == 1: 
+    if len(filenames) == 1:
         basename = os.path.splitext(os.path.basename(filenames[0]))[0]
         if "_data" in basename:
             basename = basename.replace("_data", "")
     else:
-        basename = "basename" 
-        
+        basename = "basename"
+
     new_filenames = []
     new_filenames = train_model(filenames, basename)
 

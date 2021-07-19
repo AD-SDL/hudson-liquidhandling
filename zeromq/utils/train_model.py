@@ -22,10 +22,10 @@ def train_model(filenames, basename=None):
     print(f"\ntraining model on {filenames}")
 
     # stub - implement this when we have a model to train
-    
+
     if basename == None:
         basename = "basename"
-        
+
     with open(basename + "_model.h5", "w") as f:
         f.write("PASS")
     new_files = [basename + "_model.h5"]

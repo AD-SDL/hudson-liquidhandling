@@ -17,14 +17,14 @@ def run_inferencing(filenames, basename=None):
     params: model file name and sample dataframe
     return: a file of predictions
     """
-    
+
     print(f"RUN INFERENCING BASENAME: {basename}")
     print(f"\ninferring using filenames: {filenames}")
 
     # stub - implement this when we have a model to train
-    if basename == None: 
+    if basename == None:
         basename = "basename"
-        
+
     with open(basename + "_predictions.csv", "w") as f:
         f.write("PASS")
     new_files = [basename + "_predictions.csv"]
