@@ -1,10 +1,10 @@
 {% set name = "liquidhandling" %}
-{% set version = "0.1.19" %}
+{% set version = "0.1.20" %}
 
 package:
   name: "{{ name|lower }}"
   version: "{{ version }}"
- 
+
 source:
   path: ..
 
@@ -41,7 +41,7 @@ about:
   home: "http://github.com/luckierdodge/liquidhandling"
   license: MIT
   license_family: MIT
-  license_file: 
+  license_file:
   summary: "A python library developed to allow programmatic control of the Hudson Robotics systems installed in Argonne National Laboratory's Secure BIO Lab."
-  doc_url: 
-  dev_url: 
+  doc_url:
+  dev_url:

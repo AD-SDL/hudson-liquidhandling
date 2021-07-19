@@ -12,7 +12,7 @@ def read(fname):
 
 setup(
     name="liquidhandling",
-    version="0.1.19",
+    version="0.1.20",
     description="A python library developed to allow programmatic control of the Hudson Robotics systems installed in Argonne National Laboratory's Secure BIO Lab. ",
     url="http://github.com/luckierdodge/liquidhandling",
     author="Ryan D. Lewis",
