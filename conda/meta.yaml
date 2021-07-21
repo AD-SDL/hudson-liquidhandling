@@ -1,5 +1,5 @@
 {% set name = "liquidhandling" %}
-{% set version = "0.1.22" %}
+{% set version = "0.1.23" %}
 
 package:
   name: "{{ name|lower }}"
@@ -33,12 +33,12 @@ requirements:
     - openpyxl
     - mysql-connector-python
 
-test:
-  imports:
-    - liquidhandling
+# test:
+#   imports:
+#     - liquidhandling
 
 about:
-  home: "http://github.com/luckierdodge/liquidhandling"
+  home: "http://github.com/AD-SDL/hudson-liquidhandling"
   license: MIT
   license_family: MIT
   license_file:
