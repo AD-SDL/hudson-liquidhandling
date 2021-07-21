@@ -148,7 +148,11 @@ for i in range(1, 7):
         aspirate_volumes=ZAgilentReservoir_1row().setColumn(
             1, media_transfer_volume_s1
         ),
-        aspirate_shift=[0, 0, 4,],
+        aspirate_shift=[
+            0,
+            0,
+            4,
+        ],
     )
     soloSoft.dispense(
         position="Position4",
@@ -199,7 +203,11 @@ for i in range(1, 7):
     soloSoft.aspirate(  # already mixed the cells, no need to do it before every transfer
         position="Position7",
         aspirate_volumes=GenericPlate96Well().setColumn(1, culture_transfer_volume_s1),
-        aspirate_shift=[0, 0, 2,],
+        aspirate_shift=[
+            0,
+            0,
+            2,
+        ],
         syringe_speed=25,
     )
     soloSoft.dispense(  # do need to mix at end of transfer
