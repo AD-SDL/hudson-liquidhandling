@@ -1,6 +1,6 @@
-from liquidhandling import Properties, SoloSoft, SoftLinx
 import copy
-from liquidhandling.Plates import PlateDefinition
+from ..Plates import PlateDefinition
+from .SoloSoft import SoloSoft
 
 
 # TODO: Test and bugbash
