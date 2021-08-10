@@ -17,13 +17,15 @@ def generate_campaign1_repeatable(treatment, predicted_IC50=None, culture_column
     # * Program variables
     blowoff_volume = 10
     num_mixes = 3
-    #current_media_reservoir_volume = media_reservoir_volume = 7000
+    # current_media_reservoir_volume = media_reservoir_volume = 7000
     reservoir_z_shift = 0.5  # z shift for deep blocks (Deck Positions 3 and 5)
     flat_bottom_z_shift = 1
     lambda6_path = "/lambda_stor/data/hudson/instructions/"
 
     # Step 1 variables
-    culture_plate_column_num = culture_column if culture_column else 1  # Changed to column 1 for test on 07/14/21
+    culture_plate_column_num = (
+        culture_column if culture_column else 1
+    )  # Changed to column 1 for test on 07/14/21
     media_transfer_volume_s1 = 60
     culture_transfer_volume_s1 = 30
     # dilution_media_volume = 198
@@ -271,7 +273,7 @@ def generate_campaign1_repeatable(treatment, predicted_IC50=None, culture_column
 
     # * Fill colums 1-5 of generic 96 well plate with 216uL lb media in two steps (will use for both halves of plate)
     soloSoft.getTip()
-    for i in range(1, 6): # columns 1-5
+    for i in range(1, 6):  # columns 1-5
         # draws from both lb media wells to prevent running out of media -> TODO: volume management
         soloSoft.aspirate(  # first lb media well
             position="Position3",
@@ -307,8 +309,8 @@ def generate_campaign1_repeatable(treatment, predicted_IC50=None, culture_column
             # blowoff=blowoff_volume,
         )
 
-    #* Fill column 6 of a generic 96 well plate with 240uL lb media in two steps
-    for i in range(1,3): 
+    # * Fill column 6 of a generic 96 well plate with 240uL lb media in two steps
+    for i in range(1, 3):
         soloSoft.aspirate(  # first lb media well
             position="Position3",
             aspirate_volumes=Reservoir_12col_Agilent_201256_100_BATSgroup().setColumn(
@@ -575,12 +577,18 @@ def main(args):
         help="culture plate column to use, must be an integer (ex. 3 means column 3)",
         required=False,
         type=int,
-    )    
+    )
     args = vars(parser.parse_args())
-    print("treatment = {}, IC50 = {}, culture_column = {}".format(args["treatment"], args["predicted_IC50"], args["culture_column"]))
+    print(
+        "treatment = {}, IC50 = {}, culture_column = {}".format(
+            args["treatment"], args["predicted_IC50"], args["culture_column"]
+        )
+    )
 
     # pass to method
-    generate_campaign1_repeatable(args["treatment"], args["predicted_IC50"], args["culture_column"])
+    generate_campaign1_repeatable(
+        args["treatment"], args["predicted_IC50"], args["culture_column"]
+    )
 
 
 if __name__ == "__main__":
