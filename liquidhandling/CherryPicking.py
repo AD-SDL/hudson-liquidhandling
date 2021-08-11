@@ -1,5 +1,5 @@
 import copy
-from ..Plates import PlateDefinition
+from .Plates import PlateDefinition
 from .SoloSoft import SoloSoft
 
 
