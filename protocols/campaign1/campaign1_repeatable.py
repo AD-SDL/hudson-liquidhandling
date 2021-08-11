@@ -19,7 +19,7 @@ def generate_campaign1_repeatable(treatment, predicted_IC50=None, culture_column
     num_mixes = 3
     # current_media_reservoir_volume = media_reservoir_volume = 7000
     reservoir_z_shift = 0.5  # z shift for deep blocks (Deck Positions 3 and 5)
-    flat_bottom_z_shift = 1
+    flat_bottom_z_shift = 2 # Note: 1 is not high enough (tested)
     lambda6_path = "/lambda_stor/data/hudson/instructions/"
 
     # Step 1 variables
@@ -115,7 +115,7 @@ def generate_campaign1_repeatable(treatment, predicted_IC50=None, culture_column
             dispense_volumes=Plate_96_Corning_3635_ClearUVAssay().setColumn(
                 i, media_transfer_volume_s1
             ),
-            dispense_shift=[0, 0, 2],
+            dispense_shift=[0, 0, flat_bottom_z_shift],
         )
 
     for i in range(7, 13):  # second half plate = media from column 2
@@ -131,7 +131,7 @@ def generate_campaign1_repeatable(treatment, predicted_IC50=None, culture_column
             dispense_volumes=Plate_96_Corning_3635_ClearUVAssay().setColumn(
                 i, media_transfer_volume_s1
             ),
-            dispense_shift=[0, 0, 2],
+            dispense_shift=[0, 0, flat_bottom_z_shift],
         )
 
     # * Fill first two columns of culture 10 fold dilution plate with fresh lb media (do in two steps due to 180uL filter tips)
