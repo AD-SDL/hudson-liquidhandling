@@ -66,16 +66,21 @@ class PlateDefinition:
                 for i in range(self.columns):
                     self.plate[index][i] = value
             else:
-                raise ValueError("value must be a non-negative number")
+                raise ValueError(
+                    "value must be a non-negative number, not " + str(value)
+                )
         elif row in range(1, self.rows + 1):
             if float(value) >= 0:
                 for i in range(self.columns):
                     self.plate[row][i] = value
             else:
-                raise ValueError("value must be a non-negative number")
+                raise ValueError(
+                    "value must be a non-negative number, not " + str(value)
+                )
         else:
             raise ValueError(
-                "row must be a character in the range A-H, or a number 1-8"
+                "row must be a character in the range A-H, or a number 1-8, not "
+                + str(row)
             )
         return self.plate
 
@@ -85,9 +90,14 @@ class PlateDefinition:
                 for row in range(self.rows):
                     self.plate[row][column - 1] = value
             else:
-                raise ValueError("value must be a non-negative number")
+                raise ValueError(
+                    "value must be a non-negative number, not " + str(value)
+                )
         else:
-            raise ValueError("column must be a number in the range 1-12 inclusive")
+            raise ValueError(
+                "column must be a number in the range 1-12 inclusive, not "
+                + str(column)
+            )
         return self.plate
 
     def setAll(self, value=0):
@@ -96,20 +106,25 @@ class PlateDefinition:
                 for column in range(self.columns):
                     self.plate[row][column] = value
         else:
-            raise ValueError("value must be a non-negative number")
+            raise ValueError("value must be a non-negative number, not " + str(value))
             return
         return self.plate
 
     def setCell(self, row="A", column=1, value=0):
         alpha_vals = list(string.ascii_uppercase)
         if not (column in range(1, self.columns + 1)):
-            raise ValueError("column must be a number in the range 1-12 inclusive")
+            raise ValueError(
+                "column must be a number in the range 1-12 inclusive, not "
+                + str(column)
+            )
         if str.upper(row) in alpha_vals[0 : self.rows]:
             index = alpha_vals.index(str.upper(row))
             if float(value) >= 0:
                 self.plate[index][column] = value
             else:
-                raise ValueError("value must be a non-negative number")
+                raise ValueError(
+                    "value must be a non-negative number, not " + str(value)
+                )
         elif row in range(1, self.rows + 1):
             if float(value) >= 0:
                 self.plate[row][column] = value
@@ -158,7 +173,7 @@ class PlateDefinition:
         return self.plate
 
 
-class GenericPlate96Well:
+class GenericPlate96Well(PlateDefinition):
     def __new__(cls, plate=None):
         return PlateDefinition(
             "Generic 96-well Plate",
@@ -175,7 +190,7 @@ class GenericPlate96Well:
         )
 
 
-class NinetySixPlateOneVBottom:
+class NinetySixPlateOneVBottom(PlateDefinition):
     def __new__(cls, plate=None):
         return PlateDefinition(
             "96 Plate One V Bottom",
@@ -192,19 +207,19 @@ class NinetySixPlateOneVBottom:
         )
 
 
-class ZAgilentReservoir_1row:
+class ZAgilentReservoir_1row(PlateDefinition):
     def __new__(cls, plate=None):
         return PlateDefinition(
             "Z Agilent Reservoir - 1 row", plate, 44.5, 42.3, 8, 12, 0, 0, 9, 9, ""
         )
 
 
-class NinetySixDeepWell:
+class NinetySixDeepWell(PlateDefinition):
     def __new__(cls, plate=None):
         return PlateDefinition("96 Deep Well", plate, 42.0, 38.0, 8, 12, 0, 0, 9, 9, "")
 
 
-class Reservoir_12col_Agilent_201256_100_BATSgroup:
+class Reservoir_12col_Agilent_201256_100_BATSgroup(PlateDefinition):
     def __new__(cls, plate=None):
         return PlateDefinition(
             "Reservoir.12col.Agilent-201256-100.BATSgroup",
@@ -221,7 +236,7 @@ class Reservoir_12col_Agilent_201256_100_BATSgroup:
         )
 
 
-class Plate_96_Corning_3635_ClearUVAssay:
+class Plate_96_Corning_3635_ClearUVAssay(PlateDefinition):
     def __new__(cls, plate=None):
         return PlateDefinition(
             "Plate.96.Corning-3635.ClearUVAssay",
@@ -238,7 +253,7 @@ class Plate_96_Corning_3635_ClearUVAssay:
         )
 
 
-class DeepBlock_96VWR_75870_792_sterile:
+class DeepBlock_96VWR_75870_792_sterile(PlateDefinition):
     def __new__(cls, plate=None):
         return PlateDefinition(
             "DeepBlock.96VWR-75870-792.sterile",
@@ -255,7 +270,7 @@ class DeepBlock_96VWR_75870_792_sterile:
         )
 
 
-class Plate_96_Agilent_5043_9310_RoundBottomStorage:
+class Plate_96_Agilent_5043_9310_RoundBottomStorage(PlateDefinition):
     def __new__(cls, plate=None):
         return PlateDefinition(
             "Plate.96.Agilent-5043-9310.RoundBottomStorage",
@@ -272,7 +287,7 @@ class Plate_96_Agilent_5043_9310_RoundBottomStorage:
         )
 
 
-class Plate_96_PlateOne_1833_9600_ConicalBottomStorage:
+class Plate_96_PlateOne_1833_9600_ConicalBottomStorage(PlateDefinition):
     def __new__(cls, plate=None):
         return PlateDefinition(
             "Plate.96.PlateOne-1833-9600.ConicalBottomStorage",
@@ -289,7 +304,7 @@ class Plate_96_PlateOne_1833_9600_ConicalBottomStorage:
         )
 
 
-class AgarPlate_40mL_OmniTray_242811_ColonyPicker:
+class AgarPlate_40mL_OmniTray_242811_ColonyPicker(PlateDefinition):
     def __new__(cls, plate=None):
         return PlateDefinition(
             "AgarPlate.40mLOmniTray-242811.ColonyPicker",
@@ -306,7 +321,7 @@ class AgarPlate_40mL_OmniTray_242811_ColonyPicker:
         )
 
 
-class Plate_384_Corning_3540_BlackwClearBottomAssay:
+class Plate_384_Corning_3540_BlackwClearBottomAssay(PlateDefinition):
     def __new__(cls, plate=None):
         return PlateDefinition(
             "Plate.384.Corning-3540.BlackwClearBottomAssay",
