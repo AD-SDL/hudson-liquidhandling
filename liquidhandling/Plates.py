@@ -72,7 +72,7 @@ class PlateDefinition:
         elif row in range(1, self.rows + 1):
             if float(value) >= 0:
                 for i in range(self.columns):
-                    self.plate[row][i] = value
+                    self.plate[row - 1][i] = value
             else:
                 raise ValueError(
                     "value must be a non-negative number, not " + str(value)
@@ -120,14 +120,14 @@ class PlateDefinition:
         if str.upper(row) in alpha_vals[0 : self.rows]:
             index = alpha_vals.index(str.upper(row))
             if float(value) >= 0:
-                self.plate[index][column] = value
+                self.plate[index][column - 1] = value
             else:
                 raise ValueError(
                     "value must be a non-negative number, not " + str(value)
                 )
         elif row in range(1, self.rows + 1):
             if float(value) >= 0:
-                self.plate[row][column] = value
+                self.plate[row - 1][column - 1] = value
             else:
                 raise ValueError("value must be a non-negative number")
         else:
@@ -163,7 +163,7 @@ class PlateDefinition:
         elif row in range(1, self.rows + 1):
             if float(value) >= 0:
                 for i in range(self.columns, step=2):
-                    self.plate[row][i + offset] = value
+                    self.plate[row - 1][i + offset] = value
             else:
                 raise ValueError("value must be a non-negative number")
         else:
