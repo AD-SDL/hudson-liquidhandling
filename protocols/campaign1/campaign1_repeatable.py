@@ -328,32 +328,31 @@ def generate_campaign1_repeatable(treatment, predicted_IC50=None, culture_column
             # blowoff=blowoff_volume,
         )
 
-    # # * Transfer undiluted treatment stock solution (12 channel in Position 3, 3rd row) into empty first row of serial dilution plate
-    # for i in range(2):
-    #     soloSoft.aspirate(
-    #         position=treatment_plate_loc,
-    #         aspirate_volumes=Reservoir_12col_Agilent_201256_100_BATSgroup().setColumn(
-    #             treatment_column, first_column_transfer_volume_s2
-    #         ),
-    #         pre_aspirate=blowoff_volume,
-    #         mix_at_start=True,
-    #         mix_cycles=serial_source_num_mixes_s2,
-    #         mix_volume=serial_source_mixing_volume_s2,
-    #         aspirate_shift=[0, 0, reservoir_z_shift],
-    #         dispense_height=reservoir_z_shift,
-    #     )
-    #     soloSoft.dispense(
-    #         position="Position6",
-    #         dispense_volumes=Plate_96_Corning_3635_ClearUVAssay().setColumn(
-    #             1, first_column_transfer_volume_s2
-    #         ),
-    #         dispense_shift=[0, 0, 2],
-    #         blowoff=blowoff_volume,
-    #         # mix_at_finish=True,
-    #         # mix_cycles=num_mixes,
-    #         # mix_volume=serial_destination_mixing_volume_s2,
-    #         aspirate_height=2,
-    #     )
+    #* Transfer treatment in to first column of treatement dilution plate (will make 1:10 dilution)
+    soloSoft.aspirate(
+        position=treatment_plate_loc,
+        aspirate_volumes=Reservoir_12col_Agilent_201256_100_BATSgroup().setColumn(
+            treatment_column, serial_antibiotic_transfer_volume_s2
+        ),
+        pre_aspirate=blowoff_volume,
+        mix_at_start=True,
+        mix_cycles=serial_source_num_mixes_s2,
+        mix_volume=serial_source_mixing_volume_s2,
+        aspirate_shift=[0, 0, reservoir_z_shift],
+        dispense_height=reservoir_z_shift,
+    )
+    soloSoft.dispense(
+        position="Position6",
+        dispense_volumes=Plate_96_Corning_3635_ClearUVAssay().setColumn(
+            1, serial_antibiotic_transfer_volume_s2
+        ),
+        dispense_shift=[0, 0, flat_bottom_z_shift],
+        blowoff=blowoff_volume,
+        # mix_at_finish=True,
+        # mix_cycles=num_mixes,
+        # mix_volume=serial_destination_mixing_volume_s2,
+        aspirate_height=flat_bottom_z_shift,
+    )
 
     # * Serial dilution within Generic 96 well plate (Corning or Falcon) - mix 5 times before and after transfer
     for i in range(1, 5):  # don't serial dilute into the last column (control column)
