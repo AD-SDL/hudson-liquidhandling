@@ -426,10 +426,10 @@ def generate_campaign1_repeatable(treatment, predicted_IC50=None, culture_column
             dispense_volumes=Plate_96_Corning_3635_ClearUVAssay().setColumn(
                 i, antibiotic_transfer_volume_s3
             ),
-            mix_at_finish=True,
-            mix_cycles=num_mixes,
-            mix_volume=destination_mix_volume_s3,
-            aspirate_height=flat_bottom_z_shift,
+            #mix_at_finish=True,
+            #mix_cycles=num_mixes,
+            #mix_volume=destination_mix_volume_s3,
+            #aspirate_height=flat_bottom_z_shift,
             dispense_shift=[0, 0, flat_bottom_z_shift],
         )
 
@@ -453,10 +453,10 @@ def generate_campaign1_repeatable(treatment, predicted_IC50=None, culture_column
             dispense_volumes=Plate_96_Corning_3635_ClearUVAssay().setColumn(
                 i + 6, antibiotic_transfer_volume_s3
             ),
-            mix_at_finish=True,
-            mix_cycles=num_mixes,
-            mix_volume=destination_mix_volume_s3,
-            aspirate_height=flat_bottom_z_shift,
+            #mix_at_finish=True,
+            #mix_cycles=num_mixes,
+            #mix_volume=destination_mix_volume_s3,
+            #aspirate_height=flat_bottom_z_shift,
             dispense_shift=[0, 0, flat_bottom_z_shift],
         )
 
