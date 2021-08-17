@@ -407,13 +407,13 @@ def generate_campaign1_repeatable(treatment, predicted_IC50=None, culture_column
     )
 
     soloSoft.getTip()
-    for i in range((6*(treatment_dil_half-1))+6, (6*(treatment_dil_half-1))+0, -1):  # first half of plate
+    for i in range(6, 0, -1):  # first half of plate
         if i == 3:  # switch tips half way through to reduce error
             soloSoft.getTip()
         soloSoft.aspirate(
             position="Position6",
             aspirate_volumes=Plate_96_Corning_3635_ClearUVAssay().setColumn(
-                i, antibiotic_transfer_volume_s3
+                (6*(treatment_dil_half-1))+i, antibiotic_transfer_volume_s3
             ),
             mix_at_start=True,
             mix_cycles=num_mixes,
@@ -434,13 +434,13 @@ def generate_campaign1_repeatable(treatment, predicted_IC50=None, culture_column
         )
 
     soloSoft.getTip()
-    for i in range((6*(treatment_dil_half-1))+6, (6*(treatment_dil_half-1))+0, -1):  # second half of plate
+    for i in range(6, 0, -1):  # second half of plate
         if i == 3:  # switch tips half way through to reduce error
             soloSoft.getTip()
         soloSoft.aspirate(
             position="Position6",
             aspirate_volumes=Plate_96_Corning_3635_ClearUVAssay().setColumn(
-                i, antibiotic_transfer_volume_s3
+                (6*(treatment_dil_half-1))+i, antibiotic_transfer_volume_s3
             ),
             mix_at_start=True,
             mix_cycles=num_mixes,
