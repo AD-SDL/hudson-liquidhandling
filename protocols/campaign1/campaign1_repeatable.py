@@ -273,7 +273,7 @@ def generate_campaign1_repeatable(treatment, predicted_IC50=None, culture_column
 
     # * Fill colums 1-5 of generic 96 well plate with 216uL lb media in two steps (will use for both halves of plate)
     soloSoft.getTip()
-    for i in range(6(treatment_dil_half-1)+1, 6(treatment_dil_half-1)+6):  # columns 1-5 or columns 7-11 (treatment_dil_half = 1 or 2)
+    for i in range((6*(treatment_dil_half-1))+1, (6*(treatment_dil_half-1))+6):  # columns 1-5 or columns 7-11 (treatment_dil_half = 1 or 2)
         # draws from both lb media wells to prevent running out of media -> TODO: volume management
         soloSoft.aspirate(  # first lb media well
             position="Position3",
@@ -322,7 +322,7 @@ def generate_campaign1_repeatable(treatment, predicted_IC50=None, culture_column
         soloSoft.dispense(
             position="Position6",
             dispense_volumes=Plate_96_Corning_3635_ClearUVAssay().setColumn(
-                6(treatment_dil_half-1)+6, last_column_transfer_volume_s2
+                (6*(treatment_dil_half-1))+6, last_column_transfer_volume_s2
             ),
             dispense_shift=[0, 0, flat_bottom_z_shift],
             # blowoff=blowoff_volume,
@@ -344,7 +344,7 @@ def generate_campaign1_repeatable(treatment, predicted_IC50=None, culture_column
     soloSoft.dispense(
         position="Position6",
         dispense_volumes=Plate_96_Corning_3635_ClearUVAssay().setColumn(
-            6(treatment_dil_half-1)+1, serial_antibiotic_transfer_volume_s2
+            (6*(treatment_dil_half-1))+1, serial_antibiotic_transfer_volume_s2
         ),
         dispense_shift=[0, 0, flat_bottom_z_shift],
         blowoff=blowoff_volume,
@@ -355,7 +355,7 @@ def generate_campaign1_repeatable(treatment, predicted_IC50=None, culture_column
     )
 
     # * Serial dilution within Generic 96 well plate (Corning or Falcon) - mix 5 times before and after transfer
-    for i in range(6(treatment_dil_half-1)+1, 6(treatment_dil_half-1)+5):  # don't serial dilute into the last column (control column)
+    for i in range((6*(treatment_dil_half-1))+1, (6*(treatment_dil_half-1))+5):  # don't serial dilute into the last column (control column)
         # if i == 4:  # switch tips half way through to reduce error   #TODO: Test if you need this
         #     soloSoft.getTip()
         soloSoft.aspirate(
@@ -407,7 +407,7 @@ def generate_campaign1_repeatable(treatment, predicted_IC50=None, culture_column
     )
 
     soloSoft.getTip()
-    for i in range(6(treatment_dil_half-1)+6, 6(treatment_dil_half-1)+0, -1):  # first half of plate
+    for i in range((6*(treatment_dil_half-1))+6, (6*(treatment_dil_half-1))+0, -1):  # first half of plate
         if i == 3:  # switch tips half way through to reduce error
             soloSoft.getTip()
         soloSoft.aspirate(
@@ -434,7 +434,7 @@ def generate_campaign1_repeatable(treatment, predicted_IC50=None, culture_column
         )
 
     soloSoft.getTip()
-    for i in range(6(treatment_dil_half-1)+6, 6(treatment_dil_half-1)+0, -1):  # second half of plate
+    for i in range((6*(treatment_dil_half-1))+6, (6*(treatment_dil_half-1))+0, -1):  # second half of plate
         if i == 3:  # switch tips half way through to reduce error
             soloSoft.getTip()
         soloSoft.aspirate(
