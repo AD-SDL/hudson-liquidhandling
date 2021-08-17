@@ -335,11 +335,11 @@ def generate_campaign1_repeatable(treatment, predicted_IC50=None, culture_column
             treatment_column, serial_antibiotic_transfer_volume_s2
         ),
         pre_aspirate=blowoff_volume,
-        mix_at_start=True,
-        mix_cycles=serial_source_num_mixes_s2,
-        mix_volume=serial_source_mixing_volume_s2,
+        #mix_at_start=True,
+        #mix_cycles=serial_source_num_mixes_s2,
+        #mix_volume=serial_source_mixing_volume_s2,
         aspirate_shift=[0, 0, reservoir_z_shift],
-        dispense_height=reservoir_z_shift,
+        #dispense_height=reservoir_z_shift,
     )
     soloSoft.dispense(
         position="Position6",
@@ -478,6 +478,8 @@ def generate_campaign1_repeatable(treatment, predicted_IC50=None, culture_column
     softLinx.plateCraneMovePlate(
         ["SoftLinx.PlateCrane.Stack5"], ["SoftLinx.Solo.Position4"]
     )
+    # remove lid and place in Lid Nest 
+    softLinx.plateCraneRemoveLid(["SoftLinx.Solo.Position4"], ["SoftLinx.PlateCrane.LidNest2"])
     softLinx.plateCraneMoveCrane("SoftLinx.PlateCrane.Safe")
 
     # run all three liquid handling steps (with paths to .hso files on hudson01)
@@ -501,7 +503,10 @@ def generate_campaign1_repeatable(treatment, predicted_IC50=None, culture_column
         + os.path.basename(step3_hso_filename)
     )
 
-    # move growth plate to Hidex
+    #replace the lid
+    softLinx.plateCraneReplaceLid(["SoftLinx.PlateCrane.LidNest2"], ["SoftLinx.Solo.Position4"])
+
+    # move growth plate to Temp deck (This is where the plate would be moved to the incubator)
     softLinx.plateCraneMovePlate(
         ["SoftLinx.Solo.Position4"], ["SoftLinx.PlateCrane.LidNest1"]
     )  # no need to open hidex
