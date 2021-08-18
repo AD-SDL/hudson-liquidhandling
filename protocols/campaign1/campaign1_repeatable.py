@@ -22,6 +22,7 @@ def generate_campaign1_repeatable(treatment, predicted_IC50=None, culture_column
     blowoff_volume = 10
     num_mixes = 3
     # current_media_reservoir_volume = media_reservoir_volume = 7000
+    media_z_shift = 4
     reservoir_z_shift = 0.5  # z shift for deep blocks (Deck Positions 3 and 5)
     flat_bottom_z_shift = 2  # Note: 1 is not high enough (tested)
     lambda6_path = "/lambda_stor/data/hudson/instructions/"
@@ -112,7 +113,7 @@ def generate_campaign1_repeatable(treatment, predicted_IC50=None, culture_column
             aspirate_volumes=Reservoir_12col_Agilent_201256_100_BATSgroup().setColumn(
                 media_start_column, media_transfer_volume_s1
             ),
-            aspirate_shift=[0, 0, reservoir_z_shift],
+            aspirate_shift=[0, 0, media_z_shift],
         )
         soloSoft.dispense(
             position="Position4",
@@ -128,7 +129,7 @@ def generate_campaign1_repeatable(treatment, predicted_IC50=None, culture_column
             aspirate_volumes=Reservoir_12col_Agilent_201256_100_BATSgroup().setColumn(
                 media_start_column+1, media_transfer_volume_s1
             ),
-            aspirate_shift=[0, 0, reservoir_z_shift],
+            aspirate_shift=[0, 0, media_z_shift],
         )
         soloSoft.dispense(
             position="Position4",
@@ -145,7 +146,7 @@ def generate_campaign1_repeatable(treatment, predicted_IC50=None, culture_column
             aspirate_volumes=Reservoir_12col_Agilent_201256_100_BATSgroup().setColumn(
                 media_start_column, half_dilution_media_volume
             ),
-            aspirate_shift=[0, 0, reservoir_z_shift],
+            aspirate_shift=[0, 0, media_z_shift],
         )
         soloSoft.dispense(
             position="Position7",
@@ -161,7 +162,7 @@ def generate_campaign1_repeatable(treatment, predicted_IC50=None, culture_column
             aspirate_volumes=Reservoir_12col_Agilent_201256_100_BATSgroup().setColumn(
                 media_start_column+1, half_dilution_media_volume
             ),
-            aspirate_shift=[0, 0, reservoir_z_shift],
+            aspirate_shift=[0, 0, media_z_shift],
         )
         soloSoft.dispense(
             position="Position7",
@@ -280,7 +281,7 @@ def generate_campaign1_repeatable(treatment, predicted_IC50=None, culture_column
             aspirate_volumes=Reservoir_12col_Agilent_201256_100_BATSgroup().setColumn(
                 media_start_column, media_transfer_volume_s2
             ),
-            aspirate_shift=[0, 0, reservoir_z_shift],
+            aspirate_shift=[0, 0, media_z_shift],
             # pre_aspirate=blowoff_volume,
         )
         soloSoft.dispense(
@@ -297,7 +298,7 @@ def generate_campaign1_repeatable(treatment, predicted_IC50=None, culture_column
             aspirate_volumes=Reservoir_12col_Agilent_201256_100_BATSgroup().setColumn(
                 media_start_column+1, media_transfer_volume_s2
             ),
-            aspirate_shift=[0, 0, reservoir_z_shift],
+            aspirate_shift=[0, 0, media_z_shift],
             # pre_aspirate=blowoff_volume,
         )
         soloSoft.dispense(
@@ -316,7 +317,7 @@ def generate_campaign1_repeatable(treatment, predicted_IC50=None, culture_column
             aspirate_volumes=Reservoir_12col_Agilent_201256_100_BATSgroup().setColumn(
                 i, last_column_transfer_volume_s2
             ),
-            aspirate_shift=[0, 0, reservoir_z_shift],
+            aspirate_shift=[0, 0, media_z_shift],
             # pre_aspirate=blowoff_volume,
         )
         soloSoft.dispense(
