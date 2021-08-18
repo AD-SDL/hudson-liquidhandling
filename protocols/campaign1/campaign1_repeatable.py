@@ -22,7 +22,7 @@ def generate_campaign1_repeatable(treatment, predicted_IC50=None, culture_column
     blowoff_volume = 10
     num_mixes = 3
     # current_media_reservoir_volume = media_reservoir_volume = 7000
-    media_z_shift = 4
+    media_z_shift = 6
     reservoir_z_shift = 0.5  # z shift for deep blocks (Deck Positions 3 and 5)
     flat_bottom_z_shift = 2  # Note: 1 is not high enough (tested)
     lambda6_path = "/lambda_stor/data/hudson/instructions/"
@@ -427,10 +427,10 @@ def generate_campaign1_repeatable(treatment, predicted_IC50=None, culture_column
             dispense_volumes=Plate_96_Corning_3635_ClearUVAssay().setColumn(
                 i, antibiotic_transfer_volume_s3
             ),
-            #mix_at_finish=True,
-            #mix_cycles=num_mixes,
-            #mix_volume=destination_mix_volume_s3,
-            #aspirate_height=flat_bottom_z_shift,
+            mix_at_finish=True,
+            mix_cycles=num_mixes,
+            mix_volume=destination_mix_volume_s3,
+            aspirate_height=flat_bottom_z_shift,
             dispense_shift=[0, 0, flat_bottom_z_shift],
         )
 
@@ -454,10 +454,10 @@ def generate_campaign1_repeatable(treatment, predicted_IC50=None, culture_column
             dispense_volumes=Plate_96_Corning_3635_ClearUVAssay().setColumn(
                 i + 6, antibiotic_transfer_volume_s3
             ),
-            #mix_at_finish=True,
-            #mix_cycles=num_mixes,
-            #mix_volume=destination_mix_volume_s3,
-            #aspirate_height=flat_bottom_z_shift,
+            mix_at_finish=True,
+            mix_cycles=num_mixes,
+            mix_volume=destination_mix_volume_s3,
+            aspirate_height=flat_bottom_z_shift,
             dispense_shift=[0, 0, flat_bottom_z_shift],
         )
 
