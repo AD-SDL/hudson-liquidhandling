@@ -49,8 +49,8 @@ def generate_campaign1_repeatable(treatment, predicted_IC50=None, culture_column
         120  # two times = 240uL (to equal volume in 1:10 dilution wells)
     )
     serial_antibiotic_transfer_volume_s2 = 24
-    serial_source_mixing_volume_s2 = 80
-    serial_source_num_mixes_s2 = 8
+    serial_source_mixing_volume_s2 = 20
+    serial_source_num_mixes_s2 = 5
     serial_destination_mixing_volume_s2 = 100
 
     # Step 3 variables
@@ -336,11 +336,11 @@ def generate_campaign1_repeatable(treatment, predicted_IC50=None, culture_column
             treatment_column, serial_antibiotic_transfer_volume_s2
         ),
         pre_aspirate=blowoff_volume,
-        #mix_at_start=True,
-        #mix_cycles=serial_source_num_mixes_s2,
-        #mix_volume=serial_source_mixing_volume_s2,
+        mix_at_start=True,
+        mix_cycles=serial_source_num_mixes_s2,
+        mix_volume=serial_source_mixing_volume_s2,
         aspirate_shift=[0, 0, reservoir_z_shift],
-        #dispense_height=reservoir_z_shift,
+        dispense_height=reservoir_z_shift,
     )
     soloSoft.dispense(
         position="Position6",
@@ -355,7 +355,7 @@ def generate_campaign1_repeatable(treatment, predicted_IC50=None, culture_column
         aspirate_height=flat_bottom_z_shift,
     )
 
-    # * Serial dilution within Generic 96 well plate (Corning or Falcon) - mix 5 times before and after transfer
+    # * Serial dilution within Generic 96 well plate (Corning or Falcon) - mix 3 times before and after transfer
     for i in range((6*(treatment_dil_half-1))+1, (6*(treatment_dil_half-1))+5):  # don't serial dilute into the last column (control column)
         # if i == 4:  # switch tips half way through to reduce error   #TODO: Test if you need this
         #     soloSoft.getTip()
