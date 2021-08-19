@@ -22,7 +22,7 @@ def generate_campaign1_repeatable(treatment, predicted_IC50=None, culture_column
     blowoff_volume = 10
     num_mixes = 3
     # current_media_reservoir_volume = media_reservoir_volume = 7000
-    media_z_shift = 6
+    media_z_shift = 0.5
     reservoir_z_shift = 0.5  # z shift for deep blocks (Deck Positions 3 and 5)
     flat_bottom_z_shift = 2  # Note: 1 is not high enough (tested)
     lambda6_path = "/lambda_stor/data/hudson/instructions/"
