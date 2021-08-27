@@ -509,10 +509,13 @@ def generate_campaign1_repeatable(treatment, predicted_IC50=None, culture_column
     # softLinx.plateCraneReplaceLid(["SoftLinx.PlateCrane.LidNest2"], ["SoftLinx.Solo.Position4"])
 
     # move growth plate to Temp deck (This is where the plate would be moved to the incubator)
+    # softLinx.plateCraneMovePlate(
+    #     ["SoftLinx.Solo.Position4"], ["SoftLinx.PlateCrane.LidNest1"]
+    # )  # no need to open hidex
     softLinx.plateCraneMovePlate(
-        ["SoftLinx.Solo.Position4"], ["SoftLinx.PlateCrane.LidNest1"]
+        ["SoftLinx.Solo.Position4"], ["SoftLinx.Hidex.Nest"]
     )  # no need to open hidex
-    #softLinx.hidexClose()
+    softLinx.hidexClose()
     softLinx.plateCraneMoveCrane("SoftLinx.PlateCrane.Safe")
 
     #Run Hidex Protocol (this will close the Hidex)
