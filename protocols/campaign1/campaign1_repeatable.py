@@ -519,7 +519,7 @@ def generate_campaign1_repeatable(treatment, predicted_IC50=None, culture_column
     softLinx.plateCraneMoveCrane("SoftLinx.PlateCrane.Safe")
 
     #Run Hidex Protocol (this will close the Hidex)
-    softLinx.hidexRun("Campaign1_test") # full 16 hour Hidex incubation
+    softLinx.hidexRun("Campaign1") # full 16 hour Hidex incubation
 
     #Transfer Hidex data from C:\labautomation\data to compute cell (lambda6)
     softLinx.runProgram(
