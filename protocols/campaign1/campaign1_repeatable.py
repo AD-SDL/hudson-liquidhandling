@@ -62,7 +62,7 @@ def generate_campaign1_repeatable(treatment, predicted_IC50=None, culture_column
     try:
         treatment_plate_loc, treatment_column = find_treatment_loc(treatment)
     except Error as e:
-        print(f"Unale to locate treatment {treatment}")
+        print(f"Unable to locate treatment {treatment}")
         raise  # need to know locaton of treatment, rest of protocol useless if not specified
 
     # * TODO: handle predicted IC50
@@ -504,8 +504,9 @@ def generate_campaign1_repeatable(treatment, predicted_IC50=None, culture_column
         + os.path.basename(step3_hso_filename)
     )
 
-    #replace the lid
-    softLinx.plateCraneReplaceLid(["SoftLinx.PlateCrane.LidNest2"], ["SoftLinx.Solo.Position4"])
+    # DON'T DO THIS IFINCUBATING ONE PLATE IN HIDEX
+    # #replace the lid
+    # softLinx.plateCraneReplaceLid(["SoftLinx.PlateCrane.LidNest2"], ["SoftLinx.Solo.Position4"])
 
     # move growth plate to Temp deck (This is where the plate would be moved to the incubator)
     softLinx.plateCraneMovePlate(
@@ -514,13 +515,13 @@ def generate_campaign1_repeatable(treatment, predicted_IC50=None, culture_column
     #softLinx.hidexClose()
     softLinx.plateCraneMoveCrane("SoftLinx.PlateCrane.Safe")
 
-    # Run Hidex Protocol
-    #softLinx.hidexRun("Campaign1")
+    #Run Hidex Protocol (this will close the Hidex)
+    softLinx.hidexRun("Campaign1_test") # full 16 hour Hidex incubation
 
-    # Transfer Hidex data from C:\labautomation\data to compute cell (lambda6)
-    #softLinx.runProgram(
-    #     "C:\\Users\\svcaibio\\Dev\\liquidhandling\\zeromq\\utils\\send_data.bat"
-    # )
+    #Transfer Hidex data from C:\labautomation\data to compute cell (lambda6)
+    softLinx.runProgram(
+        "C:\\Users\\svcaibio\\Dev\\liquidhandling\\zeromq\\utils\\send_data.bat"
+    )
 
     # save protocol to write instructions to .slvp file, create .txt manifest, and .ahk remote start file
     softLinx.saveProtocol()
