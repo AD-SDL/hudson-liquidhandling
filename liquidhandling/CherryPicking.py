@@ -1,6 +1,6 @@
 import copy
 from .Plates import PlateDefinition
-from .SoloSoft import SoloSoft
+from .hudson.SoloSoft import SoloSoft
 
 
 # TODO: Test and bugbash

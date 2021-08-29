@@ -39,7 +39,10 @@ default_full_tip_storage = "SoftLinx.PlateCrane.Stack4"
 # previously instantiated SoftLinx
 softLinx = SoftLinx("Tip Replacement Test Main", "tip_replacement_test_main.slvp")
 softLinx.setPlates(
-    {default_full_tip_storage: tip_box_name, default_empty_tip_loc: tip_box_name,}
+    {
+        default_full_tip_storage: tip_box_name,
+        default_empty_tip_loc: tip_box_name,
+    }
 )
 
 # Replace Tips Method ----------------------------------------------------------------
@@ -69,7 +72,9 @@ def replace_tips(
 
     # pick up the new tip box and place it in the correct location
     current_softLinx.plateCraneMovePlate(
-        [full_tip_storage], [empty_tip_location], hasLid=True,
+        [full_tip_storage],
+        [empty_tip_location],
+        hasLid=True,
     )
     # softLinx.saveProtocol()
 

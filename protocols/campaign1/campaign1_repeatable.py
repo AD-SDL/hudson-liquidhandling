@@ -222,7 +222,11 @@ def generate_campaign1_repeatable(
             aspirate_volumes=Reservoir_12col_Agilent_201256_100_BATSgroup().setColumn(
                 culture_plate_column_num, culture_transfer_volume_s1
             ),
-            aspirate_shift=[0, 0, reservoir_z_shift,],
+            aspirate_shift=[
+                0,
+                0,
+                reservoir_z_shift,
+            ],
             syringe_speed=25,
         )
         soloSoft.dispense(  # do need to mix at end of transfer

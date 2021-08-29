@@ -1,5 +1,5 @@
 import json
-from .Properties import Properties
+from ..Properties import Properties
 
 STEP_DELIMITER = "!@#$"
 
