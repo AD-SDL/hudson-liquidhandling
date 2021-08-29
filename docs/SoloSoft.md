@@ -119,7 +119,7 @@ from jsonschema import validate
 from liquidhandling import SoloSoft
 from liquidhandling import GenericPlate96Well
 
-soloSoft = SoloSoft.SoloSoft(
+soloSoft = SoloSoft(
     filename="agilent_rese.hso",
     plateList=[
         "TipBox-Corning 200uL",
