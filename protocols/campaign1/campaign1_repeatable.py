@@ -10,13 +10,23 @@ from liquidhandling import Reservoir_12col_Agilent_201256_100_BATSgroup
 from liquidhandling import Plate_96_Corning_3635_ClearUVAssay
 
 
-def generate_campaign1_repeatable(treatment, predicted_IC50=None, culture_column=None, media_start_column=None, treatment_dil_half=None):
+def generate_campaign1_repeatable(
+    treatment,
+    predicted_IC50=None,
+    culture_column=None,
+    media_start_column=None,
+    treatment_dil_half=None,
+):
 
     return_val = "PASS"
 
     # TODO: add constraints to media start column user input
-    media_start_column = media_start_column if media_start_column else 1  # media column default = 1
-    treatment_dil_half = treatment_dil_half if treatment_dil_half else 1  # treatment dilution half default = 1 (first half)
+    media_start_column = (
+        media_start_column if media_start_column else 1
+    )  # media column default = 1
+    treatment_dil_half = (
+        treatment_dil_half if treatment_dil_half else 1
+    )  # treatment dilution half default = 1 (first half)
 
     # * Program variables
     blowoff_volume = 10
@@ -127,7 +137,7 @@ def generate_campaign1_repeatable(treatment, predicted_IC50=None, culture_column
         soloSoft.aspirate(
             position="Position3",
             aspirate_volumes=Reservoir_12col_Agilent_201256_100_BATSgroup().setColumn(
-                media_start_column+1, media_transfer_volume_s1
+                media_start_column + 1, media_transfer_volume_s1
             ),
             aspirate_shift=[0, 0, media_z_shift],
         )
@@ -140,7 +150,9 @@ def generate_campaign1_repeatable(treatment, predicted_IC50=None, culture_column
         )
 
     # * Fill first two columns of culture 10 fold dilution plate with fresh lb media (do in two steps due to 180uL filter tips)
-    for i in range(2):  # from first media column -> cell dilution plate, column = same as culture column
+    for i in range(
+        2
+    ):  # from first media column -> cell dilution plate, column = same as culture column
         soloSoft.aspirate(
             position="Position3",
             aspirate_volumes=Reservoir_12col_Agilent_201256_100_BATSgroup().setColumn(
@@ -156,11 +168,13 @@ def generate_campaign1_repeatable(treatment, predicted_IC50=None, culture_column
             dispense_shift=[0, 0, reservoir_z_shift],
         )
 
-    for i in range(2):  # # from second media column -> cell dilution plate, column = same as culture column
+    for i in range(
+        2
+    ):  # # from second media column -> cell dilution plate, column = same as culture column
         soloSoft.aspirate(
             position="Position3",
             aspirate_volumes=Reservoir_12col_Agilent_201256_100_BATSgroup().setColumn(
-                media_start_column+1, half_dilution_media_volume
+                media_start_column + 1, half_dilution_media_volume
             ),
             aspirate_shift=[0, 0, media_z_shift],
         )
@@ -173,7 +187,7 @@ def generate_campaign1_repeatable(treatment, predicted_IC50=None, culture_column
         )
 
     # * Make culture 10 fold dilution (one column for each half of plate)
-    for i in range(1, 3):  # all cells dispensed into same cell dilution column 
+    for i in range(1, 3):  # all cells dispensed into same cell dilution column
         soloSoft.aspirate(
             position="Position5",
             aspirate_volumes=DeepBlock_96VWR_75870_792_sterile().setColumn(
@@ -208,11 +222,7 @@ def generate_campaign1_repeatable(treatment, predicted_IC50=None, culture_column
             aspirate_volumes=Reservoir_12col_Agilent_201256_100_BATSgroup().setColumn(
                 culture_plate_column_num, culture_transfer_volume_s1
             ),
-            aspirate_shift=[
-                0,
-                0,
-                reservoir_z_shift,
-            ], 
+            aspirate_shift=[0, 0, reservoir_z_shift,],
             syringe_speed=25,
         )
         soloSoft.dispense(  # do need to mix at end of transfer
@@ -234,7 +244,7 @@ def generate_campaign1_repeatable(treatment, predicted_IC50=None, culture_column
             aspirate_volumes=Reservoir_12col_Agilent_201256_100_BATSgroup().setColumn(
                 culture_plate_column_num, culture_transfer_volume_s1
             ),
-            aspirate_shift=[0, 0, reservoir_z_shift],  
+            aspirate_shift=[0, 0, reservoir_z_shift],
             syringe_speed=25,
         )
         soloSoft.dispense(  # do need to mix at end of transfer
@@ -274,7 +284,9 @@ def generate_campaign1_repeatable(treatment, predicted_IC50=None, culture_column
 
     # * Fill colums 1-5 of generic 96 well plate with 216uL lb media in two steps (will use for both halves of plate)
     soloSoft.getTip()
-    for i in range((6*(treatment_dil_half-1))+1, (6*(treatment_dil_half-1))+6):  # columns 1-5 or columns 7-11 (treatment_dil_half = 1 or 2)
+    for i in range(
+        (6 * (treatment_dil_half - 1)) + 1, (6 * (treatment_dil_half - 1)) + 6
+    ):  # columns 1-5 or columns 7-11 (treatment_dil_half = 1 or 2)
         # draws from both lb media wells to prevent running out of media -> TODO: volume management
         soloSoft.aspirate(  # first lb media well
             position="Position3",
@@ -296,7 +308,7 @@ def generate_campaign1_repeatable(treatment, predicted_IC50=None, culture_column
         soloSoft.aspirate(  # second lb media well
             position="Position3",
             aspirate_volumes=Reservoir_12col_Agilent_201256_100_BATSgroup().setColumn(
-                media_start_column+1, media_transfer_volume_s2
+                media_start_column + 1, media_transfer_volume_s2
             ),
             aspirate_shift=[0, 0, media_z_shift],
             # pre_aspirate=blowoff_volume,
@@ -311,7 +323,7 @@ def generate_campaign1_repeatable(treatment, predicted_IC50=None, culture_column
         )
 
     # * Fill column 6 of a generic 96 well plate with 240uL lb media in two steps
-    for i in range(media_start_column, media_start_column+2):
+    for i in range(media_start_column, media_start_column + 2):
         soloSoft.aspirate(  # first lb media well
             position="Position3",
             aspirate_volumes=Reservoir_12col_Agilent_201256_100_BATSgroup().setColumn(
@@ -323,7 +335,7 @@ def generate_campaign1_repeatable(treatment, predicted_IC50=None, culture_column
         soloSoft.dispense(
             position="Position6",
             dispense_volumes=Plate_96_Corning_3635_ClearUVAssay().setColumn(
-                (6*(treatment_dil_half-1))+6, last_column_transfer_volume_s2
+                (6 * (treatment_dil_half - 1)) + 6, last_column_transfer_volume_s2
             ),
             dispense_shift=[0, 0, flat_bottom_z_shift],
             # blowoff=blowoff_volume,
@@ -345,7 +357,7 @@ def generate_campaign1_repeatable(treatment, predicted_IC50=None, culture_column
     soloSoft.dispense(
         position="Position6",
         dispense_volumes=Plate_96_Corning_3635_ClearUVAssay().setColumn(
-            (6*(treatment_dil_half-1))+1, serial_antibiotic_transfer_volume_s2
+            (6 * (treatment_dil_half - 1)) + 1, serial_antibiotic_transfer_volume_s2
         ),
         dispense_shift=[0, 0, flat_bottom_z_shift],
         blowoff=blowoff_volume,
@@ -356,7 +368,9 @@ def generate_campaign1_repeatable(treatment, predicted_IC50=None, culture_column
     )
 
     # * Serial dilution within Generic 96 well plate (Corning or Falcon) - mix 3 times before and after transfer
-    for i in range((6*(treatment_dil_half-1))+1, (6*(treatment_dil_half-1))+5):  # don't serial dilute into the last column (control column)
+    for i in range(
+        (6 * (treatment_dil_half - 1)) + 1, (6 * (treatment_dil_half - 1)) + 5
+    ):  # don't serial dilute into the last column (control column)
         # if i == 4:  # switch tips half way through to reduce error   #TODO: Test if you need this
         #     soloSoft.getTip()
         soloSoft.aspirate(
@@ -414,7 +428,7 @@ def generate_campaign1_repeatable(treatment, predicted_IC50=None, culture_column
         soloSoft.aspirate(
             position="Position6",
             aspirate_volumes=Plate_96_Corning_3635_ClearUVAssay().setColumn(
-                (6*(treatment_dil_half-1))+i, antibiotic_transfer_volume_s3
+                (6 * (treatment_dil_half - 1)) + i, antibiotic_transfer_volume_s3
             ),
             mix_at_start=True,
             mix_cycles=num_mixes,
@@ -441,7 +455,7 @@ def generate_campaign1_repeatable(treatment, predicted_IC50=None, culture_column
         soloSoft.aspirate(
             position="Position6",
             aspirate_volumes=Plate_96_Corning_3635_ClearUVAssay().setColumn(
-                (6*(treatment_dil_half-1))+i, antibiotic_transfer_volume_s3
+                (6 * (treatment_dil_half - 1)) + i, antibiotic_transfer_volume_s3
             ),
             mix_at_start=True,
             mix_cycles=num_mixes,
@@ -479,8 +493,10 @@ def generate_campaign1_repeatable(treatment, predicted_IC50=None, culture_column
     softLinx.plateCraneMovePlate(
         ["SoftLinx.PlateCrane.Stack5"], ["SoftLinx.Solo.Position4"]
     )
-    # remove lid and place in Lid Nest 
-    softLinx.plateCraneRemoveLid(["SoftLinx.Solo.Position4"], ["SoftLinx.PlateCrane.LidNest2"])
+    # remove lid and place in Lid Nest
+    softLinx.plateCraneRemoveLid(
+        ["SoftLinx.Solo.Position4"], ["SoftLinx.PlateCrane.LidNest2"]
+    )
     softLinx.plateCraneMoveCrane("SoftLinx.PlateCrane.Safe")
 
     # run all three liquid handling steps (with paths to .hso files on hudson01)
@@ -518,10 +534,10 @@ def generate_campaign1_repeatable(treatment, predicted_IC50=None, culture_column
     softLinx.hidexClose()
     softLinx.plateCraneMoveCrane("SoftLinx.PlateCrane.Safe")
 
-    #Run Hidex Protocol (this will close the Hidex)
-    softLinx.hidexRun("Campaign1") # full 16 hour Hidex incubation
+    # Run Hidex Protocol (this will close the Hidex)
+    softLinx.hidexRun("Campaign1")  # full 16 hour Hidex incubation
 
-    #Transfer Hidex data from C:\labautomation\data to compute cell (lambda6)
+    # Transfer Hidex data from C:\labautomation\data to compute cell (lambda6)
     softLinx.runProgram(
         "C:\\Users\\svcaibio\\Dev\\liquidhandling\\zeromq\\utils\\send_data.bat"
     )
@@ -558,20 +574,20 @@ def find_treatment_loc(treatment_name):  # TODO: Move this method out of protoco
 
     """
     # {treatment_name: [Plate location, column number], ... }
-    #treatment_locations = {"KAN": ["Position3", 3], "peptide1": ["Position3", 3]}
+    # treatment_locations = {"KAN": ["Position3", 3], "peptide1": ["Position3", 3]}
     treatment_locations = {
-        "col1": ["Position8", 1], 
-        "col2": ["Position8", 2], 
-        "col3": ["Position8", 3], 
+        "col1": ["Position8", 1],
+        "col2": ["Position8", 2],
+        "col3": ["Position8", 3],
         "col4": ["Position8", 4],
-        "col5": ["Position8", 5], 
-        "col6": ["Position8", 6], 
-        "col7": ["Position8", 7], 
-        "col8": ["Position8", 8], 
-        "col9": ["Position8", 9], 
-        "col10": ["Position8", 10], 
-        "col11": ["Position8", 11], 
-        "col12": ["Position8", 12]
+        "col5": ["Position8", 5],
+        "col6": ["Position8", 6],
+        "col7": ["Position8", 7],
+        "col8": ["Position8", 8],
+        "col9": ["Position8", 9],
+        "col10": ["Position8", 10],
+        "col11": ["Position8", 11],
+        "col12": ["Position8", 12],
     }
 
     return treatment_locations[treatment_name]
@@ -618,13 +634,21 @@ def main(args):
     args = vars(parser.parse_args())
     print(
         "treatment = {}, IC50 = {}, culture_column = {}".format(
-            args["treatment"], args["predicted_IC50"], args["culture_column"], args["media_start_column"], args["treatment_dilution_half"]
+            args["treatment"],
+            args["predicted_IC50"],
+            args["culture_column"],
+            args["media_start_column"],
+            args["treatment_dilution_half"],
         )
     )
 
     # pass to method
     generate_campaign1_repeatable(
-        args["treatment"], args["predicted_IC50"], args["culture_column"], args["media_start_column"], args["treatment_dilution_half"]
+        args["treatment"],
+        args["predicted_IC50"],
+        args["culture_column"],
+        args["media_start_column"],
+        args["treatment_dilution_half"],
     )
 
 
