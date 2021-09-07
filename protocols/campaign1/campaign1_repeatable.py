@@ -49,9 +49,9 @@ def generate_campaign1_repeatable(
     culture_plate_mix_volume_s1 = (
         100  # mix volume increased for test 09/07/21
     )
-    culture_plate_num_mix = 10
+    culture_plate_num_mix = 7
     growth_plate_mix_volume_s1 = 40  
-    culture_dilution_mix_volume = 150
+    culture_dilution_mix_volume = 180
 
 
     # Step 2 variables
@@ -225,7 +225,7 @@ def generate_campaign1_repeatable(
             culture_plate_column_num, dilution_culture_volume
         ),
         aspirate_shift=[0,0,reservoir_z_shift],
-        syringe_speed=25,
+        # 100% syringe speed 
     )
     soloSoft.dispense(
         position="Position7",
