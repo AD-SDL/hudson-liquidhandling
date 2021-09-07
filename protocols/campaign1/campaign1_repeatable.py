@@ -222,7 +222,7 @@ def generate_campaign1_repeatable(
     soloSoft.aspirate(
         position="Position7", 
         aspirate_volumes=Reservoir_12col_Agilent_201256_100_BATSgroup().setColumn(
-            culture_dilution_mix_volume, dilution_culture_volume
+            culture_plate_column_num, dilution_culture_volume
         ),
         aspirate_shift=[0,0,reservoir_z_shift],
         syringe_speed=25,
