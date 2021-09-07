@@ -47,9 +47,12 @@ def generate_campaign1_repeatable(
     half_dilution_media_volume = 99
     dilution_culture_volume = 22
     culture_plate_mix_volume_s1 = (
-        30  # best to mix with same volume transferred, ok for min volume
+        100  # mix volume increased for test 09/07/21
     )
-    growth_plate_mix_volume_s1 = 40
+    culture_plate_num_mix = 10
+    growth_plate_mix_volume_s1 = 40  
+    culture_dilution_mix_volume = 150
+
 
     # Step 2 variables
     media_transfer_volume_s2 = (
@@ -149,7 +152,7 @@ def generate_campaign1_repeatable(
             dispense_shift=[0, 0, flat_bottom_z_shift],
         )
 
-    # * Fill first two columns of culture 10 fold dilution plate with fresh lb media (do in two steps due to 180uL filter tips)
+    # * Fill one column of culture dilution plate with fresh lb media (do in two steps due to 180uL filter tips)
     for i in range(
         2
     ):  # from first media column -> cell dilution plate, column = same as culture column
@@ -186,7 +189,7 @@ def generate_campaign1_repeatable(
             dispense_shift=[0, 0, reservoir_z_shift],
         )
 
-    # * Make culture 10 fold dilution (one column for each half of plate)
+    # * Make culture 10 fold dilution 
     for i in range(1, 3):  # all cells dispensed into same cell dilution column
         soloSoft.aspirate(
             position="Position5",
@@ -195,7 +198,7 @@ def generate_campaign1_repeatable(
             ),
             aspirate_shift=[0, 0, 2],
             mix_at_start=True,
-            mix_cycles=num_mixes,
+            mix_cycles=culture_plate_num_mix,
             mix_volume=culture_plate_mix_volume_s1,
             dispense_height=2,
             # pre_aspirate=blowoff_volume,
@@ -215,9 +218,33 @@ def generate_campaign1_repeatable(
             # blowoff=blowoff_volume,
         )
 
+    # * Separate big mix step to ensure cell diluton column is well mixed  # added for 09/07/21
+    soloSoft.aspirate(
+        position="Position7", 
+        aspirate_volumes=Reservoir_12col_Agilent_201256_100_BATSgroup().setColumn(
+            culture_dilution_mix_volume, dilution_culture_volume
+        ),
+        aspirate_shift=[0,0,reservoir_z_shift],
+        syringe_speed=25,
+    )
+    soloSoft.dispense(
+        position="Position7",
+        dispense_volumes=Reservoir_12col_Agilent_201256_100_BATSgroup().setColumn(
+            culture_plate_column_num, dilution_culture_volume
+        ),
+        dispense_shift=[0, 0, reservoir_z_shift],
+        mix_at_finish=True,
+        mix_cycles=culture_plate_num_mix,
+        mix_volume=culture_dilution_mix_volume,
+        aspirate_height=reservoir_z_shift,
+        syringe_speed=25,
+        # blowoff=blowoff_volume,
+    )
+
     # * Add bacteria from 10 fold diluted culture plate (Position 7, column = culture_plate_column_num) to growth plate with fresh media (both halves)
-    for i in range(1, 7):  # first half growth plate
-        soloSoft.aspirate(  # already mixed the cells, no need to do it before every transfer
+    
+    for i in range(1,7): # trying a different method of cell dispensing (09/07/21)
+        soloSoft.aspirate(     # well in first half
             position="Position7",
             aspirate_volumes=Reservoir_12col_Agilent_201256_100_BATSgroup().setColumn(
                 culture_plate_column_num, culture_transfer_volume_s1
@@ -227,6 +254,10 @@ def generate_campaign1_repeatable(
                 0,
                 reservoir_z_shift,
             ],
+            mix_at_start=True, 
+            mix_cycles=num_mixes, 
+            dispense_height=reservoir_z_shift,
+            mix_volume=culture_transfer_volume_s1,
             syringe_speed=25,
         )
         soloSoft.dispense(  # do need to mix at end of transfer
@@ -242,19 +273,26 @@ def generate_campaign1_repeatable(
             syringe_speed=25,
         )
 
-    for i in range(7, 13):  # second half growth plate
-        soloSoft.aspirate(  # already mixed the cells, no need to do it before every transfer
+        soloSoft.aspirate(     # well in second half
             position="Position7",
             aspirate_volumes=Reservoir_12col_Agilent_201256_100_BATSgroup().setColumn(
                 culture_plate_column_num, culture_transfer_volume_s1
             ),
-            aspirate_shift=[0, 0, reservoir_z_shift],
+            aspirate_shift=[
+                0,
+                0,
+                reservoir_z_shift,
+            ],
+            mix_at_start=True, 
+            mix_cycles=num_mixes, 
+            dispense_height=reservoir_z_shift,
+            mix_volume=culture_transfer_volume_s1,
             syringe_speed=25,
         )
         soloSoft.dispense(  # do need to mix at end of transfer
             position="Position4",
             dispense_volumes=Plate_96_Corning_3635_ClearUVAssay().setColumn(
-                i, culture_transfer_volume_s1
+                6+i, culture_transfer_volume_s1
             ),
             mix_at_finish=True,
             mix_cycles=num_mixes,
@@ -263,6 +301,56 @@ def generate_campaign1_repeatable(
             dispense_shift=[0, 0, flat_bottom_z_shift],
             syringe_speed=25,
         )
+
+
+    # OLD CELL TRANSFER METHODS 
+    # for i in range(1, 7):  # first half growth plate
+    #     soloSoft.aspirate(  # already mixed the cells, no need to do it before every transfer
+    #         position="Position7",
+    #         aspirate_volumes=Reservoir_12col_Agilent_201256_100_BATSgroup().setColumn(
+    #             culture_plate_column_num, culture_transfer_volume_s1
+    #         ),
+    #         aspirate_shift=[
+    #             0,
+    #             0,
+    #             reservoir_z_shift,
+    #         ],
+    #         syringe_speed=25,
+    #     )
+    #     soloSoft.dispense(  # do need to mix at end of transfer
+    #         position="Position4",
+    #         dispense_volumes=Plate_96_Corning_3635_ClearUVAssay().setColumn(
+    #             i, culture_transfer_volume_s1
+    #         ),
+    #         mix_at_finish=True,
+    #         mix_cycles=num_mixes,
+    #         mix_volume=growth_plate_mix_volume_s1,
+    #         aspirate_height=flat_bottom_z_shift,
+    #         dispense_shift=[0, 0, flat_bottom_z_shift],
+    #         syringe_speed=25,
+    #     )
+
+    # for i in range(7, 13):  # second half growth plate
+    #     soloSoft.aspirate(  # already mixed the cells, no need to do it before every transfer
+    #         position="Position7",
+    #         aspirate_volumes=Reservoir_12col_Agilent_201256_100_BATSgroup().setColumn(
+    #             culture_plate_column_num, culture_transfer_volume_s1
+    #         ),
+    #         aspirate_shift=[0, 0, reservoir_z_shift],
+    #         syringe_speed=25,
+    #     )
+    #     soloSoft.dispense(  # do need to mix at end of transfer
+    #         position="Position4",
+    #         dispense_volumes=Plate_96_Corning_3635_ClearUVAssay().setColumn(
+    #             i, culture_transfer_volume_s1
+    #         ),
+    #         mix_at_finish=True,
+    #         mix_cycles=num_mixes,
+    #         mix_volume=growth_plate_mix_volume_s1,
+    #         aspirate_height=flat_bottom_z_shift,
+    #         dispense_shift=[0, 0, flat_bottom_z_shift],
+    #         syringe_speed=25,
+    #     )
 
     soloSoft.shuckTip()
     soloSoft.savePipeline()
