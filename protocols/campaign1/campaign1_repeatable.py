@@ -50,9 +50,9 @@ def generate_campaign1_repeatable(
         100  # mix volume increased for test 09/07/21
     )
     culture_plate_num_mix = 7
+    culture_dilution_num_mix = 10
     growth_plate_mix_volume_s1 = 40  
     culture_dilution_mix_volume = 180
-
 
     # Step 2 variables
     media_transfer_volume_s2 = (
@@ -234,15 +234,15 @@ def generate_campaign1_repeatable(
         ),
         dispense_shift=[0, 0, reservoir_z_shift],
         mix_at_finish=True,
-        mix_cycles=culture_plate_num_mix,
+        mix_cycles=culture_dilution_num_mix,
         mix_volume=culture_dilution_mix_volume,
         aspirate_height=reservoir_z_shift,
-        syringe_speed=25,
+        syringe_speed=75, 
         # blowoff=blowoff_volume,
     )
 
     # * Add bacteria from 10 fold diluted culture plate (Position 7, column = culture_plate_column_num) to growth plate with fresh media (both halves)
-    
+    soloSoft.getTip()
     for i in range(1,7): # trying a different method of cell dispensing (09/07/21)
         soloSoft.aspirate(     # well in first half
             position="Position7",
