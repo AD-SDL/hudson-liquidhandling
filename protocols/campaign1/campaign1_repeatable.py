@@ -514,8 +514,8 @@ def generate_campaign1_repeatable(
 
     soloSoft.getTip() #! Necessary because new .hso file
     for i in range(6, 0, -1):  # first half of plate
-        #if i == 3:  # switch tips half way through to reduce error  # removed for test 10/05/21
-            #soloSoft.getTip()
+        if i == 3:  # switch tips half way through to reduce error  
+            soloSoft.getTip()
         soloSoft.aspirate(
             position="Position6",
             aspirate_volumes=Plate_96_Corning_3635_ClearUVAssay().setColumn(
@@ -541,8 +541,8 @@ def generate_campaign1_repeatable(
 
     soloSoft.getTip()
     for i in range(6, 0, -1):  # second half of plate
-        # if i == 3:  # switch tips half way through to reduce error  # removed for test 10/05/21
-        #     soloSoft.getTip()
+        if i == 3:  # switch tips half way through to reduce error  
+            soloSoft.getTip()
         soloSoft.aspirate(
             position="Position6",
             aspirate_volumes=Plate_96_Corning_3635_ClearUVAssay().setColumn(
@@ -620,20 +620,19 @@ def generate_campaign1_repeatable(
     #     ["SoftLinx.Solo.Position4"], ["SoftLinx.PlateCrane.LidNest1"]
     # )  # no need to open hidex
     
-    # removed for extra water test on 10/05/21 #! uncomment for remote tests
-    # softLinx.plateCraneMovePlate(
-    #     ["SoftLinx.Solo.Position4"], ["SoftLinx.Hidex.Nest"]
-    # )  # no need to open hidex
-    # softLinx.hidexClose()
-    # softLinx.plateCraneMoveCrane("SoftLinx.PlateCrane.Safe")
+    softLinx.plateCraneMovePlate(
+        ["SoftLinx.Solo.Position4"], ["SoftLinx.Hidex.Nest"]
+    )  # no need to open hidex
+    softLinx.hidexClose()
+    softLinx.plateCraneMoveCrane("SoftLinx.PlateCrane.Safe")
 
-    # # Run Hidex Protocol (this will close the Hidex)
-    # softLinx.hidexRun("Campaign1")  # full 16 hour Hidex incubation
+    # Run Hidex Protocol (this will close the Hidex)
+    softLinx.hidexRun("Campaign1")  # full 16 hour Hidex incubation
 
-    # # Transfer Hidex data from C:\labautomation\data to compute cell (lambda6)
-    # softLinx.runProgram(
-    #     "C:\\Users\\svcaibio\\Dev\\liquidhandling\\zeromq\\utils\\send_data.bat"
-    # )
+    # Transfer Hidex data from C:\labautomation\data to compute cell (lambda6)
+    softLinx.runProgram(
+        "C:\\Users\\svcaibio\\Dev\\liquidhandling\\zeromq\\utils\\send_data.bat"
+    )
 
     # save protocol to write instructions to .slvp file, create .txt manifest, and .ahk remote start file
     softLinx.saveProtocol()
