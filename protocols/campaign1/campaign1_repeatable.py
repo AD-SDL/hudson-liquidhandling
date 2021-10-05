@@ -20,7 +20,7 @@ def generate_campaign1_repeatable(
 
     return_val = "PASS"
 
-    # TODO: add constraints to media start column user input
+    # TODO: add constraints to media start column user input? 
     media_start_column = (
         media_start_column if media_start_column else 1
     )  # media column default = 1
@@ -31,7 +31,6 @@ def generate_campaign1_repeatable(
     # * Program variables
     blowoff_volume = 10
     num_mixes = 3
-    # current_media_reservoir_volume = media_reservoir_volume = 7000
     media_z_shift = 0.5
     reservoir_z_shift = 0.5  # z shift for deep blocks (Deck Positions 3 and 5)
     flat_bottom_z_shift = 2  # Note: 1 is not high enough (tested)
@@ -40,7 +39,7 @@ def generate_campaign1_repeatable(
     # Step 1 variables
     culture_plate_column_num = (
         culture_column if culture_column else 1
-    )  # Changed to column 1 for test on 07/14/21
+    )  # default culture column is column 1
     media_transfer_volume_s1 = 60
     culture_transfer_volume_s1 = 30
     # dilution_media_volume = 198
@@ -78,7 +77,7 @@ def generate_campaign1_repeatable(
         print(f"Unable to locate treatment {treatment}")
         raise  # need to know locaton of treatment, rest of protocol useless if not specified
 
-    # * TODO: handle predicted IC50
+    # TODO: handle predicted IC50
 
     # * Create folder to store all instruction files
     project = "Campaign1"
@@ -118,7 +117,7 @@ def generate_campaign1_repeatable(
     )
 
     # * Fill all columns of empty 96 well plate (corning 3383 or Falcon - ref 353916) with fresh lb media (12 channel in Position 3, media_start_column and media_start_column+1)
-    soloSoft.getTip()
+    soloSoft.getTip()  #! NECESSARY since new .hso file 
     j = 1
     for i in range(1, 7):  # first half plate = media from column 1
         soloSoft.aspirate(
@@ -242,7 +241,7 @@ def generate_campaign1_repeatable(
     )
 
     # * Add bacteria from 10 fold diluted culture plate (Position 7, column = culture_plate_column_num) to growth plate with fresh media (both halves)
-    soloSoft.getTip()
+    soloSoft.getTip()  #! NECESSARY (can tell from testing - 2)
     for i in range(1,7): # trying a different method of cell dispensing (09/07/21)
         soloSoft.aspirate(     # well in first half
             position="Position7",
@@ -375,11 +374,11 @@ def generate_campaign1_repeatable(
     )
 
     # * Fill colums 1-5 of generic 96 well plate with 216uL lb media in two steps (will use for both halves of plate)
-    soloSoft.getTip()
+    soloSoft.getTip() #! Necessary since new .hso file - 3
     for i in range(
         (6 * (treatment_dil_half - 1)) + 1, (6 * (treatment_dil_half - 1)) + 6
     ):  # columns 1-5 or columns 7-11 (treatment_dil_half = 1 or 2)
-        # draws from both lb media wells to prevent running out of media -> TODO: volume management
+        # draws from both lb media wells to prevent running out of media
         soloSoft.aspirate(  # first lb media well
             position="Position3",
             aspirate_volumes=Reservoir_12col_Agilent_201256_100_BATSgroup().setColumn(
@@ -513,10 +512,10 @@ def generate_campaign1_repeatable(
         ],
     )
 
-    soloSoft.getTip()
+    soloSoft.getTip() #! Necessary because new .hso file
     for i in range(6, 0, -1):  # first half of plate
-        if i == 3:  # switch tips half way through to reduce error
-            soloSoft.getTip()
+        #if i == 3:  # switch tips half way through to reduce error  # removed for test 10/05/21
+            #soloSoft.getTip()
         soloSoft.aspirate(
             position="Position6",
             aspirate_volumes=Plate_96_Corning_3635_ClearUVAssay().setColumn(
@@ -542,8 +541,8 @@ def generate_campaign1_repeatable(
 
     soloSoft.getTip()
     for i in range(6, 0, -1):  # second half of plate
-        if i == 3:  # switch tips half way through to reduce error
-            soloSoft.getTip()
+        # if i == 3:  # switch tips half way through to reduce error  # removed for test 10/05/21
+        #     soloSoft.getTip()
         soloSoft.aspirate(
             position="Position6",
             aspirate_volumes=Plate_96_Corning_3635_ClearUVAssay().setColumn(
@@ -620,19 +619,21 @@ def generate_campaign1_repeatable(
     # softLinx.plateCraneMovePlate(
     #     ["SoftLinx.Solo.Position4"], ["SoftLinx.PlateCrane.LidNest1"]
     # )  # no need to open hidex
-    softLinx.plateCraneMovePlate(
-        ["SoftLinx.Solo.Position4"], ["SoftLinx.Hidex.Nest"]
-    )  # no need to open hidex
-    softLinx.hidexClose()
-    softLinx.plateCraneMoveCrane("SoftLinx.PlateCrane.Safe")
+    
+    # removed for extra water test on 10/05/21 #! uncomment for remote tests
+    # softLinx.plateCraneMovePlate(
+    #     ["SoftLinx.Solo.Position4"], ["SoftLinx.Hidex.Nest"]
+    # )  # no need to open hidex
+    # softLinx.hidexClose()
+    # softLinx.plateCraneMoveCrane("SoftLinx.PlateCrane.Safe")
 
-    # Run Hidex Protocol (this will close the Hidex)
-    softLinx.hidexRun("Campaign1")  # full 16 hour Hidex incubation
+    # # Run Hidex Protocol (this will close the Hidex)
+    # softLinx.hidexRun("Campaign1")  # full 16 hour Hidex incubation
 
-    # Transfer Hidex data from C:\labautomation\data to compute cell (lambda6)
-    softLinx.runProgram(
-        "C:\\Users\\svcaibio\\Dev\\liquidhandling\\zeromq\\utils\\send_data.bat"
-    )
+    # # Transfer Hidex data from C:\labautomation\data to compute cell (lambda6)
+    # softLinx.runProgram(
+    #     "C:\\Users\\svcaibio\\Dev\\liquidhandling\\zeromq\\utils\\send_data.bat"
+    # )
 
     # save protocol to write instructions to .slvp file, create .txt manifest, and .ahk remote start file
     softLinx.saveProtocol()
