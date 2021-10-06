@@ -1,4 +1,4 @@
-from setuptools import setup
+from setuptools import setup, find_packages
 import os
 
 
@@ -34,4 +34,6 @@ setup(
     ],
     zip_safe=False,
     python_requires=">=3.8.5",
+    package_dir={"": "liquidhandling"},
+    packages=find_packages(where="liquidhandling"),
 )
