@@ -20,7 +20,7 @@ def generate_campaign1_repeatable(
 
     return_val = "PASS"
 
-    # TODO: add constraints to media start column user input? 
+    # TODO: add constraints to media start column user input?
     media_start_column = (
         media_start_column if media_start_column else 1
     )  # media column default = 1
@@ -45,12 +45,10 @@ def generate_campaign1_repeatable(
     # dilution_media_volume = 198
     half_dilution_media_volume = 99
     dilution_culture_volume = 22
-    culture_plate_mix_volume_s1 = (
-        100  # mix volume increased for test 09/07/21
-    )
+    culture_plate_mix_volume_s1 = 100  # mix volume increased for test 09/07/21
     culture_plate_num_mix = 7
     culture_dilution_num_mix = 10
-    growth_plate_mix_volume_s1 = 40  
+    growth_plate_mix_volume_s1 = 40
     culture_dilution_mix_volume = 180
 
     # Step 2 variables
@@ -117,7 +115,7 @@ def generate_campaign1_repeatable(
     )
 
     # * Fill all columns of empty 96 well plate (corning 3383 or Falcon - ref 353916) with fresh lb media (12 channel in Position 3, media_start_column and media_start_column+1)
-    soloSoft.getTip()  #! NECESSARY since new .hso file 
+    soloSoft.getTip()  #! NECESSARY since new .hso file
     j = 1
     for i in range(1, 7):  # first half plate = media from column 1
         soloSoft.aspirate(
@@ -188,7 +186,7 @@ def generate_campaign1_repeatable(
             dispense_shift=[0, 0, reservoir_z_shift],
         )
 
-    # * Make culture 10 fold dilution 
+    # * Make culture 10 fold dilution
     for i in range(1, 3):  # all cells dispensed into same cell dilution column
         soloSoft.aspirate(
             position="Position5",
@@ -219,12 +217,12 @@ def generate_campaign1_repeatable(
 
     # * Separate big mix step to ensure cell diluton column is well mixed  # added for 09/07/21
     soloSoft.aspirate(
-        position="Position7", 
+        position="Position7",
         aspirate_volumes=Reservoir_12col_Agilent_201256_100_BATSgroup().setColumn(
             culture_plate_column_num, dilution_culture_volume
         ),
-        aspirate_shift=[0,0,reservoir_z_shift],
-        # 100% syringe speed 
+        aspirate_shift=[0, 0, reservoir_z_shift],
+        # 100% syringe speed
     )
     soloSoft.dispense(
         position="Position7",
@@ -236,14 +234,14 @@ def generate_campaign1_repeatable(
         mix_cycles=culture_dilution_num_mix,
         mix_volume=culture_dilution_mix_volume,
         aspirate_height=reservoir_z_shift,
-        syringe_speed=75, 
+        syringe_speed=75,
         # blowoff=blowoff_volume,
     )
 
     # * Add bacteria from 10 fold diluted culture plate (Position 7, column = culture_plate_column_num) to growth plate with fresh media (both halves)
     soloSoft.getTip()  #! NECESSARY (can tell from testing - 2)
-    for i in range(1,7): # trying a different method of cell dispensing (09/07/21)
-        soloSoft.aspirate(     # well in first half
+    for i in range(1, 7):  # trying a different method of cell dispensing (09/07/21)
+        soloSoft.aspirate(  # well in first half
             position="Position7",
             aspirate_volumes=Reservoir_12col_Agilent_201256_100_BATSgroup().setColumn(
                 culture_plate_column_num, culture_transfer_volume_s1
@@ -253,8 +251,8 @@ def generate_campaign1_repeatable(
                 0,
                 reservoir_z_shift,
             ],
-            mix_at_start=True, 
-            mix_cycles=num_mixes, 
+            mix_at_start=True,
+            mix_cycles=num_mixes,
             dispense_height=reservoir_z_shift,
             mix_volume=culture_transfer_volume_s1,
             syringe_speed=25,
@@ -272,7 +270,7 @@ def generate_campaign1_repeatable(
             syringe_speed=25,
         )
 
-        soloSoft.aspirate(     # well in second half
+        soloSoft.aspirate(  # well in second half
             position="Position7",
             aspirate_volumes=Reservoir_12col_Agilent_201256_100_BATSgroup().setColumn(
                 culture_plate_column_num, culture_transfer_volume_s1
@@ -282,8 +280,8 @@ def generate_campaign1_repeatable(
                 0,
                 reservoir_z_shift,
             ],
-            mix_at_start=True, 
-            mix_cycles=num_mixes, 
+            mix_at_start=True,
+            mix_cycles=num_mixes,
             dispense_height=reservoir_z_shift,
             mix_volume=culture_transfer_volume_s1,
             syringe_speed=25,
@@ -291,7 +289,7 @@ def generate_campaign1_repeatable(
         soloSoft.dispense(  # do need to mix at end of transfer
             position="Position4",
             dispense_volumes=Plate_96_Corning_3635_ClearUVAssay().setColumn(
-                6+i, culture_transfer_volume_s1
+                6 + i, culture_transfer_volume_s1
             ),
             mix_at_finish=True,
             mix_cycles=num_mixes,
@@ -301,8 +299,7 @@ def generate_campaign1_repeatable(
             syringe_speed=25,
         )
 
-
-    # OLD CELL TRANSFER METHODS 
+    # OLD CELL TRANSFER METHODS
     # for i in range(1, 7):  # first half growth plate
     #     soloSoft.aspirate(  # already mixed the cells, no need to do it before every transfer
     #         position="Position7",
@@ -374,7 +371,7 @@ def generate_campaign1_repeatable(
     )
 
     # * Fill colums 1-5 of generic 96 well plate with 216uL lb media in two steps (will use for both halves of plate)
-    soloSoft.getTip() #! Necessary since new .hso file - 3
+    soloSoft.getTip()  #! Necessary since new .hso file - 3
     for i in range(
         (6 * (treatment_dil_half - 1)) + 1, (6 * (treatment_dil_half - 1)) + 6
     ):  # columns 1-5 or columns 7-11 (treatment_dil_half = 1 or 2)
@@ -512,9 +509,9 @@ def generate_campaign1_repeatable(
         ],
     )
 
-    soloSoft.getTip() #! Necessary because new .hso file
+    soloSoft.getTip()  #! Necessary because new .hso file
     for i in range(6, 0, -1):  # first half of plate
-        if i == 3:  # switch tips half way through to reduce error  
+        if i == 3:  # switch tips half way through to reduce error
             soloSoft.getTip()
         soloSoft.aspirate(
             position="Position6",
@@ -541,7 +538,7 @@ def generate_campaign1_repeatable(
 
     soloSoft.getTip()
     for i in range(6, 0, -1):  # second half of plate
-        if i == 3:  # switch tips half way through to reduce error  
+        if i == 3:  # switch tips half way through to reduce error
             soloSoft.getTip()
         soloSoft.aspirate(
             position="Position6",
@@ -619,7 +616,7 @@ def generate_campaign1_repeatable(
     # softLinx.plateCraneMovePlate(
     #     ["SoftLinx.Solo.Position4"], ["SoftLinx.PlateCrane.LidNest1"]
     # )  # no need to open hidex
-    
+
     softLinx.plateCraneMovePlate(
         ["SoftLinx.Solo.Position4"], ["SoftLinx.Hidex.Nest"]
     )  # no need to open hidex

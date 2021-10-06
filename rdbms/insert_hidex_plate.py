@@ -7,7 +7,7 @@ from connect import connect
 if len(sys.argv) != 2:
     print(f"need to provide filename to {sys.argv[0]}")
     sys.exit()
-    
+
 cnx = connect()
 cursor = cnx.cursor()
 
