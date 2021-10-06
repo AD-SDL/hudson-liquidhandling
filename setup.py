@@ -18,7 +18,6 @@ setup(
     author="Ryan D. Lewis",
     author_email="ryan.lewis@anl.gov",
     license="MIT",
-    packages=["liquidhandling"],
     keywords="robotics laboratory automation biology",
     long_description=read("README.md"),
     long_description_content_type="text/markdown",
