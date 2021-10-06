@@ -4,7 +4,10 @@ import csv
 from connect import connect
 
 # Test data at rdbms/data/Campaign1_hidex1_04-07-21.tsv
-
+if len(sys.argv) != 2:
+    print(f"need to provide filename to {sys.argv[0]}")
+    sys.exit()
+    
 cnx = connect()
 cursor = cnx.cursor()
 
