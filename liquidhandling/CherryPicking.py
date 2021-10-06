@@ -1,6 +1,6 @@
 import copy
-from ..Plates import PlateDefinition
-from .SoloSoft import SoloSoft
+from .Plates import PlateDefinition
+from .hudson.SoloSoft import SoloSoft
 
 
 # TODO: Test and bugbash
@@ -51,7 +51,7 @@ class CherryPicking:
 
     def setPickList(self, pickList):
         if isinstance(pickList, list):
-            # * Is the format [(A1, (B1, 10)), (A1, (B2, 5))...]?
+            # * Is the format [("A1", ("B1", 10)), ("A1", (B2, 5))...]?
             if all(isinstance(pick, tuple) for pick in pickList):
                 if all(
                     (
@@ -74,7 +74,7 @@ class CherryPicking:
                             else:
                                 self.pickList[pickTuple[0]] = [pickTuple[1]]
                         return
-            # * Is the format [[A1, B1, 10], [A1, B2, 5]...]?
+            # * Is the format [["A1", "B1", 10], ["A1", "B2", 5]...]?
             if all(isinstance(pick, list) for pick in pickList):
                 if all(
                     (
@@ -93,7 +93,7 @@ class CherryPicking:
                         else:
                             self.pickList[pick3ple[0]] = [(pick3ple[1], pick3ple[2])]
                     return
-        # * Is the format {\"A1\": [(B1, 10), (B2, 5),...],...}?
+        # * Is the format {"A1": [("B1", 10), ("B2", 5),...],...}?
         elif isinstance(pickList, dict):
             if all(
                 self.checkCellFormat(key) and isinstance(pickList[key], list)
@@ -106,7 +106,7 @@ class CherryPicking:
                     if all(
                         all(
                             self.checkCellFormat(cell[0])
-                            and isinstance(cell[1], [float, int])
+                            and isinstance(cell[1], (float, int))
                             for cell in pickList[key]
                         )
                         for key in pickList
@@ -123,18 +123,26 @@ class CherryPicking:
 
     def setSourcePlate(self, source_plate_position, source_plate_type):
         if isinstance(source_plate_position, str):
-            if isinstance(source_plate_type, PlateDefinition):
-                self.source_plate = source_plate_position
+            if isinstance(source_plate_type, PlateDefinition) or issubclass(
+                source_plate_type, PlateDefinition
+            ):
+                self.source_plate_position = source_plate_position
+                self.source_plate = source_plate_type()
                 self.source_plate_type = source_plate_type
+                return
         raise TypeError(
             "source_plate_position must be a string corresponding to a named point in SoloSoft, and source_plate_type must be a class inherited from PlateDefinition."
         )
 
     def setDestinationPlate(self, destination_plate_position, destination_plate_type):
         if isinstance(destination_plate_position, str):
-            if isinstance(destination_plate_type, PlateDefinition):
-                self.destination_plate = destination_plate_position
+            if isinstance(destination_plate_type, PlateDefinition) or issubclass(
+                destination_plate_type, PlateDefinition
+            ):
+                self.destination_plate_position = destination_plate_position
+                self.destination_plate = destination_plate_type()
                 self.destination_plate_type = destination_plate_type
+                return
         raise TypeError(
             "destination_plate_position must be a string corresponding to a named point in SoloSoft, and destination_plate_type must be a class inherited from PlateDefinition."
         )
@@ -153,13 +161,12 @@ class CherryPicking:
             pipeline=[],
         )
         self.solosofts.append(new_solo)
+        return new_solo
 
-    def addCherryPickDispense(dispense_volumes, current_dispense, dest_tuple):
+    def addCherryPickDispense(self, dispense_volumes, current_dispense, dest_tuple):
         dest_well = dest_tuple[0]
         dispense_value = dest_tuple[1]
-        dispense_volumes = dispense_volumes.setCell(
-            dest_well[0], dest_well[1], dispense_value
-        )
+        dispense_volumes.setCell(dest_well[0], int(dest_well[1:]), dispense_value)
         current_dispense += dispense_value
         return dispense_volumes, current_dispense
 
@@ -197,9 +204,9 @@ class CherryPicking:
                 aspirate_value = total_dispense
             current_dispense = 0
             current_solo.aspirate(
-                position=self.source_plate,
-                dispense_volumes=PlateDefinition().setCell(
-                    source_well[0], source_well[1], aspirate_value
+                position=self.source_plate_position,
+                aspirate_volumes=PlateDefinition().setCell(
+                    source_well[0], int(source_well[1:]), aspirate_value
                 ),
                 **aspirate_options
             )
@@ -208,20 +215,20 @@ class CherryPicking:
             while len(dest_list) > 0:
                 if step_count > 60:
                     current_solo = self.newSolo(plateList)
-                dispense_volumes = self.destination_plate()
+                dispense_volumes = self.destination_plate
                 dispense_volumes, current_dispense = self.addCherryPickDispense(
                     dispense_volumes, current_dispense, dest_list.pop(0)
                 )
                 while (
-                    len(dest_list > 0)
+                    len(dest_list) > 0
                     and dest_list[0][1] + current_dispense < current_aspirate
                 ):
                     dispense_volumes, current_dispense = self.addCherryPickDispense(
                         dispense_volumes, current_dispense, dest_list.pop(0)
                     )
                 current_solo.dispense(
-                    position=self.destination_plate,
-                    dispense_volumes=dispense_volumes,
+                    position=self.destination_plate_position,
+                    dispense_volumes=dispense_volumes.plate,
                     **dispense_options
                 )
                 step_count += 1
@@ -233,9 +240,9 @@ class CherryPicking:
                     else:
                         aspirate_value = total_dispense - current_dispense
                     current_solo.aspirate(
-                        position=self.source_plate,
-                        dispense_volumes=PlateDefinition().setCell(
-                            source_well[0], source_well[1], aspirate_value
+                        position=self.source_plate_position,
+                        aspirate_volumes=PlateDefinition().setCell(
+                            source_well[0], int(source_well[1:]), aspirate_value
                         ),
                         **aspirate_options
                     )

@@ -1,0 +1,2 @@
+echo %DATE% %TIME% >> C:\labautomation\log\send_data.log
+powershell.exe -Command "& 'C:\ProgramData\Miniconda3\shell\condabin\conda-hook.ps1' ; conda activate 'C:\ProgramData\Miniconda3' ; conda activate jupyter ; python 'C:\Users\svcaibio\Dev\liquidhandling\zeromq\hudson01_send_data.py' -d 'C:\labautomation\PeptideData' -e '.xlsx' >> C:\labautomation\log\send_OD590.log 2>&1

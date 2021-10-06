@@ -111,7 +111,7 @@ class TestSoloSoft:
     ]
 
     def test_empty(self):
-        soloSoft = SoloSoft.SoloSoft()
+        soloSoft = SoloSoft()
         assert soloSoft.filename == None
         assert soloSoft.pipeline == []
         assert soloSoft.plateList == [
@@ -126,7 +126,7 @@ class TestSoloSoft:
         ]
 
     def test_filename(self):
-        soloSoft = SoloSoft.SoloSoft("example_filename.hso")
+        soloSoft = SoloSoft("example_filename.hso")
         assert soloSoft.filename == "example_filename.hso"
         soloSoft.setFile("new_filename.hso")
         assert soloSoft.filename == "new_filename.hso"
@@ -136,7 +136,7 @@ class TestSoloSoft:
         assert soloSoft.filename == "once_more.hso"
 
     def test_pipeline(self):
-        soloSoft = SoloSoft.SoloSoft(pipeline=self.example_pipeline)
+        soloSoft = SoloSoft(pipeline=self.example_pipeline)
         assert soloSoft.pipeline == self.example_pipeline
         soloSoft.setPipeline([])
         assert soloSoft.pipeline == []
@@ -150,7 +150,7 @@ class TestSoloSoft:
             soloSoft.setPipeline(3)
 
     def test_plates(self):
-        soloSoft = SoloSoft.SoloSoft(plateList=self.example_platelist)
+        soloSoft = SoloSoft(plateList=self.example_platelist)
         assert soloSoft.plateList == self.example_platelist
         soloSoft.setPlates([])
         assert soloSoft.plateList == []
