@@ -514,8 +514,8 @@ def generate_campaign1_repeatable(
 
     soloSoft.getTip() #! Necessary because new .hso file
     for i in range(6, 0, -1):  # first half of plate
-        if i == 3:  # switch tips half way through to reduce error  
-            soloSoft.getTip()
+        # if i == 3:  # switch tips half way through to reduce error  # tested and ok to remove
+        #     soloSoft.getTip()
         soloSoft.aspirate(
             position="Position6",
             aspirate_volumes=Plate_96_Corning_3635_ClearUVAssay().setColumn(
@@ -541,8 +541,8 @@ def generate_campaign1_repeatable(
 
     soloSoft.getTip()
     for i in range(6, 0, -1):  # second half of plate
-        if i == 3:  # switch tips half way through to reduce error  
-            soloSoft.getTip()
+        # if i == 3:  # switch tips half way through to reduce error  # tested and ok to remove
+        #     soloSoft.getTip()
         soloSoft.aspirate(
             position="Position6",
             aspirate_volumes=Plate_96_Corning_3635_ClearUVAssay().setColumn(
