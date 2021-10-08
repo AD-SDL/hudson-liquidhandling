@@ -4,7 +4,7 @@ from pathlib import Path
 
 # this is needed to find config.py outside of the repo
 home = str(Path.home())
-sys.path.append(home)
+sys.path.insert(0, home)
 import config
 
 

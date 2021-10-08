@@ -1,4 +1,4 @@
-from setuptools import setup
+from setuptools import setup, find_packages
 import os
 
 
@@ -12,13 +12,12 @@ def read(fname):
 
 setup(
     name="liquidhandling",
-    version="0.1.33",
+    version="0.1.36",
     description="A python library developed to allow programmatic control of the Hudson Robotics systems installed in Argonne National Laboratory's Secure BIO Lab. ",
     url="http://github.com/luckierdodge/liquidhandling",
     author="Ryan D. Lewis",
     author_email="ryan.lewis@anl.gov",
     license="MIT",
-    packages=["liquidhandling"],
     keywords="robotics laboratory automation biology",
     long_description=read("README.md"),
     long_description_content_type="text/markdown",
@@ -34,4 +33,6 @@ setup(
     ],
     zip_safe=False,
     python_requires=">=3.8.5",
+    package_dir={"": "src"},
+    packages=find_packages(where="src"),
 )
