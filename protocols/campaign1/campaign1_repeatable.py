@@ -14,6 +14,7 @@ def generate_campaign1_repeatable(
     treatment,
     predicted_IC50=None,
     culture_column=None,
+    culture_dil_column=None,
     media_start_column=None,
     treatment_dil_half=None,
 ):
@@ -27,6 +28,8 @@ def generate_campaign1_repeatable(
     treatment_dil_half = (
         treatment_dil_half if treatment_dil_half else 1
     )  # treatment dilution half default = 1 (first half)
+   
+
 
     # * Program variables
     blowoff_volume = 10
@@ -40,6 +43,9 @@ def generate_campaign1_repeatable(
     culture_plate_column_num = (
         culture_column if culture_column else 1
     )  # default culture column is column 1
+    culture_dil_column = (
+        culture_dil_column if culture_dil_column else culture_plate_column_num
+    ) 
     media_transfer_volume_s1 = 60
     culture_transfer_volume_s1 = 30
     # dilution_media_volume = 198
@@ -115,7 +121,7 @@ def generate_campaign1_repeatable(
     )
 
     # * Fill all columns of empty 96 well plate (corning 3383 or Falcon - ref 353916) with fresh lb media (12 channel in Position 3, media_start_column and media_start_column+1)
-    soloSoft.getTip()  #! NECESSARY since new .hso file
+    soloSoft.getTip()  
     j = 1
     for i in range(1, 7):  # first half plate = media from column 1
         soloSoft.aspirate(
@@ -170,7 +176,7 @@ def generate_campaign1_repeatable(
 
     for i in range(
         2
-    ):  # # from second media column -> cell dilution plate, column = same as culture column
+    ):  # from second media column -> cell dilution plate
         soloSoft.aspirate(
             position="Position3",
             aspirate_volumes=Reservoir_12col_Agilent_201256_100_BATSgroup().setColumn(
@@ -204,7 +210,7 @@ def generate_campaign1_repeatable(
         soloSoft.dispense(
             position="Position7",
             dispense_volumes=Reservoir_12col_Agilent_201256_100_BATSgroup().setColumn(
-                culture_plate_column_num, dilution_culture_volume
+                culture_dil_column, dilution_culture_volume
             ),
             dispense_shift=[0, 0, reservoir_z_shift],
             mix_at_finish=True,
@@ -219,7 +225,7 @@ def generate_campaign1_repeatable(
     soloSoft.aspirate(
         position="Position7",
         aspirate_volumes=Reservoir_12col_Agilent_201256_100_BATSgroup().setColumn(
-            culture_plate_column_num, dilution_culture_volume
+            culture_dil_column, dilution_culture_volume
         ),
         aspirate_shift=[0, 0, reservoir_z_shift],
         # 100% syringe speed
@@ -227,7 +233,7 @@ def generate_campaign1_repeatable(
     soloSoft.dispense(
         position="Position7",
         dispense_volumes=Reservoir_12col_Agilent_201256_100_BATSgroup().setColumn(
-            culture_plate_column_num, dilution_culture_volume
+            culture_dil_column, dilution_culture_volume
         ),
         dispense_shift=[0, 0, reservoir_z_shift],
         mix_at_finish=True,
@@ -239,12 +245,12 @@ def generate_campaign1_repeatable(
     )
 
     # * Add bacteria from 10 fold diluted culture plate (Position 7, column = culture_plate_column_num) to growth plate with fresh media (both halves)
-    soloSoft.getTip()  #! NECESSARY (can tell from testing - 2)
+    soloSoft.getTip()  
     for i in range(1, 7):  # trying a different method of cell dispensing (09/07/21)
         soloSoft.aspirate(  # well in first half
             position="Position7",
             aspirate_volumes=Reservoir_12col_Agilent_201256_100_BATSgroup().setColumn(
-                culture_plate_column_num, culture_transfer_volume_s1
+                culture_dil_column, culture_transfer_volume_s1
             ),
             aspirate_shift=[
                 0,
@@ -273,7 +279,7 @@ def generate_campaign1_repeatable(
         soloSoft.aspirate(  # well in second half
             position="Position7",
             aspirate_volumes=Reservoir_12col_Agilent_201256_100_BATSgroup().setColumn(
-                culture_plate_column_num, culture_transfer_volume_s1
+                culture_dil_column, culture_transfer_volume_s1
             ),
             aspirate_shift=[
                 0,
@@ -720,14 +726,23 @@ def main(args):
         required=False,
         type=int,
     )
+    parser.add_argument(
+        "-cdc", 
+        "--culture_dilution_column", 
+        help="column of 10-fold culture dilution plate to use, must be an integer (ex. 1 means column 1)",
+        required=False, 
+        type = int,
+    )
     args = vars(parser.parse_args())
     print(
         "treatment = {}, IC50 = {}, culture_column = {}".format(
             args["treatment"],
             args["predicted_IC50"],
             args["culture_column"],
+            args["culture_dilution_column"],
             args["media_start_column"],
             args["treatment_dilution_half"],
+            
         )
     )
 
@@ -736,6 +751,7 @@ def main(args):
         args["treatment"],
         args["predicted_IC50"],
         args["culture_column"],
+        args["culture_dilution_column"],
         args["media_start_column"],
         args["treatment_dilution_half"],
     )
