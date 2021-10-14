@@ -29,8 +29,6 @@ def generate_campaign1_repeatable(
         treatment_dil_half if treatment_dil_half else 1
     )  # treatment dilution half default = 1 (first half)
    
-
-
     # * Program variables
     blowoff_volume = 10
     num_mixes = 3
@@ -46,6 +44,8 @@ def generate_campaign1_repeatable(
     culture_dil_column = (
         culture_dil_column if culture_dil_column else culture_plate_column_num
     ) 
+    print(culture_dil_column)
+    
     media_transfer_volume_s1 = 60
     culture_transfer_volume_s1 = 30
     # dilution_media_volume = 198
