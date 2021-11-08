@@ -615,28 +615,28 @@ def generate_campaign1_repeatable(
     )
 
     # DON'T DO THIS IFINCUBATING ONE PLATE IN HIDEX
-    #replace the lid
-    #softLinx.plateCraneReplaceLid(["SoftLinx.PlateCrane.LidNest2"], ["SoftLinx.Solo.Position4"])
+    # replace the lid
+    softLinx.plateCraneReplaceLid(["SoftLinx.PlateCrane.LidNest2"], ["SoftLinx.Solo.Position4"])
 
     # move growth plate to Temp deck (This is where the plate would be moved to the incubator)
-    # softLinx.plateCraneMovePlate(
-    #     ["SoftLinx.Solo.Position4"], ["SoftLinx.PlateCrane.LidNest1"]
-    # )  # no need to open hidex
+    softLinx.plateCraneMovePlate(
+        ["SoftLinx.Solo.Position4"], ["SoftLinx.PlateCrane.LidNest1"]
+    )  # no need to open hidex
 
     # REMOVED FOR TESTS 10/14/21
-    softLinx.plateCraneMovePlate(
-        ["SoftLinx.Solo.Position4"], ["SoftLinx.Hidex.Nest"]
-    )  # no need to open hidex
-    softLinx.hidexClose()
+    # softLinx.plateCraneMovePlate(
+    #     ["SoftLinx.Solo.Position4"], ["SoftLinx.Hidex.Nest"]
+    # )  # no need to open hidex
+    # softLinx.hidexClose()
     softLinx.plateCraneMoveCrane("SoftLinx.PlateCrane.Safe")
 
     # # Run Hidex Protocol (this will close the Hidex)
-    softLinx.hidexRun("Campaign1")  # full 16 hour Hidex incubation
+    # softLinx.hidexRun("Campaign1")  # full 16 hour Hidex incubation
 
     # # Transfer Hidex data from C:\labautomation\data to compute cell (lambda6)
-    softLinx.runProgram(
-        "C:\\Users\\svcaibio\\Dev\\liquidhandling\\zeromq\\utils\\send_data.bat"
-    )
+    # softLinx.runProgram(
+    #     "C:\\Users\\svcaibio\\Dev\\liquidhandling\\zeromq\\utils\\send_data.bat"
+    # )
 
     # save protocol to write instructions to .slvp file, create .txt manifest, and .ahk remote start file
     softLinx.saveProtocol()
