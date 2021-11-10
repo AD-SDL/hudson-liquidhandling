@@ -438,7 +438,7 @@ def generate_campaign1_repeatable(
     ):  # don't serial dilute into the last column (control column)
         # if i == 4:  # switch tips half way through to reduce error   #TODO: Test if you need this
         #     soloSoft.getTip()
-        for i in range(2): 
+        for j in range(2): 
             soloSoft.aspirate(
                 position="Position6",
                 aspirate_volumes=Reservoir_12col_Agilent_201256_100_BATSgroup().setColumn(
