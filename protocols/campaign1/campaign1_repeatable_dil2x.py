@@ -134,7 +134,7 @@ def generate_campaign1_repeatable(
             "DeepBlock.96.VWR-75870-792.sterile",
             "DeepBlock.96.VWR-75870-792.sterile",
             "DeepBlock.96.VWR-75870-792.sterile",
-            "Plate.96.Corning-3635.ClearUVAssay",
+            "DeepBlock.96.VWR-75870-792.sterile",
         ],
     )
 
@@ -341,7 +341,7 @@ def generate_campaign1_repeatable(
             "DeepBlock.96.VWR-75870-792.sterile",
             "DeepBlock.96.VWR-75870-792.sterile",
             "DeepBlock.96.VWR-75870-792.sterile",
-            "Plate.96.Corning-3635.ClearUVAssay",
+            "DeepBlock.96.VWR-75870-792.sterile",
         ],
     )
 
@@ -409,15 +409,15 @@ def generate_campaign1_repeatable(
     for i in range(2):
         soloSoft.aspirate(
             position=treatment_plate_loc,
-            aspirate_volumes=Plate_96_Corning_3635_ClearUVAssay().setColumn(
+            aspirate_volumes=Reservoir_12col_Agilent_201256_100_BATSgroup().setColumn(
                 treatment_column, serial_antibiotic_transfer_volume_s2
             ),
             pre_aspirate=blowoff_volume,
             mix_at_start=True,
             mix_cycles=serial_source_num_mixes_s2,
             mix_volume=serial_source_mixing_volume_s2,
-            aspirate_shift=[0, 0, flat_bottom_z_shift],
-            dispense_height=flat_bottom_z_shift,
+            aspirate_shift=[0, 0, reservoir_z_shift],
+            dispense_height=reservoir_z_shift,
         )
         soloSoft.dispense(
             position="Position6",
@@ -483,7 +483,7 @@ def generate_campaign1_repeatable(
             "DeepBlock.96.VWR-75870-792.sterile",
             "DeepBlock.96.VWR-75870-792.sterile",
             "DeepBlock.96.VWR-75870-792.sterile",
-            "Plate.96.Corning-3635.ClearUVAssay",
+            "DeepBlock.96.VWR-75870-792.sterile",
         ],
     )
 
