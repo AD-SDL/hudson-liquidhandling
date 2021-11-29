@@ -26,22 +26,25 @@ class SoftLinx:
             "Hidex": False,
             "RapidPick": False,
             "TorreyPinesRIC20": False,
+            "Liconic": False,
         }
         self.plugin_reference = {
             "PlateCrane": 0,
             "Plates": 1,
             "Solo": 2,
             "Hidex": 3,
-            # "RapidPick": 4,
-            # "TorreyPinesRIC20": 5,
+            "Liconic": 4,
+            # "RapidPick": 5,
+            # "TorreyPinesRIC20": 6,
         }
         self.plugin_address = {
-            "PlateCrane": 4,
-            "Plates": 5,
-            "Solo": 6,
-            "Hidex": 7,
-            # "RapidPick": 8,
-            # "TorreyPinesRIC20": 9,
+            "PlateCrane": 5,
+            "Plates": 6,
+            "Solo": 7,
+            "Hidex": 8,
+            "Liconic": 9,
+            # "RapidPick": 10,
+            # "TorreyPinesRIC20": 11,
         }
 
         # *Set Protocol Name
@@ -582,6 +585,154 @@ class SoftLinx:
             else:
                 self.protocolSteps.append(step)
 
+    # * Liconic Steps * #
+    def liconicLoadIncubator(
+        self, 
+        useIncubationTime=[0,0,0,0],
+        holdWithoutIncubationTime=False,
+        loadID=None,
+        columnType=22,
+        alwaysLoadToStack=0,
+        isActive=True, 
+        index=None,
+        inplace=True,
+    ):
+        
+        for each in useIncubationTime:
+            if not isinstance(each, int):
+                raise TypeError(
+                    "useIncubationTime must be a list of 4 integers representing number of days, hours, minutes, and seconds respectively"
+                )
+        if holdWithoutIncubationTime:
+            useIncubationTime=[-1,-1,-1,-1]
+        useIncubationTime = [str(x) for x in useIncubationTime]  # convert to strings
+        formatIncubation = f"{useIncubationTime[0]}.{useIncubationTime[1]}:{useIncubationTime[2]}:{useIncubationTime[3]}"
+        incubationString = "HoldIndefinitely" if holdWithoutIncubationTime else formatIncubation #Format string for description
+        loadID = str(loadID) if loadID else " "
+        if not isinstance(columnType, int): 
+            raise TypeError(
+                "columnType must be an integer corresponding to the total number of plates that can be held by the incubator stack"
+            )
+        if not alwaysLoadToStack in [0,1,2,3]:
+            raise ValueError(
+                "alwaysLoadToStack must be an integer between 0 and 3 inclusive"
+            )
+        
+        step = {
+            "type": "LoadIncubator",
+            "Command": "Load Incubator",
+            "Description": "Incubate Time:	" + str(incubationString)
+            + "Load ID:	" + str(loadID) + "&#xD;&#xA;Stack Size:	" 
+            + str(columnType) + "&#xD;&#xA;Use Stack:	"
+            + str(alwaysLoadToStack) + "&#xD;&#xA;",
+            "SLXId": "179880b3-6e33-462d-a586-6e1263b21835",
+            "ToolTip": "Incubate Time:	" + str(incubationString)
+            + "Load ID:	" + str(loadID) + "&#xD;&#xA;Stack Size:	" 
+            + str(columnType) + "&#xD;&#xA;Use Stack:	"
+            + str(alwaysLoadToStack) + "&#xD;&#xA;",
+            "isActive": str(isActive),
+            "system": "Liconic",    
+            "args": [
+                ["x:String", ",".join(useIncubationTime)],
+                ["x:String",loadID],
+                ["x:String",str(columnType)],
+                ["x:String", "0"],
+                ["x:String", str(alwaysLoadToStack)],
+            ],
+        }
+        if inplace:
+            if index != None:
+                self.protocolSteps.insert(index, step)
+            else:
+                self.protocolSteps.append(step)
+
+    def liconicUnloadIncubator(
+        self,
+        loadID=None,
+        clearAllPlates=True,  # what does this do? 
+        isActive=True, 
+        index=None,
+        inplace=True,
+    ): 
+        loadID = str(loadID) if loadID else " "
+        clearPlatesInt = 1 if clearAllPlates else 0
+
+        step = {
+            "type": "UnloadIncubator",
+            "Command": "Unload Incubator",
+            "Description": "Unload ID:	" + str(loadID) + "&#xD;&#xA;",
+            "SLXId": "3f69e340-7e5d-442b-97a4-d3a42eb4ad6f",
+            "ToolTip": "Unload ID:	" + str(loadID) + "&#xD;&#xA;",
+            "isActive": str(isActive),
+            "system": "Liconic",    
+            "args": [
+                ["x:String", loadID],
+                ["x:String",str(clearPlatesInt)],
+                ["x:String","0"],
+            ],
+        }
+        if inplace:
+            if index != None:
+                self.protocolSteps.insert(index, step)
+            else:
+                self.protocolSteps.append(step)
+
+    def liconicBeginShake(
+        self,
+        shaker="SHAKER1",
+        shaker1Speed=0,
+        shaker2Speed=0,
+        isActive=True, 
+        index=None,
+        inplace=True,
+    ): 
+        
+        if not isinstance(shaker, str): # check shaker
+            raise TypeError(
+                "shaker must be a string (SHAKER1, SHAKER2, or DUAL)"
+            )
+        shaker = shaker.upper()
+        if not shaker in ["SHAKER1", "SHAKER2", "DUAL"]: 
+            raise ValueError(
+                "shaker must be a string (SHAKER1, SHAKER2, or DUAL)"
+            )
+        
+        if not isinstance(shaker1Speed, int) or not isinstance(shaker2Speed, int): # check shaker speeds
+            raise TypeError(
+                "shaker1Speed and shaker2Speed must be integers between 2 and 50 inclusive"
+            )
+        if not (2 <= shaker1Speed <= 50) or (2 <= shaker2Speed <= 50): 
+            raise ValueError(
+                "shaker1Speed and shaker2Speed must be integers between 2 and 50 inclusive"
+            )
+
+        shakerSide = "Left" if shaker == "SHAKER1" else "Right"
+        if shaker == "DUAL": 
+            stepDescription = f"Start Shaking Both Shakers&#xD;&#xA;Speed: {shaker2Speed}&#xD;&#xA;Left Speed: {shaker2Speed}&#xD;&#xA;Right Speed: {shaker2Speed}"
+        else: 
+            speed = shaker1Speed if shaker == "SHAKER1" else shaker2Speed
+            stepDescription = f"Start Shaking {shakerSide} Shaker&#xD;&#xA;Speed: {speed}"
+            
+        step = {
+            "type": "BeginShake",
+            "Command": "Begin Shake",
+            "Description": stepDescription,
+            "SLXId": "40479683-228a-49a8-ae56-57f84bffb4c9",
+            "ToolTip": stepDescription,
+            "isActive": str(isActive),
+            "system": "Liconic",    
+            "args": [
+                ["x:String", shaker],
+                ["x:String",str(shaker1Speed)],
+                ["x:String",str(shaker2Speed)],
+            ],
+        }
+        if inplace:
+            if index != None:
+                self.protocolSteps.insert(index, step)
+            else:
+                self.protocolSteps.append(step)
+
     # * Output * #
     def saveProtocol(self, filename=None, generate_ahk=True):
         if filename == None:
@@ -660,6 +811,7 @@ class SoftLinx:
         self.generatePluginInterface(scg_dict, "Plates")
         self.generatePluginInterface(scg_dict, "Solo")
         self.generatePluginInterface(scg_dict, "Hidex")
+        self.generatePluginInterface(scg_dict, "Liconic")
         # self.generatePluginInterface(interfaces, "PlateCrane")
         # self.generatePluginInterface(interfaces, "Plates")
         # self.generatePluginInterface(interfaces, "RapidPick")
@@ -684,6 +836,7 @@ class SoftLinx:
         # self.generatePluginVariables(variableList, "RapidPick")
         self.generatePluginVariables(variableList, "Hidex")
         self.generatePluginVariables(variableList, "Solo")
+        self.generatePluginVariables(variableList, "Liconic")
         # self.generatePluginVariables(variableList, "TorreyPinesRIC20")
 
         # *Add each variable
