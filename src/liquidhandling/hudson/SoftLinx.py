@@ -679,39 +679,33 @@ class SoftLinx:
 
     def liconicBeginShake(
         self,
-        shaker="SHAKER1",
         shaker1Speed=0,
         shaker2Speed=0,
         isActive=True, 
         index=None,
         inplace=True,
     ): 
-        
-        if not isinstance(shaker, str): # check shaker
+        if not isinstance(shaker1Speed, int) or not isinstance(shaker2Speed, int): # validate shaker speeds 
             raise TypeError(
-                "shaker must be a string (SHAKER1, SHAKER2, or DUAL)"
+                "shaker1Speed and shaker2Speed must be integers between 2 and 50 inclusive or 0"
             )
-        shaker = shaker.upper()
-        if not shaker in ["SHAKER1", "SHAKER2", "DUAL"]: 
+        if not ((2 <= shaker1Speed <= 50) or shaker1Speed == 0) or not ((2 <= shaker2Speed <= 50) or shaker2Speed == 0) :
             raise ValueError(
-                "shaker must be a string (SHAKER1, SHAKER2, or DUAL)"
-            )
-        
-        if not isinstance(shaker1Speed, int) or not isinstance(shaker2Speed, int): # check shaker speeds
-            raise TypeError(
-                "shaker1Speed and shaker2Speed must be integers between 2 and 50 inclusive"
-            )
-        if not (2 <= shaker1Speed <= 50) or (2 <= shaker2Speed <= 50): 
-            raise ValueError(
-                "shaker1Speed and shaker2Speed must be integers between 2 and 50 inclusive"
+                "shaker1speed and shaker2speed must be integers between 2 and 50 inclusive or 0"
             )
 
-        shakerSide = "Left" if shaker == "SHAKER1" else "Right"
-        if shaker == "DUAL": 
-            stepDescription = f"Start Shaking Both Shakers&#xD;&#xA;Speed: {shaker2Speed}&#xD;&#xA;Left Speed: {shaker2Speed}&#xD;&#xA;Right Speed: {shaker2Speed}"
+        if shaker1Speed > 0 and shaker2Speed > 0:  # Both shakers
+            shaker = "DUAL"
+            stepDescription = f"Start Shaking Both Shakers&#xD;&#xA;Left Speed: {shaker1Speed}&#xD;&#xA;Right Speed: {shaker2Speed}"
         else: 
-            speed = shaker1Speed if shaker == "SHAKER1" else shaker2Speed
-            stepDescription = f"Start Shaking {shakerSide} Shaker&#xD;&#xA;Speed: {speed}"
+            if shaker1Speed > 0 and shaker2Speed == 0: # shaker 1 only
+                shaker = "SHAKER1"
+                shakerSide = "Left"
+                stepDescription = f"Start Shaking {shakerSide} Shaker&#xD;&#xA;Speed: {shaker1Speed}"
+            if shaker2Speed > 0 and shaker1Speed == 0: # shaker 2 only
+                shaker = "SHAKER2"
+                shakerSide = "Right"
+                stepDescription = f"Start Shaking {shakerSide} Shaker&#xD;&#xA;Speed: {shaker2Speed}"
             
         step = {
             "type": "BeginShake",
@@ -732,6 +726,113 @@ class SoftLinx:
                 self.protocolSteps.insert(index, step)
             else:
                 self.protocolSteps.append(step)
+
+    def liconicEndShake(
+        self, 
+        shaker="SHAKER1",
+        isActive=True, 
+        index=None,
+        inplace=True,
+    ):   
+        if not isinstance(shaker, str): 
+            raise TypeError(
+                "shaker must be a string (SHAKER1, SHAKER2, or BOTH)"
+            )
+        shaker = shaker.upper()
+        if not shaker in ["SHAKER1", "SHAKER2", "BOTH"]:
+            raise ValueError(
+                "shaker must be a string (SHAKER1, SHAKER2, or BOTH)"
+            )
+        shakerSide = "Left" if shaker == "SHAKER1" else "Right"
+        if shaker == "BOTH": 
+            shaker = "DUAL"
+            stepDescription = f"Stop Shaking Both Shakers"
+        else: 
+            stepDescription = f"Stop Shaking {shakerSide} Shaker"
+        
+        step = {
+            "type": "EndShake",
+            "Command": "End Shake",
+            "Description": stepDescription,
+            "SLXId": "08da67fe-23e3-406e-a425-3ceeda6bf9a9",
+            "ToolTip": stepDescription,
+            "isActive": str(isActive),
+            "system": "Liconic",    
+            "args": [
+                ["x:String", shaker],
+            ],
+        }
+        if inplace:
+            if index != None:
+                self.protocolSteps.insert(index, step)
+            else:
+                self.protocolSteps.append(step)
+
+    def liconicShake(
+        self, 
+        shaker1Speed=0,
+        shaker2Speed=0,
+        shakeTime=[0,0,0,0], 
+        isActive=True, 
+        index=None,
+        inplace=True,
+    ): 
+        if not isinstance(shaker1Speed, int) or not isinstance(shaker2Speed, int): # validate shaker speeds 
+            raise TypeError(
+                "shaker1Speed and shaker2Speed must be integers between 2 and 50 inclusive or 0"
+            )
+        if not ((2 <= shaker1Speed <= 50) or shaker1Speed == 0) or not ((2 <= shaker2Speed <= 50) or shaker2Speed == 0) :
+            raise ValueError(
+                "shaker1speed and shaker2speed must be integers between 2 and 50 inclusive or 0"
+            )
+        if shakeTime == [0,0,0,0]: # validate shaker time
+            raise ValueError(
+                "shakeTime must be greater than 0. Use liconicBeginShake to set an indeterminate time"
+            )
+        for num in shakeTime:
+            if not isinstance(num, int): 
+                raise TypeError(
+                    "shakeTime must be a list of 4 integers representing number of days, hours, minutes, and seconds respectively"
+                )
+        days, hours, minutes, seconds = [str(x) for x in shakeTime]
+
+        if shaker1Speed > 0 and shaker2Speed > 0:  # Both shakers
+            shaker = "DUAL"
+            stepDescription = f"Shake Both Shakers&#xD;&#xA;Left Speed: {shaker1Speed}&#xD;&#xA;Right Speed: {shaker2Speed}"
+        else: 
+            if shaker1Speed > 0 and shaker2Speed == 0: # shaker 1 only
+                shaker = "SHAKER1"
+                shakerSide = "Left"
+                stepDescription = f"Shake {shakerSide} Shaker&#xD;&#xA;Speed: {shaker1Speed}"
+            if shaker2Speed > 0 and shaker1Speed == 0: # shaker 2 only
+                shaker = "SHAKER2"
+                shakerSide = "Right"
+                stepDescription = f"Shake {shakerSide} Shaker&#xD;&#xA;Speed: {shaker2Speed}"
+        stepDescription += f"&#xD;&#xA;Seconds: {seconds}&#xD;&#xA;Minutes: {minutes}&#xD;&#xA;Hours: {hours}&#xD;&#xA;Days: {days}"
+        
+        step = {
+            "type": "Shake",
+            "Command": "Shake",
+            "Description": stepDescription,
+            "SLXId": "395c55ca-b81b-40bc-9203-f4dd65c9094c",
+            "ToolTip": stepDescription,
+            "isActive": str(isActive),
+            "system": "Liconic",    
+            "args": [
+                ["x:String", shaker],
+                ["x:String", str(shaker1Speed)],
+                ["x:String", str(shaker2Speed)],
+                ["x:String", seconds],
+                ["x:String", minutes],
+                ["x:String", hours],
+                ["x:String", days],
+            ],
+        }
+        if inplace:
+                if index != None:
+                    self.protocolSteps.insert(index, step)
+                else:
+                    self.protocolSteps.append(step)
 
     # * Output * #
     def saveProtocol(self, filename=None, generate_ahk=True):
