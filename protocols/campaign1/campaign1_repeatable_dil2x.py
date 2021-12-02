@@ -624,7 +624,7 @@ def generate_campaign1_repeatable(
 
     # Load plate into incubator and begin timed shake
     softLinx.liconicLoadIncubator(loadID=1, holdWithoutIncubationTime=True)  # shake for 16 hours ([days, hours, minutes, seconds])
-    softLinx.liconicShake(shaker1Speed=30, shakeTime=[0,15,30,0])
+    softLinx.liconicShake(shaker1Speed=30, shakeTime=[0,15,0,0])
 
     # Preheat Hidex to take reading (could also do this earlier...)
     softLinx.hidexRun("SetTempWait37")  # waits for Hidex to heat to 37
