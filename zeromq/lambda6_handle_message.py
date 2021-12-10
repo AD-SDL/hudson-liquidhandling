@@ -65,10 +65,17 @@ def lambda6_handle_message(decoded_message):
             for key, value in json_decoded.items():
                 file_name = key
                 data = value["data"]
+                plate_id = value["plate_id"]
                 with open(
                     os.path.join(data_dir_path, os.path.basename(file_name)), "w+"
                 ) as data_file:
                     data_file.writelines(data)
+
+                # write info file inside the same folder
+                with open(
+                    os.path.join(data_dir_path, "info.txt"), "w+"
+                ) as info_file:
+                    info_file.write(f"Plate ID: {plate_id}")
 
     print(f"calling qc on {file_name}")
     _run_qc(os.path.join(data_dir_path, os.path.basename(file_name)))

@@ -610,7 +610,8 @@ def generate_campaign1_repeatable(
 
     # Transfer Hidex data (timepoint 0 data)
     softLinx.runProgram(
-        "C:\\Users\\svcaibio\\Dev\\liquidhandling\\zeromq\\utils\\send_data.bat"
+        "C:\\Users\\svcaibio\\Dev\\liquidhandling\\zeromq\\utils\\send_data.bat",
+        arguments=1
     )
 
     # Transfer plate to Liconic.Nest and replace lid
@@ -639,7 +640,8 @@ def generate_campaign1_repeatable(
 
     # transfer data to lambda6
     softLinx.runProgram(
-        "C:\\Users\\svcaibio\\Dev\\liquidhandling\\zeromq\\utils\\send_data.bat"
+        "C:\\Users\\svcaibio\\Dev\\liquidhandling\\zeromq\\utils\\send_data.bat",
+        arguments=1
     )
 
     # Move plate from Hidex to LidNest1 and replace lid

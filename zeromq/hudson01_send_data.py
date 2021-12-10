@@ -14,8 +14,10 @@ import sys
 import datetime
 
 
-def hudson01_send_data(directory, lookback_time=None, extension=""):
+def hudson01_send_data(directory, lookback_time=None, extension="", plate_id=""):
     """Sends most recent file in data folder to compute cell (lambda6)"""
+
+    plate_id = "" if (isinstance(plate_id, int) and plate_id == -1) else plate_id
 
     date = datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%S.%f")
     print(date)
@@ -50,10 +52,10 @@ def hudson01_send_data(directory, lookback_time=None, extension=""):
                 os.path.splitext(os.path.basename(f))[1] == ".xlsx"
             ):  # if excel file, parse and covert to csv
                 csv_filepath = excel_to_csv(f)
-                tmp = generateFileManifest(csv_filepath, "data")
+                tmp = generateFileManifest(csv_filepath, "data", plate_id)
                 files_to_archive.extend([f, csv_filepath])
             else:
-                tmp = generateFileManifest(f, "data")
+                tmp = generateFileManifest(f, "data", plate_id)
                 files_to_archive.append(f)
 
             for key, value in tmp.items():
@@ -86,12 +88,15 @@ def main(args):
     parser.add_argument(
         "-e", "--ext", help="File extension to check for", required=False, type=str
     )
+    parser.add_argument(
+        "-id", "--plate_id", help="Plate ID associated with the data", required=False
+    )
     args = vars(parser.parse_args())
     # print(
     #     "time = {}, dir = {}, ext = {}".format(args["time"], args["dir"], args["ext"])
     # )
 
-    hudson01_send_data(args["dir"], args["time"], args["ext"])
+    hudson01_send_data(args["dir"], args["time"], args["ext"], args["plate_id"])
 
 
 if __name__ == "__main__":
