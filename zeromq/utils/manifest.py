@@ -10,7 +10,7 @@ import pathlib
 import json
 
 
-def generateFileManifest(filename, purpose, plate_id, manifest_filename=None):
+def generateFileManifest(filename, purpose, plate_id="", manifest_filename=None):
 
     string = ""
     data = {}
