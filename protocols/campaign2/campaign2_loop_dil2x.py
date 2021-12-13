@@ -10,7 +10,7 @@ from liquidhandling import Reservoir_12col_Agilent_201256_100_BATSgroup
 from liquidhandling import Plate_96_Corning_3635_ClearUVAssay
 
 """
-Campaign 1 Protocol - 2x dilutions 
+Campaign 2 Protocol - 2x dilutions 
 (7 strains x 1 treatment x 5 dilutions x 2 replicates)
 
 created 11/05/21
@@ -26,15 +26,18 @@ Pos 7 = 96 deep well culture dilution plate (plate is empty at start)
 Pos 8 = 96 well flat bottom treatment plate (one treatment per column, min 280uL treatment per well)
 
 Stack 5 - 96 well clear, flat-bottom plate w/ lid.  (will be placed on deck pos 4 at start of protocol)
+
+Example command line usage: (creating 3 plates)
+python campaign2_loop_dil2x.py -tr col1 col2 col3 -cc 1 2 3 -mc 1 3 5 -tdh 1 2 1 -cdc 1 2 3
 """
 
 def generate_campaign1_repeatable(
-    treatment, # string list
+    treatment, # string list of treatment names
     predicted_IC50=None,  # TODO: handle predicted IC50
-    culture_column=None,  # int list
-    culture_dil_column=None, # int list 
-    media_start_column=None,  # int list
-    treatment_dil_half=None,  # int list
+    culture_column=None,  # int list of cell culture columns 
+    culture_dil_column=None, # int list of dilution columns for 1:10 culture dilutions
+    media_start_column=None,  # int list of columns to draw media from (requires 2 columns, 1 means columns 1 and 2)
+    treatment_dil_half=None,  # int list of which half of treatment dilution plate to use
 ):
 
     return_val = "PASS"
@@ -648,14 +651,13 @@ def generate_campaign1_repeatable(
         softLinx.plateCraneReplaceLid(["SoftLinx.PlateCrane.LidNest2"], ["SoftLinx.Liconic.Nest"])
         softLinx.plateCraneMoveCrane("SoftLinx.PlateCrane.Safe")
 
-        # set Hidex Temperature back to 20 deg C
-        softLinx.hidexRun("SetTemp20")
-
         # Load plate into incubator and begin timed shake
         softLinx.liconicLoadIncubator(loadID=k, holdWithoutIncubationTime=True)  # shake for 16 hours ([days, hours, minutes, seconds])
 
-
-    softLinx.liconicShake(shaker1Speed=30, shakeTime=[0,15,30,0])
+    # set Hidex Temperature back to 20 deg C
+    softLinx.hidexRun("SetTemp20")
+    
+    softLinx.liconicShake(shaker1Speed=30, shakeTime=[0,15,30,0]) 
 
     # Preheat Hidex to take reading (could also do this earlier...)
     softLinx.hidexRun("SetTempWait37")  # waits for Hidex to heat to 37
@@ -678,7 +680,7 @@ def generate_campaign1_repeatable(
         #softLinx.plateCraneMovePlate(["SoftLinx.Hidex.Nest"], ["SoftLinx.PlateCrane.LidNest1AfterHidex"])
         softLinx.plateCraneMovePlate(["SoftLinx.Hidex.Nest"], ["SoftLinx.PlateCrane.Stack1"])
         softLinx.hidexClose()
-        softLinx.plateCraneReplaceLid(["SoftLinx.PlateCrane.LidNest2"], ["SoftLinx.PlateCrane.LidNest1"])  # TODO: place completed plate somewhere else
+        #softLinx.plateCraneReplaceLid(["SoftLinx.PlateCrane.LidNest2"], ["SoftLinx.PlateCrane.LidNest1"])  
         softLinx.plateCraneReplaceLid(["SoftLinx.PlateCrane.LidNest2"], ["SoftLinx.PlateCrane.Stack1"])
         softLinx.plateCraneMoveCrane("SoftLinx.PlateCrane.Safe")
 
@@ -740,44 +742,50 @@ def main(args):
     parser.add_argument(
         "-tr",
         "--treatment",
+        nargs="*",
         help="treatment to apply to cells",
         required=True,
-        # type=str,
+        type=str,
     )
     parser.add_argument(
         "-IC50",
         "--predicted_IC50",
         help="predicted_IC50, must be a float (do not include units)",
         required=False,
-        # type=float,
+        type=float,
+        nargs="*",
     )
     parser.add_argument(
         "-cc",
         "--culture_column",
         help="culture plate column to use, must be an integer (ex. 3 means column 3)",
         required=False,
-        # type=int,
+        type=int,
+        nargs="*",
     )
     parser.add_argument(
         "-mc",
         "--media_start_column",
         help="media plate column to start with, must be an integer (ex. 1) Will use column specified(i) and column(i+1). (ex. -mc 1 = first and second column)",
         required=False,
-        # type=int,
+        type=int,
+        nargs="*",
     )
     parser.add_argument(
         "-tdh",
         "--treatment_dilution_half",
         help="which half of the treatment serial dilution plate to use, must be an integer (1 or 2). 1 = columns 1-6, 2 = columns 7-12",
         required=False,
-        # type=int,
+        type=int,
+        nargs="*",
     )
     parser.add_argument(
         "-cdc", 
         "--culture_dilution_column", 
         help="column of 10-fold culture dilution plate to use, must be an integer (ex. 1 means column 1)",
         required=False, 
-        # type = int,
+        type = int,
+        nargs="*",
     )
     args = vars(parser.parse_args())
     print(
