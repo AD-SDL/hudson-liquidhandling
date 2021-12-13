@@ -571,9 +571,6 @@ def generate_campaign1_repeatable(
         soloSoft.shuckTip()
         soloSoft.savePipeline()
 
-
-    # LOOPING COMPLETE UP UNTIL THIS POINT
-
     """
     ADD ALL STEPS TO SOFTLINX PROTOCOL AND SEND TO HUDSON01 -----------------------------------------------------------------------
     """
@@ -588,6 +585,7 @@ def generate_campaign1_repeatable(
     # preheat Hidex to 37 for timepoint 0 reading
     softLinx.hidexRun("SetTemp37")
 
+    #* LOOP to create plates, take t0 reading, and transfer to incubator
     for k in range(len(treatment)): 
         # restock growth assay plate before run
         softLinx.plateCraneMovePlate(
@@ -744,42 +742,42 @@ def main(args):
         "--treatment",
         help="treatment to apply to cells",
         required=True,
-        type=str,
+        # type=str,
     )
     parser.add_argument(
         "-IC50",
         "--predicted_IC50",
         help="predicted_IC50, must be a float (do not include units)",
         required=False,
-        type=float,
+        # type=float,
     )
     parser.add_argument(
         "-cc",
         "--culture_column",
         help="culture plate column to use, must be an integer (ex. 3 means column 3)",
         required=False,
-        type=int,
+        # type=int,
     )
     parser.add_argument(
         "-mc",
         "--media_start_column",
         help="media plate column to start with, must be an integer (ex. 1) Will use column specified(i) and column(i+1). (ex. -mc 1 = first and second column)",
         required=False,
-        type=int,
+        # type=int,
     )
     parser.add_argument(
         "-tdh",
         "--treatment_dilution_half",
         help="which half of the treatment serial dilution plate to use, must be an integer (1 or 2). 1 = columns 1-6, 2 = columns 7-12",
         required=False,
-        type=int,
+        # type=int,
     )
     parser.add_argument(
         "-cdc", 
         "--culture_dilution_column", 
         help="column of 10-fold culture dilution plate to use, must be an integer (ex. 1 means column 1)",
         required=False, 
-        type = int,
+        # type = int,
     )
     args = vars(parser.parse_args())
     print(
