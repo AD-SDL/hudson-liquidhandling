@@ -75,7 +75,7 @@ def lambda6_handle_message(decoded_message):
                 with open(
                     os.path.join(data_dir_path, "info.txt"), "w+"
                 ) as info_file:
-                    info_file.write(f"Plate ID: {plate_id}")
+                    info_file.write(f"Plate ID: {plate_id}\n")
 
     print(f"calling qc on {file_name}")
     _run_qc(os.path.join(data_dir_path, os.path.basename(file_name)))
