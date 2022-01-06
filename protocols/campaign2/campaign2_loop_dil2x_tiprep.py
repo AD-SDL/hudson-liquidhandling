@@ -642,7 +642,7 @@ def generate_campaign1_repeatable(
     # reduce Hidex temp to reduce strain on instument over incubation (necessary?)
     softLinx.hidexRun("SetTemp20") 
     
-    softLinx.liconicShake(shaker1Speed=30, shakeTime=[0,15,0,0]) 
+    softLinx.liconicShake(shaker1Speed=30, shakeTime=[0,9,55,0]) 
 
     # preheat Hidex for readings after incubation
     softLinx.hidexRun("SetTempWait37")  
@@ -669,7 +669,7 @@ def generate_campaign1_repeatable(
 
         # shake in incubator until time to take next reading  (don't do if already read last plate)
         if not k == (len(treatment)-1):
-            softLinx.liconicShake(shaker1Speed=30, shakeTime=[0,0,24,0])  # 24 min
+            softLinx.liconicShake(shaker1Speed=30, shakeTime=[0,0,21,0])  # 21 min
     #* END LOOP
 
     softLinx.hidexRun("SetTemp20") 
