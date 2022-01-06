@@ -565,7 +565,8 @@ def generate_campaign1_repeatable(
 
     # define starting plate layout
     softLinx.setPlates(
-        {"SoftLinx.PlateCrane.Stack5": "Plate.96.Corning-3635.ClearUVAssay"}
+        {"SoftLinx.PlateCrane.Stack5": "Plate.96.Corning-3635.ClearUVAssay", 
+        "SoftLinx.PlateCrane.Stack4": "TipBox.180uL.Axygen-EVF-180-R-S.bluebox"}
     )
 
     # set up equiptment
@@ -582,8 +583,7 @@ def generate_campaign1_repeatable(
         softLinx.plateCraneRemoveLid(
             ["SoftLinx.Solo.Position4"], ["SoftLinx.PlateCrane.LidNest2"]
         )
-        softLinx.plateCraneMoveCrane("SoftLinx.PlateCrane.Safe")
-
+        
         # replace tip box if necessary
         if (k%2 == 0):
             if k == 0: 
@@ -592,6 +592,8 @@ def generate_campaign1_repeatable(
                 remove_tip_box(softLinx, "Position3")
                 replace_tip_box(softLinx, "Position3")
             softLinx.soloSoftResetTipCount(1)  # Reset the tip count every other run. 
+
+        softLinx.plateCraneMoveCrane("SoftLinx.PlateCrane.Safe")
 
         # run all three liquid handling steps 
         softLinx.soloSoftRun(
