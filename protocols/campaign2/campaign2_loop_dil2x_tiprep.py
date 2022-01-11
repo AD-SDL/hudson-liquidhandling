@@ -112,8 +112,8 @@ def generate_campaign1_repeatable(
     num_assay_plates = len(culture_column) # from cl args
     num_assay_wells = 96  # hardcoded for now
     assay_plate_type = "hidex"
-    info_list = [num_assay_plates, num_assay_wells, assay_plate_type, directory_name]
-    print(info_list)
+    info_str = f"{num_assay_plates} {num_assay_wells} {assay_plate_type} {directory_name}"
+    print(info_str)
         
     # * create new directory to hold new instructions
     try:
@@ -698,7 +698,7 @@ def generate_campaign1_repeatable(
                 "-d",
                 directory_path,
                 "-i", 
-                info_list,
+                info_str,
             ],
             start_new_session=True,
         ).pid
