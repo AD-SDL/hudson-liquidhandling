@@ -34,6 +34,7 @@ Example command line usage: (creating 3 plates)
 python campaign2_loop_dil2x.py -tr col1 col2 col3 -cc 1 2 3 -mc 1 3 5 -tdh 1 2 1 -cdc 1 2 3
 """
 
+
 def generate_campaign1_repeatable(
     treatment, # string list of treatment names
     predicted_IC50=None,  # TODO: handle predicted IC50
@@ -106,11 +107,18 @@ def generate_campaign1_repeatable(
     directory_path = os.path.join(
         os.path.realpath(os.path.dirname(lambda6_path)), directory_name
     )
-    print(f"Protocol directory created: {directory_path}")
 
+    # populate info list
+    num_assay_plates = len(culture_column) # from cl args
+    num_assay_wells = 96  # hardcoded for now
+    assay_plate_type = "hidex"
+    info_list = [num_assay_plates, num_assay_wells, assay_plate_type, directory_name]
+    print(info_list)
+        
     # * create new directory to hold new instructions
     try:
         os.makedirs(directory_path, exist_ok=True)
+        print(f"Protocol directory created: {directory_path}")
     except OSError as e:
         print(e)
         print(f"failed to create new directory for instructions: {directory_path}")
@@ -689,6 +697,8 @@ def generate_campaign1_repeatable(
                 "../../zeromq/lambda6_send_instructions.py",
                 "-d",
                 directory_path,
+                "-i", 
+                info_list,
             ],
             start_new_session=True,
         ).pid
