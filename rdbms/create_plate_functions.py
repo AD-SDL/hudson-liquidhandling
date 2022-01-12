@@ -101,7 +101,7 @@ def update_plate_data(new_data, plate_id, timestemp):
 #plate_info = (num_plates, num_wells, exp_id, plate_type)
 
 # Calling the create empty plate records function. Function returns a list of recently created Plate IDs
-plate_id_list = create_empty_plate_records(plate_info)
+# plate_id_list = create_empty_plate_records(plate_info)
 
 
 #-----------------------------------------------
