@@ -2,6 +2,7 @@ import argparse
 import os
 import sys
 import time
+
 from subprocess import Popen
 from liquidhandling import SoloSoft
 from liquidhandling import SoftLinx
@@ -99,7 +100,7 @@ def generate_campaign1_repeatable(
     destination_mix_volume_s3 = 100
 
     # * Create folder to store all instruction files
-    project = "Campaign2"
+    project = "Campaign2_TEST"
     project_desc = "loop"
     version_num = "v1"
     timestamp = str(time.time()).split(".")[0]
@@ -112,8 +113,8 @@ def generate_campaign1_repeatable(
     num_assay_plates = len(culture_column) # from cl args
     num_assay_wells = 96  # hardcoded for now
     assay_plate_type = "hidex"
-    info_str = f"{num_assay_plates} {num_assay_wells} {assay_plate_type} {directory_name}"
-    print(info_str)
+    #info_str = f"{num_assay_plates} {num_assay_wells} {assay_plate_type} {directory_name}"
+    #print(info_str)
         
     # * create new directory to hold new instructions
     try:
@@ -698,12 +699,16 @@ def generate_campaign1_repeatable(
                 "-d",
                 directory_path,
                 "-i", 
-                info_str,
+                str(num_assay_plates),
+                str(num_assay_wells),
+                assay_plate_type,
+                #info_str,
             ],
             start_new_session=True,
         ).pid
+
         print("New instruction directory passed to lambda6_send_message.py")
-    except Error as e:
+    except BaseException as e:
         print(e)
         print("Could not send new instructions to hudson01")
 
