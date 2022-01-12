@@ -23,8 +23,8 @@ def disconnect_Database(cursor,cnx):
     cnx.close()
 
 # Function creates empty records in the "plate" and "assay_plate" tables, considering the given plate information.
-def create_empty_plate_records(plate_info):    
-    
+def create_empty_plate_records(num_plates, num_wells, plate_type, directory_name):    
+
     # Connect to the test_bugs database
     cursor,cnx = connect_Database()    
     
@@ -33,7 +33,7 @@ def create_empty_plate_records(plate_info):
     curr = 0
 
     #Create empty records in plate table
-    for create_plate in range(0,plate_info[0]):
+    for create_plate in range(0, num_plates):
         add_plate = """INSERT INTO plate (type, format, expID, date_created, time_created)
                      VALUES (%s, %s, %s, %s, %s)"""
 
@@ -42,7 +42,7 @@ def create_empty_plate_records(plate_info):
         current_date = now.strftime("%m/%d/%Y")
         current_time = now.strftime("%H:%M:%S.%f")
         
-        plate_data = (plate_info[3], plate_info[1], plate_info[2], current_date, current_time)
+        plate_data = (plate_type, num_wells, directory_name, current_date, current_time)
         # Creating a new record in the plate table for the next unique plate 
         cursor.execute(add_plate, plate_data)
 
@@ -50,14 +50,14 @@ def create_empty_plate_records(plate_info):
         plate_id.append(cursor.lastrowid) 
 
         # Considering the plate format, creating a given number of records in the assay_plate table 
-        for records in range(0, plate_info[1]):
+        for records in range(0, num_wells):
             
             #Create empty assay_plate row
             add_assay_plate = """INSERT INTO assay_plate (plate_id, RawOD_590)
                                VALUES (%s, %s)"""
     
             assay_data = (plate_id[curr],"RawOD")
-            cursor.execute(add_assay_plate,assay_data)
+            cursor.execute(add_assay_plate, assay_data)
 
         curr += 1
     
@@ -94,11 +94,11 @@ def update_plate_data(new_data, plate_id, timestemp):
 #-----------------------------------------------
 
 #TEST if this is a plate with the info below. 
-#plate_info = (6, 10, "directory_name", "plate_type")
+# plate_info = (6, 10, "directory_name", "plate_type")
 
 #TODO: Read plate info from the dictionary
-num_plates, num_wells, exp_id, plate_type = dic.get('num_plates'), dic.get('num_wells'), dic.get('directory_name'), dic.get('plate_type')
-plate_info = (num_plates, num_wells, exp_id, plate_type)
+#num_plates, num_wells, exp_id, plate_type = dic.get('num_plates'), dic.get('num_wells'), dic.get('directory_name'), dic.get('plate_type')
+#plate_info = (num_plates, num_wells, exp_id, plate_type)
 
 # Calling the create empty plate records function. Function returns a list of recently created Plate IDs
 plate_id_list = create_empty_plate_records(plate_info)
