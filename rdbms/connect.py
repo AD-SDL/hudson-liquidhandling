@@ -9,7 +9,7 @@ import config
 
 
 def connect():
-    print("using database {} as iser {}".format(config.DBNAME, config.DBUSER))
+    print("Using database {} as user {}".format(config.DBNAME, config.DBUSER))
 
     # set up
     try:
@@ -20,7 +20,7 @@ def connect():
             database=config.DBNAME,
         )
     except mysql.connector.Error as err:
-        print("unable to commect")
+        print("Unable to connect")
         print(err)
 
     return cnx
