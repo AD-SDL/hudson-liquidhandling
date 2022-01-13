@@ -2,6 +2,7 @@ import sys
 import os
 import csv
 from connect import connect
+import mysql.connector
 from datetime import datetime
 
 # Function to connect to the test_bugs database
@@ -12,7 +13,7 @@ def connect_Database():
     # start transaction
     cursor.execute("SET autocommit = 0")
     cursor.execute("START TRANSACTION")
-    return cursor,cnx
+    return cursor, cnx
 
 #Function to disconnect from the test_bugs database
 def disconnect_Database(cursor,cnx):
@@ -25,47 +26,56 @@ def disconnect_Database(cursor,cnx):
 # Function creates empty records in the "plate" and "assay_plate" tables, considering the given plate information.
 def create_empty_plate_records(num_plates, num_wells, plate_type, directory_name):    
 
-    # Connect to the test_bugs database
-    cursor,cnx = connect_Database()    
-    
-    # A list that keeps the Plate IDs
-    plate_id = []
-    curr = 0
-
-    #Create empty records in plate table
-    for create_plate in range(0, num_plates):
-        add_plate = """INSERT INTO plate (type, format, expID, date_created, time_created)
-                     VALUES (%s, %s, %s, %s, %s)"""
-
-        # Using the current time to keep track of the time when the plate information is recorded in the database 
-        now = datetime.now()
-        current_date = now.strftime("%m/%d/%Y")
-        current_time = now.strftime("%H:%M:%S.%f")
+    try:
+        # Connect to the test_bugs database
+        cursor,cnx = connect_Database()    
         
-        plate_data = (plate_type, num_wells, directory_name, current_date, current_time)
-        # Creating a new record in the plate table for the next unique plate 
-        cursor.execute(add_plate, plate_data)
+        # A list that keeps the Plate IDs
+        plate_id = []
+        curr = 0
 
-        # Recieving plate_id back to utilize the unique plate id in the assay_plate records
-        plate_id.append(cursor.lastrowid) 
+        #Create empty records in plate table
+        for create_plate in range(0, num_plates):
+            add_plate = """INSERT INTO plate (type, format, expID, date_created, time_created)
+                        VALUES (%s, %s, %s, %s, %s)"""
 
-        # Considering the plate format, creating a given number of records in the assay_plate table 
-        for records in range(0, num_wells):
+            # Using the current time to keep track of the time when the plate information is recorded in the database 
+            now = datetime.now()
+            current_date = now.strftime("%m/%d/%Y")
+            current_time = now.strftime("%H:%M:%S.%f")
             
-            #Create empty assay_plate row
-            add_assay_plate = """INSERT INTO assay_plate (plate_id, RawOD_590)
-                               VALUES (%s, %s)"""
-    
-            assay_data = (plate_id[curr],"RawOD")
-            cursor.execute(add_assay_plate, assay_data)
+            plate_data = (plate_type, num_wells, directory_name, current_date, current_time)
+            # Creating a new record in the plate table for the next unique plate 
+            cursor.execute(add_plate, plate_data)
+            
 
-        curr += 1
+            # Recieving plate_id back to utilize the unique plate id in the assay_plate records
+            plate_id.append(cursor.lastrowid) 
+
+            # Considering the plate format, creating a given number of records in the assay_plate table 
+            for records in range(0, num_wells):
+                
+                #Create empty assay_plate row
+                add_assay_plate = """INSERT INTO assay_plate (plate_id, RawOD_590)
+                                VALUES (%s, %s)"""
+        
+                assay_data = (plate_id[curr],"RawOD")
+                cursor.execute(add_assay_plate, assay_data)
+            curr += 1
+        print(num_plates, " Record inserted succesfully into Plate table")
+        print(num_plates * num_wells, " Record inserted succesfully into Assay_Plate table")
+
+        
+    except mysql.connector.Error as error:
+        print("Failed to insert record into Plate and Assay_Plate table {}".format(error))
     
-    # Disconnect from the test_bugs database
-    disconnect_Database(cursor,cnx)
+    finally:
+        # Disconnect from the test_bugs database
+        disconnect_Database(cursor,cnx)
+        print("Connection to the database is closed")
+        # Function returns the list of Plate IDs that are created in the database
+        return plate_id
     
-    # Function returns the list of Plate IDs that are created in the database
-    return plate_id
 
 # Function to update the records for the given plate. Accepts the data file, plate id that is going to be updated and the reading time 
 def update_plate_data(new_data, plate_id, timestemp):
@@ -94,14 +104,14 @@ def update_plate_data(new_data, plate_id, timestemp):
 #-----------------------------------------------
 
 #TEST if this is a plate with the info below. 
-# plate_info = (6, 10, "directory_name", "plate_type")
+#plate_info = (6, 10, "directory_name", "plate_type")
 
 #TODO: Read plate info from the dictionary
 #num_plates, num_wells, exp_id, plate_type = dic.get('num_plates'), dic.get('num_wells'), dic.get('directory_name'), dic.get('plate_type')
 #plate_info = (num_plates, num_wells, exp_id, plate_type)
 
 # Calling the create empty plate records function. Function returns a list of recently created Plate IDs
-# plate_id_list = create_empty_plate_records(plate_info)
+# plate_id_list = create_empty_plate_records(6, 10,"plate_type", "directory_name")
 
 
 #-----------------------------------------------
