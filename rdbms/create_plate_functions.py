@@ -95,7 +95,7 @@ def count_rows_assay_table(cursor, plate_num):
     return count_rows[0][0]
 
 #-----------------------------------------------
-# Finds which plate_id is accouciated with the given file name and plate number
+# Finds which plate_id is associated with the given file name and plate number
 
 def plate_id_finder(cursor, file_basename_for_data, plate_number):
     find_plate = "select Plate_ID from plate WHERE Exp_ID = %s and Barcode = %s"
