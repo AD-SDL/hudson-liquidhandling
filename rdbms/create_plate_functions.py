@@ -79,6 +79,19 @@ def timestamp_tracker(index, time_stamps , cursor, time_index, new_data, index_n
         return timestamp_tracker(index, time_stamps , cursor, time_index, new_data, index_num, row, experiment_name, date, time, plate_id, Well_type)
 
 #-----------------------------------------------
+# Enters data into database
+def assay_plate_insert_data(cursor, time_index, new_data, index_num, row, experiment_name, date, time, plate_id, Well_type):
+    row += 1
+    if row < (len(new_data) + 1):
+        update_assay_plate = "UPDATE assay_plate SET Well_type =  %s, Well=%s, RawOD_590=%s, Elapsed_time = %s, Experiment_name = %s, Reading_date = %s, Reading_time =%s WHERE Plate_ID = %s AND Row_num = %s"
+        plate_assay_data = (Well_type, new_data['Well'][row], new_data[time_index][row], time_index, experiment_name, date, time, plate_id, index_num)
+        cursor.execute(update_assay_plate, plate_assay_data)
+        index_num+=1
+        return assay_plate_insert_data(cursor, time_index, new_data, index_num, row, experiment_name, date, time, plate_id, Well_type)
+    else:
+        return index_num
+
+#-----------------------------------------------
 # Function creates empty records in the "plate" and "assay_plate" tables, considering the given plate information.
 def create_empty_plate_records(num_plates, num_wells, plate_type, directory_name):    
 
@@ -123,20 +136,6 @@ def create_empty_plate_records(num_plates, num_wells, plate_type, directory_name
         # Disconnect from the test_bugs database
         disconnect_Database(cursor, cnx)
         print("Connection to the database is closed")
-
-
-#-----------------------------------------------
-# Enters data into database
-def assay_plate_insert_data(cursor, time_index, new_data, index_num, row, experiment_name, date, time, plate_id, Well_type):
-    row += 1
-    if row < (len(new_data) + 1):
-        update_assay_plate = "UPDATE assay_plate SET Well_type =  %s, Well=%s, RawOD_590=%s, Elapsed_time = %s, Experiment_name = %s, Reading_date = %s, Reading_time =%s WHERE Plate_ID = %s AND Row_num = %s"
-        plate_assay_data = (Well_type, new_data['Well'][row], new_data[time_index][row], time_index, experiment_name, date, time, plate_id, index_num)
-        cursor.execute(update_assay_plate, plate_assay_data)
-        index_num+=1
-        return assay_plate_insert_data(cursor, time_index, new_data, index_num, row, experiment_name, date, time, plate_id, Well_type)
-    else:
-        return index_num
 
 #-----------------------------------------------
 # Function to update the records for the given plate. Accepts the data file, plate id that is going to be updated and the reading time 
