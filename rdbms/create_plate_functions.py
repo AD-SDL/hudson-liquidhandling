@@ -32,14 +32,18 @@ def disconnect_Database(cursor,cnx):
 
 #-----------------------------------------------
 # Creates empty records in the assay plate table
-def create_empty_records_assay_plate(plate_id, cursor, row_num):
-    
+def create_empty_records_assay_plate(plate_id, cursor, row_num, num_wells):
+
     add_assay_plate = """INSERT INTO assay_plate (Plate_ID, Row_num)
                                 VALUES (%s, %s)"""
         
     assay_data = (plate_id, row_num)
     cursor.execute(add_assay_plate, assay_data)
-    
+
+    if row_num < num_wells:
+        row_num += 1
+        return create_empty_records_assay_plate(plate_id, cursor, row_num, num_wells)
+
 #-----------------------------------------------
 # Counts the number of rows in table for the given plate_id
 def count_rows_assay_table(cursor, plate_num):
@@ -118,11 +122,9 @@ def create_empty_plate_records(num_plates, num_wells, plate_type, directory_name
             plate_id = cursor.lastrowid
 
             # Considering the plate format, creating a given number of records in the assay_plate table 
-            for records in range(0, num_wells):
-                row_num = records + 1
-
-                #Create empty assay_plate row
-                create_empty_records_assay_plate(plate_id, cursor, row_num)
+             
+            #Create empty assay_plate row
+            create_empty_records_assay_plate(plate_id, cursor, 1, num_wells)
 
                  
         print(num_plates, " records inserted succesfully into Plate table")
@@ -154,7 +156,7 @@ def update_plate_data(experiment_name, plate_number, time_stamps, new_data, date
             # Fixing the index number
             row_num += 1
             # Creating new empty record in the assay_table until len(time_stamps) * format = row_num
-            create_empty_records_assay_plate(plate_id, cursor, row_num)
+            create_empty_records_assay_plate(plate_id, cursor, row_num, 0)
             disconnect_Database(cursor, cnx)
             return update_plate_data(experiment_name, plate_number, time_stamps, new_data, date, time, file_basename_for_data, Well_type)
             
