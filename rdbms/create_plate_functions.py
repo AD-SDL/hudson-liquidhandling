@@ -10,6 +10,7 @@ import mysql.connector
 import openpyxl
 from datetime import datetime
 
+#-----------------------------------------------
 # Function to connect to the test_bugs database
 def connect_Database():
 
@@ -20,6 +21,7 @@ def connect_Database():
     cursor.execute("START TRANSACTION")
     return cursor, cnx
 
+#-----------------------------------------------
 #Function to disconnect from the test_bugs database
 def disconnect_Database(cursor,cnx):
 
@@ -28,6 +30,55 @@ def disconnect_Database(cursor,cnx):
     cursor.close()
     cnx.close()
 
+#-----------------------------------------------
+# Creates empty records in the assay plate table
+def create_empty_records_assay_plate(plate_id, cursor, row_num):
+    
+    add_assay_plate = """INSERT INTO assay_plate (Plate_ID, Row_num)
+                                VALUES (%s, %s)"""
+        
+    assay_data = (plate_id, row_num)
+    cursor.execute(add_assay_plate, assay_data)
+    
+#-----------------------------------------------
+# Counts the number of rows in table for the given plate_id
+def count_rows_assay_table(cursor, plate_num):
+
+    count="SELECT COUNT(*) FROM assay_plate WHERE Plate_ID = %s"
+    value = plate_num
+    count_rows = cursor.execute(count, (value,))
+    count_rows = cursor.fetchall()
+    
+    return count_rows[0][0]
+
+#-----------------------------------------------
+# Finds format of the plate for the given plate_id
+def find_format(cursor, plate_id):
+    plate_format ="SELECT Format FROM plate WHERE Plate_ID = %s"
+    value = plate_id
+    format = cursor.execute(plate_format, (value,))
+    format = cursor.fetchall()
+    return format[0][0]
+
+#-----------------------------------------------
+# Finds which plate_id is associated with the given file name and plate number
+def plate_id_finder(cursor, file_basename_for_data, plate_number):
+    find_plate = "select Plate_ID from plate WHERE Exp_ID = %s and Barcode = %s"
+    plate_info = (file_basename_for_data, plate_number)
+    plate_id = cursor.execute(find_plate, plate_info)
+    plate_id = cursor.fetchall()
+    return plate_id[0][0]
+    
+#-----------------------------------------------
+# timestamp_tracker
+def timestamp_tracker(index, time_stamps , cursor, time_index, new_data, index_num, row, experiment_name, date, time, plate_id, Well_type):
+
+    if index != (len(time_stamps)):
+        index_num = assay_plate_insert_data(cursor, time_stamps[index], new_data, index_num, row, experiment_name, date, time, plate_id, Well_type)
+        index += 1
+        return timestamp_tracker(index, time_stamps , cursor, time_index, new_data, index_num, row, experiment_name, date, time, plate_id, Well_type)
+
+#-----------------------------------------------
 # Function creates empty records in the "plate" and "assay_plate" tables, considering the given plate information.
 def create_empty_plate_records(num_plates, num_wells, plate_type, directory_name):    
 
@@ -73,43 +124,19 @@ def create_empty_plate_records(num_plates, num_wells, plate_type, directory_name
         disconnect_Database(cursor, cnx)
         print("Connection to the database is closed")
 
-#-----------------------------------------------
-# Creates empty records in the assay plate table
-def create_empty_records_assay_plate(plate_id, cursor, row_num):
-    
-    add_assay_plate = """INSERT INTO assay_plate (Plate_ID, Row_num)
-                                VALUES (%s, %s)"""
-        
-    assay_data = (plate_id, row_num)
-    cursor.execute(add_assay_plate, assay_data)
-    
-#-----------------------------------------------
-# Counts the number of rows in table for the given plate_id
-def count_rows_assay_table(cursor, plate_num):
-
-    count="SELECT COUNT(*) FROM assay_plate WHERE Plate_ID = %s"
-    value = plate_num
-    count_rows = cursor.execute(count, (value,))
-    count_rows = cursor.fetchall()
-    
-    return count_rows[0][0]
 
 #-----------------------------------------------
-# Finds format of the plate for the given plate_id
-def find_format(cursor, plate_id):
-    plate_format ="SELECT Format FROM plate WHERE Plate_ID = %s"
-    value = plate_id
-    format = cursor.execute(plate_format, (value,))
-    format = cursor.fetchall()
-    return format[0][0]
-#-----------------------------------------------
-# Finds which plate_id is associated with the given file name and plate number
-def plate_id_finder(cursor, file_basename_for_data, plate_number):
-    find_plate = "select Plate_ID from plate WHERE Exp_ID = %s and Barcode = %s"
-    plate_info = (file_basename_for_data, plate_number)
-    plate_id = cursor.execute(find_plate, plate_info)
-    plate_id = cursor.fetchall()
-    return plate_id[0][0]
+# Enters data into database
+def assay_plate_insert_data(cursor, time_index, new_data, index_num, row, experiment_name, date, time, plate_id, Well_type):
+    row += 1
+    if row < (len(new_data) + 1):
+        update_assay_plate = "UPDATE assay_plate SET Well_type =  %s, Well=%s, RawOD_590=%s, Elapsed_time = %s, Experiment_name = %s, Reading_date = %s, Reading_time =%s WHERE Plate_ID = %s AND Row_num = %s"
+        plate_assay_data = (Well_type, new_data['Well'][row], new_data[time_index][row], time_index, experiment_name, date, time, plate_id, index_num)
+        cursor.execute(update_assay_plate, plate_assay_data)
+        index_num+=1
+        return assay_plate_insert_data(cursor, time_index, new_data, index_num, row, experiment_name, date, time, plate_id, Well_type)
+    else:
+        return index_num
 
 #-----------------------------------------------
 # Function to update the records for the given plate. Accepts the data file, plate id that is going to be updated and the reading time 
@@ -136,13 +163,8 @@ def update_plate_data(experiment_name, plate_number, time_stamps, new_data, date
         elif len(time_stamps) * format == row_num:
 
             index_num = 1
-            for time_index in time_stamps:
-                for row in range(1,len(new_data) + 1):
-                    update_assay_plate = "UPDATE assay_plate SET Well_type =  %s, Well=%s, RawOD_590=%s, Elapsed_time = %s, Experiment_name = %s, Reading_date = %s, Reading_time =%s WHERE Plate_ID = %s AND Row_num = %s"
-                    plate_assay_data = (Well_type, new_data['Well'][row], new_data[time_index][row], time_index, experiment_name, date, time, plate_id, index_num)
-                    cursor.execute(update_assay_plate, plate_assay_data)
-                    index_num+=1
-
+            timestamp_tracker(0, time_stamps , cursor, time_stamps, new_data, index_num, 0, experiment_name, date, time, plate_id, Well_type)
+                   
 
         # Update plate info for the given plate_id and the timestemp
         update_plate_table = "UPDATE plate SET Process_status = %s WHERE Plate_ID = %s"
