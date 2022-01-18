@@ -10,6 +10,8 @@ import mysql.connector
 import openpyxl
 from datetime import datetime
 
+#TODO: Check before updating, if we have records in the database already. If not insert the plate info to the database first then upload the data
+
 #-----------------------------------------------
 # Function to connect to the test_bugs database
 def connect_Database():
@@ -141,8 +143,8 @@ def create_empty_plate_records(num_plates, num_wells, plate_type, directory_name
 
 #-----------------------------------------------
 # Function to update the records for the given plate. Accepts the data file, plate id that is going to be updated and the reading time 
-def update_plate_data(experiment_name, plate_number, time_stamps, new_data, date, time, file_basename_for_data, Well_type):
-    
+def update_plate_data(experiment_name, plate_number, time_stamps, new_data, date, time, file_basename_for_data):
+    Well_type = "TODO"
     try:
         #connect to the test_bugs database
         cursor,cnx = connect_Database() 
@@ -230,10 +232,10 @@ def main(filename):
     date_time = date_time.split(" ", 1)
     
     # Calling the create empty plate records function. Function returns a list of recently created Plate IDs
-    create_empty_plate_records(2, 48, "Hidex", "Campaign1_20210505_144922_RawOD.csv")
+    create_empty_plate_records(1, 96, "Hidex", "TEST_PROTOCOL_NAME.csv")
 
     # Calling the update plate data function
-    update_plate_data("Campaign1_RawOD", 1, time_stamps, df, str(date_time[0]), str(date_time[1]), "Campaign1_20210505_144922_RawOD.csv", "Control")
+    #update_plate_data("Campaign1_RawOD", 1, time_stamps, df, str(date_time[0]), str(date_time[1]), "Campaign1_20210505_144922_RawOD.csv")
     
 
     #return df
