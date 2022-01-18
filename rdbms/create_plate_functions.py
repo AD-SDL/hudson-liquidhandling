@@ -10,7 +10,7 @@ import mysql.connector
 import openpyxl
 from datetime import datetime
 
-#TODO: Check before updating, if we have records in the database already. If not insert the plate info to the database first then upload the data
+#TODO:  If not insert the plate info to the database first then upload the data
 
 #-----------------------------------------------
 # Function to connect to the test_bugs database
@@ -143,7 +143,7 @@ def create_empty_plate_records(num_plates, num_wells, plate_type, directory_name
 
 #-----------------------------------------------
 # Function to update the records for the given plate. Accepts the data file, plate id that is going to be updated and the reading time 
-def update_plate_data(experiment_name, plate_number, time_stamps, new_data, date, time, file_basename_for_data):
+def update_plate_data(file_basename_for_data, plate_number, time_stamps, new_data, date, time, experiment_name):
     Well_type = "TODO"
     try:
         #connect to the test_bugs database
@@ -160,7 +160,7 @@ def update_plate_data(experiment_name, plate_number, time_stamps, new_data, date
             # Creating new empty record in the assay_table until len(time_stamps) * format = row_num
             create_empty_records_assay_plate(plate_id, cursor, row_num, 0)
             disconnect_Database(cursor, cnx)
-            return update_plate_data(experiment_name, plate_number, time_stamps, new_data, date, time, file_basename_for_data, Well_type)
+            return update_plate_data(file_basename_for_data, plate_number, time_stamps, new_data, date, time, experiment_name)
             
         # Update the records in the assay_plate table with the given data
         elif len(time_stamps) * format == row_num:
