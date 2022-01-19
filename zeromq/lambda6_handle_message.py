@@ -13,6 +13,9 @@ import numpy as np
 from utils.data_utils import parse_hidex
 from utils.run_qc import run_qc
 from utils.zmq_connection import zmq_connect
+sys.path.append("../rdbms/")
+sys.path.append("../../rdbms/") # this is the one that works
+from create_plate_functions import update_plate_data
 
 
 def lambda6_handle_message(decoded_message):
@@ -66,6 +69,7 @@ def lambda6_handle_message(decoded_message):
                 file_name = key
                 data = value["data"]
                 plate_id = value["plate_id"]
+                exp_name = value["experiment_name"]
                 with open(
                     os.path.join(data_dir_path, os.path.basename(file_name)), "w+"
                 ) as data_file:
@@ -76,9 +80,10 @@ def lambda6_handle_message(decoded_message):
                     os.path.join(data_dir_path, "info.txt"), "w+"
                 ) as info_file:
                     info_file.write(f"Plate ID: {plate_id}\n")
+                    info_file.write(f"Experiment Name: {exp_name}\n")  
 
     print(f"calling qc on {file_name}")
-    _run_qc(os.path.join(data_dir_path, os.path.basename(file_name)))
+    _run_qc(os.path.join(data_dir_path, os.path.basename(file_name)), plate_id, exp_name)
     print(f"Done handling message: {str(address)}")
     return return_val
 
@@ -95,19 +100,20 @@ def od_blank_adjusted(arr):
     return np.array(reg_array).astype(float)
 
 
-def _run_qc(file_name):
+def _run_qc(file_name, plate_id, exp_name):
 
     # perform the quality control on hidex file
-    df = parse_hidex(file_name)
-    print(df)
+    df, timestamp_list, reading_date, reading_time, data_filename = parse_hidex(file_name)  
+    # print(df)
     # values = df.loc[df["Sample"] == "Blank"].to_numpy()[:, 3].astype(float)
     values = df.loc[df["Well"] == "H1"].to_numpy()[:, -1].astype(float)
     values = od_blank_adjusted(values)
-    ret_val = run_qc(values)
+    ret_val = run_qc(values)  # TODO: fix z score in run_qc
     print(f"result: {ret_val}")
 
-    # TODO update database with results
-
+    # Add data to db 
+    update_plate_data(exp_name, plate_id, timestamp_list, df, reading_date, reading_time, data_filename)
+    
     # send message to build_dataframe if the data is good
     if ret_val == "PASS":
         context, socket = zmq_connect(port=5556, pattern="REQ")
