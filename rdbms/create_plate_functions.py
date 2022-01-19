@@ -42,9 +42,15 @@ def create_empty_records_assay_plate(plate_id, cursor, row_num, num_wells):
     assay_data = (plate_id, row_num)
     cursor.execute(add_assay_plate, assay_data)
 
-    if row_num < num_wells:
+    if row_num < (num_wells):
         row_num += 1
         return create_empty_records_assay_plate(plate_id, cursor, row_num, num_wells)
+    elif row_num >= (num_wells) and row_num%(num_wells) != 0:
+        row_num += 1
+        return create_empty_records_assay_plate(plate_id, cursor, row_num, num_wells)
+    else:
+        return row_num
+
 
 #-----------------------------------------------
 # Counts the number of rows in table for the given plate_id
@@ -73,22 +79,22 @@ def plate_id_finder(cursor, file_basename_for_data, plate_number):
     plate_info = (file_basename_for_data, plate_number)
     plate_id = cursor.execute(find_plate, plate_info)
     plate_id = cursor.fetchall()
+    print(plate_id, type(plate_id))
     return plate_id[0][0]
     
 #-----------------------------------------------
 # timestamp_tracker
 def timestamp_tracker(index, time_stamps , cursor, time_index, new_data, index_num, row, experiment_name, date, time, plate_id, Well_type):
 
-    if index != (len(time_stamps)):
+    for index in range(0,len(time_stamps)):
         index_num = assay_plate_insert_data(cursor, time_stamps[index], new_data, index_num, row, experiment_name, date, time, plate_id, Well_type)
-        index += 1
-        return timestamp_tracker(index, time_stamps , cursor, time_index, new_data, index_num, row, experiment_name, date, time, plate_id, Well_type)
+        
 
 #-----------------------------------------------
 # Enters data into database
 def assay_plate_insert_data(cursor, time_index, new_data, index_num, row, experiment_name, date, time, plate_id, Well_type):
     row += 1
-    if row < (len(new_data) + 1):
+    if row < (len(new_data)+1):
         update_assay_plate = "UPDATE assay_plate SET Well_type =  %s, Well=%s, RawOD_590=%s, Elapsed_time = %s, Experiment_name = %s, Reading_date = %s, Reading_time =%s WHERE Plate_ID = %s AND Row_num = %s"
         plate_assay_data = (Well_type, new_data['Well'][row], new_data[time_index][row], time_index, experiment_name, date, time, plate_id, index_num)
         cursor.execute(update_assay_plate, plate_assay_data)
@@ -115,7 +121,7 @@ def create_empty_plate_records(num_plates, num_wells, plate_type, directory_name
             current_date = now.strftime("%m/%d/%Y")
             current_time = now.strftime("%H:%M:%S.%f")
             
-            plate_data = (plate_type, num_wells, str(create_plate + 1), directory_name, current_date, current_time)
+            plate_data = (plate_type, num_wells, str(create_plate), directory_name, current_date, current_time)
             # Creating a new record in the plate table for the next unique plate 
             cursor.execute(add_plate, plate_data)
             
@@ -126,7 +132,7 @@ def create_empty_plate_records(num_plates, num_wells, plate_type, directory_name
             # Considering the plate format, creating a given number of records in the assay_plate table 
              
             #Create empty assay_plate row
-            create_empty_records_assay_plate(plate_id, cursor, 1, num_wells)
+            val=create_empty_records_assay_plate(plate_id, cursor, 1, num_wells)
 
                  
         print(num_plates, " records inserted succesfully into Plate table")
@@ -155,18 +161,19 @@ def update_plate_data(file_basename_for_data, plate_number, time_stamps, new_dat
         # Counting how many records exist in the table and returns the last index number
         row_num = count_rows_assay_table(cursor, plate_id) 
         if len(time_stamps) * format > row_num:
-            # Fixing the index number
-            row_num += 1
+        # Fixing the index number
             # Creating new empty record in the assay_table until len(time_stamps) * format = row_num
-            create_empty_records_assay_plate(plate_id, cursor, row_num, 0)
-            disconnect_Database(cursor, cnx)
-            return update_plate_data(file_basename_for_data, plate_number, time_stamps, new_data, date, time, experiment_name)
+
+            # TODO: PUT for loops back to extend the database
+            #while len(time_stamps) * format > row_num:
+            for time_index in range(len(time_stamps)-1):
+                row_num = create_empty_records_assay_plate(plate_id, cursor, row_num +1, format)
             
         # Update the records in the assay_plate table with the given data
-        elif len(time_stamps) * format == row_num:
+       
 
-            index_num = 1
-            timestamp_tracker(0, time_stamps , cursor, time_stamps, new_data, index_num, 0, experiment_name, date, time, plate_id, Well_type)
+        index_num = 1
+        timestamp_tracker(0, time_stamps , cursor, time_stamps, new_data, index_num, 0, experiment_name, date, time, plate_id, Well_type)
                    
 
         # Update plate info for the given plate_id and the timestemp
@@ -232,10 +239,10 @@ def main(filename):
     date_time = date_time.split(" ", 1)
     
     # Calling the create empty plate records function. Function returns a list of recently created Plate IDs
-    create_empty_plate_records(1, 96, "Hidex", "TEST_PROTOCOL_NAME.csv")
-
+    create_empty_plate_records(1, 48, "Hidex", "Campaign1_20210505_144922_RawOD.csv")
+    
     # Calling the update plate data function
-    #update_plate_data("Campaign1_RawOD", 1, time_stamps, df, str(date_time[0]), str(date_time[1]), "Campaign1_20210505_144922_RawOD.csv")
+    update_plate_data("Campaign1_20210505_144922_RawOD.csv", 0, time_stamps, df, str(date_time[0]), str(date_time[1]), "Campaign1_20210505_144922_RawOD.csv")
     
 
     #return df
