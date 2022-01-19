@@ -1,9 +1,18 @@
-import sys
+from distutils.util import execute
+from hashlib import new
 import os
 import csv
 from connect import connect
+import pandas as pd
+import numpy as np
+import sys
+import mysql.connector
+import openpyxl
 from datetime import datetime
 
+#TODO:  If not insert the plate info to the database first then upload the data
+
+#-----------------------------------------------
 # Function to connect to the test_bugs database
 def connect_Database():
 
@@ -12,8 +21,9 @@ def connect_Database():
     # start transaction
     cursor.execute("SET autocommit = 0")
     cursor.execute("START TRANSACTION")
-    return cursor,cnx
+    return cursor, cnx
 
+#-----------------------------------------------
 #Function to disconnect from the test_bugs database
 def disconnect_Database(cursor,cnx):
 
@@ -22,111 +32,215 @@ def disconnect_Database(cursor,cnx):
     cursor.close()
     cnx.close()
 
-# Function creates empty records in the "plate" and "assay_plate" tables, considering the given plate information.
-def create_empty_plate_records(plate_info):    
-    
-    # Connect to the test_bugs database
-    cursor,cnx = connect_Database()    
-    
-    # A list that keeps the Plate IDs
-    plate_id = []
-    curr = 0
+#-----------------------------------------------
+# Creates empty records in the assay plate table
+def create_empty_records_assay_plate(plate_id, cursor, row_num, num_wells):
 
-    #Create empty records in plate table
-    for create_plate in range(0,plate_info[0]):
-        add_plate = """INSERT INTO plate (type, format, expID, date_created, time_created)
-                     VALUES (%s, %s, %s, %s, %s)"""
-
-        # Using the current time to keep track of the time when the plate information is recorded in the database 
-        now = datetime.now()
-        current_date = now.strftime("%m/%d/%Y")
-        current_time = now.strftime("%H:%M:%S.%f")
+    add_assay_plate = """INSERT INTO assay_plate (Plate_ID, Row_num)
+                                VALUES (%s, %s)"""
         
-        plate_data = (plate_info[3], plate_info[1], plate_info[2], current_date, current_time)
-        # Creating a new record in the plate table for the next unique plate 
-        cursor.execute(add_plate, plate_data)
+    assay_data = (plate_id, row_num)
+    cursor.execute(add_assay_plate, assay_data)
 
-        # Recieving plate_id back to utilize the unique plate id in the assay_plate records
-        plate_id.append(cursor.lastrowid) 
+    if row_num < num_wells:
+        row_num += 1
+        return create_empty_records_assay_plate(plate_id, cursor, row_num, num_wells)
 
-        # Considering the plate format, creating a given number of records in the assay_plate table 
-        for records in range(0, plate_info[1]):
-            
-            #Create empty assay_plate row
-            add_assay_plate = """INSERT INTO assay_plate (plate_id, RawOD_590)
-                               VALUES (%s, %s)"""
-    
-            assay_data = (plate_id[curr],"RawOD")
-            cursor.execute(add_assay_plate,assay_data)
+#-----------------------------------------------
+# Counts the number of rows in table for the given plate_id
+def count_rows_assay_table(cursor, plate_num):
 
-        curr += 1
+    count="SELECT COUNT(*) FROM assay_plate WHERE Plate_ID = %s"
+    value = plate_num
+    count_rows = cursor.execute(count, (value,))
+    count_rows = cursor.fetchall()
     
-    # Disconnect from the test_bugs database
-    disconnect_Database(cursor,cnx)
-    
-    # Function returns the list of Plate IDs that are created in the database
-    return plate_id
+    return count_rows[0][0]
 
-# Function to update the records for the given plate. Accepts the data file, plate id that is going to be updated and the reading time 
-def update_plate_data(new_data, plate_id, timestemp):
-    #connect to the test_bugs database
-    cursor,cnx = connect_Database() 
+#-----------------------------------------------
+# Finds format of the plate for the given plate_id
+def find_format(cursor, plate_id):
+    plate_format ="SELECT Format FROM plate WHERE Plate_ID = %s"
+    value = plate_id
+    format = cursor.execute(plate_format, (value,))
+    format = cursor.fetchall()
+    return format[0][0]
+
+#-----------------------------------------------
+# Finds which plate_id is associated with the given file name and plate number
+def plate_id_finder(cursor, file_basename_for_data, plate_number):
+    find_plate = "select Plate_ID from plate WHERE Exp_ID = %s and Barcode = %s"
+    plate_info = (file_basename_for_data, plate_number)
+    plate_id = cursor.execute(find_plate, plate_info)
+    plate_id = cursor.fetchall()
+    return plate_id[0][0]
     
-    # Update plate info for the given plate_id and the timestemp
-    update_plate = "UPDATE plate SET process_status = %s WHERE plate_id = %s"
-    update_values = ("completed", plate_id)
-    
-    cursor.execute(update_plate,update_values)
-    
-    # Update the records in the assay_plate table with the given data
-    curr = 0
-    for row in new_data:
-        update_assay_plate = "UPDATE assay_plate SET well=%s, sample=%s, value=%s WHERE plate_id = %s AND create_time = %s"
-        plate_assay_data = (row[0], row[1], row[3], plate_id, timestemp[curr])
-        curr +=1
+#-----------------------------------------------
+# timestamp_tracker
+def timestamp_tracker(index, time_stamps , cursor, time_index, new_data, index_num, row, experiment_name, date, time, plate_id, Well_type):
+
+    if index != (len(time_stamps)):
+        index_num = assay_plate_insert_data(cursor, time_stamps[index], new_data, index_num, row, experiment_name, date, time, plate_id, Well_type)
+        index += 1
+        return timestamp_tracker(index, time_stamps , cursor, time_index, new_data, index_num, row, experiment_name, date, time, plate_id, Well_type)
+
+#-----------------------------------------------
+# Enters data into database
+def assay_plate_insert_data(cursor, time_index, new_data, index_num, row, experiment_name, date, time, plate_id, Well_type):
+    row += 1
+    if row < (len(new_data) + 1):
+        update_assay_plate = "UPDATE assay_plate SET Well_type =  %s, Well=%s, RawOD_590=%s, Elapsed_time = %s, Experiment_name = %s, Reading_date = %s, Reading_time =%s WHERE Plate_ID = %s AND Row_num = %s"
+        plate_assay_data = (Well_type, new_data['Well'][row], new_data[time_index][row], time_index, experiment_name, date, time, plate_id, index_num)
         cursor.execute(update_assay_plate, plate_assay_data)
+        index_num+=1
+        return assay_plate_insert_data(cursor, time_index, new_data, index_num, row, experiment_name, date, time, plate_id, Well_type)
+    else:
+        return index_num
+
+#-----------------------------------------------
+# Function creates empty records in the "plate" and "assay_plate" tables, considering the given plate information.
+def create_empty_plate_records(num_plates, num_wells, plate_type, directory_name):    
+
+    try:
+        # Connect to the test_bugs database
+        cursor,cnx = connect_Database()    
+        
+        #Create empty records in plate table
+        for create_plate in range(0, num_plates):
+            add_plate = """INSERT INTO plate (Type, Format, Barcode, exp_ID, Date_created, Time_created)
+                        VALUES (%s, %s, %s, %s, %s, %s)"""
+
+            # Using the current time to keep track of the time when the plate information is recorded in the database 
+            now = datetime.now()
+            current_date = now.strftime("%m/%d/%Y")
+            current_time = now.strftime("%H:%M:%S.%f")
+            
+            plate_data = (plate_type, num_wells, str(create_plate + 1), directory_name, current_date, current_time)
+            # Creating a new record in the plate table for the next unique plate 
+            cursor.execute(add_plate, plate_data)
+            
+
+            # Recieving plate_id back to utilize the unique plate id in the assay_plate records
+            plate_id = cursor.lastrowid
+
+            # Considering the plate format, creating a given number of records in the assay_plate table 
+             
+            #Create empty assay_plate row
+            create_empty_records_assay_plate(plate_id, cursor, 1, num_wells)
+
+                 
+        print(num_plates, " records inserted succesfully into Plate table")
+        print(num_plates * num_wells, " records inserted succesfully into Assay_Plate table")
+
+        
+    except mysql.connector.Error as error:
+        print("Failed to insert record into Plate and Assay_Plate table {}".format(error))
+    
+    finally:
+        # Disconnect from the test_bugs database
+        disconnect_Database(cursor, cnx)
+        print("Connection to the database is closed")
+
+#-----------------------------------------------
+# Function to update the records for the given plate. Accepts the data file, plate id that is going to be updated and the reading time 
+def update_plate_data(file_basename_for_data, plate_number, time_stamps, new_data, date, time, experiment_name):
+    Well_type = "TODO"
+    try:
+        #connect to the test_bugs database
+        cursor,cnx = connect_Database() 
+        # Find the plate_id for the given data
+        plate_id = plate_id_finder(cursor, file_basename_for_data, plate_number)
+        # Find format of the plate
+        format = find_format(cursor, plate_id)
+        # Counting how many records exist in the table and returns the last index number
+        row_num = count_rows_assay_table(cursor, plate_id) 
+        if len(time_stamps) * format > row_num:
+            # Fixing the index number
+            row_num += 1
+            # Creating new empty record in the assay_table until len(time_stamps) * format = row_num
+            create_empty_records_assay_plate(plate_id, cursor, row_num, 0)
+            disconnect_Database(cursor, cnx)
+            return update_plate_data(file_basename_for_data, plate_number, time_stamps, new_data, date, time, experiment_name)
+            
+        # Update the records in the assay_plate table with the given data
+        elif len(time_stamps) * format == row_num:
+
+            index_num = 1
+            timestamp_tracker(0, time_stamps , cursor, time_stamps, new_data, index_num, 0, experiment_name, date, time, plate_id, Well_type)
+                   
+
+        # Update plate info for the given plate_id and the timestemp
+        update_plate_table = "UPDATE plate SET Process_status = %s WHERE Plate_ID = %s"
+        update_values = ("Completed", plate_id)
+        cursor.execute(update_plate_table, update_values)
+        disconnect_Database(cursor, cnx)
+        print("Records are inserted and connection to the database is closed")
+        
+    except mysql.connector.Error as error:
+        print("Failed to insert record into Plate and Assay_Plate table {}".format(error))
+    
+    #finally:
+        # Disconnect from the test_bugs database
+
+
+#-----------------------------------------------
+# Parsing and reading the data
+def parse_hidex(filename):
+    """parses the Hidex csv file
+
+    Params:
+        filename: the complete path and name of the Hidex cvs file
+
+    Returns:
+        df: a pandas data frame
+
+    Description:
+
+    """
+    df = pd.DataFrame()
+    DATA = False
+    with open(filename, newline="") as csvfile:
+        print(f"opened {filename}")
+        csv.QUOTE_NONNUMERIC = True
+        reader = csv.reader(csvfile)
+        i = 0
+        for row in reader:
+            i += 1
+            row = [x.strip() for x in row]
+            if i == 3:
+                date_time = row[0]
+            if len(row) > 0 and row[0] == "Plate #":
+                
+                df = pd.DataFrame(columns=row)
+                DATA = True
+                continue
+            if DATA == True:
+                df.loc[len(df.index) + 1] = row
+    return df, date_time
+
+def add_time(date, time, time_stamp):
+    date = date.split("-", 3)
+    time = time.split(":",3)
+    date_and_time = datetime.datetime(int(date[0]), int(date[1]), int(date[2]), int(time[0]), int(time[1]), int(time[2]))
+    print(date_and_time)
+    pass
 
     
-    #Disconnect from the test_bugs database
-    disconnect_Database(cursor,cnx)
+def main(filename):
+    df, date_time  = parse_hidex(filename)
+    time_stamps = df.columns[3:].to_list()
+    date_time = date_time.split(" ", 1)
+    
+    # Calling the create empty plate records function. Function returns a list of recently created Plate IDs
+    create_empty_plate_records(1, 96, "Hidex", "TEST_PROTOCOL_NAME.csv")
+
+    # Calling the update plate data function
+    #update_plate_data("Campaign1_RawOD", 1, time_stamps, df, str(date_time[0]), str(date_time[1]), "Campaign1_20210505_144922_RawOD.csv")
+    
+
+    #return df
 
 
-#-----------------------------------------------
-
-#TEST if this is a plate with the info below. 
-#plate_info = (6, 10, "directory_name", "plate_type")
-
-#TODO: Read plate info from the dictionary
-num_plates, num_wells, exp_id, plate_type = dic.get('num_plates'), dic.get('num_wells'), dic.get('directory_name'), dic.get('plate_type')
-plate_info = (num_plates, num_wells, exp_id, plate_type)
-
-# Calling the create empty plate records function. Function returns a list of recently created Plate IDs
-plate_id_list = create_empty_plate_records(plate_info)
-
-
-#-----------------------------------------------
-# TO UPDATE THE RECORDS 
-#-----------------------------------------------
-
-# TODO: Write a function to parse the data file
-
-#with open ('/lambda_stor/data/hudson/data/Campaign1_20210504_172356.csv','r') as infile:
-#    reader = csv.reader(infile, delimiter = ",")
-#    title = next(reader)
-#    found_section = False
-#    header = None
-#    for row in reader:
-#        if not found_section:
-#            if len(row) > 0:
-#                if row[0] == "Well":
-#                    header = next(reader)
-#                    found_section = True
-#        else:
-#            if len(row)>0:
-#                break
-
-# Calling the update plate data function with the data file, plate_id and timestemp list
-#update_plate_data(header, plate_id, timestemp)
-
-
+if __name__ == "__main__":
+    main('/lambda_stor/data/hudson/data/1620249864-1/Campaign1_20210505_144922_RawOD.csv')
 

@@ -6,7 +6,9 @@ import zmq
 import time
 import os
 import sys
-
+sys.path.append("../rdbms/")
+sys.path.append("../../rdbms/") # this is the one that works
+from create_plate_functions import create_empty_plate_records
 
 def lamdba6_send_instructions(instructions_dir, info_list):
 
@@ -43,22 +45,18 @@ def lamdba6_send_instructions(instructions_dir, info_list):
             # Send message to queue
             socket.send_string(address + "***" + info_string + "***" + json.dumps(data))
             print("Message sent to port 5556 on hudson01")
-            
-            # TESTING
-
+           
+            # Wait for reply and 
             repl = socket.recv()
             string_repl = str(repl)
             message, info = string_repl.split("***")
             
             print(f"Got {repl}")
             num_plates, num_wells, plate_type, directory_name = info.split(",")
-            print(num_plates)
-            print(num_wells)
-            print(plate_type)
-            print(directory_name[:-2])
+            directory_name = directory_name[:-2]
             
             # insert call to database here
-            
+            plate_ids = create_empty_plate_records(int(num_plates), int(num_wells), plate_type, directory_name)
 
             # archive instructions once sent correctly
             archive([instructions_dir], "/lambda_stor/data/hudson/instructions/")
