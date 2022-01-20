@@ -155,6 +155,7 @@ def update_plate_data(file_basename_for_data, plate_number, time_stamps, new_dat
         #connect to the test_bugs database
         cursor,cnx = connect_Database() 
         # Find the plate_id for the given data
+        file_basename_for_data = file_basename_for_data.strip()
         plate_id = plate_id_finder(cursor, file_basename_for_data, plate_number)
         # Find format of the plate
         format = find_format(cursor, plate_id)
