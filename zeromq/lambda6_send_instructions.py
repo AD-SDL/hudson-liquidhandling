@@ -52,11 +52,12 @@ def lamdba6_send_instructions(instructions_dir, info_list):
             message, info = string_repl.split("***")
             
             print(f"Got {repl}")
+
             num_plates, num_wells, plate_type, directory_name = info.split(",")
-            directory_name = directory_name[:-2]
+            directory_name = directory_name[:-1]
             
             # insert call to database here
-            plate_ids = create_empty_plate_records(int(num_plates), int(num_wells), plate_type, directory_name)
+            create_empty_plate_records(int(num_plates), int(num_wells), plate_type, directory_name)
 
             # archive instructions once sent correctly
             archive([instructions_dir], "/lambda_stor/data/hudson/instructions/")

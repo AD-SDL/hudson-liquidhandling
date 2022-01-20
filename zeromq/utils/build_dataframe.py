@@ -28,6 +28,7 @@ def build_dataframe(filenames, basename=None):
 
         Writes out data, cols, rows, labels files using
     """
+
     # define data frame file name
     if basename == None:
         basename = "basename"
@@ -40,8 +41,7 @@ def build_dataframe(filenames, basename=None):
     # loop over the set if filenames appending to samples and data
     for f in filenames:
         print("parsing {}".format(f))
-        df = parse_hidex(f)
-        print(df)
+        df, timestamp_list, reading_date, reading_time, basename = parse_hidex(f)   
         data = data.append(df.iloc[:, -1:])
         rows = rows.append(df[["Well"]], ignore_index=True)
 

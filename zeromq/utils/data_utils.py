@@ -20,13 +20,18 @@ def parse_hidex(filename):
     """
     df = pd.DataFrame()
 
+    # extract the reading date, time, and data (into dataframe)
     DATA = False
     with open(filename, newline="") as csvfile:
         print(f"opened {filename}")
         csv.QUOTE_NONNUMERIC = True
         reader = csv.reader(csvfile)
+        i = 0
         for row in reader:
+            i += 1
             row = [x.strip() for x in row]
+            if i == 3: 
+                reading_date, reading_time = row[0].split(" ")
             if len(row) > 0 and row[0] == "Plate #":
                 df = pd.DataFrame(columns=row)
                 DATA = True
@@ -34,7 +39,16 @@ def parse_hidex(filename):
             if DATA == True:
                 df.loc[len(df.index) + 1] = row
 
-    return df
+    timestamp_list = df.columns[3:].to_list()
+
+    # clean up the df 
+    # df.drop(df.columns[[0,2]], axis = 1, inplace = True)
+
+    # extract file basename 
+    basename = os.path.basename(filename)
+
+    return df, timestamp_list, reading_date, reading_time, basename 
+
 
 
 def excel_to_csv(filename):

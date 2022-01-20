@@ -36,5 +36,11 @@ while True:
         # child_message_handler = child_pid = Popen(["python", "C:\\Users\\svcaibio\\Dev\\liquidhandling\\zeromq\\test\\hudson01_handle.py", decoded],
         #     start_new_session=True
         #     ).pid
-        hudson01_handle_message(decoded)
-        socket.send(b"Hudson01 received instructions")
+
+        address, info, message_body = decoded.split("***")
+        info += "," + address
+        hudson01_handle_message(decoded) 
+        response = bytes("Hudson01 received instruction***" + info, encoding='utf-8')
+        socket.send(response)
+        #socket.send(b"Hudson01 received instruction")
+        

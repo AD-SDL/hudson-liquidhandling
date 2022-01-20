@@ -578,110 +578,111 @@ def generate_campaign1_repeatable(
     )
 
     # set up equiptment
-    softLinx.hidexRun("SetTemp37")
-    softLinx.liconicBeginShake(shaker1Speed=30)
+    # softLinx.hidexRun("SetTemp37")
+    # softLinx.liconicBeginShake(shaker1Speed=30)
 
     #* LOOP: create plates, take t0 reading, transfer to incubator
-    for k in range(len(treatment)): 
-        # restock growth assay plate before run
-        softLinx.plateCraneMovePlate(
-            ["SoftLinx.PlateCrane.Stack5"], ["SoftLinx.Solo.Position4"], hasLid=True
-        )
-        # remove lid and place in Lid Nest
-        softLinx.plateCraneRemoveLid(
-            ["SoftLinx.Solo.Position4"], ["SoftLinx.PlateCrane.LidNest2"]
-        )
+    # for k in range(len(treatment)): 
+    #     # restock growth assay plate before run
+    #     softLinx.plateCraneMovePlate(
+    #         ["SoftLinx.PlateCrane.Stack5"], ["SoftLinx.Solo.Position4"], hasLid=True
+    #     )
+    #     # remove lid and place in Lid Nest
+    #     softLinx.plateCraneRemoveLid(
+    #         ["SoftLinx.Solo.Position4"], ["SoftLinx.PlateCrane.LidNest2"]
+    #     )
         
-        # replace tip box if necessary
-        if (k%2 == 0):
-            if k == 0: 
-                replace_tip_box(softLinx, "Position3") 
-            else: 
-                remove_tip_box(softLinx, "Position3")
-                replace_tip_box(softLinx, "Position3")
-            softLinx.soloSoftResetTipCount(1)  # Reset the tip count every other run. 
+    #     # replace tip box if necessary
+    #     if (k%2 == 0):
+    #         if k == 0: 
+    #             replace_tip_box(softLinx, "Position3") 
+    #         else: 
+    #             remove_tip_box(softLinx, "Position3")
+    #             replace_tip_box(softLinx, "Position3")
+    #         softLinx.soloSoftResetTipCount(1)  # Reset the tip count every other run. 
 
-        softLinx.plateCraneMoveCrane("SoftLinx.PlateCrane.Safe")
+    #     softLinx.plateCraneMoveCrane("SoftLinx.PlateCrane.Safe")
 
-        # run all three liquid handling steps 
-        softLinx.soloSoftRun(
-            "C:\\labautomation\\instructions\\"
-            + directory_name
-            + "\\"
-            + os.path.basename(step1_hso_filename_list[k])
-        )
-        softLinx.soloSoftRun(
-            "C:\\labautomation\\instructions\\"
-            + directory_name
-            + "\\"
-            + os.path.basename(step2_hso_filename_list[k])
-        )
-        softLinx.soloSoftRun(
-            "C:\\labautomation\\instructions\\"
-            + directory_name
-            + "\\"
-            + os.path.basename(step3_hso_filename_list[k])
-        )
+    #     # run all three liquid handling steps 
+    #     softLinx.soloSoftRun(
+    #         "C:\\labautomation\\instructions\\"
+    #         + directory_name
+    #         + "\\"
+    #         + os.path.basename(step1_hso_filename_list[k])
+    #     )
+    #     softLinx.soloSoftRun(
+    #         "C:\\labautomation\\instructions\\"
+    #         + directory_name
+    #         + "\\"
+    #         + os.path.basename(step2_hso_filename_list[k])
+    #     )
+    #     softLinx.soloSoftRun(
+    #         "C:\\labautomation\\instructions\\"
+    #         + directory_name
+    #         + "\\"
+    #         + os.path.basename(step3_hso_filename_list[k])
+    #     )
 
-        # # Timepoint 0 Hidex reading (NOT NECESSARY)
-        # softLinx.plateCraneMovePlate(
-        #     ["SoftLinx.Solo.Position4"], ["SoftLinx.Hidex.Nest"]
-        # )  # no need to open hidex
-        # softLinx.hidexClose()
-        # softLinx.plateCraneMoveCrane("SoftLinx.PlateCrane.Safe")
-        # softLinx.hidexRun("Campaign1_noIncubate2")  # Hidex will close automatically
+    #     # # Timepoint 0 Hidex reading (NOT NECESSARY)
+    #     # softLinx.plateCraneMovePlate(
+    #     #     ["SoftLinx.Solo.Position4"], ["SoftLinx.Hidex.Nest"]
+    #     # )  # no need to open hidex
+    #     # softLinx.hidexClose()
+    #     # softLinx.plateCraneMoveCrane("SoftLinx.PlateCrane.Safe")
+    #     # softLinx.hidexRun("Campaign1_noIncubate2")  # Hidex will close automatically
 
-        # # Transfer Hidex data (timepoint 0 data)
-        # softLinx.runProgram(
-        #     "C:\\Users\\svcaibio\\Dev\\liquidhandling\\zeromq\\utils\\send_data.bat", arguments=k
-        # )
+    #     # # Transfer Hidex data (timepoint 0 data)
+    #     # softLinx.runProgram(
+    #     #     "C:\\Users\\svcaibio\\Dev\\liquidhandling\\zeromq\\utils\\send_data.bat", arguments=k
+    #     # )
 
-        # Transfer plate to Liconic.Nest and replace lid
-        #softLinx.plateCraneMovePlate(["SoftLinx.Hidex.Nest"], ["SoftLinx.Liconic.Nest"])
-        softLinx.plateCraneMovePlate(["SoftLinx.Solo.Position4"], ["SoftLinx.Liconic.Nest"])
-        #softLinx.hidexClose()
-        softLinx.plateCraneReplaceLid(["SoftLinx.PlateCrane.LidNest2"], ["SoftLinx.Liconic.Nest"])
-        softLinx.plateCraneMoveCrane("SoftLinx.PlateCrane.Safe")
+    #     # Transfer plate to Liconic.Nest and replace lid
+    #     #softLinx.plateCraneMovePlate(["SoftLinx.Hidex.Nest"], ["SoftLinx.Liconic.Nest"])
+    #     softLinx.plateCraneMovePlate(["SoftLinx.Solo.Position4"], ["SoftLinx.Liconic.Nest"])
+    #     #softLinx.hidexClose()
+    #     softLinx.plateCraneReplaceLid(["SoftLinx.PlateCrane.LidNest2"], ["SoftLinx.Liconic.Nest"])
+    #     softLinx.plateCraneMoveCrane("SoftLinx.PlateCrane.Safe")
 
-        # Load plate into incubator
-        softLinx.liconicLoadIncubator(loadID=k, holdWithoutIncubationTime=True)  
-    #* END LOOP
+    #     # Load plate into incubator
+    #     softLinx.liconicLoadIncubator(loadID=k, holdWithoutIncubationTime=True)  
+    # #* END LOOP
 
-    # reduce Hidex temp to reduce strain on instument over incubation (necessary?)
-    softLinx.hidexRun("SetTemp20") 
+    # # reduce Hidex temp to reduce strain on instument over incubation (necessary?)
+    # softLinx.hidexRun("SetTemp20") 
     
-    softLinx.liconicShake(shaker1Speed=30, shakeTime=[0,9,55,0]) 
+    # softLinx.liconicShake(shaker1Speed=30, shakeTime=[0,9,55,0]) 
 
-    # preheat Hidex for readings after incubation
-    softLinx.hidexRun("SetTempWait37")  
+    # # preheat Hidex for readings after incubation
+    # softLinx.hidexRun("SetTempWait37")  
 
     #* LOOP: unload plates from incubator and take endpoing reading
     for k in range(len(treatment)): 
-        softLinx.liconicUnloadIncubator(loadID=k)
-        softLinx.plateCraneRemoveLid(["SoftLinx.Liconic.Nest"], ["SoftLinx.PlateCrane.LidNest2"])
-        softLinx.plateCraneMovePlate(["SoftLinx.Liconic.Nest"], ["SoftLinx.Hidex.Nest"])
-        softLinx.hidexClose()
-        softLinx.plateCraneMoveCrane("SoftLinx.PlateCrane.Safe")
-        softLinx.hidexRun("Campaign1_noIncubate2")
+        #softLinx.liconicUnloadIncubator(loadID=k)
+        #softLinx.plateCraneRemoveLid(["SoftLinx.Liconic.Nest"], ["SoftLinx.PlateCrane.LidNest2"])
+        #softLinx.plateCraneMovePlate(["SoftLinx.Liconic.Nest"], ["SoftLinx.Hidex.Nest"])
+        #softLinx.hidexClose()
+        #softLinx.plateCraneMoveCrane("SoftLinx.PlateCrane.Safe")
+        #softLinx.hidexRun("Campaign1_noIncubate2")
 
         # transfer data to lambda6
         softLinx.runProgram(
             "C:\\Users\\svcaibio\\Dev\\liquidhandling\\zeromq\\utils\\send_data.bat", arguments=f"{k} {directory_name}"
         )
+        softLinx.liconicShake(shaker1Speed=30, shakeTime=[0,0,0,10])  # delay before sending the next file
 
         # Move plate from Hidex to Stack 1 and replace lid
-        softLinx.plateCraneMovePlate(["SoftLinx.Hidex.Nest"], ["SoftLinx.PlateCrane.Stack1"])
-        softLinx.hidexClose()
-        softLinx.plateCraneReplaceLid(["SoftLinx.PlateCrane.LidNest2"], ["SoftLinx.PlateCrane.Stack1"])
-        softLinx.plateCraneMoveCrane("SoftLinx.PlateCrane.Safe")
+        #softLinx.plateCraneMovePlate(["SoftLinx.Hidex.Nest"], ["SoftLinx.PlateCrane.Stack1"])
+        #softLinx.hidexClose()
+        #softLinx.plateCraneReplaceLid(["SoftLinx.PlateCrane.LidNest2"], ["SoftLinx.PlateCrane.Stack1"])
+        #softLinx.plateCraneMoveCrane("SoftLinx.PlateCrane.Safe")
 
         # shake in incubator until time to take next reading  (don't do if already read last plate)
-        if not k == (len(treatment)-1):
-            softLinx.liconicShake(shaker1Speed=30, shakeTime=[0,0,21,0])  # 21 min
+        #if not k == (len(treatment)-1):
+            #softLinx.liconicShake(shaker1Speed=30, shakeTime=[0,0,21,0])  # 21 min
     #* END LOOP
 
-    softLinx.hidexRun("SetTemp20") 
-    softLinx.liconicEndShake()
+    #softLinx.hidexRun("SetTemp20") 
+    #softLinx.liconicEndShake()
     
     # save protocol to write instructions to .slvp file, create .txt manifest, and .ahk remote start file
     softLinx.saveProtocol()
