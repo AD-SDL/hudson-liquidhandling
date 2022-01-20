@@ -1,4 +1,5 @@
-create database test_bugs;
+create database if not exists test_bugs;
+
 
 use test_bugs;
 
