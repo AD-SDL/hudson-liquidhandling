@@ -17,7 +17,7 @@ from utils.archive import archive
 def hudson01_handle_message(decoded_message):
 
     # * extract message address and body
-    address, message_body = decoded_message.split("***")
+    address, info, message_body = decoded_message.split("***")
     json_decoded = json.loads(message_body)
 
     return_val = "PASS"

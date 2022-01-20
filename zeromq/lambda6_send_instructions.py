@@ -6,14 +6,19 @@ import zmq
 import time
 import os
 import sys
+sys.path.append("../rdbms/")
+sys.path.append("../../rdbms/") # this is the one that works
+from create_plate_functions import create_empty_plate_records
 
-
-def lamdba6_send_instructions(instructions_dir):
+def lamdba6_send_instructions(instructions_dir, info_list):
 
     # * connect to port on hudson01
     context = zmq.Context()
     socket = context.socket(zmq.REQ)
     socket.connect("tcp://hudson01.bio.anl.gov:5556")
+    
+    # format info string (num_plates,num_wells,plate_type)
+    info_string = f"{info_list[0]},{info_list[1]},{info_list[2]}"
 
     if os.path.isdir(instructions_dir):
         instruction_files = os.listdir(instructions_dir)
@@ -32,13 +37,27 @@ def lamdba6_send_instructions(instructions_dir):
                 tmp = generateFileManifest(f_path, "instructions")
                 for key, value in tmp.items():
                     data[key] = value
+                    
+            # TESTING
+            print("LAMBDA6_SEND_INSTRUCTIONS")
+            print(f"INFO STRING: {info_string}")
 
             # Send message to queue
-            socket.send_string(address + "***" + json.dumps(data))
+            socket.send_string(address + "***" + info_string + "***" + json.dumps(data))
             print("Message sent to port 5556 on hudson01")
-
+           
+            # Wait for reply and 
             repl = socket.recv()
+            string_repl = str(repl)
+            message, info = string_repl.split("***")
+            
             print(f"Got {repl}")
+
+            num_plates, num_wells, plate_type, directory_name = info.split(",")
+            directory_name = directory_name[:-1]
+            
+            # insert call to database here
+            create_empty_plate_records(int(num_plates), int(num_wells), plate_type, directory_name)
 
             # archive instructions once sent correctly
             archive([instructions_dir], "/lambda_stor/data/hudson/instructions/")
@@ -52,11 +71,19 @@ def main(args):
     parser.add_argument(
         "-d", "--dir", help="Directory to send", required=True, type=str
     )
+    parser.add_argument(
+        "-i", "--info", 
+        help="Assay plate details string: num_plates num_wells plate_type dir_name", 
+        required = True, 
+        type = str,
+        nargs = "*",
+    )
     args = vars(parser.parse_args())
     print("directory sent = {}".format(args["dir"]))
-
+   
     instructions_dir = args["dir"]  # full path
-    lamdba6_send_instructions(instructions_dir)
+    info_list = args["info"]
+    lamdba6_send_instructions(instructions_dir, info_list)
 
 
 if __name__ == "__main__":
