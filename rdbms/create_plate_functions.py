@@ -150,11 +150,16 @@ def create_empty_plate_records(num_plates, num_wells, plate_type, directory_name
 #-----------------------------------------------
 # Function to update the records for the given plate. Accepts the data file, plate id that is going to be updated and the reading time 
 def update_plate_data(file_basename_for_data, plate_number, time_stamps, new_data, date, time, experiment_name):
+    # TODO:Check if plate exists in plate table first if not upload every all in ones
+    # TODO:Change file_basename_for_data with file_basename_for_data
     Well_type = "TODO"
+
     try:
         #connect to the test_bugs database
         cursor,cnx = connect_Database() 
         # Find the plate_id for the given data
+        plate_number = plate_number.strip()
+        file_basename_for_data = file_basename_for_data.strip()
         plate_id = plate_id_finder(cursor, file_basename_for_data, plate_number)
         # Find format of the plate
         format = find_format(cursor, plate_id)
@@ -237,12 +242,20 @@ def main(filename):
     df, date_time  = parse_hidex(filename)
     time_stamps = df.columns[3:].to_list()
     date_time = date_time.split(" ", 1)
-    
+
+    p = " 0 "
+    p=p.strip()
+    print(p)
+    cursor,cnx = connect_Database()    
+
+    print(plate_id_finder(cursor, "Campaign2_DB_12_TEST-loop-v1-164263201", "0 "))
+    disconnect_Database(cursor, cnx)
+
     # Calling the create empty plate records function. Function returns a list of recently created Plate IDs
-    create_empty_plate_records(1, 48, "Hidex", "Campaign1_20210505_144922_RawOD.csv")
+    #create_empty_plate_records(1, 48, "Hidex", "Campaign1_20210505_144922_RawOD.csv")
     
     # Calling the update plate data function
-    update_plate_data("Campaign1_20210505_144922_RawOD.csv", 0, time_stamps, df, str(date_time[0]), str(date_time[1]), "Campaign1_20210505_144922_RawOD.csv")
+    #update_plate_data("Campaign1_20210505_144922_RawOD.csv", 0, time_stamps, df, str(date_time[0]), str(date_time[1]), "Campaign1_20210505_144922_RawOD.csv")
     
 
     #return df

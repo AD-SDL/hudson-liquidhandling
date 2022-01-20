@@ -9,7 +9,7 @@ import config
 
 
 def connect():
-    print("Using database {} as user {}".format(config.DBNAME, config.DBUSER))
+    #print("Using database {} as user {}".format(config.DBNAME, config.DBUSER))
 
     # set up
     try:
