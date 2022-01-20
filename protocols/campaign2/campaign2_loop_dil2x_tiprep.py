@@ -99,7 +99,7 @@ def generate_campaign1_repeatable(
     destination_mix_volume_s3 = 100
 
     # * Create folder to store all instruction files
-    project = "Campaign2_TEST"
+    project = "Campaign2"
     project_desc = "loop"
     version_num = "v1"
     timestamp = str(time.time()).split(".")[0]
@@ -572,9 +572,12 @@ def generate_campaign1_repeatable(
     softLinx = SoftLinx("Steps_1_2_3", os.path.join(directory_path, "steps_1_2_3.slvp"))
 
     # define starting plate layout
+    # softLinx.setPlates(
+    #     {"SoftLinx.PlateCrane.Stack5": "Plate.96.Corning-3635.ClearUVAssay", 
+    #     "SoftLinx.PlateCrane.Stack4": "TipBox.180uL.Axygen-EVF-180-R-S.bluebox"}
+    # )
     softLinx.setPlates(
-        {"SoftLinx.PlateCrane.Stack5": "Plate.96.Corning-3635.ClearUVAssay", 
-        "SoftLinx.PlateCrane.Stack4": "TipBox.180uL.Axygen-EVF-180-R-S.bluebox"}
+        {"SoftLinx.PlateCrane.Stack5": "Plate.96.Corning-3635.ClearUVAssay"}
     )
 
     # set up equiptment
@@ -592,13 +595,13 @@ def generate_campaign1_repeatable(
             ["SoftLinx.Solo.Position4"], ["SoftLinx.PlateCrane.LidNest2"]
         )
         
-        # replace tip box if necessary
+        # replace tip box if necessary 
         if (k%2 == 0):
-            if k == 0: 
-                replace_tip_box(softLinx, "Position3") 
-            else: 
-                remove_tip_box(softLinx, "Position3")
-                replace_tip_box(softLinx, "Position3")
+            # if k == 0: 
+            #     replace_tip_box(softLinx, "Position3") 
+            # else: 
+            #     remove_tip_box(softLinx, "Position3")
+            #     replace_tip_box(softLinx, "Position3")
             softLinx.soloSoftResetTipCount(1)  # Reset the tip count every other run. 
 
         softLinx.plateCraneMoveCrane("SoftLinx.PlateCrane.Safe")
@@ -650,7 +653,7 @@ def generate_campaign1_repeatable(
     # reduce Hidex temp to reduce strain on instument over incubation (necessary?)
     softLinx.hidexRun("SetTemp20") 
     
-    softLinx.liconicShake(shaker1Speed=30, shakeTime=[0,9,55,0]) 
+    softLinx.liconicShake(shaker1Speed=30, shakeTime=[0,7,36,0]) 
 
     # preheat Hidex for readings after incubation
     softLinx.hidexRun("SetTempWait37")  
