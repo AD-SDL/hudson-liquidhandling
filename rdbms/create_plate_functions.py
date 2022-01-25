@@ -36,7 +36,7 @@ def disconnect_Database(cursor,cnx):
 # Creates empty records in the assay plate table
 def create_empty_records_assay_plate(plate_id, cursor, row_num, num_wells):
 
-    add_assay_plate = """INSERT INTO assay_plate (Plate_ID, Row_num)
+    add_assay_plate = """INSERT INTO Test_assay_plate (Plate_ID, Row_num)
                                 VALUES (%s, %s)"""
         
     assay_data = (plate_id, row_num)
@@ -56,7 +56,7 @@ def create_empty_records_assay_plate(plate_id, cursor, row_num, num_wells):
 # Counts the number of rows in table for the given plate_id
 def count_rows_assay_table(cursor, plate_num):
 
-    count="SELECT COUNT(*) FROM assay_plate WHERE Plate_ID = %s"
+    count="SELECT COUNT(*) FROM Test_assay_plate WHERE Plate_ID = %s"
     value = plate_num
     count_rows = cursor.execute(count, (value,))
     count_rows = cursor.fetchall()
@@ -66,7 +66,7 @@ def count_rows_assay_table(cursor, plate_num):
 #-----------------------------------------------
 # Finds format of the plate for the given plate_id
 def find_format(cursor, plate_id):
-    plate_format ="SELECT Format FROM plate WHERE Plate_ID = %s"
+    plate_format ="SELECT Format FROM Test_plate WHERE Plate_ID = %s"
     value = plate_id
     format = cursor.execute(plate_format, (value,))
     format = cursor.fetchall()
@@ -74,34 +74,110 @@ def find_format(cursor, plate_id):
 
 #-----------------------------------------------
 # Finds which plate_id is associated with the given file name and plate number
-def plate_id_finder(cursor, file_basename_for_data, plate_number):
-    find_plate = "select Plate_ID from plate WHERE Exp_ID = %s and Barcode = %s"
-    plate_info = (file_basename_for_data, plate_number)
+def plate_id_finder(cursor, experiment_name, plate_number):
+    find_plate = "select Plate_ID from Test_plate WHERE Exp_ID = %s and Barcode = %s"
+    plate_info = (experiment_name, plate_number)
     plate_id = cursor.execute(find_plate, plate_info)
     plate_id = cursor.fetchall()
-    print(plate_id, type(plate_id))
-    return plate_id[0][0]
+   
+    if len(plate_id) == 0:
+        return -1
+    else:
+        print("Record found in the database. Plate ID:", plate_id[0][0])    
+        return plate_id[0][0]
     
 #-----------------------------------------------
-# timestamp_tracker
-def timestamp_tracker(index, time_stamps , cursor, time_index, new_data, index_num, row, experiment_name, date, time, plate_id, Well_type):
+# Match the data rows with their elapsed time
+def timestamp_tracker(time_stamps, cursor, new_data, Data_information):
+#Data_information = (row_num, data_index_num, file_basename_for_data, date, time, plate_id)
 
     for index in range(0,len(time_stamps)):
-        index_num = assay_plate_insert_data(cursor, time_stamps[index], new_data, index_num, row, experiment_name, date, time, plate_id, Well_type)
-        
+        assay_plate_insert_data(cursor, time_stamps[index], new_data, Data_information)
+        Data_information[1] = 0
 
 #-----------------------------------------------
 # Enters data into database
-def assay_plate_insert_data(cursor, time_index, new_data, index_num, row, experiment_name, date, time, plate_id, Well_type):
-    row += 1
-    if row < (len(new_data)+1):
-        update_assay_plate = "UPDATE assay_plate SET Well_type =  %s, Well=%s, RawOD_590=%s, Elapsed_time = %s, Experiment_name = %s, Reading_date = %s, Reading_time =%s WHERE Plate_ID = %s AND Row_num = %s"
-        plate_assay_data = (Well_type, new_data['Well'][row], new_data[time_index][row], time_index, experiment_name, date, time, plate_id, index_num)
-        cursor.execute(update_assay_plate, plate_assay_data)
-        index_num+=1
-        return assay_plate_insert_data(cursor, time_index, new_data, index_num, row, experiment_name, date, time, plate_id, Well_type)
-    else:
-        return index_num
+#def assay_plate_insert_data(cursor, time_index, new_data, row_num, data_index_num, experiment_name, date, time, plate_id):
+def assay_plate_insert_data(cursor, time_index, new_data, Data_information):
+    """
+        Data_information [List]:
+
+            Variables:
+
+                row_num: Row number in the database that iterates through the extended records. Highest number equals to format * len(time_stamps)
+                data_index_num: Index number that iterates through the data. Highest number equals to format of the plate
+                file_basename_for_data: The name of the experiment 
+                date: Experiment start date 
+                time: Experiment start time 
+                plate_id: Plate id 
+    """
+    
+    Data_information[1] += 1
+    
+    if Data_information[1] < (len(new_data)+1):
+        try:
+            if new_data['Well'][Data_information[1]][0] == 'H':
+                Well_type = "Control"
+            else:
+                Well_type = "Experimental"
+    
+            update_assay_plate = "UPDATE Test_assay_plate SET Well_type =  %s, Well=%s, RawOD_590=%s, Elapsed_time = %s, Experiment_name = %s, Reading_date = %s, Reading_time =%s WHERE Plate_ID = %s AND Row_num = %s"
+            plate_assay_data = (Well_type, new_data['Well'][Data_information[1]], new_data[time_index][Data_information[1]], time_index, Data_information[2], Data_information[3], Data_information[4], Data_information[5], Data_information[0])
+            cursor.execute(update_assay_plate, plate_assay_data)
+            Data_information[0]+= 1
+           
+        
+        except mysql.connector.Error as error:
+            print("Failed to insert record into Assay_plate table {}".format(error))
+        
+        finally:    
+            return assay_plate_insert_data(cursor, time_index, new_data, Data_information)
+    #else:
+     #   row_num = Data_information[0]
+      #  return row_num
+
+#-----------------------------------------------
+# Enters new data into the database directly 
+def upload_data_directly(experiment_name, plate_number, time_stamps, new_data, date, time, file_basename_for_data):
+    try:
+        cursor,cnx = connect_Database()    
+
+        add_plate = """INSERT INTO Test_plate (Type, Process_status, Barcode, exp_ID, Format, Date_created, Time_created)
+                        VALUES (%s, %s, %s, %s, %s, %s, %s)"""
+
+        # Using the current time to keep track of the time when the plate information is recorded in the database 
+        now = datetime.now()
+        current_date = now.strftime("%m/%d/%Y")
+        current_time = now.strftime("%H:%M:%S.%f")
+                    
+        plate_data = ("TODO", "Completed", str(plate_number), experiment_name, len(new_data), current_date, current_time)
+        cursor.execute(add_plate, plate_data)
+            
+        # Recieving plate_id back to utilize the unique plate id in the assay_plate records
+        plate_id = cursor.lastrowid
+
+        row_num = 1
+        for index in time_stamps:
+            for data_index_num in range(1,len(new_data)+1):
+                if new_data['Well'][data_index_num][0] == 'H':
+                    Well_type = "Control"
+                else:
+                    Well_type = "Experimental"
+
+                update_assay_plate = """INSERT INTO Test_assay_plate (Plate_ID, Well_type, Row_num, Well, RawOD_590, Elapsed_time, Experiment_name, Reading_date, Reading_time)
+                                                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)"""                
+                plate_assay_data = (plate_id, Well_type, row_num, new_data['Well'][data_index_num], new_data[index][data_index_num], index, file_basename_for_data, date, time)
+                cursor.execute(update_assay_plate, plate_assay_data)
+                row_num+=1
+
+    except mysql.connector.Error as error:
+        print("Failed to insert record into Assay_plate table {}".format(error))
+
+    finally:
+        # Disconnect from the test_bugs database
+        disconnect_Database(cursor, cnx)
+        print("Connection to the database is closed")
+    
 
 #-----------------------------------------------
 # Function creates empty records in the "plate" and "assay_plate" tables, considering the given plate information.
@@ -113,7 +189,7 @@ def create_empty_plate_records(num_plates, num_wells, plate_type, directory_name
         
         #Create empty records in plate table
         for create_plate in range(0, num_plates):
-            add_plate = """INSERT INTO plate (Type, Format, Barcode, exp_ID, Date_created, Time_created)
+            add_plate = """INSERT INTO Test_plate (Type, Format, Barcode, exp_ID, Date_created, Time_created)
                         VALUES (%s, %s, %s, %s, %s, %s)"""
 
             # Using the current time to keep track of the time when the plate information is recorded in the database 
@@ -122,21 +198,15 @@ def create_empty_plate_records(num_plates, num_wells, plate_type, directory_name
             current_time = now.strftime("%H:%M:%S.%f")
             
             plate_data = (plate_type, num_wells, str(create_plate), directory_name, current_date, current_time)
-            # Creating a new record in the plate table for the next unique plate 
             cursor.execute(add_plate, plate_data)
-            
 
             # Recieving plate_id back to utilize the unique plate id in the assay_plate records
             plate_id = cursor.lastrowid
 
-            # Considering the plate format, creating a given number of records in the assay_plate table 
-             
-            #Create empty assay_plate row
-            val=create_empty_records_assay_plate(plate_id, cursor, 1, num_wells)
-
-                 
-        print(num_plates, " records inserted succesfully into Plate table")
-        print(num_plates * num_wells, " records inserted succesfully into Assay_Plate table")
+    
+            # Considering the plate format, creating a given number of records in the assay_plate table
+            row_num = 1
+            create_empty_records_assay_plate(plate_id, cursor, row_num, num_wells)
 
         
     except mysql.connector.Error as error:
@@ -144,54 +214,59 @@ def create_empty_plate_records(num_plates, num_wells, plate_type, directory_name
     
     finally:
         # Disconnect from the test_bugs database
+        print(num_plates, " records inserted succesfully into Plate table")
+        print(num_plates * num_wells, " records inserted succesfully into Assay_Plate table")
         disconnect_Database(cursor, cnx)
         print("Connection to the database is closed")
 
 #-----------------------------------------------
 # Function to update the records for the given plate. Accepts the data file, plate id that is going to be updated and the reading time 
-def update_plate_data(file_basename_for_data, plate_number, time_stamps, new_data, date, time, experiment_name):
-    # TODO:Check if plate exists in plate table first if not upload every all in ones
-    # TODO:Change file_basename_for_data with file_basename_for_data
-    Well_type = "TODO"
+def update_plate_data(experiment_name, plate_number, time_stamps, new_data, date, time, file_basename_for_data):
 
     try:
         #connect to the test_bugs database
         cursor,cnx = connect_Database() 
-        # Find the plate_id for the given data
-        file_basename_for_data = file_basename_for_data.strip()
-        plate_id = plate_id_finder(cursor, file_basename_for_data, plate_number)
-        # Find format of the plate
-        format = find_format(cursor, plate_id)
-        # Counting how many records exist in the table and returns the last index number
-        row_num = count_rows_assay_table(cursor, plate_id) 
-        if len(time_stamps) * format > row_num:
-        # Fixing the index number
-            # Creating new empty record in the assay_table until len(time_stamps) * format = row_num
-
-            # TODO: PUT for loops back to extend the database
-            #while len(time_stamps) * format > row_num:
-            for time_index in range(len(time_stamps)-1):
-                row_num = create_empty_records_assay_plate(plate_id, cursor, row_num +1, format)
-            
-        # Update the records in the assay_plate table with the given data
        
-
-        index_num = 1
-        timestamp_tracker(0, time_stamps , cursor, time_stamps, new_data, index_num, 0, experiment_name, date, time, plate_id, Well_type)
-                   
-
-        # Update plate info for the given plate_id and the timestemp
-        update_plate_table = "UPDATE plate SET Process_status = %s WHERE Plate_ID = %s"
-        update_values = ("Completed", plate_id)
-        cursor.execute(update_plate_table, update_values)
-        disconnect_Database(cursor, cnx)
-        print("Records are inserted and connection to the database is closed")
+        # Find the plate_id for the given data
+        experiment_name = experiment_name.strip()
+        plate_id = plate_id_finder(cursor, experiment_name, plate_number)
         
+        if plate_id == -1:
+            print("Plate record does not exists in the database!!!")
+            print("Creating new records for", experiment_name, " Barcode: 0")
+            upload_data_directly(experiment_name, plate_number, time_stamps, new_data, date, time, file_basename_for_data)
+        else:
+            # Find format of the plate
+            format = find_format(cursor, plate_id)
+            
+            # Counting how many records exist in the table and returns the last index number
+            row_num = count_rows_assay_table(cursor, plate_id) 
+
+            # Checking if the database needs to be extended
+            if len(time_stamps) * format > row_num:
+                # Creating new empty record in the assay_table until len(time_stamps) * format = row_num
+                for lenght_time_stamps in range(len(time_stamps)-1):
+                    row_num = create_empty_records_assay_plate(plate_id, cursor, row_num +1, format)
+                
+            # Update the records in the assay_plate table with the given data
+            row_num, data_index_num = 1, 0
+            Data_information = [row_num, data_index_num, file_basename_for_data, date, time, plate_id]
+            timestamp_tracker(time_stamps, cursor, new_data, Data_information)
+
+            # Update plate info for the given plate_id and the timestemp
+            update_plate_table = "UPDATE Test_plate SET Process_status = %s WHERE Plate_ID = %s"
+            update_values = ("Completed", plate_id)
+            cursor.execute(update_plate_table, update_values)
+            
+            
     except mysql.connector.Error as error:
         print("Failed to insert record into Plate and Assay_Plate table {}".format(error))
     
-    #finally:
+    finally:
         # Disconnect from the test_bugs database
+        disconnect_Database(cursor, cnx)
+        print(len(time_stamps)*len(new_data), "Records are inserted. Barcode:", plate_number)
+        print("Connection to the database is closed")
 
 
 #-----------------------------------------------
@@ -242,24 +317,14 @@ def main(filename):
     time_stamps = df.columns[3:].to_list()
     date_time = date_time.split(" ", 1)
 
-    p = " 0 "
-    p=p.strip()
-    print(p)
-    cursor,cnx = connect_Database()    
-
-    print(plate_id_finder(cursor, "Campaign2_DB_12_TEST-loop-v1-164263201", "0 "))
-    disconnect_Database(cursor, cnx)
-
+    
     # Calling the create empty plate records function. Function returns a list of recently created Plate IDs
-    #create_empty_plate_records(1, 48, "Hidex", "Campaign1_20210505_144922_RawOD.csv")
+    #create_empty_plate_records(1, 48, "Hidex", "Campaign1_20210505_191201_RawOD.csv")
     
     # Calling the update plate data function
-    #update_plate_data("Campaign1_20210505_144922_RawOD.csv", 0, time_stamps, df, str(date_time[0]), str(date_time[1]), "Campaign1_20210505_144922_RawOD.csv")
+    update_plate_data("Campaign1_20210505_191201_RawOD.csv", 3, time_stamps, df, date_time[0], date_time[1], "Campaign1_20210505")
     
 
-    #return df
-
-
 if __name__ == "__main__":
-    main('/lambda_stor/data/hudson/data/1620249864-1/Campaign1_20210505_144922_RawOD.csv')
+    main('/lambda_stor/data/hudson/data/1628731768/Campaign1_20210505_191201_RawOD.csv')
 
