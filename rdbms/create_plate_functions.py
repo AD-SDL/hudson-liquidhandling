@@ -10,7 +10,6 @@ import mysql.connector
 import openpyxl
 from datetime import datetime
 
-#TODO:  If not insert the plate info to the database first then upload the data
 
 #-----------------------------------------------
 # Function to connect to the test_bugs database
