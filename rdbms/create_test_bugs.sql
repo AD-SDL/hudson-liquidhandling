@@ -118,9 +118,8 @@ create table source_plate
  * FUNCTION	The plates containing a treatment condition being measured
  *		Think AMR, it's the plate that we take absorbance readings on.
  * COLUMNS
- *		Data_group
- *		Row_num
- 
+ *		Data_group	Group of the data (Experimental or Control)
+ *		Row_num 	Row number for indexing 
  *      well	The well id
  *		Raw_Value 		Raw value
  *		Elapsed_time	Readings at different timepoints
