@@ -151,7 +151,7 @@ def assay_plate_insert_data(cursor, time_index, new_data, Data_information, Is_T
             Data_information[0]+= 1
                  
         except mysql.connector.Error as error:
-            print("Failed to insert record into Assay_plate table {}".format(error))
+            print(f"Failed to insert record into {table_name}" + " table {}".format(error))
         
         finally:    
             return assay_plate_insert_data(cursor, time_index, new_data, Data_information, Is_Test)
@@ -203,7 +203,7 @@ def upload_data_directly(experiment_name, plate_number, time_stamps, new_data, d
                 row_num+=1
 
     except mysql.connector.Error as error:
-        print("Failed to insert record into Assay_plate table {}".format(error))
+        print(f"Failed to insert record into {table_name}" + " table {}".format(error))
 
     finally:
         # Disconnect from the test_bugs database
@@ -248,13 +248,13 @@ def create_empty_plate_records(num_plates, num_wells, plate_type, directory_name
 
         
     except mysql.connector.Error as error:
-        print("Failed to insert record into Plate and Assay_Plate table {}".format(error))
+        print(f"Failed to insert record into {table_name}" + " table {}".format(error))
         fail = 1
     
     finally:
         # Disconnect from the test_bugs database
         if fail == 0:
-            print(num_plates, " records inserted succesfully into Plate table")
+            print(num_plates, f" records inserted succesfully into {table_name} table")
             print(num_plates * num_wells, " records inserted succesfully into Assay_Plate table")
         disconnect_Database(cursor, cnx)
         print("Connection to the database is closed")
@@ -372,13 +372,12 @@ def main(filename):
         False: Records will be inserted into plate & assay_plate.
     """
     Is_Test = True
-    
+    table_name = "assay"
     # Calling the create empty plate records function.
-    #create_empty_plate_records(1, 48, "Hidex", "Campaign1_20210505_191201_RawOD.csv", Is_Test)
+    create_empty_plate_records(1, 48, "Hidex", "Campaign1_20210505_191201_RawOD.csv", Is_Test)
     
     # Calling the update plate data function
     update_plate_data("Campaign1_20210505_191201_RawOD.csv", 0, time_stamps, df, date_time[0], date_time[1], "Campaign1_20210505", Is_Test)
-    
    
 
 if __name__ == "__main__":
