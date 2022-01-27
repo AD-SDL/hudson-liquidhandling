@@ -35,21 +35,24 @@ create table project
  *
  * FUNCTION     A physical plate of any kind.
  *
- * COLUMNS:     plate_id	A Unique identifier for the plate
+ * COLUMNS:     Inc_ID	A Unique identifier for the plate
  *              type		The type of plate:
 					assay
 					source
- *      	process_status  Where the plate is in the sequencing process
- *		barcode		barcode for the plate
- *		name		name string for the plate
- *		format    	The number of wells (96 or 384). MUST NOT BE NULL.
- *		origin	  	The original source: pgf, lanl, llnl...
+ *      		process_status  Where the plate is in the sequencing process
+ *				barcode		barcode for the plate
+ *				Exp_ID		Experiment ID (Curently file name)
+ *				format    	The number of wells (96 or 384). MUST NOT BE NULL.
+ *				Date_created 	First recording date of the plate information
+ *				Time_created 	First recording time of the plate information
+ *				name		name string for the plate
+ *				origin	  	The original source: pgf, lanl, llnl...
  *
  *------------------------------------------------------------------------------*/
 
 create table plate
 (
- Plate_id       int(11) PRIMARY KEY NOT NULL AUTO_INCREMENT,
+ Inc_ID       int(11) PRIMARY KEY NOT NULL AUTO_INCREMENT,
  Type     	VARCHAR(30),
  Process_status VARCHAR(15) default 'New',
  Barcode 	VARCHAR(255),
@@ -112,29 +115,74 @@ create table source_plate
 /*------------------------------------------------------------------------------
  *
  * TABLENAME	assay_plate
- * FUNCTION	THe plates containing a treatment condition being measured
+ * FUNCTION	The plates containing a treatment condition being measured
  *		Think AMR, it's the plate that we take absorbance readings on.
  * COLUMNS
- * 	type	The type of assay, for example dose_response
+ *		Data_group
+ *		Row_num
+ 
  *      well	The well id
+ *		Raw_Value 		Raw value
+ *		Elapsed_time	Readings at different timepoints
+ *		Data_File_Name	Experiment data file name
+ *		Reading_date	Plate reading date
+ *		Reading_time	Plate reading time
+ *		Assay_Details 	Details of the assay. For example Raw OD(590)
+ *		Blank_Adj_Value
+ * 		type	The type of assay, for example dose_response
  *      sample  The sample in the well, ideally comes from the source plate and
  *              is an ID, but for now we'll just use the sample name.
- *	value	the measured value for that well
+ *		value	the measured value for that well
 *------------------------------------------------------------------------------*/
 
 
 create table assay_plate
 (
- Plate_id	int(11) NOT NULL,
- Well_type	varchar(50),
+ Inc_ID	int(11) NOT NULL,
+ Data_group	varchar(50),
  Row_num	int(11),
  Well		varchar(10),
- RawOD_590	varchar(256),
+ Raw_Value	varchar(256),
  Elapsed_time varchar(50),
- Experiment_name varchar(256),
+ Data_File_Name varchar(256),
  Reading_date	varchar(50),
  Reading_time	varchar(50),
+ Assay_Details	 varchar(100),
+ Blank_Adj_Value	 varchar(100),
+ Type		varchar(50),
  Sample		varchar(256),
- Value		varchar(25)
+
+);
+
+create table Test_plate
+(
+ Inc_ID       int(11) PRIMARY KEY NOT NULL AUTO_INCREMENT,
+ Type     	VARCHAR(30),
+ Process_status VARCHAR(15) default 'New',
+ Barcode 	VARCHAR(255),
+ Exp_ID 	        VARCHAR(255) NOT NULL,
+ Format   	int(9),
+ Date_created	VARCHAR(50),
+ Time_created 	VARCHAR(50),
+ Name 		VARCHAR(255),
+ Origin	  	VARCHAR(25)
+
+);
+
+create table Test_assay_plate
+(
+ Inc_ID	int(11) NOT NULL,
+ Data_group	varchar(50),
+ Row_num	int(11),
+ Well		varchar(10),
+ Raw_Value	varchar(256),
+ Elapsed_time varchar(50),
+ Data_File_Name varchar(256),
+ Reading_date	varchar(50),
+ Reading_time	varchar(50),
+ Assay_Details	 varchar(100),
+ Blank_Adj_Value	 varchar(100),
+ Type		varchar(50),
+ Sample		varchar(256),
 
 );
