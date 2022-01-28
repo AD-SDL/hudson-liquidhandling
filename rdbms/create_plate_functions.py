@@ -2,6 +2,8 @@ from distutils.util import execute
 from hashlib import new
 import os
 import csv
+
+from pandas.core.frame import DataFrame
 from connect import connect
 import pandas as pd
 import numpy as np
@@ -213,10 +215,12 @@ def upload_data_directly(experiment_name, plate_number, time_stamps, new_data, d
 
 #-----------------------------------------------
 # Function creates empty records in the "plate" and "assay_plate" tables, considering the given plate information.
-def create_empty_plate_records(num_plates, num_wells, plate_type, directory_name, Is_Test):    
-    fail = 0
-   
+def create_empty_plate_records(num_plates: int, num_wells: int, plate_type: str, directory_name: str, Testing: str):       
     try:
+        if Testing == "True":
+            Is_Test = True
+        elif Testing == "False":
+            Is_Test = False
         # Connect to the test_bugs database
         cursor,cnx = connect_Database()    
         
@@ -249,21 +253,25 @@ def create_empty_plate_records(num_plates, num_wells, plate_type, directory_name
         
     except mysql.connector.Error as error:
         print(f"Failed to insert record into {table_name}" + " table {}".format(error))
-        fail = 1
-    
+
+    else:
+        print(num_plates, f" records inserted succesfully into {table_name} table")
+        print(num_plates * num_wells, " records inserted succesfully into Assay_Plate table")
+        
     finally:
         # Disconnect from the test_bugs database
-        if fail == 0:
-            print(num_plates, f" records inserted succesfully into {table_name} table")
-            print(num_plates * num_wells, " records inserted succesfully into Assay_Plate table")
         disconnect_Database(cursor, cnx)
         print("Connection to the database is closed")
 
 #-----------------------------------------------
 # Function to update the records for the given plate. Accepts the data file, plate id that is going to be updated and the reading time 
-def update_plate_data(experiment_name, plate_number, time_stamps, new_data, date, time, file_basename_for_data, Is_Test):
-    fail = 0
+def update_plate_data(experiment_name: str, plate_number: int, time_stamps: list, new_data: DataFrame, date: str, time: str, file_basename_for_data: str, Testing: str):
     try:
+        if Testing == "True":
+            Is_Test = True
+        elif Testing == "False":
+            Is_Test = False
+            
         #connect to the test_bugs database
         cursor,cnx = connect_Database() 
        
@@ -305,13 +313,13 @@ def update_plate_data(experiment_name, plate_number, time_stamps, new_data, date
             
     except mysql.connector.Error as error:
         print("Failed to insert record into Plate and Assay_Plate table {}".format(error))
-        fail =1
+
+    else:
+        print(len(time_stamps)*len(new_data), "Records are inserted. Barcode:", plate_number)
     
     finally:
         # Disconnect from the test_bugs database
-        disconnect_Database(cursor, cnx)
-        if fail == 0:
-            print(len(time_stamps)*len(new_data), "Records are inserted. Barcode:", plate_number)
+        disconnect_Database(cursor, cnx)        
         print("Connection to the database is closed")
 
 
@@ -358,12 +366,12 @@ def add_time(date, time, time_stamp):
     pass
 
     
-def main(filename):
+def Database_functions(filename):
     df, date_time  = parse_hidex(filename)
     time_stamps = df.columns[3:].to_list()
     date_time = date_time.split(" ", 1)
 
-    """Is_Test 
+    """Is_Test s
 
     Is this a test? 
 
@@ -374,12 +382,11 @@ def main(filename):
     Is_Test = True
     table_name = "assay"
     # Calling the create empty plate records function.
-    create_empty_plate_records(1, 48, "Hidex", "Campaign1_20210505_191201_RawOD.csv", Is_Test)
+    #create_empty_plate_records(1, 48, "Hidex", "Campaign1_20210505_191201_RawOD.csv", "True")
     
     # Calling the update plate data function
-    update_plate_data("Campaign1_20210505_191201_RawOD.csv", 0, time_stamps, df, date_time[0], date_time[1], "Campaign1_20210505", Is_Test)
-   
+    update_plate_data("Campaign1_20210505_191201_RawOD.csv", 0, time_stamps, df, date_time[0], date_time[1], "Campaign1_20210505", "True")
 
 if __name__ == "__main__":
-    main('/lambda_stor/data/hudson/data/1628731768/Campaign1_20210505_191201_RawOD.csv')
+    Database_functions('/lambda_stor/data/hudson/data/1628731768/Campaign1_20210505_191201_RawOD.csv')
 
