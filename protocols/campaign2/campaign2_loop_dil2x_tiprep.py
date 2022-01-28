@@ -16,7 +16,7 @@ Campaign 2 Protocol - 2x dilutions
 
 created 01/05/22
 
-Solo Deck Arrangement: 
+SOLO DECK ARRANGEMENT: 
 Pos 1 = 96 deep well media reservoir
 Pos 2 = EMPTY (heat nest)
 Pos 3 = 180uL tips (filtered if possible)
@@ -32,6 +32,9 @@ Stack 3 - Empty Tip Box Storage (empty at start)
 
 Example command line usage: (creating 3 plates)
 python campaign2_loop_dil2x.py -tr col1 col2 col3 -cc 1 2 3 -mc 1 3 5 -tdh 1 2 1 -cdc 1 2 3
+
+COMMAND LINE ARGUMENTS: 
+TODO
 """
 
 
@@ -42,6 +45,7 @@ def generate_campaign1_repeatable(
     culture_dil_column=None, # int list of dilution columns for 1:10 culture dilutions
     media_start_column=None,  # int list of columns to draw media from (requires 2 columns, 1 means columns 1 and 2)
     treatment_dil_half=None,  # int list of which half of treatment dilution plate to use
+    is_test=False,
 ):
 
     return_val = "PASS"
@@ -704,7 +708,7 @@ def generate_campaign1_repeatable(
                 str(num_assay_plates),
                 str(num_assay_wells),
                 assay_plate_type,
-                #info_str,
+                is_test,
             ],
             start_new_session=True,
         ).pid
@@ -792,16 +796,22 @@ def main(args):
         type = int,
         nargs="*",
     )
+    parser.add_argument(
+        "-t", 
+        "--is_test",
+        help="use -t or --is_test only if the run is a test and the data can be deleted",  
+        action="store_true",
+    )
     args = vars(parser.parse_args())
     print(
-        "treatment = {}, IC50 = {}, culture_column = {}".format(
+        "treatment(s) = {}, IC50 = {}, culture_column(s) = {}, culture dilution column(s) = {}, media start column(s) = {}, treatment dilution column(s)= {}, is test = {}".format(
             args["treatment"],
             args["predicted_IC50"],
             args["culture_column"],
             args["culture_dilution_column"],
             args["media_start_column"],
             args["treatment_dilution_half"],
-            
+            args["is_test"],
         )
     )
 
@@ -813,6 +823,7 @@ def main(args):
         args["culture_dilution_column"],
         args["media_start_column"],
         args["treatment_dilution_half"],
+        args["is_test"]
     )
 
 

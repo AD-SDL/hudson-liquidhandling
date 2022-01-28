@@ -19,6 +19,7 @@ def lamdba6_send_instructions(instructions_dir, info_list):
     
     # format info string (num_plates,num_wells,plate_type)
     info_string = f"{info_list[0]},{info_list[1]},{info_list[2]}"
+    is_test=info_list[3]  # don't pass in message to hudson01, no need
 
     if os.path.isdir(instructions_dir):
         instruction_files = os.listdir(instructions_dir)
@@ -57,7 +58,7 @@ def lamdba6_send_instructions(instructions_dir, info_list):
             directory_name = directory_name[:-1]
             
             # insert call to database here
-            create_empty_plate_records(int(num_plates), int(num_wells), plate_type, directory_name)
+            create_empty_plate_records(int(num_plates), int(num_wells), plate_type, directory_name,is_test)
 
             # archive instructions once sent correctly
             archive([instructions_dir], "/lambda_stor/data/hudson/instructions/")
