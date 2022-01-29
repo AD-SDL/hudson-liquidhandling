@@ -17,9 +17,9 @@ from datetime import datetime
 def connect_Database():
     """connect_Database
 
-            Description: Function to connect to the test_bugs database
+        Description: Function to connect to the test_bugs database
 
-            Varaibles: 
+        Parameters: 
                 
     """
 
@@ -34,9 +34,9 @@ def connect_Database():
 def disconnect_Database(cursor,cnx):
     """disconnect_Database
 
-            Description: Function to disconnect from the test_bugs database
+        Description: Function to disconnect from the test_bugs database
 
-            Varaibles: 
+        Parameters: 
                 
     """
 
@@ -49,17 +49,17 @@ def disconnect_Database(cursor,cnx):
 def create_empty_records_assay_plate(Inc_ID, cursor, row_num, num_wells, Is_Test):
     """create_empty_records_assay_plate
 
-            Description: Creates empty records in the assay plate table
+        Description: Creates empty records in the assay plate table
 
-            Varaibles: 
-                Inc_ID
-                cursor
-                row_num
-                num_wells
-                Is_Test
-            Returns:
-                - Recursive function, untill desired number of rows are created
-                - Last row number 
+        Parameters: 
+            Inc_ID
+            cursor
+            row_num
+            num_wells
+            Is_Test
+        Returns:
+            - Recursive function, untill desired number of rows are created
+            - Last row number 
     """
 
     if Is_Test == "true":
@@ -87,14 +87,14 @@ def create_empty_records_assay_plate(Inc_ID, cursor, row_num, num_wells, Is_Test
 def count_rows_assay_table(cursor, plate_num , Is_Test):
     """count_rows_assay_table
 
-            Description: Counts the number of rows in table for the given Inc_ID
+        Description: Counts the number of rows in table for the given Inc_ID
 
-            Varaibles: 
-                cursor
-                plate_num
-                Is_Test
+        Parameters: 
+            cursor
+            plate_num
+            Is_Test
 
-            Returns: Number of records in the databse of the given Plate
+        Returns: Number of records in the databse of the given Plate
                         
     """
     if Is_Test == "true":
@@ -113,16 +113,16 @@ def count_rows_assay_table(cursor, plate_num , Is_Test):
 def find_format(cursor, Inc_ID, Is_Test):
     """find_format
 
-            Description: Finds format of the plate for the given Inc_ID
+        Description: Finds format of the plate for the given Inc_ID
 
-            Varaibles: 
-                cursor
-                Inc_ID
-                Is_Test: 
+        Parameters: 
+            cursor
+            Inc_ID
+            Is_Test: 
+        
+        Returns:
+            Format of the plate
             
-            Returns:
-                Format of the plate
-                
     """
 
     if Is_Test == "true":
@@ -140,16 +140,16 @@ def find_format(cursor, Inc_ID, Is_Test):
 def Inc_ID_finder(cursor, experiment_name, plate_number, Is_Test):
     """Inc_ID_finder
 
-            Description: Finds which Inc_ID is associated with the given file name and plate number
+        Description: Finds which Inc_ID is associated with the given file name and plate number
 
-            Varaibles: 
-                cursor:
-                experiment_name:
-                plate_number:
-                Is_Test: True; records will be inserted into Test_plate & Test_assay_plate. False; records will be inserted into plate & assay_plate.
-            Returns:
-                -1: If Plate is not found in the database
-                Inc_ID number: If plate exist in the database 
+        Parameters: 
+            cursor:
+            experiment_name:
+            plate_number:
+            Is_Test: True; records will be inserted into Test_plate & Test_assay_plate. False; records will be inserted into plate & assay_plate.
+        Returns:
+            -1: If Plate is not found in the database
+            Inc_ID number: If plate exist in the database 
     """
 
     if Is_Test == "true":
@@ -171,9 +171,9 @@ def Inc_ID_finder(cursor, experiment_name, plate_number, Is_Test):
 def timestamp_tracker(time_stamps, cursor, new_data, Data_information, Is_Test):
     """timestamp_tracker
 
-            Description: A function to traverse the timestamp list so that elapsed times could be matched with Raw OD data
+        Description: A function to traverse the timestamp list so that elapsed times could be matched with Raw OD data
 
-            Varaibles: 
+        Parameters: 
                 
     """
 
@@ -200,6 +200,8 @@ def assay_plate_insert_data(cursor, time_index, new_data, Data_information, Is_T
                     time: Experiment start time 
                     Inc_ID: Inc_ID 
             Is_Test: True; records will be inserted into Test_plate & Test_assay_plate. False; records will be inserted into plate & assay_plate.
+        Returns:
+            Recursive function
     """
     Data_information[1] += 1
     
@@ -230,17 +232,17 @@ def assay_plate_insert_data(cursor, time_index, new_data, Data_information, Is_T
 def upload_data_directly(experiment_name, plate_number, time_stamps, new_data, date, time, file_basename_for_data, Is_Test):
     """upload_data_directly
 
-            Description: Enters new data into the database directly 
+        Description: Enters new data into the database directly 
 
-            Varaibles: 
-                experiment_name
-                plate_number: Barcode number 
-                time_stamps: List of start times
-                new_data: Data itself in pandas Data Frame
-                date: Experiment start date 
-                time: Experiment start time 
-                file_basename_for_data: The name of the experiment file
-                Is_Test: True; records will be inserted into Test_plate & Test_assay_plate. False; records will be inserted into plate & assay_plate.     
+        Parameters: 
+            experiment_name
+            plate_number: Barcode number 
+            time_stamps: List of start times
+            new_data: Data itself in pandas Data Frame
+            date: Experiment start date 
+            time: Experiment start time 
+            file_basename_for_data: The name of the experiment file
+            Is_Test: True; records will be inserted into Test_plate & Test_assay_plate. False; records will be inserted into plate & assay_plate.     
     """
     try:
         cursor,cnx = connect_Database()    
@@ -295,14 +297,14 @@ def upload_data_directly(experiment_name, plate_number, time_stamps, new_data, d
 def create_empty_plate_records(num_plates: int, num_wells: int, plate_type: str, directory_name: str, Is_Test: str):    
     """create_empty_plate_records
 
-            Description: Creates empty records in the "plate" and "assay_plate" tables, considering the given plate information.
+        Description: Creates empty records in the "plate" and "assay_plate" tables, considering the given plate information.
 
-            Varaibles: 
-                num_plates: Number of plates
-                num_wells: Number of wells
-                plate_type: Type of the plate
-                directory_name: Name of the experiment file
-                Is_Test: True; records will be inserted into Test_plate & Test_assay_plate. False; records will be inserted into plate & assay_plate.
+        Parameters: 
+            num_plates: Number of plates
+            num_wells: Number of wells
+            plate_type: Type of the plate
+            directory_name: Name of the experiment file
+            Is_Test: True; records will be inserted into Test_plate & Test_assay_plate. False; records will be inserted into plate & assay_plate.
                 
     """   
     try:
@@ -361,18 +363,18 @@ def create_empty_plate_records(num_plates: int, num_wells: int, plate_type: str,
 def update_plate_data(experiment_name: str, plate_number: int, time_stamps: list, new_data: DataFrame, date: str, time: str, file_basename_for_data: str, Is_Test: str):
     """update_plate_data
 
-            Description: Update the records for the given plate
+        Description: Update the records for the given plate
 
-            Varaibles: 
-                experiment_name: Name of the experiment, that matches the Exp_ID in Plate table
-                plate_number: Barcode number
-                time_stamps: List of start times
-                new_data: Data itself in pandas Data Frame
-                date: Experiment start date 
-                time: Experiment start time 
-                file_basename_for_data: The name of the experiment file
-                Is_Test: True; records will be inserted into Test_plate & Test_assay_plate. False; records will be inserted into plate & assay_plate.
-                
+        Parameters: 
+            experiment_name: Name of the experiment, that matches the Exp_ID in Plate table
+            plate_number: Barcode number
+            time_stamps: List of start times
+            new_data: Data itself in pandas Data Frame
+            date: Experiment start date 
+            time: Experiment start time 
+            file_basename_for_data: The name of the experiment file
+            Is_Test: True; records will be inserted into Test_plate & Test_assay_plate. False; records will be inserted into plate & assay_plate.
+            
     """
     try:
         cursor,cnx = connect_Database() 
