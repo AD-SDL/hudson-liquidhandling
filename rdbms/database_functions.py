@@ -479,7 +479,11 @@ def add_time(date, time, time_stamp):
     pass
 
     
+<<<<<<< HEAD
 def main(filename):
+=======
+def Database_functions(filename):
+>>>>>>> b9a50bb51872009bba38046786f19f649ef7895a
     df, date_time  = parse_hidex(filename)
     time_stamps = df.columns[3:].to_list()
     date_time = date_time.split(" ", 1)
@@ -488,14 +492,25 @@ def main(filename):
     Is_Test = "True"
     
     # Calling the create empty plate records function.
+<<<<<<< HEAD
     create_empty_plate_records(1, 48, "Hidex", "Campaign1_20210505_191201_RawOD.csv", Is_Test)
     
     # Calling the update plate data function
     #update_plate_data("Campaign1_20210505_191201_RawOD.csv", 0, time_stamps, df, date_time[0], date_time[1], "Campaign1_20210505", Is_Test)
+=======
+    #create_empty_plate_records(1, 48, "Hidex", "Campaign1_20210505_191201_RawOD.csv", Is_Test)
+    
+    # Calling the update plate data function
+    update_plate_data("Campaign1_20210505_191201_RawOD.csv", 0, time_stamps, df, date_time[0], date_time[1], "Campaign1_20210505", Is_Test)
+>>>>>>> b9a50bb51872009bba38046786f19f649ef7895a
 
 
 
 if __name__ == "__main__":
+<<<<<<< HEAD
     # execute only if run as a script
     main('/lambda_stor/data/hudson/data/1628731768/Campaign1_20210505_191201_RawOD.csv')
+=======
+    Database_functions('/lambda_stor/data/hudson/data/1628731768/Campaign1_20210505_191201_RawOD.csv')
+>>>>>>> b9a50bb51872009bba38046786f19f649ef7895a
 
