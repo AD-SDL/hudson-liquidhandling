@@ -4,7 +4,7 @@ import os
 import csv
 from selectors import EpollSelector
 from pandas.core.frame import DataFrame
-from connect import connect
+from connect import *
 import pandas as pd
 import numpy as np
 import sys
@@ -42,8 +42,8 @@ def disconnect_Database(cursor,cnx):
 
     cursor.execute("COMMIT")
     cursor.execute("SET autocommit = 1")
-    cursor.close()
-    cnx.close()
+    #cursor.close()
+    close(cnx)
 
 #-----------------------------------------------
 def create_empty_records_assay_plate(Inc_ID, cursor, row_num, num_wells, Is_Test):
@@ -156,7 +156,7 @@ def Inc_ID_finder(cursor, experiment_name, plate_number, Is_Test):
         table_name = "Test_plate"
     elif Is_Test == "false":
         table_name = "plate"
-
+    
     find_plate = "select Inc_ID from " + table_name + " WHERE Exp_ID = %s and Barcode = %s"
     plate_info = (experiment_name, plate_number)
     Inc_ID = cursor.execute(find_plate, plate_info)
@@ -310,8 +310,9 @@ def create_empty_plate_records(num_plates: int, num_wells: int, plate_type: str,
     try:
       
         # Connect to the test_bugs database
-        cursor,cnx = connect_Database()    
-        
+
+        cursor,cnx = connect_Database()   
+               
         Is_Test = Is_Test.lower()
         if Is_Test != "true" and Is_Test != "false":
             raise Exception 
@@ -343,12 +344,11 @@ def create_empty_plate_records(num_plates: int, num_wells: int, plate_type: str,
             create_empty_records_assay_plate(Inc_ID, cursor, row_num, num_wells, Is_Test)
 
 
-
     except mysql.connector.Error as error:
         print(f"Failed to insert record into {table_name}" + " table {}".format(error))
 
     except Exception as err:
-        print("Please enter True or False to Is_Test!!!")    
+        print("Is_Test invalid input!!! True for test tables, False for experiment tables")    
 
     else:
         print(num_plates, f" records inserted succesfully into {table_name} table")
@@ -378,7 +378,7 @@ def update_plate_data(experiment_name: str, plate_number: int, time_stamps: list
     """
     try:
         cursor,cnx = connect_Database() 
-
+        
         Is_Test = Is_Test.lower()
         if Is_Test != "true" and Is_Test != "false":
             raise Exception 
@@ -397,7 +397,7 @@ def update_plate_data(experiment_name: str, plate_number: int, time_stamps: list
             # Find format of the plate
             format = find_format(cursor, Inc_ID, Is_Test)
             
-            # Counting how many records exist in the table and returns the last index number
+            # Counting how many records exist in the table. Returns the last index number
             row_num = count_rows_assay_table(cursor, Inc_ID, Is_Test) 
 
             # Checking if the database needs to be extended
@@ -420,12 +420,9 @@ def update_plate_data(experiment_name: str, plate_number: int, time_stamps: list
             update_values = ("Completed", Inc_ID)
             cursor.execute(update_plate_table, update_values)
             
-            
-    except mysql.connector.Error as error:
-        print("Failed to insert record into Plate and Assay_Plate table {}".format(error))
     
     except Exception as err:
-        print("Please enter True or False to Is_Test")    
+        print("Is_Test invalid input!!! True for test tables, False for experiment tables")    
 
     else:
         print(len(time_stamps)*len(new_data), "Records are inserted. Barcode:", plate_number)
@@ -436,6 +433,46 @@ def update_plate_data(experiment_name: str, plate_number: int, time_stamps: list
         print("Connection to the database is closed")
 
 
+#-----------------------------------------------
+def blob_handler(filename, experiment_name: str, plate_number: int, Is_Test: str):
+    try:
+        file = open(filename, 'rb')
+    except OSError as err:
+        print(err)
+        sys.exit()
+    else:
+        with file:
+            binary_data = file.read()
+
+    try:
+        cursor,cnx = connect_Database() 
+        
+        Is_Test = Is_Test.lower()
+        if Is_Test != "true" and Is_Test != "false":
+            raise Exception("Is_Test invalid input!!! True for test tables, False for experiment tables") 
+
+        if Is_Test == "true":
+            table_name = "Test_plate"
+        elif Is_Test == "false":
+            table_name = "plate"
+
+        Inc_ID = Inc_ID_finder(cursor, experiment_name, plate_number, Is_Test)
+
+        Image_query =  "UPDATE " + table_name + " SET Exp_Image = %s WHERE Inc_ID = %s"
+        update_values = (binary_data, Inc_ID)
+        cursor.execute(Image_query, update_values)
+
+    except mysql.connector.Error as error:
+        print("Faild to insert image into database {}".format(error))
+    else:
+        print("Image is inserted into plate table")
+    finally:
+        disconnect_Database(cursor,cnx)
+#-----------------------------------------------
+def invert_blob(experiment_name: str, plate_number: int):
+
+    pass
+    
 #-----------------------------------------------
 def parse_hidex(filename):
     """parses the Hidex csv file
@@ -479,11 +516,7 @@ def add_time(date, time, time_stamp):
     pass
 
     
-<<<<<<< HEAD
 def main(filename):
-=======
-def Database_functions(filename):
->>>>>>> b9a50bb51872009bba38046786f19f649ef7895a
     df, date_time  = parse_hidex(filename)
     time_stamps = df.columns[3:].to_list()
     date_time = date_time.split(" ", 1)
@@ -492,25 +525,16 @@ def Database_functions(filename):
     Is_Test = "True"
     
     # Calling the create empty plate records function.
-<<<<<<< HEAD
     create_empty_plate_records(1, 48, "Hidex", "Campaign1_20210505_191201_RawOD.csv", Is_Test)
     
     # Calling the update plate data function
     #update_plate_data("Campaign1_20210505_191201_RawOD.csv", 0, time_stamps, df, date_time[0], date_time[1], "Campaign1_20210505", Is_Test)
-=======
-    #create_empty_plate_records(1, 48, "Hidex", "Campaign1_20210505_191201_RawOD.csv", Is_Test)
-    
-    # Calling the update plate data function
-    update_plate_data("Campaign1_20210505_191201_RawOD.csv", 0, time_stamps, df, date_time[0], date_time[1], "Campaign1_20210505", Is_Test)
->>>>>>> b9a50bb51872009bba38046786f19f649ef7895a
 
+    #calling blob handler function
+    #blob_handler('/lambda_stor/data/hudson/data/1628731768/Campaign1_20210505_191201_RawOD.csv',"Campaign1_20210505_191201_RawOD.csv", 0, Is_Test)
 
 
 if __name__ == "__main__":
-<<<<<<< HEAD
-    # execute only if run as a script
+    #Execute only if run as a script
     main('/lambda_stor/data/hudson/data/1628731768/Campaign1_20210505_191201_RawOD.csv')
-=======
-    Database_functions('/lambda_stor/data/hudson/data/1628731768/Campaign1_20210505_191201_RawOD.csv')
->>>>>>> b9a50bb51872009bba38046786f19f649ef7895a
 
