@@ -60,6 +60,8 @@ create table plate
  Format   	int(9),
  Date_created	VARCHAR(50),
  Time_created 	VARCHAR(50),
+ Z_Score_QC VARCHAR(15),
+ Exp_Image	mediumblob,
  Name 		VARCHAR(255),
  Origin	  	VARCHAR(25)
 
@@ -163,6 +165,8 @@ create table Test_plate
  Format   	int(9),
  Date_created	VARCHAR(50),
  Time_created 	VARCHAR(50),
+ Z_Score_QC VARCHAR(15),
+ Exp_Image	mediumblob,
  Name 		VARCHAR(255),
  Origin	  	VARCHAR(25)
 
