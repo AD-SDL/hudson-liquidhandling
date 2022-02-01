@@ -229,70 +229,7 @@ def assay_plate_insert_data(cursor, time_index, new_data, Data_information, Is_T
         finally:    
             return assay_plate_insert_data(cursor, time_index, new_data, Data_information, Is_Test)
   
-#-----------------------------------------------
-def upload_data_directly(experiment_name, plate_number, time_stamps, new_data, date, time, file_basename_for_data, Is_Test):
-    """upload_data_directly
 
-        Description: Enters new data into the database directly 
-
-        Parameters: 
-            experiment_name
-            plate_number: Barcode number 
-            time_stamps: List of start times
-            new_data: Data itself in pandas Data Frame
-            date: Experiment start date 
-            time: Experiment start time 
-            file_basename_for_data: The name of the experiment file
-            Is_Test: True; records will be inserted into Test_plate & Test_assay_plate. False; records will be inserted into plate & assay_plate.     
-    """
-    try:
-        cursor,cnx = connect_Database()    
-
-        if Is_Test == "true":
-            table_name = "Test_plate"
-        elif Is_Test == "false":
-            table_name = "plate"
-
-        add_plate = "INSERT INTO " + table_name + " (Type, Process_status, Barcode, Exp_ID, Format, Date_created, Time_created) VALUES (%s, %s, %s, %s, %s, %s, %s)"
-
-        # Using the current time to keep track of the time when the plate information is recorded in the database 
-        now = datetime.now()
-        current_date = now.strftime("%Y-%m-%d")
-        current_time = now.strftime("%H:%M:%S.%f")
-                    
-        plate_data = ("Hidex", "Completed", str(plate_number), experiment_name, 96, current_date, current_time)
-        cursor.execute(add_plate, plate_data)
-            
-        # Recieving Inc_ID back to utilize the unique plate id in the assay_plate records
-        Inc_ID = cursor.lastrowid
-        
-        if table_name == "Test_plate":
-                table_name = "Test_assay_plate"
-        elif table_name == "plate":
-                table_name = "assay_plate"
-
-        row_num = 1
-        for index in time_stamps:
-            for data_index_num in range(1,len(new_data)+1):
-
-                if new_data['Well'][data_index_num][0] == 'H':
-                    Data_group = "Control"
-                else:
-                    Data_group = "Experimental"
-                
-                update_assay_plate = "INSERT INTO " + table_name + " (Inc_ID, Data_group, Row_num, Well, Raw_Value, Elapsed_time, Data_File_Name, Reading_date, Reading_time) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)"                
-                plate_assay_data = (Inc_ID, Data_group, row_num, new_data['Well'][data_index_num], new_data[index][data_index_num], index, file_basename_for_data, date, time)
-                cursor.execute(update_assay_plate, plate_assay_data)
-                row_num+=1
-
-    except mysql.connector.Error as error:
-        print(f"Failed to insert record into {table_name}" + " table {}".format(error))
-
-    finally:
-        # Disconnect from the test_bugs database
-        disconnect_Database(cursor, cnx)
-        print("Connection to the database is closed")
-    
 
 #-----------------------------------------------
 def create_empty_plate_records(num_plates: int, num_wells: int, plate_type: str, directory_name: str, Is_Test: str):    
@@ -361,7 +298,7 @@ def create_empty_plate_records(num_plates: int, num_wells: int, plate_type: str,
         print("Connection to the database is closed")
 
 #-----------------------------------------------
-def update_plate_data(experiment_name: str, plate_number: int, time_stamps: list, new_data: DataFrame, date: str, time: str, file_basename_for_data: str, Is_Test: str):
+def update_plate_data(experiment_name: str, plate_number: int, time_stamps: list, new_data: DataFrame, date: str, time: str, file_basename_for_data: str):
     """update_plate_data
 
         Description: Update the records for the given plate
@@ -380,20 +317,28 @@ def update_plate_data(experiment_name: str, plate_number: int, time_stamps: list
     try:
         cursor,cnx = connect_Database() 
         
-        Is_Test = Is_Test.lower()
-        if Is_Test != "true" and Is_Test != "false":
-            raise Exception 
+        # Is_Test = Is_Test.lower()
+        # if Is_Test != "true" and Is_Test != "false":
+        #     raise Exception 
             
-        #connect to the test_bugs database
        
         # Find the Inc_ID for the given data
         experiment_name = experiment_name.strip()
-        Inc_ID = Inc_ID_finder(cursor, experiment_name, plate_number, Is_Test)
+        Test_table = Inc_ID_finder(cursor, experiment_name, plate_number, "true")
+        Exp_table = Inc_ID_finder(cursor, experiment_name, plate_number, "false") 
+        if Test_table != -1:
+            Inc_ID = Test_table
+            Is_Test = "true"
         
-        if Inc_ID == -1:
+        elif Exp_table != -1:
+            Inc_ID = Exp_table
+            Is_Test = "false"
+        
+        if Test_table == -1 or Exp_table == -1:
             print("Plate record does not exists in the database!!!")
             print("Creating new records for", experiment_name, " Barcode: 0")
-            upload_data_directly(experiment_name, plate_number, time_stamps, new_data, date, time, file_basename_for_data, Is_Test)
+            upload_data_directly(experiment_name, plate_number, time_stamps, new_data, date, time, file_basename_for_data, "true")
+        
         else:
             # Find format of the plate
             format = find_format(cursor, Inc_ID, Is_Test)
@@ -417,6 +362,7 @@ def update_plate_data(experiment_name: str, plate_number: int, time_stamps: list
                 table_name = "Test_plate"
             elif Is_Test == "false":
                 table_name = "plate"
+
             update_plate_table = "UPDATE " + table_name + " SET Process_status = %s WHERE Inc_ID = %s"
             update_values = ("Completed", Inc_ID)
             cursor.execute(update_plate_table, update_values)
@@ -433,6 +379,99 @@ def update_plate_data(experiment_name: str, plate_number: int, time_stamps: list
         disconnect_Database(cursor, cnx)        
         print("Connection to the database is closed")
 
+#-----------------------------------------------
+def upload_data_directly(experiment_name, plate_number, time_stamps, new_data, date, time, file_basename_for_data, Is_Test):
+    """upload_data_directly
+
+        Description: Enters new data into the database directly 
+
+        Parameters: 
+            experiment_name
+            plate_number: Barcode number 
+            time_stamps: List of start times
+            new_data: Data itself in pandas Data Frame
+            date: Experiment start date 
+            time: Experiment start time 
+            file_basename_for_data: The name of the experiment file
+            Is_Test: True; records will be inserted into Test_plate & Test_assay_plate. False; records will be inserted into plate & assay_plate.     
+    """
+    try:
+        cursor,cnx = connect_Database()    
+
+        if Is_Test == "true":
+            table_name = "Test_plate"
+        elif Is_Test == "false":
+            table_name = "plate"
+
+        add_plate = "INSERT INTO " + table_name + " (Type, Process_status, Barcode, Exp_ID, Format, Date_created, Time_created) VALUES (%s, %s, %s, %s, %s, %s, %s)"
+
+        # Using the current time to keep track of the time when the plate information is recorded in the database 
+        now = datetime.now()
+        current_date = now.strftime("%Y-%m-%d")
+        current_time = now.strftime("%H:%M:%S.%f")
+                    
+        plate_data = ("Hidex", "Completed", str(plate_number), experiment_name, 96, current_date, current_time)
+        cursor.execute(add_plate, plate_data)
+            
+        # Recieving Inc_ID back to utilize the unique plate id in the assay_plate records
+        Inc_ID = cursor.lastrowid
+        
+        if table_name == "Test_plate":
+                table_name = "Test_assay_plate"
+        elif table_name == "plate":
+                table_name = "assay_plate"
+
+        row_num = 1
+        for index in time_stamps:
+            for data_index_num in range(1,len(new_data)+1):
+
+                if new_data['Well'][data_index_num][0] == 'H':
+                    Data_group = "Control"
+                else:
+                    Data_group = "Experimental"
+                
+                update_assay_plate = "INSERT INTO " + table_name + " (Inc_ID, Data_group, Row_num, Well, Raw_Value, Elapsed_time, Data_File_Name, Reading_date, Reading_time) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)"                
+                plate_assay_data = (Inc_ID, Data_group, row_num, new_data['Well'][data_index_num], new_data[index][data_index_num], index, file_basename_for_data, date, time)
+                cursor.execute(update_assay_plate, plate_assay_data)
+                row_num+=1
+
+    except mysql.connector.Error as error:
+        print(f"Failed to insert record into {table_name}" + " table {}".format(error))
+
+    finally:
+        # Disconnect from the test_bugs database
+        disconnect_Database(cursor, cnx)
+        print("Connection to the database is closed")
+
+#-----------------------------------------------
+def update_z_core_qc(experiment_name: str, plate_number: int, Z_Score_QC: str):
+    
+    try:
+        cursor,cnx = connect_Database()    
+
+        Test_table = Inc_ID_finder(cursor, experiment_name, plate_number, "true")
+        Exp_table = Inc_ID_finder(cursor, experiment_name, plate_number, "false") 
+        if Test_table != -1:
+            Inc_ID = Test_table
+            table_name = "Test_plate"
+        
+        elif Exp_table != -1:
+            Inc_ID = Exp_table
+            table_name = "plate"
+
+
+        update_plate_table = "UPDATE " + table_name + " SET Z_Score_QC = %s WHERE Inc_ID = %s"
+        update_values = (Z_Score_QC, Inc_ID)
+        cursor.execute(update_plate_table, update_values)
+
+    except mysql.connector.Error as error:
+        print(f"Failed to insert record into {table_name}" + " table {}".format(error))
+    else: 
+        print(f"Z_Score_QC inserted into {table_name} as ",Z_Score_QC)
+    finally:
+        # Disconnect from the test_bugs database
+        disconnect_Database(cursor, cnx)
+        print("Connection to the database is closed")
 
 #-----------------------------------------------
 #blob_handler
@@ -559,16 +598,17 @@ def main(filename):
     Is_Test = "True"
     
     # Calling the create empty plate records function.
-    create_empty_plate_records(1, 48, "Hidex", "Campaign1_20210505_191201_RawOD.csv", Is_Test)
+    #create_empty_plate_records(1, 48, "Hidex", "Campaign1_20210505_191201_RawOD.csv", Is_Test)
     
     # Calling the update plate data function
-    update_plate_data("Campaign1_20210505_191201_RawOD.csv", 0, time_stamps, df, date_time[0], date_time[1], "Campaign1_20210505", Is_Test)
+    
+    update_plate_data("Campaign1_20210505_191201_RawOD.csv", 1, time_stamps, df, date_time[0], date_time[1], "Campaign1_20210505")
 
     #calling blob handler function
-    upload_image('/home/dozgulbas/hudson-liquidhandling/rdbms/images/Campaign2_HopeStrains106-112_plate2col4_12hrInc_12PlateTest.png',"Campaign1_20210505_191201_RawOD.csv", 0, Is_Test)
+    #upload_image('/home/dozgulbas/hudson-liquidhandling/rdbms/images/Campaign2_HopeStrains106-112_plate2col4_12hrInc_12PlateTest.png',"Campaign1_20210505_191201_RawOD.csv", 0, Is_Test)
     
-    retrieve_image("Campaign1_20210505_191201_RawOD.csv", 0, Is_Test)
-
+    #retrieve_image("Campaign1_20210505_191201_RawOD.csv", 0, Is_Test)
+    #update_z_core_qc("Campaign1_20210505_191201_RawOD.csv",0,"Pass")
 
 if __name__ == "__main__":
     #Execute only if run as a script
