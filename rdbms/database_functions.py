@@ -13,6 +13,7 @@ import openpyxl
 from datetime import datetime
 
 
+
 #-----------------------------------------------
 def connect_Database():
     """connect_Database
@@ -435,7 +436,7 @@ def update_plate_data(experiment_name: str, plate_number: int, time_stamps: list
 
 #-----------------------------------------------
 #blob_handler
-def blob_handler(filename, experiment_name: str, plate_number: int, Is_Test: str):
+def upload_image(filename, experiment_name: str, plate_number: int, Is_Test: str):
     try:
         file = open(filename, 'rb')
     except OSError as err:
@@ -471,10 +472,40 @@ def blob_handler(filename, experiment_name: str, plate_number: int, Is_Test: str
         print("Image is inserted into plate table")
     finally:
         disconnect_Database(cursor,cnx)
+        
 #-----------------------------------------------
-def invert_blob(experiment_name: str, plate_number: int):
+def retrieve_image(experiment_name: str, plate_number: int, Is_Test: str):
 
-    pass
+    try:
+        cursor,cnx = connect_Database() 
+        
+        Is_Test = Is_Test.lower()
+        if Is_Test != "true" and Is_Test != "false":
+            raise Exception 
+
+        if Is_Test == "true":
+            table_name = "Test_plate"
+        elif Is_Test == "false":
+            table_name = "plate"
+
+        Inc_ID = Inc_ID_finder(cursor, experiment_name, plate_number, Is_Test)
+
+        Image_query = "SELECT Exp_Image from " + table_name + " WHERE Inc_ID = %s"
+        cursor.execute(Image_query, (Inc_ID,))
+        data = cursor.fetchone()[0]
+        with open(experiment_name + ".png", 'wb') as f:
+            f.write(data)       
+      
+
+    except mysql.connector.Error as error:
+        print("Faild to insert image into database {}".format(error))
+    except Exception as err:
+        print("Is_Test invalid input!!! True for test tables, False for experiment tables")
+        print(err)
+    else:
+        print("Image saved to directory")
+    finally:
+        disconnect_Database(cursor,cnx)
     
 #-----------------------------------------------
 def parse_hidex(filename):
@@ -525,16 +556,18 @@ def main(filename):
     date_time = date_time.split(" ", 1)
 
     
-    Is_Test = "Trgue"
+    Is_Test = "True"
     
     # Calling the create empty plate records function.
-    #create_empty_plate_records(1, 48, "Hidex", "Campaign1_20210505_191201_RawOD.csv", Is_Test)
+    create_empty_plate_records(1, 48, "Hidex", "Campaign1_20210505_191201_RawOD.csv", Is_Test)
     
     # Calling the update plate data function
-    #update_plate_data("Campaign1_20210505_191201_RawOD.csv", 0, time_stamps, df, date_time[0], date_time[1], "Campaign1_20210505", Is_Test)
+    update_plate_data("Campaign1_20210505_191201_RawOD.csv", 0, time_stamps, df, date_time[0], date_time[1], "Campaign1_20210505", Is_Test)
 
     #calling blob handler function
-    blob_handler('/lambda_stor/data/hudson/data/1628731768/Campaign1_20210505_191201_RawOD.csv',"Campaign1_20210505_191201_RawOD.csv", 0, Is_Test)
+    upload_image('/home/dozgulbas/hudson-liquidhandling/rdbms/images/Campaign2_HopeStrains106-112_plate2col4_12hrInc_12PlateTest.png',"Campaign1_20210505_191201_RawOD.csv", 0, Is_Test)
+    
+    retrieve_image("Campaign1_20210505_191201_RawOD.csv", 0, Is_Test)
 
 
 if __name__ == "__main__":
