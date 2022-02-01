@@ -434,6 +434,7 @@ def update_plate_data(experiment_name: str, plate_number: int, time_stamps: list
 
 
 #-----------------------------------------------
+#blob_handler
 def blob_handler(filename, experiment_name: str, plate_number: int, Is_Test: str):
     try:
         file = open(filename, 'rb')
@@ -449,7 +450,7 @@ def blob_handler(filename, experiment_name: str, plate_number: int, Is_Test: str
         
         Is_Test = Is_Test.lower()
         if Is_Test != "true" and Is_Test != "false":
-            raise Exception("Is_Test invalid input!!! True for test tables, False for experiment tables") 
+            raise Exception 
 
         if Is_Test == "true":
             table_name = "Test_plate"
@@ -464,6 +465,8 @@ def blob_handler(filename, experiment_name: str, plate_number: int, Is_Test: str
 
     except mysql.connector.Error as error:
         print("Faild to insert image into database {}".format(error))
+    except Exception:
+        print("Is_Test invalid input!!! True for test tables, False for experiment tables")
     else:
         print("Image is inserted into plate table")
     finally:
@@ -522,16 +525,16 @@ def main(filename):
     date_time = date_time.split(" ", 1)
 
     
-    Is_Test = "True"
+    Is_Test = "Trgue"
     
     # Calling the create empty plate records function.
-    create_empty_plate_records(1, 48, "Hidex", "Campaign1_20210505_191201_RawOD.csv", Is_Test)
+    #create_empty_plate_records(1, 48, "Hidex", "Campaign1_20210505_191201_RawOD.csv", Is_Test)
     
     # Calling the update plate data function
     #update_plate_data("Campaign1_20210505_191201_RawOD.csv", 0, time_stamps, df, date_time[0], date_time[1], "Campaign1_20210505", Is_Test)
 
     #calling blob handler function
-    #blob_handler('/lambda_stor/data/hudson/data/1628731768/Campaign1_20210505_191201_RawOD.csv',"Campaign1_20210505_191201_RawOD.csv", 0, Is_Test)
+    blob_handler('/lambda_stor/data/hudson/data/1628731768/Campaign1_20210505_191201_RawOD.csv',"Campaign1_20210505_191201_RawOD.csv", 0, Is_Test)
 
 
 if __name__ == "__main__":
