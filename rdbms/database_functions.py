@@ -138,7 +138,7 @@ def find_format(cursor, Inc_ID, Is_Test):
     return format[0][0]
 
 #-----------------------------------------------
-def Inc_ID_finder(cursor, experiment_name, plate_number, Is_Test):
+def Inc_ID_finder(cursor, experiment_name, plate_number):
     """Inc_ID_finder
 
         Description: Finds which Inc_ID is associated with the given file name and plate number
@@ -147,26 +147,30 @@ def Inc_ID_finder(cursor, experiment_name, plate_number, Is_Test):
             cursor:
             experiment_name:
             plate_number:
-            Is_Test: True; records will be inserted into Test_plate & Test_assay_plate. False; records will be inserted into plate & assay_plate.
         Returns:
             -1: If Plate is not found in the database
-            Inc_ID number: If plate exist in the database 
+            Inc_ID number and table_name: If plate exist in the database 
     """
 
-    if Is_Test == "true":
-        table_name = "Test_plate"
-    elif Is_Test == "false":
-        table_name = "plate"
-    
-    find_plate = "select Inc_ID from " + table_name + " WHERE Exp_ID = %s and Barcode = %s"
+    find_plate = "select Inc_ID from Test_plate WHERE Exp_ID = %s and Barcode = %s"
     plate_info = (experiment_name, plate_number)
     Inc_ID = cursor.execute(find_plate, plate_info)
     Inc_ID = cursor.fetchall()
-    if len(Inc_ID) == 0:
-        return -1
+    
+    if len(Inc_ID) != 0:
+        print("Record found in the database. Inc_ID:", Inc_ID[0][0])   
+        return Inc_ID[0][0], "Test_plate"
+
+    find_plate = "select Inc_ID from plate WHERE Exp_ID = %s and Barcode = %s"
+    plate_info = (experiment_name, plate_number)
+    Inc_ID = cursor.execute(find_plate, plate_info)
+    Inc_ID = cursor.fetchall()
+    
+    if len(Inc_ID) != 0:
+        print("Record found in the database. Inc_ID:", Inc_ID[0][0])   
+        return Inc_ID[0][0], "plate"
     else:
-        print("Record found in the database. Inc_ID:", Inc_ID[0][0])    
-        return Inc_ID[0][0]
+        return -1, "NULL"
     
 #-----------------------------------------------
 def timestamp_tracker(time_stamps, cursor, new_data, Data_information, Is_Test):
@@ -318,30 +322,26 @@ def update_plate_data(experiment_name: str, plate_number: int, time_stamps: list
     try:
         cursor,cnx = connect_Database() 
         
-        # Is_Test = Is_Test.lower()
-        # if Is_Test != "true" and Is_Test != "false":
-        #     raise Exception 
-            
+      
        
         # Find the Inc_ID for the given data
         experiment_name = experiment_name.strip()
-        Test_table = Inc_ID_finder(cursor, experiment_name, plate_number, "true")
-        Exp_table = Inc_ID_finder(cursor, experiment_name, plate_number, "false") 
+        Inc_ID, table_name = Inc_ID_finder(cursor, experiment_name, plate_number)
         
-        if Test_table != -1:
-            Inc_ID = Test_table
-            Is_Test = "true"
         
-        elif Exp_table != -1:
-            Inc_ID = Exp_table
-            Is_Test = "false"
-        
-        if Test_table == -1 or Exp_table == -1:
+        if Inc_ID == -1:
             print("Plate record does not exists in the database!!!")
             print("Creating new records for", experiment_name, " Barcode: 0")
             upload_data_directly(experiment_name, plate_number, time_stamps, new_data, date, time, file_basename_for_data)
         
         else:
+
+            if table_name == "Test_plate":
+                Is_Test = "true"
+    
+            elif table_name == "plate":
+                Is_Test = "false"
+                
             # Find format of the plate
             format = find_format(cursor, Inc_ID, Is_Test)
             
@@ -360,10 +360,7 @@ def update_plate_data(experiment_name: str, plate_number: int, time_stamps: list
             timestamp_tracker(time_stamps, cursor, new_data, Data_information, Is_Test)
 
             # Update plate info for the given Inc_ID and the timestemp
-            if Is_Test == "true":
-                table_name = "Test_plate"
-            elif Is_Test == "false":
-                table_name = "plate"
+
 
             update_plate_table = "UPDATE " + table_name + " SET Process_status = %s WHERE Inc_ID = %s"
             update_values = ("Completed", Inc_ID)
@@ -439,7 +436,7 @@ def upload_data_directly(experiment_name, plate_number, time_stamps, new_data, d
 
 #-----------------------------------------------
 #Change the name of the fucntion LATER / Change column name control_qc
-def control_qc(experiment_name: str, plate_number: int, Control_QC: str):
+def insert_control_qc(experiment_name: str, plate_number: int, Control_QC: str):
     """update_z_core_qc
 
         Description: Enter Control_QC status into plate table for the given plate. 
@@ -452,15 +449,7 @@ def control_qc(experiment_name: str, plate_number: int, Control_QC: str):
     try:
         cursor,cnx = connect_Database()    
 
-        Test_table = Inc_ID_finder(cursor, experiment_name, plate_number, "true")
-        Exp_table = Inc_ID_finder(cursor, experiment_name, plate_number, "false") 
-        if Test_table != -1:
-            Inc_ID = Test_table
-            table_name = "Test_plate"
-        
-        elif Exp_table != -1:
-            Inc_ID = Exp_table
-            table_name = "plate"
+        Inc_ID, table_name = Inc_ID_finder(cursor, experiment_name, plate_number)
 
 
         update_plate_table = "UPDATE " + table_name + " SET Control_QC = %s WHERE Inc_ID = %s"
@@ -479,22 +468,27 @@ def control_qc(experiment_name: str, plate_number: int, Control_QC: str):
 
 #-----------------------------------------------
 def insert_blank_adj(experiment_name, plate_number, blank_adj):
+    """insert_blank_adj
+
+        Description: Inserts the blank adjusted values into assay_plate table
+        Parameters: 
+            experiment_name: 
+            plate_number: Plate id
+            blank_adj: A dictionary that containes the blank adjusted values
+            
+    """
     try:
         cursor,cnx = connect_Database() 
         
-        Test_table = Inc_ID_finder(cursor, experiment_name, plate_number, "true")
-        Exp_table = Inc_ID_finder(cursor, experiment_name, plate_number, "false") 
+        Inc_ID, table_name = Inc_ID_finder(cursor, experiment_name, plate_number)
 
-        if Test_table != -1:
-            Inc_ID = Test_table
+
+        if table_name == "Test_plate":
             table_name = "Test_assay_plate"
         
-        elif Exp_table != -1:
-            Inc_ID = Exp_table
+        elif table_name == "plate":
             table_name = "assay_plate"
         
-        #print(blank_adj[df['Well'][1]])
-
         for key, value in blank_adj.items():
             query = "UPDATE " + table_name + " SET Blank_Adj_Value = %s Where Inc_ID = %s and Well = %s"
             update_values = (value, Inc_ID, key)
@@ -534,16 +528,8 @@ def upload_image(filename, experiment_name: str, plate_number: int):
     try:
         cursor,cnx = connect_Database() 
         
-        Test_table = Inc_ID_finder(cursor, experiment_name, plate_number, "true")
-        Exp_table = Inc_ID_finder(cursor, experiment_name, plate_number, "false") 
+        Inc_ID, table_name = Inc_ID_finder(cursor, experiment_name, plate_number)
 
-        if Test_table != -1:
-            Inc_ID = Test_table
-            table_name = "Test_plate"
-        
-        elif Exp_table != -1:
-            Inc_ID = Exp_table
-            table_name = "plate"
 
         Image_query =  "UPDATE " + table_name + " SET Exp_Image = %s WHERE Inc_ID = %s"
         update_values = (binary_data, Inc_ID)
@@ -571,16 +557,7 @@ def retrieve_image(experiment_name: str, plate_number: int):
     try:
         cursor,cnx = connect_Database() 
         
-        Test_table = Inc_ID_finder(cursor, experiment_name, plate_number, "true")
-        Exp_table = Inc_ID_finder(cursor, experiment_name, plate_number, "false") 
-
-        if Test_table != -1:
-            Inc_ID = Test_table
-            table_name = "Test_plate"
-        
-        elif Exp_table != -1:
-            Inc_ID = Exp_table
-            table_name = "plate"
+        Inc_ID, table_name = Inc_ID_finder(cursor, experiment_name, plate_number)
 
 
         Image_query = "SELECT Exp_Image from " + table_name + " WHERE Inc_ID = %s"
@@ -663,16 +640,16 @@ def main(filename):
     
     # Calling the update plate data function
     
-    #update_plate_data("Campaign1_20210505_191201_RawOD.csv", 1, time_stamps, df, date_time[0], date_time[1], "Campaign1_20210505")
+    #update_plate_data("Campaign1_20210505_191201_RawOD.csv", 0, time_stamps, df, date_time[0], date_time[1], "Campaign1_20210505")
 
     #calling blob handler function
     #upload_image('/home/dozgulbas/hudson-liquidhandling/rdbms/images/Campaign2_HopeStrains106-112_plate2col4_12hrInc_12PlateTest.png',"Campaign1_20210505_191201_RawOD.csv", 0, Is_Test)
     
     #retrieve_image("Campaign1_20210505_191201_RawOD.csv", 0, Is_Test)
 
-    #update_z_core_qc("Campaign1_20210505_191201_RawOD.csv",0,"Pass")
+    #insert_control_qc("Campaign1_20210505_191201_RawOD.csv", 0,"Pass")
 
-    insert_blank_adj("TEST2", 2, blank_adj)
+    #insert_blank_adj("Campaign1_20210505_191201_RawOD.csv", 0, blank_adj)
 
 if __name__ == "__main__":
     #Execute only if run as a script
