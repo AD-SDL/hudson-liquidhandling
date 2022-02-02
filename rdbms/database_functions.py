@@ -225,6 +225,7 @@ def assay_plate_insert_data(cursor, time_index, new_data, Data_information, Is_T
                  
         except mysql.connector.Error as error:
             print(f"Failed to insert record into {table_name}" + " table {}".format(error))
+            sys.exit()
         
         finally:    
             return assay_plate_insert_data(cursor, time_index, new_data, Data_information, Is_Test)
@@ -284,6 +285,7 @@ def create_empty_plate_records(num_plates: int, num_wells: int, plate_type: str,
 
     except mysql.connector.Error as error:
         print(f"Failed to insert record into {table_name}" + " table {}".format(error))
+        sys.exit()
 
     except Exception as err:
         print("Is_Test invalid input!!! True for test tables, False for experiment tables")    
@@ -311,7 +313,6 @@ def update_plate_data(experiment_name: str, plate_number: int, time_stamps: list
             date: Experiment start date 
             time: Experiment start time 
             file_basename_for_data: The name of the experiment file
-            Is_Test: True; records will be inserted into Test_plate & Test_assay_plate. False; records will be inserted into plate & assay_plate.
             
     """
     try:
@@ -326,6 +327,7 @@ def update_plate_data(experiment_name: str, plate_number: int, time_stamps: list
         experiment_name = experiment_name.strip()
         Test_table = Inc_ID_finder(cursor, experiment_name, plate_number, "true")
         Exp_table = Inc_ID_finder(cursor, experiment_name, plate_number, "false") 
+        
         if Test_table != -1:
             Inc_ID = Test_table
             Is_Test = "true"
@@ -337,7 +339,7 @@ def update_plate_data(experiment_name: str, plate_number: int, time_stamps: list
         if Test_table == -1 or Exp_table == -1:
             print("Plate record does not exists in the database!!!")
             print("Creating new records for", experiment_name, " Barcode: 0")
-            upload_data_directly(experiment_name, plate_number, time_stamps, new_data, date, time, file_basename_for_data, "true")
+            upload_data_directly(experiment_name, plate_number, time_stamps, new_data, date, time, file_basename_for_data)
         
         else:
             # Find format of the plate
@@ -368,9 +370,10 @@ def update_plate_data(experiment_name: str, plate_number: int, time_stamps: list
             cursor.execute(update_plate_table, update_values)
             
     
-    except Exception as err:
-        print("Is_Test invalid input!!! True for test tables, False for experiment tables")    
-
+    except mysql.connector.Error as error:
+        print("Failed to insert record into Test_assay_plate table {}".format(error))
+        sys.exit()
+    
     else:
         print(len(time_stamps)*len(new_data), "Records are inserted. Barcode:", plate_number)
     
@@ -380,7 +383,7 @@ def update_plate_data(experiment_name: str, plate_number: int, time_stamps: list
         print("Connection to the database is closed")
 
 #-----------------------------------------------
-def upload_data_directly(experiment_name, plate_number, time_stamps, new_data, date, time, file_basename_for_data, Is_Test):
+def upload_data_directly(experiment_name, plate_number, time_stamps, new_data, date, time, file_basename_for_data):
     """upload_data_directly
 
         Description: Enters new data into the database directly 
@@ -393,17 +396,12 @@ def upload_data_directly(experiment_name, plate_number, time_stamps, new_data, d
             date: Experiment start date 
             time: Experiment start time 
             file_basename_for_data: The name of the experiment file
-            Is_Test: True; records will be inserted into Test_plate & Test_assay_plate. False; records will be inserted into plate & assay_plate.     
+            
     """
     try:
         cursor,cnx = connect_Database()    
 
-        if Is_Test == "true":
-            table_name = "Test_plate"
-        elif Is_Test == "false":
-            table_name = "plate"
-
-        add_plate = "INSERT INTO " + table_name + " (Type, Process_status, Barcode, Exp_ID, Format, Date_created, Time_created) VALUES (%s, %s, %s, %s, %s, %s, %s)"
+        add_plate = "INSERT INTO Test_plate (Type, Process_status, Barcode, Exp_ID, Format, Date_created, Time_created) VALUES (%s, %s, %s, %s, %s, %s, %s)"
 
         # Using the current time to keep track of the time when the plate information is recorded in the database 
         now = datetime.now()
@@ -416,11 +414,6 @@ def upload_data_directly(experiment_name, plate_number, time_stamps, new_data, d
         # Recieving Inc_ID back to utilize the unique plate id in the assay_plate records
         Inc_ID = cursor.lastrowid
         
-        if table_name == "Test_plate":
-                table_name = "Test_assay_plate"
-        elif table_name == "plate":
-                table_name = "assay_plate"
-
         row_num = 1
         for index in time_stamps:
             for data_index_num in range(1,len(new_data)+1):
@@ -430,13 +423,14 @@ def upload_data_directly(experiment_name, plate_number, time_stamps, new_data, d
                 else:
                     Data_group = "Experimental"
                 
-                update_assay_plate = "INSERT INTO " + table_name + " (Inc_ID, Data_group, Row_num, Well, Raw_Value, Elapsed_time, Data_File_Name, Reading_date, Reading_time) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)"                
-                plate_assay_data = (Inc_ID, Data_group, row_num, new_data['Well'][data_index_num], new_data[index][data_index_num], index, file_basename_for_data, date, time)
+                update_assay_plate = "INSERT INTO Test_assay_plate (Inc_ID, Data_group, Row_num, Well, Raw_Value, Elapsed_time, Data_File_Name, Reading_date, Reading_time, Assay_Details) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"                
+                plate_assay_data = (Inc_ID, Data_group, row_num, new_data['Well'][data_index_num], new_data[index][data_index_num], index, file_basename_for_data, date, time, "Row_OD(590)")
                 cursor.execute(update_assay_plate, plate_assay_data)
                 row_num+=1
 
     except mysql.connector.Error as error:
-        print(f"Failed to insert record into {table_name}" + " table {}".format(error))
+        print("Failed to insert record into Test_assay_plate table {}".format(error))
+        sys.exit()
 
     finally:
         # Disconnect from the test_bugs database
@@ -444,8 +438,17 @@ def upload_data_directly(experiment_name, plate_number, time_stamps, new_data, d
         print("Connection to the database is closed")
 
 #-----------------------------------------------
-def update_z_core_qc(experiment_name: str, plate_number: int, Z_Score_QC: str):
-    
+#Change the name of the fucntion LATER / Change column name control_qc
+def control_qc(experiment_name: str, plate_number: int, Control_QC: str):
+    """update_z_core_qc
+
+        Description: Enter Control_QC status into plate table for the given plate. 
+
+        Parameters: 
+            Control_QC: Either "Pass" or "Fail".
+            plate_number: Plate id
+            experiment_name: 
+    """
     try:
         cursor,cnx = connect_Database()    
 
@@ -460,22 +463,65 @@ def update_z_core_qc(experiment_name: str, plate_number: int, Z_Score_QC: str):
             table_name = "plate"
 
 
-        update_plate_table = "UPDATE " + table_name + " SET Z_Score_QC = %s WHERE Inc_ID = %s"
-        update_values = (Z_Score_QC, Inc_ID)
+        update_plate_table = "UPDATE " + table_name + " SET Control_QC = %s WHERE Inc_ID = %s"
+        update_values = (Control_QC, Inc_ID)
         cursor.execute(update_plate_table, update_values)
 
     except mysql.connector.Error as error:
         print(f"Failed to insert record into {table_name}" + " table {}".format(error))
     else: 
-        print(f"Z_Score_QC inserted into {table_name} as ",Z_Score_QC)
+        print(f"Control_QC status inserted into {table_name} as ",Control_QC)
     finally:
         # Disconnect from the test_bugs database
         disconnect_Database(cursor, cnx)
         print("Connection to the database is closed")
 
+
+#-----------------------------------------------
+def insert_blank_adj(experiment_name, plate_number, blank_adj):
+    try:
+        cursor,cnx = connect_Database() 
+        
+        Test_table = Inc_ID_finder(cursor, experiment_name, plate_number, "true")
+        Exp_table = Inc_ID_finder(cursor, experiment_name, plate_number, "false") 
+
+        if Test_table != -1:
+            Inc_ID = Test_table
+            table_name = "Test_assay_plate"
+        
+        elif Exp_table != -1:
+            Inc_ID = Exp_table
+            table_name = "assay_plate"
+        
+        #print(blank_adj[df['Well'][1]])
+
+        for key, value in blank_adj.items():
+            query = "UPDATE " + table_name + " SET Blank_Adj_Value = %s Where Inc_ID = %s and Well = %s"
+            update_values = (value, Inc_ID, key)
+            cursor.execute(query,update_values)
+        
+
+    except mysql.connector.Error as error:
+        print("Faild to insert blank adjusted value into database {}".format(error))
+    except Exception as err:
+        print(err)
+    else:
+        print("Blank Adjusted values are inserted")
+    finally:
+        disconnect_Database(cursor,cnx)
+
 #-----------------------------------------------
 #blob_handler
-def upload_image(filename, experiment_name: str, plate_number: int, Is_Test: str):
+def upload_image(filename, experiment_name: str, plate_number: int):
+    """upload_image
+
+        Description: Converts image to BLOB and then inserts it to plate table
+        Parameters: 
+            filename: Path to the image file
+            experiment_name: 
+            plate_number: Plate id
+            
+    """
     try:
         file = open(filename, 'rb')
     except OSError as err:
@@ -488,16 +534,16 @@ def upload_image(filename, experiment_name: str, plate_number: int, Is_Test: str
     try:
         cursor,cnx = connect_Database() 
         
-        Is_Test = Is_Test.lower()
-        if Is_Test != "true" and Is_Test != "false":
-            raise Exception 
+        Test_table = Inc_ID_finder(cursor, experiment_name, plate_number, "true")
+        Exp_table = Inc_ID_finder(cursor, experiment_name, plate_number, "false") 
 
-        if Is_Test == "true":
+        if Test_table != -1:
+            Inc_ID = Test_table
             table_name = "Test_plate"
-        elif Is_Test == "false":
+        
+        elif Exp_table != -1:
+            Inc_ID = Exp_table
             table_name = "plate"
-
-        Inc_ID = Inc_ID_finder(cursor, experiment_name, plate_number, Is_Test)
 
         Image_query =  "UPDATE " + table_name + " SET Exp_Image = %s WHERE Inc_ID = %s"
         update_values = (binary_data, Inc_ID)
@@ -505,41 +551,55 @@ def upload_image(filename, experiment_name: str, plate_number: int, Is_Test: str
 
     except mysql.connector.Error as error:
         print("Faild to insert image into database {}".format(error))
-    except Exception:
-        print("Is_Test invalid input!!! True for test tables, False for experiment tables")
+    except Exception as err:
+        print(err)
     else:
         print("Image is inserted into plate table")
     finally:
         disconnect_Database(cursor,cnx)
         
 #-----------------------------------------------
-def retrieve_image(experiment_name: str, plate_number: int, Is_Test: str):
+def retrieve_image(experiment_name: str, plate_number: int):
+    """retrieve_image
+
+    Description: Retrives blob from database, converts it to an image and saves to predefined directory
+    Parameters: 
+        experiment_name: 
+        plate_number: Plate id
+    """
 
     try:
         cursor,cnx = connect_Database() 
         
-        Is_Test = Is_Test.lower()
-        if Is_Test != "true" and Is_Test != "false":
-            raise Exception 
+        Test_table = Inc_ID_finder(cursor, experiment_name, plate_number, "true")
+        Exp_table = Inc_ID_finder(cursor, experiment_name, plate_number, "false") 
 
-        if Is_Test == "true":
+        if Test_table != -1:
+            Inc_ID = Test_table
             table_name = "Test_plate"
-        elif Is_Test == "false":
+        
+        elif Exp_table != -1:
+            Inc_ID = Exp_table
             table_name = "plate"
 
-        Inc_ID = Inc_ID_finder(cursor, experiment_name, plate_number, Is_Test)
 
         Image_query = "SELECT Exp_Image from " + table_name + " WHERE Inc_ID = %s"
         cursor.execute(Image_query, (Inc_ID,))
         data = cursor.fetchone()[0]
-        with open(experiment_name + ".png", 'wb') as f:
-            f.write(data)       
+        
+        try:
+            file = open(experiment_name + ".png", 'wb')
+        except OSError as err:
+            print(err)
+            sys.exit()
+        else:   
+            with file:
+                file.write(data)       
       
 
     except mysql.connector.Error as error:
         print("Faild to insert image into database {}".format(error))
     except Exception as err:
-        print("Is_Test invalid input!!! True for test tables, False for experiment tables")
         print(err)
     else:
         print("Image saved to directory")
@@ -594,6 +654,7 @@ def main(filename):
     time_stamps = df.columns[3:].to_list()
     date_time = date_time.split(" ", 1)
 
+    blank_adj = {'A1': 0.5319999999999999, 'A2': 0.7965, 'A3': 1.091, 'A4': 1.1945, 'A5': 1.2455, 'A6': 1.402, 'A7': 0.5389999999999999, 'A8': 0.7595000000000001, 'A9': 1.097, 'A10': 1.2274999999999998, 'A11': 1.2255, 'A12': 1.3739999999999999, 'B1': 0.599, 'B2': 0.8635, 'B3': 1.135, 'B4': 1.2414999999999998, 'B5': 1.3445, 'B6': 1.48, 'B7': 0.6479999999999999, 'B8': 0.8985, 'B9': 1.1260000000000001, 'B10': 1.2334999999999998, 'B11': 1.3185, 'B12': 1.4589999999999999, 'C1': 0.48900000000000005, 'C2': 0.6875, 'C3': 0.9939999999999999, 'C4': 1.1864999999999999, 'C5': 1.2785, 'C6': 1.458, 'C7': 0.5549999999999999, 'C8': 0.7885, 'C9': 0.95, 'C10': 1.2094999999999998, 'C11': 1.2315, 'C12': 1.445, 'D1': 0.388, 'D2': 0.6455, 'D3': 0.8069999999999999, 'D4': 0.9105, 'D5': 1.0415, 'D6': 1.156, 'D7': 0.391, 'D8': 0.6365000000000001, 'D9': 0.7989999999999999, 'D10': 0.9175, 'D11': 0.9984999999999999, 'D12': 1.193, 'E1': 1.126, 'E2': 1.3485, 'E3': 1.383, 'E4': 1.3555, 'E5': 1.3615, 'E6': 1.349, 'E7': 1.379, 'E8': 1.3355, 'E9': 1.374, 'E10': 1.3375, 'E11': 1.3125, 'E12': 1.27, 'F1': 0.45, 'F2': 0.7085, 'F3': 1.107, 'F4': 1.2834999999999999, 'F5': 1.3835, 'F6': 1.4989999999999999, 'F7': 0.691, 'F8': 0.9225, 'F9': 1.1560000000000001, 'F10': 1.2945, 'F11': 1.2945, 'F12': 1.466, 'G1': 0.508, 'G2': 0.7005, 'G3': 1.01, 'G4': 1.1875, 'G5': 1.3665, 'G6': 1.4829999999999999, 'G7': 0.76, 'G8': 0.9155, 'G9': 1.1260000000000001, 'G10': 1.2445, 'G11': 1.3025, 'G12': 1.438, 'H1': 0.0010000000000000009, 'H2': 0.0005000000000000004, 'H3': 0.0020000000000000018, 'H4': 0.0, 'H5': 0.0, 'H6': 0.0, 'H7': 0.0, 'H8': 0.0, 'H9': 0.0, 'H10': 0.0005000000000000004, 'H11': 0.0005000000000000004, 'H12': 0.0010000000000000009}
     
     Is_Test = "True"
     
@@ -602,13 +663,16 @@ def main(filename):
     
     # Calling the update plate data function
     
-    update_plate_data("Campaign1_20210505_191201_RawOD.csv", 1, time_stamps, df, date_time[0], date_time[1], "Campaign1_20210505")
+    #update_plate_data("Campaign1_20210505_191201_RawOD.csv", 1, time_stamps, df, date_time[0], date_time[1], "Campaign1_20210505")
 
     #calling blob handler function
     #upload_image('/home/dozgulbas/hudson-liquidhandling/rdbms/images/Campaign2_HopeStrains106-112_plate2col4_12hrInc_12PlateTest.png',"Campaign1_20210505_191201_RawOD.csv", 0, Is_Test)
     
     #retrieve_image("Campaign1_20210505_191201_RawOD.csv", 0, Is_Test)
+
     #update_z_core_qc("Campaign1_20210505_191201_RawOD.csv",0,"Pass")
+
+    insert_blank_adj("TEST2", 2, blank_adj)
 
 if __name__ == "__main__":
     #Execute only if run as a script
