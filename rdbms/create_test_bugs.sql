@@ -1,4 +1,4 @@
-create database test_bugs;
+create database if not exists test_bugs;
 
 use test_bugs;
 
@@ -45,8 +45,10 @@ create table project
  *				format    	The number of wells (96 or 384). MUST NOT BE NULL.
  *				Date_created 	First recording date of the plate information
  *				Time_created 	First recording time of the plate information
- *				name		name string for the plate
- *				origin	  	The original source: pgf, lanl, llnl...
+ *				Control_QC      Either "Pass" or "Fail".
+ *              Exp_Image       Experiment image in BLOB format
+ *              Name		    name string for the plate
+ *				Origin	  	    The original source: pgf, lanl, llnl...
  *
  *------------------------------------------------------------------------------*/
 
