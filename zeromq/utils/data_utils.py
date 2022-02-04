@@ -41,9 +41,6 @@ def parse_hidex(filename):
 
     timestamp_list = df.columns[3:].to_list()
 
-    # clean up the df 
-    # df.drop(df.columns[[0,2]], axis = 1, inplace = True)
-
     # extract file basename 
     basename = os.path.basename(filename)
 
@@ -72,7 +69,6 @@ def excel_to_csv(filename):
     excel_OD_data.to_csv(csv_filepath, encoding="utf-8", index=False)
 
     return csv_filepath
-
 
 def test(filename):
     df = parse_hidex(filename)

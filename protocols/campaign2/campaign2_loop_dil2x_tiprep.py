@@ -606,7 +606,7 @@ def generate_campaign1_repeatable(
             # else: 
             #     remove_tip_box(softLinx, "Position3")
             #     replace_tip_box(softLinx, "Position3")
-            softLinx.soloSoftResetTipCount(1)  # Reset the tip count every other run. 
+            softLinx.soloSoftResetTipCount(3)  # reset the tip count at pos 3 not pos 1
 
         softLinx.plateCraneMoveCrane("SoftLinx.PlateCrane.Safe")
 
@@ -657,7 +657,7 @@ def generate_campaign1_repeatable(
     # reduce Hidex temp to reduce strain on instument over incubation (necessary?)
     softLinx.hidexRun("SetTemp20") 
     
-    softLinx.liconicShake(shaker1Speed=30, shakeTime=[0,7,36,0]) 
+    softLinx.liconicShake(shaker1Speed=30, shakeTime=[0,7,6,0]) # 7hrs 6 min
 
     # preheat Hidex for readings after incubation
     softLinx.hidexRun("SetTempWait37")  
@@ -684,7 +684,7 @@ def generate_campaign1_repeatable(
 
         # shake in incubator until time to take next reading  (don't do if already read last plate)
         if not k == (len(treatment)-1):
-            softLinx.liconicShake(shaker1Speed=30, shakeTime=[0,0,21,0])  # 21 min
+            softLinx.liconicShake(shaker1Speed=30, shakeTime=[0,0,23,0])  # 23 min
     #* END LOOP
 
     softLinx.hidexRun("SetTemp20") 
@@ -708,7 +708,7 @@ def generate_campaign1_repeatable(
                 str(num_assay_plates),
                 str(num_assay_wells),
                 assay_plate_type,
-                is_test,
+                str(is_test),
             ],
             start_new_session=True,
         ).pid
@@ -823,7 +823,7 @@ def main(args):
         args["culture_dilution_column"],
         args["media_start_column"],
         args["treatment_dilution_half"],
-        args["is_test"]
+        args["is_test"],
     )
 
 

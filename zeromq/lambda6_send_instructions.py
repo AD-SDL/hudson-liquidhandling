@@ -8,7 +8,7 @@ import os
 import sys
 sys.path.append("../rdbms/")
 sys.path.append("../../rdbms/") # this is the one that works
-from create_plate_functions import create_empty_plate_records
+from database_functions import create_empty_plate_records
 
 def lamdba6_send_instructions(instructions_dir, info_list):
 
