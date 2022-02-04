@@ -13,9 +13,9 @@
 
 2. TABLENAME    PLATE
 
-    FUNCTION:   A physical plate of any kind.
- 
-    COLUMNS:    * Inc_ID	        A Unique identifier for the plate
+    FUNCTION:   A physical plate of any kind.\n
+
+    COLUMNS:    * Inc_ID	        A Unique identifier for the plate\n
                 * Type		    The type of plate:
                                 - assay
                                 - source
