@@ -15,7 +15,7 @@ from utils.run_qc import run_qc
 from utils.zmq_connection import zmq_connect
 sys.path.append("../rdbms/")
 sys.path.append("../../rdbms/") # this is the one that works
-from create_plate_functions import update_plate_data
+from database_functions import update_plate_data, insert_control_qc, insert_blank_adj
 
 
 def lambda6_handle_message(decoded_message):
@@ -88,32 +88,62 @@ def lambda6_handle_message(decoded_message):
     return return_val
 
 
-def od_blank_adjusted(arr):
-    reg_array = arr.tolist()
-    mean = float(np.mean(arr))
-    for i in range(len(reg_array)):
-        diff = float(reg_array[i] - mean)
-        if diff > 0:
-            reg_array[i] = diff
-        else:
-            reg_array[i] = 0.0
-    return np.array(reg_array).astype(float)
-
-
 def _run_qc(file_name, plate_id, exp_name):
+
+    ret_val = "PASS"
 
     # perform the quality control on hidex file
     df, timestamp_list, reading_date, reading_time, data_filename = parse_hidex(file_name)  
-    # print(df)
-    # values = df.loc[df["Sample"] == "Blank"].to_numpy()[:, 3].astype(float)
-    values = df.loc[df["Well"] == "H1"].to_numpy()[:, -1].astype(float)
-    values = od_blank_adjusted(values)
-    ret_val = run_qc(values)  # TODO: fix z score in run_qc
-    print(f"result: {ret_val}")
 
     # Add data to db 
     update_plate_data(exp_name, plate_id, timestamp_list, df, reading_date, reading_time, data_filename)
     
+    #all_data_values = df.iloc[:, -1:].copy().to_numpy().astype(float)
+    blank_values = df.loc[df["Well"].str.startswith('H')].copy().to_numpy()[:, -1].astype(float)
+    rows = pd.DataFrame()
+    data = pd.DataFrame()
+    rows = rows.append(df[["Well"]], ignore_index=True)  # .to_list()   TEST THIS
+    data = data.append(df.iloc[:, -1:], ignore_index=True)  # .to_list()
+
+    data_list = data.values.tolist() 
+    data_list = [float(x[0]) for x in data_list]
+
+    rows_list = rows.values.tolist()
+    rows_list = [str(x[0]) for x in rows_list]
+
+    data_dict = {}
+    for i in range(len(rows_list)): 
+        data_dict[rows_list[i]] = data_list[i]
+
+    #print(data_dict)
+    
+    #check z score of blanks
+    # blank_z_scores = _z_score(blank_values)
+    # for z in blank_z_scores:
+    #     if z >= 1.5 or z <= -1.5:
+    #         print("FAIL sample has z_xcore {} >= 1.5 or <= -1.5".format(z))
+    #         ret_val = "FAIL"
+
+    # check that no blank is above a certain threshold (0.052 for now?)
+    for blank_OD in blank_values: 
+        #if blank_OD > 0.052: 
+        if blank_OD > 0.07:
+            print(f"FAIL control sample {blank_OD} has Raw OD value greater than 0.052")
+            ret_val = "FAIL"
+
+    # print(f"blanks z score qc result: {ret_val}")
+    print(f"done running qc on {file_name}")
+    print(f"result: {ret_val}")
+
+    # update z score qc column in db
+    insert_control_qc(exp_name, plate_id, ret_val) 
+    
+    # if z score qc passed, then blank adjust
+    if ret_val == "PASS": 
+        blank_adj_values_dict = od_blank_adjusted(data_dict)
+        insert_blank_adj(exp_name, plate_id, blank_adj_values_dict)
+        print("INSERTED BLANK ADJ DATA INTO TABLE")
+
     # send message to build_dataframe if the data is good
     if ret_val == "PASS":
         context, socket = zmq_connect(port=5556, pattern="REQ")
@@ -134,6 +164,53 @@ def _run_qc(file_name, plate_id, exp_name):
 
     return ret_val
 
+def _z_score(blank_values): 
+    """ _z_score
+        
+        Description: Calculates the z-score of all values in the list
+
+        Parameters: 
+            blank_values: list of OD data for control wells
+
+    """
+    z_scores = []
+    avg = np.mean(blank_values)
+    std = np.std(blank_values)
+    for val in blank_values:
+        z_scores.append((val - avg) / std)
+    print("z-scores: {}".format(z_scores))
+
+    return z_scores
+
+
+
+
+def od_blank_adjusted(data_dict):
+    print("----- BLANK ADDJUSTING -----")
+
+    blank_adj_data = {} 
+
+    # calculate blank averages
+    blank_avg = []
+    blank_avg.append(np.average([data_dict["H1"],data_dict["H7"]]))
+    blank_avg.append(np.average([data_dict["H2"],data_dict["H8"]]))
+    blank_avg.append(np.average([data_dict["H3"],data_dict["H9"]]))
+    blank_avg.append(np.average([data_dict["H4"],data_dict["H10"]]))
+    blank_avg.append(np.average([data_dict["H5"],data_dict["H11"]]))
+    blank_avg.append(np.average([data_dict["H6"],data_dict["H12"]]))
+
+    # blank adjust all data
+    data_list = list(data_dict.values()) 
+    rows_list = list(data_dict.keys())
+    
+    i = 0
+    for j in range(len(data_list)): 
+        blank_adj_data[rows_list[j]] = data_list[j] - blank_avg[i]
+        if blank_adj_data[rows_list[j]] < 0: 
+            blank_adj_data[rows_list[j]] = 0.0
+        i = i + 1 if not i == 5 else 0
+    
+    return blank_adj_data  # a dictionary
 
 def main(json_string):
     lambda6_handle_message(json_string)
