@@ -102,6 +102,11 @@ create table plate_quality
  *		location_serial_num
  *              availability  	Indicates status of the plate - available, unusable...
  *
+ * PLATE TYPES = ('strain_collection', )
+ *		strain_collection represents a bacteria strain library.
+ *
+ * AVAILABILTY = ('available', 
+ *		available indicates that the plate is available for use.
  *
  *------------------------------------------------------------------------------*/
 
@@ -190,4 +195,27 @@ create table Test_assay_plate
  Type		varchar(50),
  Sample		varchar(256),
 
+);
+
+/*------------------------------------------------------------------------------
+ *
+ * TABLENAME    source_sample_alias
+ * FUNCTION     Provides aliases for a sample in a source plate. The alias is
+		another name for the sample_id in the source plate.
+ * COLUMNS
+ *              sample_id varchar(100),
+ *              alias varchar(100),
+ *		alias_type varchar(64),
+ *		constraint  sample_id_alias_constraint UNIQUE (sample_id, alias, alias_type)
+ *              value   the measured value for that well
+ *
+ * ALIAS_TYPES = ('PATRIC_GENOME', )
+ *		PATRIC_GENOME is a genome id in the PATRIC database
+*------------------------------------------------------------------------------*/
+
+create table source_sample_alias (
+	sample_id varchar(100),
+	alias varchar(100),
+	alias_type varchar(64),
+	constraint  sample_id_alias_constraint UNIQUE (sample_id, alias, alias_type)
 );
