@@ -2,6 +2,14 @@ create database if not exists test_bugs;
 
 use test_bugs;
 
+CREATE TABLE experiment (
+     experiment_id int(11) NOT NULL AUTO_INCREMENT,
+     project_id int(11),
+     PRIMARY KEY (experiment_id)
+);
+alter table experiment add CONSTRAINT project_fk FOREIGN KEY (project_id) REFERENCES project(project_id);
+
+
 /*------------------------------------------------------------------------------
  *
  * TABLENAME    PROJECT
@@ -39,16 +47,16 @@ create table project
  *              type		The type of plate:
 					assay
 					source
- *      		process_status  Where the plate is in the sequencing process
- *				barcode		barcode for the plate
- *				Exp_ID		Experiment ID (Curently file name)
- *				format    	The number of wells (96 or 384). MUST NOT BE NULL.
- *				Date_created 	First recording date of the plate information
- *				Time_created 	First recording time of the plate information
- *				Control_QC      Either "Pass" or "Fail".
- *              Exp_Image       Experiment image in BLOB format
- *              Name		    name string for the plate
- *				Origin	  	    The original source: pgf, lanl, llnl...
+ *      	process_status  Where the plate is in the sequencing process
+ *		barcode		barcode for the plate
+ *		Exp_ID		Experiment ID (Curently file name)
+ *		format    	The number of wells (96 or 384). MUST NOT BE NULL.
+ *		Date_created 	First recording date of the plate information
+ *		Time_created 	First recording time of the plate information
+ *		Control_QC      Either "Pass" or "Fail".
+ *      	Exp_Image       Experiment image in BLOB format
+ *              Name		name string for the plate
+ *		Origin  	The original source: hope, cdc, ...
  *
  *------------------------------------------------------------------------------*/
 
@@ -115,11 +123,12 @@ create table source_plate
  plate_id       	int(11),
  type			varchar(24),
  well			varchar(10),
+ sample_id		varchar(100),
  location_serial_num    int(11),
  availability   	VARCHAR(10),
  name			VARCHAR(256)
 );
-
+alter table source_plate add constraint plate_fk_1 foreign key (plate_id) references plate(plate_id);
 
 /*------------------------------------------------------------------------------
  *
@@ -161,6 +170,7 @@ create table assay_plate
  Sample		varchar(256),
 
 );
+alter table assay_plate add constraint plate_fk_2 foreign key (plate_id) references plate(plate_id);
 
 create table Test_plate
 (
@@ -201,7 +211,7 @@ create table Test_assay_plate
  *
  * TABLENAME    source_sample_alias
  * FUNCTION     Provides aliases for a sample in a source plate. The alias is
-		another name for the sample_id in the source plate.
+ *		another name for the sample_id in the source plate.
  * COLUMNS
  *              sample_id varchar(100),
  *              alias varchar(100),
