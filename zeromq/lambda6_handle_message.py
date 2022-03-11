@@ -235,7 +235,6 @@ def od_blank_adjusted(data_frame, time_stamps):
             adjusted_values_list.append(adjust)
             index+=1
     
-    print(adjusted_values_list)
     return blank_adj_data_frame, adjusted_values_list
 
    
