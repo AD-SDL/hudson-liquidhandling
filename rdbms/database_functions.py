@@ -10,7 +10,7 @@ import numpy as np
 import sys
 import mysql.connector
 import openpyxl
-from datetime import datetime
+from datetime import *
 
 
 
@@ -467,14 +467,14 @@ def insert_control_qc(experiment_name: str, plate_number: int, Control_QC: str):
 
 
 #-----------------------------------------------
-def insert_blank_adj(experiment_name, plate_number, blank_adj):
+def insert_blank_adj(experiment_name, plate_number, adjusted_values_list):
     """insert_blank_adj
 
         Description: Inserts the blank adjusted values into assay_plate table
         Parameters: 
             experiment_name: 
             plate_number: Plate id
-            blank_adj: A dictionary that containes the blank adjusted values
+            blank_adj: A list that containes the blank adjusted values
             
     """
     try:
@@ -489,9 +489,9 @@ def insert_blank_adj(experiment_name, plate_number, blank_adj):
         elif table_name == "plate":
             table_name = "assay_plate"
         
-        for key, value in blank_adj.items():
-            query = "UPDATE " + table_name + " SET Blank_Adj_Value = %s Where Inc_ID = %s and Well = %s"
-            update_values = (value, Inc_ID, key)
+        for row_num, value in enumerate(adjusted_values_list):
+            query = "UPDATE " + table_name + " SET Blank_Adj_Value = %s Where Inc_ID = %s and Row_num = %s"
+            update_values = (value, Inc_ID, row_num+1)
             cursor.execute(query,update_values)
         
 
@@ -617,8 +617,67 @@ def parse_hidex(filename):
                 df.loc[len(df.index) + 1] = row
     return df, date_time
 
+def parse_source_data(file):
+    df = pd.DataFrame()
+    DATA = False
+    with open(file, newline="") as csvfile:
+        print(f"opened {file}")
+        csv.QUOTE_NONNUMERIC = True
+        reader = csv.reader(csvfile)
+        i = 0
+        for row in reader:
+            i += 1
+            row = [x.strip() for x in row]
+            if i == 1:
+                name = row[0].strip()
+            elif i == 2:
+                date = row[0].strip()
+            elif i == 3:
+                plate_id = row[0].strip()
+
+            if len(row) > 0 and row[0] == "Well":
+                
+                df = pd.DataFrame(columns=row)
+                DATA = True
+                continue
+            if DATA == True:
+                df.loc[len(df.index) + 1] = row
+    #date = datetime.strptime(date, '%m/%d/%y').strftime('%Y-%m-%d')
+    return df, name, date, plate_id
+
+def insert_source_plate(file):
+
+    df, name, date, plate_id = parse_source_data(file)
+    try:
+        cursor,cnx = connect_Database()    
+        add_plate = "INSERT INTO plate (Type, Barcode, Exp_ID, Date_created) VALUES (%s, %s, %s, %s)"
+        plate_data = ("Source", plate_id, name, date)
+        cursor.execute(add_plate, plate_data)
+
+            
+        # Recieving Inc_ID back to utilize the unique plate id in the assay_plate records
+        Inc_ID = cursor.lastrowid
+
+        for data in range(1, len(df)+1):
+            update_assay_plate = "INSERT INTO source_plate (Inc_ID, well, sample_id) VALUES (%s, %s, %s)"                
+            plate_assay_data = (Inc_ID, df['Well'][data].strip(), df['Sample ID'][data].strip())
+            cursor.execute(update_assay_plate, plate_assay_data)
+           
+
+    except mysql.connector.Error as error:
+        print("Failed to insert record {}".format(error))
+        sys.exit()
+
+    finally:
+        # Disconnect from the test_bugs database
+        disconnect_Database(cursor, cnx)
+        print("Connection to the database is closed")
+
+
+    
 # Currently not in use
 def add_time(date, time, time_stamp):
+    
     date = date.split("-", 3)
     time = time.split(":",3)
     date_and_time = datetime.datetime(int(date[0]), int(date[1]), int(date[2]), int(time[0]), int(time[1]), int(time[2]))
@@ -630,11 +689,11 @@ def main(filename):
     df, date_time  = parse_hidex(filename)
     time_stamps = df.columns[3:].to_list()
     date_time = date_time.split(" ", 1)
-
-    blank_adj = {'A1': 0.5319999999999999, 'A2': 0.7965, 'A3': 1.091, 'A4': 1.1945, 'A5': 1.2455, 'A6': 1.402, 'A7': 0.5389999999999999, 'A8': 0.7595000000000001, 'A9': 1.097, 'A10': 1.2274999999999998, 'A11': 1.2255, 'A12': 1.3739999999999999, 'B1': 0.599, 'B2': 0.8635, 'B3': 1.135, 'B4': 1.2414999999999998, 'B5': 1.3445, 'B6': 1.48, 'B7': 0.6479999999999999, 'B8': 0.8985, 'B9': 1.1260000000000001, 'B10': 1.2334999999999998, 'B11': 1.3185, 'B12': 1.4589999999999999, 'C1': 0.48900000000000005, 'C2': 0.6875, 'C3': 0.9939999999999999, 'C4': 1.1864999999999999, 'C5': 1.2785, 'C6': 1.458, 'C7': 0.5549999999999999, 'C8': 0.7885, 'C9': 0.95, 'C10': 1.2094999999999998, 'C11': 1.2315, 'C12': 1.445, 'D1': 0.388, 'D2': 0.6455, 'D3': 0.8069999999999999, 'D4': 0.9105, 'D5': 1.0415, 'D6': 1.156, 'D7': 0.391, 'D8': 0.6365000000000001, 'D9': 0.7989999999999999, 'D10': 0.9175, 'D11': 0.9984999999999999, 'D12': 1.193, 'E1': 1.126, 'E2': 1.3485, 'E3': 1.383, 'E4': 1.3555, 'E5': 1.3615, 'E6': 1.349, 'E7': 1.379, 'E8': 1.3355, 'E9': 1.374, 'E10': 1.3375, 'E11': 1.3125, 'E12': 1.27, 'F1': 0.45, 'F2': 0.7085, 'F3': 1.107, 'F4': 1.2834999999999999, 'F5': 1.3835, 'F6': 1.4989999999999999, 'F7': 0.691, 'F8': 0.9225, 'F9': 1.1560000000000001, 'F10': 1.2945, 'F11': 1.2945, 'F12': 1.466, 'G1': 0.508, 'G2': 0.7005, 'G3': 1.01, 'G4': 1.1875, 'G5': 1.3665, 'G6': 1.4829999999999999, 'G7': 0.76, 'G8': 0.9155, 'G9': 1.1260000000000001, 'G10': 1.2445, 'G11': 1.3025, 'G12': 1.438, 'H1': 0.0010000000000000009, 'H2': 0.0005000000000000004, 'H3': 0.0020000000000000018, 'H4': 0.0, 'H5': 0.0, 'H6': 0.0, 'H7': 0.0, 'H8': 0.0, 'H9': 0.0, 'H10': 0.0005000000000000004, 'H11': 0.0005000000000000004, 'H12': 0.0010000000000000009}
+    print(df)
+    #blank_adj = {'A1': 0.5319999999999999, 'A2': 0.7965, 'A3': 1.091, 'A4': 1.1945, 'A5': 1.2455, 'A6': 1.402, 'A7': 0.5389999999999999, 'A8': 0.7595000000000001, 'A9': 1.097, 'A10': 1.2274999999999998, 'A11': 1.2255, 'A12': 1.3739999999999999, 'B1': 0.599, 'B2': 0.8635, 'B3': 1.135, 'B4': 1.2414999999999998, 'B5': 1.3445, 'B6': 1.48, 'B7': 0.6479999999999999, 'B8': 0.8985, 'B9': 1.1260000000000001, 'B10': 1.2334999999999998, 'B11': 1.3185, 'B12': 1.4589999999999999, 'C1': 0.48900000000000005, 'C2': 0.6875, 'C3': 0.9939999999999999, 'C4': 1.1864999999999999, 'C5': 1.2785, 'C6': 1.458, 'C7': 0.5549999999999999, 'C8': 0.7885, 'C9': 0.95, 'C10': 1.2094999999999998, 'C11': 1.2315, 'C12': 1.445, 'D1': 0.388, 'D2': 0.6455, 'D3': 0.8069999999999999, 'D4': 0.9105, 'D5': 1.0415, 'D6': 1.156, 'D7': 0.391, 'D8': 0.6365000000000001, 'D9': 0.7989999999999999, 'D10': 0.9175, 'D11': 0.9984999999999999, 'D12': 1.193, 'E1': 1.126, 'E2': 1.3485, 'E3': 1.383, 'E4': 1.3555, 'E5': 1.3615, 'E6': 1.349, 'E7': 1.379, 'E8': 1.3355, 'E9': 1.374, 'E10': 1.3375, 'E11': 1.3125, 'E12': 1.27, 'F1': 0.45, 'F2': 0.7085, 'F3': 1.107, 'F4': 1.2834999999999999, 'F5': 1.3835, 'F6': 1.4989999999999999, 'F7': 0.691, 'F8': 0.9225, 'F9': 1.1560000000000001, 'F10': 1.2945, 'F11': 1.2945, 'F12': 1.466, 'G1': 0.508, 'G2': 0.7005, 'G3': 1.01, 'G4': 1.1875, 'G5': 1.3665, 'G6': 1.4829999999999999, 'G7': 0.76, 'G8': 0.9155, 'G9': 1.1260000000000001, 'G10': 1.2445, 'G11': 1.3025, 'G12': 1.438, 'H1': 0.0010000000000000009, 'H2': 0.0005000000000000004, 'H3': 0.0020000000000000018, 'H4': 0.0, 'H5': 0.0, 'H6': 0.0, 'H7': 0.0, 'H8': 0.0, 'H9': 0.0, 'H10': 0.0005000000000000004, 'H11': 0.0005000000000000004, 'H12': 0.0010000000000000009}
     
     Is_Test = "True"
-    
+    #insert_source_plate('/homes/dozgulbas/data/11_17_21_plate2.csv')
     # Calling the create empty plate records function.
     #create_empty_plate_records(1, 48, "Hidex", "Campaign1_20210505_191201_RawOD.csv", Is_Test)
     
@@ -653,5 +712,5 @@ def main(filename):
 
 if __name__ == "__main__":
     #Execute only if run as a script
-    main('/lambda_stor/data/hudson/data/1628731768/Campaign1_20210505_191201_RawOD.csv')
+    main('/lambda_stor/data/hudson/data/1623878974-1/Campaign1_20210615_150156_RawOD.csv')
 
