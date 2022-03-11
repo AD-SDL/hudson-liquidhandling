@@ -474,7 +474,7 @@ def insert_blank_adj(experiment_name, plate_number, adjusted_values_list):
         Parameters: 
             experiment_name: 
             plate_number: Plate id
-            blank_adj: A dictionary that containes the blank adjusted values
+            blank_adj: A list that containes the blank adjusted values
             
     """
     try:
