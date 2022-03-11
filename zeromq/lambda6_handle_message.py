@@ -183,41 +183,70 @@ def _z_score(blank_values):
     return z_scores
 
 
+def calculate_avg(list):
+    """calculate_avg
+
+        Description: Avarage calculations of the "H" values
+    """
+    avg_list = []
+    pointer1 = 0
+    pointer2 = 6
+
+    while pointer1 < 6:
+        
+        avg_list.insert(pointer1,(float(list[pointer1]) + float(list[pointer2]))/2)
+        avg_list.insert(pointer2,(float(list[pointer1]) + float(list[pointer2]))/2)
+        pointer1+=1
+        pointer2+=1
+    
+    return avg_list
 
 
-def od_blank_adjusted(data_dict):
+
+def od_blank_adjusted(data_frame, time_stamps):
     print("----- BLANK ADDJUSTING -----")
+    """od_blank_adjusted
 
-    blank_adj_data = {} 
-
-    # calculate blank averages
-    blank_avg = []
-    blank_avg.append(np.average([data_dict["H1"],data_dict["H7"]]))
-    blank_avg.append(np.average([data_dict["H2"],data_dict["H8"]]))
-    blank_avg.append(np.average([data_dict["H3"],data_dict["H9"]]))
-    blank_avg.append(np.average([data_dict["H4"],data_dict["H10"]]))
-    blank_avg.append(np.average([data_dict["H5"],data_dict["H11"]]))
-    blank_avg.append(np.average([data_dict["H6"],data_dict["H12"]]))
-
-    # blank adjust all data
-    data_list = list(data_dict.values()) 
-    rows_list = list(data_dict.keys())
+        Description: Recives a data_frame and calculates blank adjusted values for each data point
+        Parameters: 
+            data_frame: Data itself
+            time_stamps: A list that contains the time points
+        
+        Returns: 
+            - blank_adj_data_frame: A new data frame with blank adjusted values
+            - adjusted_values_list: A list of blank adjusted values (this will be used to insert the values into the database)
+    """
+    blank_adj_data_frame = data_frame
+    adjusted_values_list = []
+    for time_point in time_stamps:
     
-    i = 0
-    for j in range(len(data_list)): 
-        blank_adj_data[rows_list[j]] = data_list[j] - blank_avg[i]
-        if blank_adj_data[rows_list[j]] < 0: 
-            blank_adj_data[rows_list[j]] = 0.0
-        i = i + 1 if not i == 5 else 0
+        blank_adj_list = calculate_avg(list(data_frame[time_point][84:]))
+        index = 0
+        
+        for data_index_num in range(1,len(data_frame)+1) :
+            A = float(data_frame[time_point][data_index_num])
+            if index == len(blank_adj_list):
+                index = 0
+            adjust = round(float(data_frame[time_point][data_index_num]) - blank_adj_list[index], 3)
+            if adjust < 0:
+                adjust = 0
+            
+            blank_adj_data_frame[time_point][data_index_num] = adjust
+            adjusted_values_list.append(adjust)
+            index+=1
     
-    return blank_adj_data  # a dictionary
+    print(adjusted_values_list)
+    return blank_adj_data_frame, adjusted_values_list
+
+   
 
 def main(json_string):
     lambda6_handle_message(json_string)
+    
 
 
 if __name__ == "__main__":
-    # execute only if run as a script
+    #execute only if run as a script
     if os.path.isfile(sys.argv[1]):
         with open(sys.argv[1], "r") as file:
             json_string = file.read()
@@ -225,3 +254,6 @@ if __name__ == "__main__":
         json_string = sys.argv[1]
 
     main(json_string)
+    
+    # df, timestamp_list, reading_date, reading_time, basename = parse_hidex('/lambda_stor/data/hudson/data/1623878974-1/Campaign1_20210615_150156_RawOD.csv')
+    # od_blank_adjusted(df, timestamp_list)
