@@ -155,7 +155,7 @@ alter table source_plate add constraint plate_fk_1 foreign key (plate_id) refere
 
 create table assay_plate
 (
- Inc_ID	int(11) NOT NULL,
+ plate_id	int(11) NOT NULL,
  Data_group	varchar(50),
  Row_num	int(11),
  Well		varchar(10),
