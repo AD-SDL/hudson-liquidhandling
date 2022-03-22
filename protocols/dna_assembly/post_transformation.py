@@ -22,17 +22,62 @@ Pos 6 = EMPTY AT START (later 96 well clear, flat-bottom plate w/ lid placed by 
 Pos 7 = EMPTY
 Pos 8 = EMPTY
 
-Post Transformation Steps: 
+POST TRANSFORMATION STEPS: 
+*** start with transformation plate in incubator, with incubator plate ID = 1 ***
+
+Transformation plate to selection plate #1 
+- Unload transformation plate from incubator --> SOLO position 6
+- Move new plate to SOLO position 4 (will be selection plate #1)
+    Note: new plate will contain 180uL LB media + antobiotic in each well)
+- exectue transf_to_sel.hso: 
+    - transfer 10uL from each well of transformation plate to corresponding well in selection plate #1 
+- Load selection plate #1 into incubator (plate ID = 2) and remove used transformation plate to Stack 1
+- Incubate for 3 hours
+
+Selection plate #1 to master plate:
+- Unload selection plate #1 from incubator (plate ID = 2) --> SOLO position 6
+- Move new plate to SOLO position 4 (will be master plate)
+    (Note: new plate will contain 100uL of 50% glycerol media in each well)
+- exectue sel_to_master.hso: 
+    - transfer 100uL from each well of selection plate #1 to corresponding well in master plate  
+- Load master plate into incubator, plate ID = 3
+- Freeze for later use or immediately proceed to next step 
+    (If proceeding, remove used selection plate #1 to Stack 1 and move master plate to SOLO position 6)
+
+Master plate to overnight plate: 
+- Unload master plate from incubator (plate ID = 3) --> SOLO position 6
+- Move new plate to SOLO position 4 (will be overnight plate)
+    (Note: new plate will contain 180uL LB media + antibiotic in each well)
+- exectue master_to_overnight.hso: 
+    - transfer 10uL from each well of master plate to corresponding well in overnight plate 
+- Load overnight plate into incubator, plate ID = 4
+- Incubate for 8 hours
+
+Overnight plate to test plate: 
+- Unload overnight plate from incubator (plate ID = 4) --> SOLO position 6
+- Move new plate to SOLO position 4 (will be test plate)
+    (Note: new plate will contain 180uL LB media + antibiotic in each well)
+- exectue overnight_to_test.hso: 
+    - transfer 10uL from each well of overnight plate to corresponding well in test plate 
+
+Take Hidex Readings: 
+START LOOP (6 times)
+- Move test plate to Hidex (either move from SOLO Position 4 or unload from incubator)
+- Run Hidex Assay 
+    - TODO: details about assay
+- Load test plate into incubator (except after last reading move to Stack 1)
+- Incubate for 1 hour
+END LOOP
+
+
 """
 
 def generate_post_transformation(): 
 
     # file paths
-    #instruction_file_directory = "C:\\labautomation\\instructions"
-    #instruction_file_directory = "C:\\Users\\svcaibio\\Desktop\\FOR_BEN"
     instruction_file_directory = "C:\\Users\\svcaibio\\Desktop\\Debug\\post_transformation"
     transf_to_sel_filename = os.path.join(instruction_file_directory, "transf_to_sel.hso")
-    sel_to_sel_filename = os.path.join(instruction_file_directory, "sel_to_sel.hso")
+    #sel_to_sel_filename = os.path.join(instruction_file_directory, "sel_to_sel.hso")
     sel_to_master_filename = os.path.join(instruction_file_directory, "sel_to_master.hso")
     master_to_overnight_filename = os.path.join(instruction_file_directory, "master_to_overnight.hso")
     overnight_to_test_filename = os.path.join(instruction_file_directory, "overnight_to_test.hso")
@@ -47,9 +92,9 @@ def generate_post_transformation():
     # z shift
 
     # default variables 
-    flat_96_z_shift = 2  # changed from 1 TEST 
+    flat_96_z_shift = 2  # changed from 1 
     default_num_mix = 3
-    default_mix_volume = 45 # using 50 uL tips TEST 
+    default_mix_volume = 45 # using 50 uL tips 
 
     # transformation plate to selection plate variables (transformation plate -> selection plate #1)
     transf_plate_wells = ["A1", "A2", "A3", "A4", "A5", "A6", "A7", "A8", "A9", "A10", "A11", "A12"]
@@ -59,9 +104,8 @@ def generate_post_transformation():
     sel_plate_mix_volume_step_1 = 45 
     num_mix_step_1 = 3
 
-    # selection plate to selection plate variables
-    sel_to_sel_asp_volume = 2 # check that this can even be done...
-    # keep the other variables the same as step 1
+    # selection plate to selection plate variables 
+    #sel_to_sel_asp_volume = 2  # other variables the same as step 1
 
     # step 4 variables (selection plate #3 -> master/freezer plate)
     sel_to_master_asp_volume = 100 # do in 2 transfers, using 50uL tips!
@@ -73,19 +117,19 @@ def generate_post_transformation():
     overnight_to_test_asp_volume = 2
 
     # Hidex assay variables 
-    hidex_assay_name = "Campaign1_noIncubate2"  # TODO --> make Hidex protocol in app
+    hidex_assay_name = "Absorbance_and_Fluorescence"  
     num_readings = 6  # total, including T0 reading
     
 
-    # #incubation times
-    # default_incubation_time = [0,3,0,0]  # --> 0 days, 3 hours, 0 minutes, 0 seconds 
-    # overnight_incubation_time = [0,8,0,0]  # --> 0 days, 8 hours, 0 minutes, 0 seconds
-    # incubation_time_between_readings = [0,1,0,0] # 0 days, 1 hour, 0 mintues, 0 seconds
+    #incubation times
+    default_incubation_time = [0,3,0,0]  # --> 0 days, 3 hours, 0 minutes, 0 seconds 
+    overnight_incubation_time = [0,8,0,0]  # --> 0 days, 8 hours, 0 minutes, 0 seconds
+    incubation_time_between_readings = [0,1,0,0] # 0 days, 1 hour, 0 mintues, 0 seconds
 
     # FOR TESTING
-    default_incubation_time = [0,0,0,10]  # --> 0 days, 0 hours, 0 minutes, 10 seconds 
-    overnight_incubation_time = [0,0,0,20] #  --> 0 days, 0 hours, 0 minutes, 20 seconds
-    incubation_time_between_readings = [0,0,0,5] # 0 days, 0 hours, 0 minutes, 5 seconds
+    # default_incubation_time = [0,0,0,10]  # --> 0 days, 0 hours, 0 minutes, 10 seconds 
+    # overnight_incubation_time = [0,0,0,20] #  --> 0 days, 0 hours, 0 minutes, 20 seconds
+    # incubation_time_between_readings = [0,0,0,5]  #  --> 0 days, 0 hours, 0 minutes, 5 seconds
 
 
     #* SOFTLINX .slvp PROTOCOL - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
@@ -94,9 +138,9 @@ def generate_post_transformation():
     # initialize plates 
     softLinx.setPlates({"SoftLinx.PlateCrane.Stack5": "Plate.96.Corning-3635.ClearUVAssay"})  # assume all new plates in same stack until stack issue fixed
 
-    """ Assume transformation plate is already in incubator with plate ID 0"""
+    """ Assume transformation plate is already in incubator with plate ID 1"""
 
-    plate_id=1  # keep track of current plate id
+    plate_id=1  
     
     #* TRANSFORMATION PLATE --> SELECTION PLATE #1
     # set up SOLO deck
@@ -114,35 +158,36 @@ def generate_post_transformation():
         flat_96_z_shift,
         flat_96_z_shift
     )
+    softLinx.soloSoftResetTipCount(3)
     softLinx.soloSoftRun(hso_1)
     
     # clear SOLO deck and transfer new plate to incubator
     plate_id += 1
     tear_down(current_softLinx=softLinx, incubator_plate_id=plate_id, incubation_time=default_incubation_time, shaker_speed=30)
 
-    #* SELECTION PLATE #1 --> SELECTION PLATE #2 --> SELECTION PLATE #3
-    # generate the liquidhandling hso (same for both steps)
-    hso_2_and_3 = generate_hso(
-        sel_to_sel_filename, 
-        sel_plate_wells, 
-        sel_plate_wells, 
-        sel_to_sel_asp_volume, 
-        default_num_mix, 
-        default_mix_volume, 
-        default_mix_volume, 
-        flat_96_z_shift,
-        flat_96_z_shift
-    )
-    for i in range(2): 
-        # set up the SOLO deck
-        set_up(current_softLinx=softLinx, incubator_plate_id=plate_id)
+    # #* SELECTION PLATE #1 --> SELECTION PLATE #2 --> SELECTION PLATE #3
+    # # generate the liquidhandling hso (same for both steps)
+    # hso_2_and_3 = generate_hso(
+    #     sel_to_sel_filename, 
+    #     sel_plate_wells, 
+    #     sel_plate_wells, 
+    #     sel_to_sel_asp_volume, 
+    #     default_num_mix, 
+    #     default_mix_volume, 
+    #     default_mix_volume, 
+    #     flat_96_z_shift,
+    #     flat_96_z_shift
+    # )
+    # for i in range(2): 
+    #     # set up the SOLO deck
+    #     set_up(current_softLinx=softLinx, incubator_plate_id=plate_id)
 
-        # run liquidhandling hso file 
-        softLinx.soloSoftRun(hso_2_and_3)
+    #     # run liquidhandling hso file 
+    #     softLinx.soloSoftRun(hso_2_and_3)
 
-        # clear SOLO deck and move new plate to incubator
-        plate_id += 1
-        tear_down(current_softLinx=softLinx, incubator_plate_id=plate_id, incubation_time=default_incubation_time, shaker_speed=30)
+    #     # clear SOLO deck and move new plate to incubator
+    #     plate_id += 1
+    #     tear_down(current_softLinx=softLinx, incubator_plate_id=plate_id, incubation_time=default_incubation_time, shaker_speed=30)
 
     #* SELECTION PLATE #3 --> MASTER PLATE
     # set up the SOLO deck
@@ -162,22 +207,21 @@ def generate_post_transformation():
     )
     softLinx.soloSoftRun(hso_4)
 
-    #different tear down method, don't need to incubate, need to freeze potentially 
+    # different tear down method, don't need to incubate, might need to freeze 
     plate_id += 1
     softLinx.plateCraneReplaceLid(["SoftLinx.PlateCrane.LidNest1"], ["SoftLinx.Solo.Position6"])
     softLinx.plateCraneMovePlate(["SoftLinx.Solo.Position6"], ["SoftLinx.PlateCrane.Stack1"])  # remove used plate to stack 
     softLinx.plateCraneReplaceLid(["SoftLinx.PlateCrane.LidNest2"], ["SoftLinx.Solo.Position4"])
     softLinx.plateCraneMovePlate(["SoftLinx.Solo.Position4"],["SoftLinx.Solo.Position6"])  # move to other deck position, now source plate
-    
 
 
     #* MASTER PLATE --> OVERNIGHT PLATE
     # set up the SOLO deck (different than normal)
-    softLinx.plateCraneRemoveLid(["SoftLinx.PlateCrane.Position6"], ["SoftLinx.PlateCrane.LidNest1"])  # remove lid again 
+    softLinx.plateCraneRemoveLid(["SoftLinx.Solo.Position6"], ["SoftLinx.PlateCrane.LidNest1"])  # remove lid again 
 
     # place prefilled media plate onto solo deck position 4, remove lid
     softLinx.plateCraneMovePlate(["SoftLinx.PlateCrane.Stack5"],["SoftLinx.Solo.Position4"])
-    softLinx.plateCraneRemoveLid(["SoftLinx.Solo.Position4"],["SoftLinx.Solo.LidNest2"])
+    softLinx.plateCraneRemoveLid(["SoftLinx.Solo.Position4"],["SoftLinx.PlateCrane.LidNest2"])
     softLinx.plateCraneMoveCrane("SoftLinx.PlateCrane.Safe")
 
     # generate and run liquidhandling hso
@@ -197,7 +241,6 @@ def generate_post_transformation():
     # clear SOLO deck and move new plate to incubator
     plate_id += 1
     tear_down(current_softLinx=softLinx, incubator_plate_id=plate_id,incubation_time=overnight_incubation_time,shaker_speed=30)
-
 
 
     #* OVERNIGHT PLATE --> TEST PLATE
@@ -274,12 +317,12 @@ def set_up(current_softLinx:SoftLinx, incubator_plate_id):
     """
     # place plate from incubator on deck, remove lid
     current_softLinx.liconicUnloadIncubator(loadID=incubator_plate_id)
-    current_softLinx.plateCraneMovePlate(["SoftLinx.Liconic.Nest"],["SoftLinx.Solo.Position4"])  
+    current_softLinx.plateCraneMovePlate(["SoftLinx.Liconic.Nest"],["SoftLinx.Solo.Position6"])  
     current_softLinx.plateCraneRemoveLid(["SoftLinx.Solo.Position6"],["SoftLinx.PlateCrane.LidNest1"])
 
     # place prefilled media plate onto solo deck position 4, remove lid
     current_softLinx.plateCraneMovePlate(["SoftLinx.PlateCrane.Stack5"],["SoftLinx.Solo.Position4"])
-    current_softLinx.plateCraneRemoveLid(["SoftLinx.Solo.Position4"],["SoftLinx.Solo.LidNest2"])
+    current_softLinx.plateCraneRemoveLid(["SoftLinx.Solo.Position4"],["SoftLinx.PlateCrane.LidNest2"])
 
     current_softLinx.plateCraneMoveCrane("SoftLinx.PlateCrane.Safe")
 
@@ -319,7 +362,7 @@ def take_hidex_reading(current_softLinx:SoftLinx, incubator_plate_id, hidex_assa
 
         Description: Removes the specified plate (plate_id) from incubator and transfers to Hidex
                      Runs desired Hidex assay (hidex_assay) to collect data on plate
-                     TODO Transfers data to Lambda6 for quality control and processing
+                     TODO Transfer data to Lambda6 for quality control and processing
 
         Parameters: 
             current_softLinx: the instance of SoftLinx that should add the included steps
@@ -331,7 +374,7 @@ def take_hidex_reading(current_softLinx:SoftLinx, incubator_plate_id, hidex_assa
     current_softLinx.liconicUnloadIncubator(loadID=incubator_plate_id)
 
     # remove lid and transfer to Hidex
-    current_softLinx.plateCraneRemoveLid(["SoftLinx.Liconic.Nest"],["SoftLinx.LidNest2"])
+    current_softLinx.plateCraneRemoveLid(["SoftLinx.Liconic.Nest"],["SoftLinx.PlateCrane.LidNest2"])
     current_softLinx.plateCraneMovePlate(["SoftLinx.Liconic.Nest"],["SoftLinx.Hidex.Nest"])
     current_softLinx.plateCraneMoveCrane("SoftLinx.PlateCrane.Safe")
 
@@ -369,7 +412,7 @@ def generate_hso(file_path, origin_wells, destination_wells, volume, num_mix, or
         plateList=[
             "Empty",
             "Empty",
-            "TipBox.50uL.Axygen-EV-50-R-S.tealbox", #TODO: do we have 20uL tips? 
+            "TipBox.50uL.Axygen-EV-50-R-S.tealbox", 
             "Plate.96.Corning-3635.ClearUVAssay",
             "Empty",
             "Plate.96.Corning-3635.ClearUVAssay",
