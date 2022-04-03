@@ -8,9 +8,11 @@ from liquidhandling import SoloSoft
 from liquidhandling import SoftLinx
 from liquidhandling import Reservoir_12col_Agilent_201256_100_BATSgroup
 from liquidhandling import Plate_96_Corning_3635_ClearUVAssay
-
+ 
 """
 DNA ASSEMBLY
+
+USAGE EXAMPLE: python post_transformation.py -t 
  
 SOLO DECK ARRANGEMENT AT START: 
 Pos 1 = EMPTY
@@ -72,15 +74,38 @@ END LOOP
 
 """
 
-def generate_post_transformation(): 
+def generate_post_transformation(is_test): 
 
     # file paths
-    instruction_file_directory = "C:\\Users\\svcaibio\\Desktop\\Debug\\post_transformation"
-    transf_to_sel_filename = os.path.join(instruction_file_directory, "transf_to_sel.hso")
+    lambda6_path = "/lambda_stor/data/hudson/instructions/"
+    num_assay_plates = 1
+    num_assay_wells = 96 
+    assay_plate_type = "hidex"
+    data_format = "dna_assembly_1"
+
+    # Create directory to store all instruction files
+    project = "DNA_Assembly"
+    project_desc = "post_transformation"
+    timestamp = str(time.time()).split(".")[0]
+    directory_name = f"{project}-{project_desc}-{timestamp}"
+    directory_path = os.path.join(
+        os.path.realpath(os.path.dirname(lambda6_path)), directory_name
+    )
+
+    try:
+        os.makedirs(directory_path, exist_ok=True)
+        print(f"Protocol directory created: {directory_path}")
+    except OSError as e:
+        print(e)
+        print(f"failed to create new directory for instructions: {directory_path}")
+
+    # hso file paths
+    transf_to_sel_filename = os.path.join(directory_path, "transf_to_sel.hso")
     #sel_to_sel_filename = os.path.join(instruction_file_directory, "sel_to_sel.hso")
-    sel_to_master_filename = os.path.join(instruction_file_directory, "sel_to_master.hso")
-    master_to_overnight_filename = os.path.join(instruction_file_directory, "master_to_overnight.hso")
-    overnight_to_test_filename = os.path.join(instruction_file_directory, "overnight_to_test.hso")
+    sel_to_master_filename = os.path.join(directory_path, "sel_to_master.hso")
+    master_to_overnight_filename = os.path.join(directory_path, "master_to_overnight.hso")
+    overnight_to_test_filename = os.path.join(directory_path, "overnight_to_test.hso")
+    softLinx_filename = os.path.join (directory_path, "post_transformation.slvp")
 
     # plate types
     transformation_plate_type = "Plate_96_Corning_3635_ClearUVAssay"
@@ -122,18 +147,18 @@ def generate_post_transformation():
     
 
     #incubation times
-    default_incubation_time = [0,3,0,0]  # --> 0 days, 3 hours, 0 minutes, 0 seconds 
-    overnight_incubation_time = [0,8,0,0]  # --> 0 days, 8 hours, 0 minutes, 0 seconds
-    incubation_time_between_readings = [0,1,0,0] # 0 days, 1 hour, 0 mintues, 0 seconds
+    # default_incubation_time = [0,8,0,0]  # --> 0 days, 3 hours, 0 minutes, 0 seconds 
+    # overnight_incubation_time = [0,8,0,0]  # --> 0 days, 8 hours, 0 minutes, 0 seconds
+    # incubation_time_between_readings = [0,1,0,0] # 0 days, 1 hour, 0 mintues, 0 seconds
 
     # FOR TESTING
-    # default_incubation_time = [0,0,0,10]  # --> 0 days, 0 hours, 0 minutes, 10 seconds 
-    # overnight_incubation_time = [0,0,0,20] #  --> 0 days, 0 hours, 0 minutes, 20 seconds
-    # incubation_time_between_readings = [0,0,0,5]  #  --> 0 days, 0 hours, 0 minutes, 5 seconds
+    default_incubation_time = [0,0,0,10]  # --> 0 days, 0 hours, 0 minutes, 10 seconds 
+    overnight_incubation_time = [0,0,0,20] #  --> 0 days, 0 hours, 0 minutes, 20 seconds
+    incubation_time_between_readings = [0,0,0,5]  #  --> 0 days, 0 hours, 0 minutes, 5 seconds
 
 
     #* SOFTLINX .slvp PROTOCOL - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-    softLinx = SoftLinx("Post Transformation", "C:\\Users\\svcaibio\\Desktop\\Debug\\post_transformation\\post_transformation.slvp")
+    softLinx = SoftLinx("Post Transformation", softLinx_filename)
 
     # initialize plates 
     softLinx.setPlates({"SoftLinx.PlateCrane.Stack5": "Plate.96.Corning-3635.ClearUVAssay"})  # assume all new plates in same stack until stack issue fixed
@@ -149,6 +174,7 @@ def generate_post_transformation():
     # generate then run the first liquidhandling hso
     hso_1 = generate_hso(
         transf_to_sel_filename, 
+        directory_name,
         transf_plate_wells, 
         sel_plate_wells, 
         transf_plate_asp_volume_step_1, 
@@ -195,7 +221,8 @@ def generate_post_transformation():
 
     # generate and run liquidhandling hso
     hso_4 = generate_hso(
-        sel_to_master_filename, 
+        sel_to_master_filename,
+        directory_name, 
         sel_plate_wells, 
         sel_plate_wells, 
         sel_to_master_asp_volume, 
@@ -227,6 +254,7 @@ def generate_post_transformation():
     # generate and run liquidhandling hso
     hso_5 = generate_hso(
         master_to_overnight_filename,
+        directory_name,
         sel_plate_wells,
         sel_plate_wells,
         master_to_overnight_asp_volume,
@@ -250,6 +278,7 @@ def generate_post_transformation():
     # generate and run the liquidhandling hso
     hso_6 = generate_hso(
         overnight_to_test_filename, 
+        directory_name,
         sel_plate_wells, 
         sel_plate_wells,
         overnight_to_test_asp_volume, 
@@ -280,7 +309,7 @@ def generate_post_transformation():
     
     for i in range(num_readings-1):  
         # take hidex reading
-        take_hidex_reading(current_softLinx=softLinx,incubator_plate_id=plate_id,hidex_assay=hidex_assay_name)
+        take_hidex_reading(current_softLinx=softLinx, directory_name=directory_name, incubator_plate_id=plate_id,hidex_assay=hidex_assay_name)
 
         # if last reading complete, move used plate to stack 1 
         if i == num_readings - 2: 
@@ -299,6 +328,31 @@ def generate_post_transformation():
             softLinx.liconicShake(shaker1Speed=30, shakeTime=incubation_time_between_readings)
 
     softLinx.saveProtocol()
+
+    """
+    SEND NEW PROTOCOL TO WORK CELL (HUDSON01) ------------------------------------------------------------------
+    """
+    try:
+        # TODO: change to full path on lambda6
+        child_message_sender = child_pid = Popen(
+            [
+                "python",
+                "../../zeromq/lambda6_send_instructions.py",
+                "-d",
+                directory_path,
+                "-i", 
+                str(num_assay_plates),
+                str(num_assay_wells),
+                assay_plate_type,
+                str(is_test),
+            ],
+            start_new_session=True,
+        ).pid
+
+        print("New instruction directory passed to lambda6_send_message.py")
+    except BaseException as e:
+        print(e)
+        print("Could not send new instructions to hudson01")
 
 
 
@@ -357,7 +411,7 @@ def tear_down(current_softLinx:SoftLinx, incubator_plate_id, incubation_time, sh
 
 
 # ----------------------------------------------------------------------------------
-def take_hidex_reading(current_softLinx:SoftLinx, incubator_plate_id, hidex_assay): 
+def take_hidex_reading(current_softLinx:SoftLinx, directory_name, incubator_plate_id, hidex_assay): 
     """ take_hidex_reading
 
         Description: Removes the specified plate (plate_id) from incubator and transfers to Hidex
@@ -382,9 +436,16 @@ def take_hidex_reading(current_softLinx:SoftLinx, incubator_plate_id, hidex_assa
     current_softLinx.hidexRun(hidex_assay)
 
     #TODO transfer readings back to lambda6 automatically
+    # transfer data to lambda6
+    data_format = "dna_assembly"
+
+    # current_softLinx.runProgram(   # REMOVED FOR TESTING
+    #     "C:\\Users\\svcaibio\\Dev\\liquidhandling\\zeromq\\utils\\send_data.bat", 
+    #     arguments=f"{incubator_plate_id} {directory_name} {data_format}"
+    # )
 
 # ----------------------------------------------------------------------------------
-def generate_hso(file_path, origin_wells, destination_wells, volume, num_mix, origin_mix_volume, destination_mix_volume, origin_z_shift, destination_z_shift):
+def generate_hso(file_path, directory_name, origin_wells, destination_wells, volume, num_mix, origin_mix_volume, destination_mix_volume, origin_z_shift, destination_z_shift):
     """ generate_delection_hso
 
         Description: Generates the SOLO .hso files for creating the selection plates
@@ -464,14 +525,28 @@ def generate_hso(file_path, origin_wells, destination_wells, volume, num_mix, or
 
     soloSoft.shuckTip()
     soloSoft.savePipeline()
-    
-    return file_path
+
+    hudson01_hso_path = "C:\\labautomation\\instructions\\" + directory_name + "\\" + os.path.basename(file_path)
+    print(hudson01_hso_path)
+
+    return hudson01_hso_path 
 
 
 # ----------------------------------------------------------------------------------
 def main(args):
+    # handle command line args
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "-t", 
+        "--is_test",
+        help="use -t or --is_test only if the run is a test and the data can be deleted",  
+        action="store_true",
+    )
+    args = vars(parser.parse_args())
+
     # pass to method
-    generate_post_transformation()
+    generate_post_transformation(args["is_test"])
+
 
 # ----------------------------------------------------------------------------------
 if __name__ == "__main__":
