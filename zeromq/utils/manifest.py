@@ -10,7 +10,7 @@ import pathlib
 import json
 
 
-def generateFileManifest(filename, purpose, plate_id="", exp_name="", manifest_filename=None):
+def generateFileManifest(filename, purpose, plate_id="", exp_name="", data_format="", manifest_filename=None):
 
     string = ""
     data = {}
@@ -49,7 +49,7 @@ def generateFileManifest(filename, purpose, plate_id="", exp_name="", manifest_f
             "purpose": purpose,
             "plate_id": plate_id,
             "experiment_name": exp_name,
-
+            "data_format": data_format,
         }
         json_data = json.dumps(data)
 
