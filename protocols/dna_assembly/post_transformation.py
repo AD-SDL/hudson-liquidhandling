@@ -81,7 +81,7 @@ def generate_post_transformation(is_test):
     num_assay_plates = 1
     num_assay_wells = 96 
     assay_plate_type = "hidex"
-    data_format = "dna_assembly_1"
+    data_format = "dna_assembly"
 
     # Create directory to store all instruction files
     project = "DNA_Assembly"
@@ -100,9 +100,10 @@ def generate_post_transformation(is_test):
         print(f"failed to create new directory for instructions: {directory_path}")
 
     # hso file paths
-    transf_to_sel_filename = os.path.join(directory_path, "transf_to_sel.hso")
+    transf_to_master_filename = os.path.join(directory_path, "transf_to_master.hso")
     #sel_to_sel_filename = os.path.join(instruction_file_directory, "sel_to_sel.hso")
-    sel_to_master_filename = os.path.join(directory_path, "sel_to_master.hso")
+    #sel_to_master_filename = os.path.join(directory_path, "sel_to_master.hso")
+    glycerol_to_master_filename = os.path.join(directory_path, "glycerol_to_master.hso")
     master_to_overnight_filename = os.path.join(directory_path, "master_to_overnight.hso")
     overnight_to_test_filename = os.path.join(directory_path, "overnight_to_test.hso")
     softLinx_filename = os.path.join (directory_path, "post_transformation.slvp")
@@ -118,16 +119,22 @@ def generate_post_transformation(is_test):
 
     # default variables 
     flat_96_z_shift = 2  # changed from 1 
+    deep_well_z_shift = 2
     default_num_mix = 3
     default_mix_volume = 45 # using 50 uL tips 
 
-    # transformation plate to selection plate variables (transformation plate -> selection plate #1)
+    # transformation plate to master platae variables (transformation plate -> master plate)
     transf_plate_wells = ["A1", "A2", "A3", "A4", "A5", "A6", "A7", "A8", "A9", "A10", "A11", "A12"]
-    sel_plate_wells = transf_plate_wells.copy()
-    transf_plate_asp_volume_step_1 = 10
-    transf_plate_mix_volume_step_1 = 45 # using 50uL tips 
-    sel_plate_mix_volume_step_1 = 45 
+    master_plate_wells = transf_plate_wells.copy()
+    transf_plate_asp_volume_step_1 = 2
+    transf_plate_mix_volume_step_1 = 45 # using 50uL tips (~180uL or so in wells?)
+    master_plate_mix_volume_step_1 = 35 # only 52uL in wells 
     num_mix_step_1 = 3
+
+    # glycerol variables
+    glycerol_plate_asp_volume = 50 
+    glycerol_plate_mix_volume = 40
+    master_plate_mix_volume = 45
 
     # selection plate to selection plate variables 
     #sel_to_sel_asp_volume = 2  # other variables the same as step 1
@@ -136,7 +143,7 @@ def generate_post_transformation(is_test):
     sel_to_master_asp_volume = 100 # do in 2 transfers, using 50uL tips!
 
     # step 5 variables (master/freezer plate -> overnight plate)
-    master_to_overnight_asp_volume = 10
+    master_to_overnight_asp_volume = 5
 
     # step 6 variables (overnight/freezer plate -> test plate)
     overnight_to_test_asp_volume = 2
@@ -148,12 +155,14 @@ def generate_post_transformation(is_test):
 
     #incubation times
     # default_incubation_time = [0,8,0,0]  # --> 0 days, 3 hours, 0 minutes, 0 seconds 
-    # overnight_incubation_time = [0,8,0,0]  # --> 0 days, 8 hours, 0 minutes, 0 seconds
+    # overnight_incubation_time_1= [0,8,0,0]  # --> 0 days, 8 hours, 0 minutes, 0 seconds
+    # overnight_incubation_time_2= [0,8,0,0]  # --> 0 days, 8 hours, 0 minutes, 0 seconds
     # incubation_time_between_readings = [0,1,0,0] # 0 days, 1 hour, 0 mintues, 0 seconds
 
     # FOR TESTING
     default_incubation_time = [0,0,0,10]  # --> 0 days, 0 hours, 0 minutes, 10 seconds 
-    overnight_incubation_time = [0,0,0,20] #  --> 0 days, 0 hours, 0 minutes, 20 seconds
+    overnight_incubation_time_1 = [0,0,0,20] #  --> 0 days, 0 hours, 0 minutes, 20 seconds
+    overnight_incubation_time_2 = [0,0,0,20] #  --> 0 days, 0 hours, 0 minutes, 20 seconds
     incubation_time_between_readings = [0,0,0,5]  #  --> 0 days, 0 hours, 0 minutes, 5 seconds
 
 
@@ -167,20 +176,20 @@ def generate_post_transformation(is_test):
 
     plate_id=1  
     
-    #* TRANSFORMATION PLATE --> SELECTION PLATE #1
+    #* TRANSFORMATION PLATE --> MASTER PLATE
     # set up SOLO deck
     set_up(current_softLinx=softLinx, incubator_plate_id=plate_id)
 
     # generate then run the first liquidhandling hso
     hso_1 = generate_hso(
-        transf_to_sel_filename, 
+        transf_to_master_filename, 
         directory_name,
         transf_plate_wells, 
-        sel_plate_wells, 
+        master_plate_wells, 
         transf_plate_asp_volume_step_1, 
         num_mix_step_1, 
         transf_plate_mix_volume_step_1,
-        sel_plate_mix_volume_step_1,
+        master_plate_mix_volume_step_1,
         flat_96_z_shift,
         flat_96_z_shift
     )
@@ -189,14 +198,14 @@ def generate_post_transformation(is_test):
     
     # clear SOLO deck and transfer new plate to incubator
     plate_id += 1
-    tear_down(current_softLinx=softLinx, incubator_plate_id=plate_id, incubation_time=default_incubation_time, shaker_speed=30)
+    tear_down(current_softLinx=softLinx, incubator_plate_id=plate_id, incubation_time=overnight_incubation_time_1, shaker_speed=30)
 
     # #* SELECTION PLATE #1 --> SELECTION PLATE #2 --> SELECTION PLATE #3
     # # generate the liquidhandling hso (same for both steps)
     # hso_2_and_3 = generate_hso(
     #     sel_to_sel_filename, 
-    #     sel_plate_wells, 
-    #     sel_plate_wells, 
+    #   master, 
+    #   master, 
     #     sel_to_sel_asp_volume, 
     #     default_num_mix, 
     #     default_mix_volume, 
@@ -215,48 +224,31 @@ def generate_post_transformation(is_test):
     #     plate_id += 1
     #     tear_down(current_softLinx=softLinx, incubator_plate_id=plate_id, incubation_time=default_incubation_time, shaker_speed=30)
 
-    #* SELECTION PLATE #3 --> MASTER PLATE
+    #* MASTER PLATE --> OVERNIGHT PLATE
     # set up the SOLO deck
     set_up(current_softLinx=softLinx, incubator_plate_id=plate_id)
 
-    # generate and run liquidhandling hso
-    hso_4 = generate_hso(
-        sel_to_master_filename,
-        directory_name, 
-        sel_plate_wells, 
-        sel_plate_wells, 
-        sel_to_master_asp_volume, 
-        default_num_mix, 
-        default_mix_volume,
-        default_mix_volume,
-        flat_96_z_shift,
+    # # generate and run liquidhandling hso(s)
+    glycerol_hso = generate_glycerol_hso(
+        glycerol_to_master_filename,
+        directory_name,
+        master_plate_wells, # doesn't matter here
+        master_plate_wells, 
+        glycerol_plate_asp_volume, 
+        default_num_mix,
+        glycerol_plate_mix_volume,
+        master_plate_mix_volume,
+        deep_well_z_shift, 
         flat_96_z_shift,
     )
-    softLinx.soloSoftRun(hso_4)
-
-    # different tear down method, don't need to incubate, might need to freeze 
-    plate_id += 1
-    softLinx.plateCraneReplaceLid(["SoftLinx.PlateCrane.LidNest1"], ["SoftLinx.Solo.Position6"])
-    softLinx.plateCraneMovePlate(["SoftLinx.Solo.Position6"], ["SoftLinx.PlateCrane.Stack1"])  # remove used plate to stack 
-    softLinx.plateCraneReplaceLid(["SoftLinx.PlateCrane.LidNest2"], ["SoftLinx.Solo.Position4"])
-    softLinx.plateCraneMovePlate(["SoftLinx.Solo.Position4"],["SoftLinx.Solo.Position6"])  # move to other deck position, now source plate
-
-
-    #* MASTER PLATE --> OVERNIGHT PLATE
-    # set up the SOLO deck (different than normal)
-    softLinx.plateCraneRemoveLid(["SoftLinx.Solo.Position6"], ["SoftLinx.PlateCrane.LidNest1"])  # remove lid again 
-
-    # place prefilled media plate onto solo deck position 4, remove lid
-    softLinx.plateCraneMovePlate(["SoftLinx.PlateCrane.Stack5"],["SoftLinx.Solo.Position4"])
-    softLinx.plateCraneRemoveLid(["SoftLinx.Solo.Position4"],["SoftLinx.PlateCrane.LidNest2"])
-    softLinx.plateCraneMoveCrane("SoftLinx.PlateCrane.Safe")
+    softLinx.soloSoftRun(glycerol_hso)
 
     # generate and run liquidhandling hso
-    hso_5 = generate_hso(
+    hso_3 = generate_hso(
         master_to_overnight_filename,
         directory_name,
-        sel_plate_wells,
-        sel_plate_wells,
+        master_plate_wells,
+        master_plate_wells ,
         master_to_overnight_asp_volume,
         default_num_mix,
         default_mix_volume,
@@ -264,11 +256,47 @@ def generate_post_transformation(is_test):
         flat_96_z_shift,
         flat_96_z_shift,
     )
-    softLinx.soloSoftRun(hso_5)
+    softLinx.soloSoftRun(hso_3)
 
-    # clear SOLO deck and move new plate to incubator
+    # different tear down method (place master plate in STACK 2 for safe keeping)
     plate_id += 1
-    tear_down(current_softLinx=softLinx, incubator_plate_id=plate_id,incubation_time=overnight_incubation_time,shaker_speed=30)
+    softLinx.plateCraneReplaceLid(["SoftLinx.PlateCrane.LidNest1"], ["SoftLinx.Solo.Position6"])
+    softLinx.plateCraneMovePlate(["SoftLinx.Solo.Position6"], ["SoftLinx.PlateCrane.Stack2"])  # place master plate in different stack to save
+    softLinx.plateCraneReplaceLid(["SoftLinx.PlateCrane.LidNest2"], ["SoftLinx.Solo.Position4"])
+    softLinx.plateCraneMovePlate(["SoftLinx.Solo.Position4"],["SoftLinx.Liconic.Nest"])  # move to other deck position, now source plate
+    softLinx.plateCraneMoveCrane("SoftLinx.PlateCrane.Safe")
+
+    # load the new plate into the incubator
+    softLinx.liconicLoadIncubator(loadID=plate_id)
+    softLinx.liconicShake(shaker1Speed=30, shakeTime=overnight_incubation_time_2)
+    
+    # # set up the SOLO deck 
+
+    # softLinx.plateCraneRemoveLid(["SoftLinx.Solo.Position6"], ["SoftLinx.PlateCrane.LidNest1"])  # remove lid again 
+
+    # # place prefilled media plate onto solo deck position 4, remove lid
+    # softLinx.plateCraneMovePlate(["SoftLinx.PlateCrane.Stack5"],["SoftLinx.Solo.Position4"])
+    # softLinx.plateCraneRemoveLid(["SoftLinx.Solo.Position4"],["SoftLinx.PlateCrane.LidNest2"])
+    # softLinx.plateCraneMoveCrane("SoftLinx.PlateCrane.Safe")
+
+    # # # generate and run liquidhandling hso
+    # # hso_5 = generate_hso(
+    # #     master_to_overnight_filename,
+    # #     directory_name,
+    # #     master_plate_wells,
+    # #     master_plate_wells ,
+    # #     master_to_overnight_asp_volume,
+    # #     default_num_mix,
+    # #     default_mix_volume,
+    # #     default_mix_volume,
+    # #     flat_96_z_shift,
+    # #     flat_96_z_shift,
+    # # )
+    # # softLinx.soloSoftRun(hso_5)
+
+    # # clear SOLO deck and move new plate to incubator
+    # plate_id += 1
+    # tear_down(current_softLinx=softLinx, incubator_plate_id=plate_id,incubation_time=overnight_incubation_time,shaker_speed=30)
 
 
     #* OVERNIGHT PLATE --> TEST PLATE
@@ -276,11 +304,11 @@ def generate_post_transformation(is_test):
     set_up(current_softLinx=softLinx, incubator_plate_id=plate_id)
 
     # generate and run the liquidhandling hso
-    hso_6 = generate_hso(
+    hso_4 = generate_hso(
         overnight_to_test_filename, 
         directory_name,
-        sel_plate_wells, 
-        sel_plate_wells,
+        master_plate_wells, 
+        master_plate_wells,
         overnight_to_test_asp_volume, 
         default_num_mix,
         default_mix_volume,
@@ -288,8 +316,9 @@ def generate_post_transformation(is_test):
         flat_96_z_shift,
         flat_96_z_shift,
     )
-    softLinx.soloSoftRun(hso_6)
+    softLinx.soloSoftRun(hso_4)
 
+    plate_id += 1
     # clear SOLO deck and prepare for T0 Hidex reading
     softLinx.plateCraneReplaceLid(["SoftLinx.PlateCrane.LidNest1"], ["SoftLinx.Solo.Position6"])
     softLinx.plateCraneMovePlate(["SoftLinx.Solo.Position6"], ["SoftLinx.PlateCrane.Stack1"])
@@ -299,7 +328,10 @@ def generate_post_transformation(is_test):
     softLinx.plateCraneMovePlate(["SoftLinx.Solo.Position4"],["SoftLinx.Hidex.Nest"])
     softLinx.plateCraneMoveCrane("SoftLinx.PlateCrane.Safe")
     softLinx.hidexRun(hidex_assay_name)
-    #TODO send results to lambda6 automatically
+    softLinx.runProgram(   
+        "C:\\Users\\svcaibio\\Dev\\liquidhandling\\zeromq\\utils\\send_data.bat", 
+        arguments=f"{plate_id} {directory_name} {data_format}"
+    )
     softLinx.plateCraneMovePlate(["SoftLinx.Hidex.Nest"],["SoftLinx.Liconic.Nest"])  #TODO: define Liconic.NestAfterHidex location
     softLinx.hidexClose()
     softLinx.plateCraneReplaceLid(["SoftLinx.PlateCrane.LidNest2"],["SoftLinx.Liconic.Nest"])
@@ -438,11 +470,10 @@ def take_hidex_reading(current_softLinx:SoftLinx, directory_name, incubator_plat
     #TODO transfer readings back to lambda6 automatically
     # transfer data to lambda6
     data_format = "dna_assembly"
-
-    # current_softLinx.runProgram(   # REMOVED FOR TESTING
-    #     "C:\\Users\\svcaibio\\Dev\\liquidhandling\\zeromq\\utils\\send_data.bat", 
-    #     arguments=f"{incubator_plate_id} {directory_name} {data_format}"
-    # )
+    current_softLinx.runProgram(   
+        "C:\\Users\\svcaibio\\Dev\\liquidhandling\\zeromq\\utils\\send_data.bat", 
+        arguments=f"{incubator_plate_id} {directory_name} {data_format}"
+    )
 
 # ----------------------------------------------------------------------------------
 def generate_hso(file_path, directory_name, origin_wells, destination_wells, volume, num_mix, origin_mix_volume, destination_mix_volume, origin_z_shift, destination_z_shift):
@@ -471,7 +502,7 @@ def generate_hso(file_path, directory_name, origin_wells, destination_wells, vol
     soloSoft = SoloSoft(
         filename=file_path,
         plateList=[
-            "Empty",
+            "DeepBlock.96.VWR-75870-792.sterile",
             "Empty",
             "TipBox.50uL.Axygen-EV-50-R-S.tealbox", 
             "Plate.96.Corning-3635.ClearUVAssay",
@@ -522,6 +553,61 @@ def generate_hso(file_path, directory_name, origin_wells, destination_wells, vol
                 mix_volume=destination_mix_volume, 
                 aspirate_height=destination_z_shift,
             )
+
+    soloSoft.shuckTip()
+    soloSoft.savePipeline()
+
+    hudson01_hso_path = "C:\\labautomation\\instructions\\" + directory_name + "\\" + os.path.basename(file_path)
+    print(hudson01_hso_path)
+
+    return hudson01_hso_path 
+
+
+# -------------------------------------------------------------------------------------------------------------
+def generate_glycerol_hso(file_path, directory_name, origin_wells, destination_wells, volume, num_mix, origin_mix_volume, destination_mix_volume, origin_z_shift, destination_z_shift):
+    """generate_glycerol_hso
+
+    Description: TODO
+
+    Parameters: TODO
+
+    Returns: TODO
+
+    """
+    soloSoft = SoloSoft(
+        filename=file_path,
+        plateList=[
+            "DeepBlock.96.VWR-75870-792.sterile",
+            "Empty",
+            "TipBox.50uL.Axygen-EV-50-R-S.tealbox", 
+            "Plate.96.Corning-3635.ClearUVAssay",
+            "Empty",
+            "Plate.96.Corning-3635.ClearUVAssay",
+            "Empty",
+            "Empty",
+        ],
+    )
+
+    for i in range(len(origin_wells)):
+        soloSoft.getTip("Position3", num_tips=1)
+        soloSoft.aspirate(
+            position="Position1", 
+            aspirate_volumes=Reservoir_12col_Agilent_201256_100_BATSgroup().setColumn(1, volume),
+            aspirate_shift=[0,0,origin_z_shift], 
+            mix_at_start=True, 
+            mix_cycles=num_mix, 
+            mix_volume=origin_mix_volume,
+            dispense_height=origin_z_shift,
+        )
+        soloSoft.dispense(
+            position="Position4", 
+            dispense_volumes=Plate_96_Corning_3635_ClearUVAssay().setCell(destination_wells[i][0], int(destination_wells[i][1:]), volume),
+            dispense_shift=[0,0,destination_z_shift],
+            mix_at_finish=True, 
+            mix_cycles=num_mix, 
+            mix_volume=destination_mix_volume, 
+            aspirate_height=destination_z_shift,
+        )
 
     soloSoft.shuckTip()
     soloSoft.savePipeline()
