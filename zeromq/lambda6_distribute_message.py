@@ -6,7 +6,7 @@ import numpy as np
 from utils.data_utils import parse_hidex
 from utils.run_qc import run_qc
 from utils.zmq_connection import zmq_connect
-import matplotlib.pyplot as plt
+# import matplotlib.pyplot as plt
 sys.path.append("../rdbms/")
 sys.path.append("../../rdbms/") # this is the one that works
 from database_functions import update_plate_data, insert_control_qc, insert_blank_adj

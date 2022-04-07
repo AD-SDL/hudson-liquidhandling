@@ -12,6 +12,8 @@ from liquidhandling import Plate_96_Corning_3635_ClearUVAssay
 """
 DNA ASSEMBLY
 
+TODO: rewrite this
+
 USAGE EXAMPLE: python post_transformation.py -t 
  
 SOLO DECK ARRANGEMENT AT START: 
@@ -128,7 +130,7 @@ def generate_post_transformation(is_test):
     master_plate_wells = transf_plate_wells.copy()
     transf_plate_asp_volume_step_1 = 2
     transf_plate_mix_volume_step_1 = 45 # using 50uL tips (~180uL or so in wells?)
-    master_plate_mix_volume_step_1 = 35 # only 52uL in wells 
+    master_plate_mix_volume_step_1 = 15 # only 52uL in wells (! tiny in flat bottom plate)
     num_mix_step_1 = 3
 
     # glycerol variables
@@ -154,16 +156,16 @@ def generate_post_transformation(is_test):
     
 
     #incubation times
-    # default_incubation_time = [0,8,0,0]  # --> 0 days, 3 hours, 0 minutes, 0 seconds 
-    # overnight_incubation_time_1= [0,8,0,0]  # --> 0 days, 8 hours, 0 minutes, 0 seconds
-    # overnight_incubation_time_2= [0,8,0,0]  # --> 0 days, 8 hours, 0 minutes, 0 seconds
-    # incubation_time_between_readings = [0,1,0,0] # 0 days, 1 hour, 0 mintues, 0 seconds
+    default_incubation_time = [0,8,0,0]  # --> 0 days, 3 hours, 0 minutes, 0 seconds 
+    overnight_incubation_time_1= [0,8,0,0]  # --> 0 days, 8 hours, 0 minutes, 0 seconds
+    overnight_incubation_time_2= [0,14,0,0]  # --> 0 days, 8 hours, 0 minutes, 0 seconds
+    incubation_time_between_readings = [0,1,0,0] # 0 days, 1 hour, 0 mintues, 0 seconds
 
-    # FOR TESTING
-    default_incubation_time = [0,0,0,10]  # --> 0 days, 0 hours, 0 minutes, 10 seconds 
-    overnight_incubation_time_1 = [0,0,0,20] #  --> 0 days, 0 hours, 0 minutes, 20 seconds
-    overnight_incubation_time_2 = [0,0,0,20] #  --> 0 days, 0 hours, 0 minutes, 20 seconds
-    incubation_time_between_readings = [0,0,0,5]  #  --> 0 days, 0 hours, 0 minutes, 5 seconds
+    # # FOR TESTING
+    # default_incubation_time = [0,0,0,10]  # --> 0 days, 0 hours, 0 minutes, 10 seconds 
+    # overnight_incubation_time_1 = [0,0,0,20] #  --> 0 days, 0 hours, 0 minutes, 20 seconds
+    # overnight_incubation_time_2 = [0,0,0,20] #  --> 0 days, 0 hours, 0 minutes, 20 seconds
+    # incubation_time_between_readings = [0,0,0,5]  #  --> 0 days, 0 hours, 0 minutes, 5 seconds
 
 
     #* SOFTLINX .slvp PROTOCOL - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
@@ -592,12 +594,13 @@ def generate_glycerol_hso(file_path, directory_name, origin_wells, destination_w
         soloSoft.getTip("Position3", num_tips=1)
         soloSoft.aspirate(
             position="Position1", 
-            aspirate_volumes=Reservoir_12col_Agilent_201256_100_BATSgroup().setColumn(1, volume),
+            aspirate_volumes=Reservoir_12col_Agilent_201256_100_BATSgroup().setCell("A", 1, volume),
             aspirate_shift=[0,0,origin_z_shift], 
             mix_at_start=True, 
             mix_cycles=num_mix, 
             mix_volume=origin_mix_volume,
             dispense_height=origin_z_shift,
+            syringe_speed=50,
         )
         soloSoft.dispense(
             position="Position4", 
@@ -607,6 +610,7 @@ def generate_glycerol_hso(file_path, directory_name, origin_wells, destination_w
             mix_cycles=num_mix, 
             mix_volume=destination_mix_volume, 
             aspirate_height=destination_z_shift,
+            syringe_speed=50,
         )
 
     soloSoft.shuckTip()
