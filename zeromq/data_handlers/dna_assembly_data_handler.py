@@ -3,26 +3,21 @@ import sys
 import json
 
 def handle_dna_assembly_data(address, json_decoded_message): 
-    print("handle_dna_assembly called!")
+    print(f"handling dna assembly data {address}")
 
     # log the message and save to files 
     data_dir_path, file_name, plate_id, exp_name, plot_dir_path = log_and_save(address, json_decoded_message)
-
-    # TESTING
-    print(data_dir_path)
-    print(file_name)
-    print(plate_id)
-    print(exp_name)
-    print(plot_dir_path)
-    print("log and save completed")
+    print(f"done logging and saving {file_name}")
 
     file_path = os.path.join(data_dir_path, os.path.basename(file_name))
 
     # parse hidex data csv file 
     parse_hidex_dna_assembly(file_path)
+    print("done parsing dna assembly data")
 
     # add data to DB
-        #TODO
+        # TODO
+        
     
     # check for contaminated controls
         #run_qc(DATA_FRAME)
@@ -46,28 +41,7 @@ def handle_dna_assembly_data(address, json_decoded_message):
 
     # else: 
         # print(qc failed message)
-
-
-
-
-
-
-
-
-
-    
-    
-
-    
-    
-
-
-
-
-
-
-
-
+    print("DONE handling dna assembly data")
 
 
 

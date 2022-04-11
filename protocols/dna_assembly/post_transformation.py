@@ -125,7 +125,7 @@ def generate_post_transformation(is_test):
     default_num_mix = 3
     default_mix_volume = 45 # using 50 uL tips 
 
-    # transformation plate to master platae variables (transformation plate -> master plate)
+    # transformation plate to master plate variables (transformation plate -> master plate)
     transf_plate_wells = ["A1", "A2", "A3", "A4", "A5", "A6", "A7", "A8", "A9", "A10", "A11", "A12"]
     master_plate_wells = transf_plate_wells.copy()
     transf_plate_asp_volume_step_1 = 2
@@ -575,6 +575,8 @@ def generate_glycerol_hso(file_path, directory_name, origin_wells, destination_w
 
     Returns: TODO
 
+    # TODO: maybe use larger tips to make this faster
+
     """
     soloSoft = SoloSoft(
         filename=file_path,
@@ -591,27 +593,28 @@ def generate_glycerol_hso(file_path, directory_name, origin_wells, destination_w
     )
 
     for i in range(len(origin_wells)):
-        soloSoft.getTip("Position3", num_tips=1)
-        soloSoft.aspirate(
-            position="Position1", 
-            aspirate_volumes=Reservoir_12col_Agilent_201256_100_BATSgroup().setCell("A", 1, volume),
-            aspirate_shift=[0,0,origin_z_shift], 
-            mix_at_start=True, 
-            mix_cycles=num_mix, 
-            mix_volume=origin_mix_volume,
-            dispense_height=origin_z_shift,
-            syringe_speed=50,
-        )
-        soloSoft.dispense(
-            position="Position4", 
-            dispense_volumes=Plate_96_Corning_3635_ClearUVAssay().setCell(destination_wells[i][0], int(destination_wells[i][1:]), volume),
-            dispense_shift=[0,0,destination_z_shift],
-            mix_at_finish=True, 
-            mix_cycles=num_mix, 
-            mix_volume=destination_mix_volume, 
-            aspirate_height=destination_z_shift,
-            syringe_speed=50,
-        )
+        for j in range(2):
+            soloSoft.getTip("Position3", num_tips=1)
+            soloSoft.aspirate(
+                position="Position1", 
+                aspirate_volumes=Reservoir_12col_Agilent_201256_100_BATSgroup().setCell("A", 1, volume),
+                aspirate_shift=[0,0,origin_z_shift], 
+                mix_at_start=True, 
+                mix_cycles=num_mix, 
+                mix_volume=origin_mix_volume,
+                dispense_height=origin_z_shift,
+                syringe_speed=75,
+            )
+            soloSoft.dispense(
+                position="Position6", # master plate
+                dispense_volumes=Plate_96_Corning_3635_ClearUVAssay().setCell(destination_wells[i][0], int(destination_wells[i][1:]), volume),
+                dispense_shift=[0,0,destination_z_shift],
+                mix_at_finish=True, 
+                mix_cycles=num_mix, 
+                mix_volume=destination_mix_volume, 
+                aspirate_height=destination_z_shift,
+                syringe_speed=75,
+            )
 
     soloSoft.shuckTip()
     soloSoft.savePipeline()
