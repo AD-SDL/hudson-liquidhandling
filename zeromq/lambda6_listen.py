@@ -16,7 +16,7 @@ import json
 import _thread
 import threading
 from subprocess import Popen
-from lambda6_handle_message import lambda6_handle_message
+
 
 # This should probably go into a core module so that we have common
 # timestamps across the system
@@ -50,4 +50,4 @@ while True:
         ).pid
 
         date = datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%S.%f")
-        socket.send(b"Message received and passed to lambda6_handle_message")
+        socket.send(b"Message received and passed to lambda6_distribute_message")
