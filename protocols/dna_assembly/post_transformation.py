@@ -157,8 +157,8 @@ def generate_post_transformation(is_test):
 
     #incubation times
     default_incubation_time = [0,8,0,0]  # --> 0 days, 3 hours, 0 minutes, 0 seconds 
-    overnight_incubation_time_1= [0,8,0,0]  # --> 0 days, 8 hours, 0 minutes, 0 seconds
-    overnight_incubation_time_2= [0,14,0,0]  # --> 0 days, 8 hours, 0 minutes, 0 seconds
+    overnight_incubation_time_1= [0,20,0,0]  # --> 0 days, 8 hours, 0 minutes, 0 seconds
+    overnight_incubation_time_2= [0,20,0,0]  # --> 0 days, 8 hours, 0 minutes, 0 seconds
     incubation_time_between_readings = [0,1,0,0] # 0 days, 1 hour, 0 mintues, 0 seconds
 
     # # FOR TESTING
@@ -302,6 +302,9 @@ def generate_post_transformation(is_test):
 
 
     #* OVERNIGHT PLATE --> TEST PLATE
+    # preheat hidex to 37C
+    softLinx.hidexRun("SetTemp37")
+
     # set up the SOLO deck
     set_up(current_softLinx=softLinx, incubator_plate_id=plate_id)
 
@@ -450,7 +453,7 @@ def take_hidex_reading(current_softLinx:SoftLinx, directory_name, incubator_plat
 
         Description: Removes the specified plate (plate_id) from incubator and transfers to Hidex
                      Runs desired Hidex assay (hidex_assay) to collect data on plate
-                     TODO Transfer data to Lambda6 for quality control and processing
+                     Transfers data file to lambda6 for data processing
 
         Parameters: 
             current_softLinx: the instance of SoftLinx that should add the included steps
@@ -467,9 +470,9 @@ def take_hidex_reading(current_softLinx:SoftLinx, directory_name, incubator_plat
     current_softLinx.plateCraneMoveCrane("SoftLinx.PlateCrane.Safe")
 
     # take Hidex reading
+    current_softLinx.hidexRun("SetTempWait37")  # make sure hidex is at 37C  # TODO: combine into one Hidex protocol 
     current_softLinx.hidexRun(hidex_assay)
 
-    #TODO transfer readings back to lambda6 automatically
     # transfer data to lambda6
     data_format = "dna_assembly"
     current_softLinx.runProgram(   
