@@ -8,6 +8,7 @@ from liquidhandling import SoloSoft
 from liquidhandling import SoftLinx
 from liquidhandling import Reservoir_12col_Agilent_201256_100_BATSgroup
 from liquidhandling import Plate_96_Corning_3635_ClearUVAssay
+from tip_utils import replace_tip_box, remove_tip_box
  
 """
 DNA ASSEMBLY
@@ -134,8 +135,8 @@ def generate_post_transformation(is_test):
     num_mix_step_1 = 3
 
     # glycerol variables
-    glycerol_plate_asp_volume = 50 
-    glycerol_plate_mix_volume = 40
+    glycerol_plate_asp_volume = 100 
+    glycerol_plate_mix_volume = 100
     master_plate_mix_volume = 45
 
     # selection plate to selection plate variables 
@@ -171,99 +172,82 @@ def generate_post_transformation(is_test):
     #* SOFTLINX .slvp PROTOCOL - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
     softLinx = SoftLinx("Post Transformation", softLinx_filename)
 
-    # initialize plates 
-    softLinx.setPlates({"SoftLinx.PlateCrane.Stack5": "Plate.96.Corning-3635.ClearUVAssay"})  # assume all new plates in same stack until stack issue fixed
+    # initialize plates # TODO test this
+    softLinx.setPlates({
+        "SoftLinx.PlateCrane.Stack5": "Plate.96.Corning-3635.ClearUVAssay",
+        "SoftLinx.PlateCrane.Stack4": "TipBox.50uL.Axygen-EV-50-R-S.tealbox",  # will also contain a 180uL tip box (ran out of stacks to use)
+    })  
 
     """ Assume transformation plate is already in incubator with plate ID 1"""
 
     plate_id=1  
     
     #* TRANSFORMATION PLATE --> MASTER PLATE
-    # set up SOLO deck
-    set_up(current_softLinx=softLinx, incubator_plate_id=plate_id)
+    # set up SOLO deck, get new tips and reset tip count
+    set_up(current_softLinx=softLinx, incubator_plate_id=plate_id, empty_tip_deck_loc="Position3") 
 
     # generate then run the first liquidhandling hso
     hso_1 = generate_hso(
         transf_to_master_filename, 
-        directory_name,
-        transf_plate_wells, 
-        master_plate_wells, 
+        directory_name, 
         transf_plate_asp_volume_step_1, 
         num_mix_step_1, 
         transf_plate_mix_volume_step_1,
         master_plate_mix_volume_step_1,
         flat_96_z_shift,
-        flat_96_z_shift
+        flat_96_z_shift, 
     )
-    softLinx.soloSoftResetTipCount(3)
     softLinx.soloSoftRun(hso_1)
     
     # clear SOLO deck and transfer new plate to incubator
     plate_id += 1
-    tear_down(current_softLinx=softLinx, incubator_plate_id=plate_id, incubation_time=overnight_incubation_time_1, shaker_speed=30)
+    tear_down(current_softLinx=softLinx, incubator_plate_id=plate_id, incubation_time=overnight_incubation_time_1, shaker_speed=30) # TODO: test this
 
-    # #* SELECTION PLATE #1 --> SELECTION PLATE #2 --> SELECTION PLATE #3
-    # # generate the liquidhandling hso (same for both steps)
-    # hso_2_and_3 = generate_hso(
-    #     sel_to_sel_filename, 
-    #   master, 
-    #   master, 
-    #     sel_to_sel_asp_volume, 
-    #     default_num_mix, 
-    #     default_mix_volume, 
-    #     default_mix_volume, 
-    #     flat_96_z_shift,
-    #     flat_96_z_shift
-    # )
-    # for i in range(2): 
-    #     # set up the SOLO deck
-    #     set_up(current_softLinx=softLinx, incubator_plate_id=plate_id)
-
-    #     # run liquidhandling hso file 
-    #     softLinx.soloSoftRun(hso_2_and_3)
-
-    #     # clear SOLO deck and move new plate to incubator
-    #     plate_id += 1
-    #     tear_down(current_softLinx=softLinx, incubator_plate_id=plate_id, incubation_time=default_incubation_time, shaker_speed=30)
 
     #* MASTER PLATE --> OVERNIGHT PLATE
-    # set up the SOLO deck
-    set_up(current_softLinx=softLinx, incubator_plate_id=plate_id)
+    
+    # get new 180uL tips for glycerol transfer, reset solo tip count at deck pos 5
+    replace_tip_box(current_softLinx=softLinx, empty_tip_locaiton="Position5", pool_id=4) # pool id = stack num
+    # set up the SOLO deck, get new 50uL tips, reset solo tip count at deck pos 3
+    set_up(current_softLinx=softLinx, incubator_plate_id=plate_id, empty_tip_deck_loc="Position3")  
 
     # # generate and run liquidhandling hso(s)
-    glycerol_hso = generate_glycerol_hso(
+    glycerol_hso = generate_glycerol_hso(   # uses 180uL tips, deck pos 5
         glycerol_to_master_filename,
         directory_name,
-        master_plate_wells, # doesn't matter here
-        master_plate_wells, 
-        glycerol_plate_asp_volume, 
-        default_num_mix,
-        glycerol_plate_mix_volume,
-        master_plate_mix_volume,
+        glycerol_plate_asp_volume,  # 100uL 
+        default_num_mix,  # 3
+        glycerol_plate_mix_volume,  # 100uL 
+        master_plate_mix_volume,  # 45uL 
         deep_well_z_shift, 
         flat_96_z_shift,
     )
-    softLinx.soloSoftRun(glycerol_hso)
+    softLinx.soloSoftRun(glycerol_hso)  # only run once since using 180uL tips  
 
     # generate and run liquidhandling hso
     hso_3 = generate_hso(
         master_to_overnight_filename,
         directory_name,
-        master_plate_wells,
-        master_plate_wells ,
-        master_to_overnight_asp_volume,
-        default_num_mix,
-        default_mix_volume,
-        default_mix_volume,
-        flat_96_z_shift,
-        flat_96_z_shift,
+        master_to_overnight_asp_volume,  # 5uL 
+        default_num_mix,  # 3
+        default_mix_volume,  # 45uL 
+        default_mix_volume,  # 45uL 
+        flat_96_z_shift,  # 2
+        flat_96_z_shift,  # 2
     )
     softLinx.soloSoftRun(hso_3)
+    plate_id += 1
+
+    # remove empty 180uL tips from deck
+    remove_tip_box(
+        current_softLinx=softLinx, 
+        empty_tip_loc="Position5", 
+        pool_id=4,
+    )
 
     # different tear down method (place master plate in STACK 2 for safe keeping)
-    plate_id += 1
     softLinx.plateCraneReplaceLid(["SoftLinx.PlateCrane.LidNest1"], ["SoftLinx.Solo.Position6"])
-    softLinx.plateCraneMovePlate(["SoftLinx.Solo.Position6"], ["SoftLinx.PlateCrane.Stack2"])  # place master plate in different stack to save
+    softLinx.plateCraneMovePlate(["SoftLinx.Solo.Position6"], ["SoftLinx.PlateCrane.Stack2"], pool_id=2)  # place master plate in different stack to save
     softLinx.plateCraneReplaceLid(["SoftLinx.PlateCrane.LidNest2"], ["SoftLinx.Solo.Position4"])
     softLinx.plateCraneMovePlate(["SoftLinx.Solo.Position4"],["SoftLinx.Liconic.Nest"])  # move to other deck position, now source plate
     softLinx.plateCraneMoveCrane("SoftLinx.PlateCrane.Safe")
@@ -272,61 +256,36 @@ def generate_post_transformation(is_test):
     softLinx.liconicLoadIncubator(loadID=plate_id)
     softLinx.liconicShake(shaker1Speed=30, shakeTime=overnight_incubation_time_2)
     
-    # # set up the SOLO deck 
-
-    # softLinx.plateCraneRemoveLid(["SoftLinx.Solo.Position6"], ["SoftLinx.PlateCrane.LidNest1"])  # remove lid again 
-
-    # # place prefilled media plate onto solo deck position 4, remove lid
-    # softLinx.plateCraneMovePlate(["SoftLinx.PlateCrane.Stack5"],["SoftLinx.Solo.Position4"])
-    # softLinx.plateCraneRemoveLid(["SoftLinx.Solo.Position4"],["SoftLinx.PlateCrane.LidNest2"])
-    # softLinx.plateCraneMoveCrane("SoftLinx.PlateCrane.Safe")
-
-    # # # generate and run liquidhandling hso
-    # # hso_5 = generate_hso(
-    # #     master_to_overnight_filename,
-    # #     directory_name,
-    # #     master_plate_wells,
-    # #     master_plate_wells ,
-    # #     master_to_overnight_asp_volume,
-    # #     default_num_mix,
-    # #     default_mix_volume,
-    # #     default_mix_volume,
-    # #     flat_96_z_shift,
-    # #     flat_96_z_shift,
-    # # )
-    # # softLinx.soloSoftRun(hso_5)
-
-    # # clear SOLO deck and move new plate to incubator
-    # plate_id += 1
-    # tear_down(current_softLinx=softLinx, incubator_plate_id=plate_id,incubation_time=overnight_incubation_time,shaker_speed=30)
-
-
+ 
     #* OVERNIGHT PLATE --> TEST PLATE
     # preheat hidex to 37C
     softLinx.hidexRun("SetTemp37")
 
     # set up the SOLO deck
-    set_up(current_softLinx=softLinx, incubator_plate_id=plate_id)
+    set_up(current_softLinx=softLinx, incubator_plate_id=plate_id, empty_tip_deck_loc="Position3")
 
     # generate and run the liquidhandling hso
     hso_4 = generate_hso(
         overnight_to_test_filename, 
         directory_name,
-        master_plate_wells, 
-        master_plate_wells,
-        overnight_to_test_asp_volume, 
-        default_num_mix,
-        default_mix_volume,
-        default_mix_volume,
-        flat_96_z_shift,
-        flat_96_z_shift,
+        overnight_to_test_asp_volume, # 2uL
+        default_num_mix,  # 3
+        default_mix_volume,  # 45uL 
+        default_mix_volume,  # 45uL
+        flat_96_z_shift,  # 2
+        flat_96_z_shift,  # 2
     )
     softLinx.soloSoftRun(hso_4)
-
     plate_id += 1
+    
     # clear SOLO deck and prepare for T0 Hidex reading
+    remove_tip_box(  # remove 50uL tips
+        current_softLinx=softLinx,
+        empty_tip_loc="Position3", 
+        pool_id=3,  # pool id = stack num of dest 
+    )
     softLinx.plateCraneReplaceLid(["SoftLinx.PlateCrane.LidNest1"], ["SoftLinx.Solo.Position6"])
-    softLinx.plateCraneMovePlate(["SoftLinx.Solo.Position6"], ["SoftLinx.PlateCrane.Stack1"])
+    softLinx.plateCraneMovePlate(["SoftLinx.Solo.Position6"], ["SoftLinx.PlateCrane.Stack1"], pool_id=1)
 
     #* TEST PLATE HIDEX READINGS 
     # T0 hidex reading
@@ -352,7 +311,7 @@ def generate_post_transformation(is_test):
         if i == num_readings - 2: 
             softLinx.plateCraneMovePlate(["SoftLinx.Hidex.Nest"], ["SoftLinx.PlateCrane.Stack1"])
             softLinx.hidexClose()
-            softLinx.plateCraneReplaceLid(["SoftLinx.PlateCrane.LidNest2"], ["SoftLinx.PlateCrane.Stack1"])
+            softLinx.plateCraneReplaceLid(["SoftLinx.PlateCrane.LidNest2"], ["SoftLinx.PlateCrane.Stack1"], pool_id=1)
             softLinx.plateCraneMoveCrane("SoftLinx.PlateCrane.Safe")
 
         # otherwise, move to incubator until next reading
@@ -394,7 +353,12 @@ def generate_post_transformation(is_test):
 
 
 # HELPER METHODS: ---------------------------------------------------------------
-def set_up(current_softLinx:SoftLinx, incubator_plate_id): 
+def set_up(
+    current_softLinx:SoftLinx, 
+    incubator_plate_id, 
+    empty_tip_deck_loc,
+    new_tip_storage_loc="SoftLinx.PlateCrane.Stack4",
+): 
     """ set_up
 
         Descrition: Sets up SOLO deck for liquidhandling
@@ -404,22 +368,39 @@ def set_up(current_softLinx:SoftLinx, incubator_plate_id):
         Parameters: 
             current_softLinx: the instance of SoftLinx that should add the included steps
             incubator_plate_id: plate_id corresponding to incubaotor plate to place on SOLO deck
+            empty_tip_deck_loc: TODO
+            new_tip_storage_loc: TODO
             
     """
+    # place new tip box on the deck
+    replace_tip_box(
+        current_softLinx=current_softLinx, 
+        empty_tip_loc=empty_tip_deck_loc, 
+        full_tip_storage=new_tip_storage_loc, 
+        pool_id=4,  # pool id = stack num
+    )  
+
     # place plate from incubator on deck, remove lid
     current_softLinx.liconicUnloadIncubator(loadID=incubator_plate_id)
     current_softLinx.plateCraneMovePlate(["SoftLinx.Liconic.Nest"],["SoftLinx.Solo.Position6"])  
     current_softLinx.plateCraneRemoveLid(["SoftLinx.Solo.Position6"],["SoftLinx.PlateCrane.LidNest1"])
 
     # place prefilled media plate onto solo deck position 4, remove lid
-    current_softLinx.plateCraneMovePlate(["SoftLinx.PlateCrane.Stack5"],["SoftLinx.Solo.Position4"])
+    current_softLinx.plateCraneMovePlate(["SoftLinx.PlateCrane.Stack5"],["SoftLinx.Solo.Position4"], pool_id=5)  # pool id = stack num
     current_softLinx.plateCraneRemoveLid(["SoftLinx.Solo.Position4"],["SoftLinx.PlateCrane.LidNest2"])
 
     current_softLinx.plateCraneMoveCrane("SoftLinx.PlateCrane.Safe")
 
 
 # ---------------------------------------------------------------------------------
-def tear_down(current_softLinx:SoftLinx, incubator_plate_id, incubation_time, shaker_speed=30): 
+def tear_down(
+    current_softLinx:SoftLinx, 
+    incubator_plate_id, 
+    incubation_time, 
+    shaker_speed=30, 
+    empty_tip_deck_loc="SoftLinx.Solo.Position3", 
+    empty_tip_storage_loc="SoftLinx.PlateCrane.Stack3",
+): 
     """ tear_down
     
         Description: Clears the SOLO deck after liquidhandling is complete
@@ -431,11 +412,21 @@ def tear_down(current_softLinx:SoftLinx, incubator_plate_id, incubation_time, sh
             incubation_time: How long the plate should incubate before next step of the protocol 
                 note: must be a list of integers [days, hours, minutes, seconds] (ex. [0,3,0,0] means 3 hours)
             shaker_speed: shaker setting for incubator. Must be 1-50. (20 = 200 rpm, 30 = 300 rpm, etc.)
+            empty_tip_deck_loc: TODO 
+            empty_tip_storage_loc: TODO
     
     """
+    # remove used tip box from deck
+    remove_tip_box(
+        current_softLinx=current_softLinx, 
+        empty_tip_loc=empty_tip_deck_loc, 
+        empty_tip_storage=empty_tip_storage_loc, 
+        pool_id=3, # pool id = stack num
+    )  
+
     # remove used origin plate from deck and place in stack 1
     current_softLinx.plateCraneReplaceLid(["SoftLinx.PlateCrane.LidNest1"], ["SoftLinx.Solo.Position6"])
-    current_softLinx.plateCraneMovePlate(["SoftLinx.Solo.Position6"], ["SoftLinx.PlateCrane.Stack1"])
+    current_softLinx.plateCraneMovePlate(["SoftLinx.Solo.Position6"], ["SoftLinx.PlateCrane.Stack1"], pool_id=1)
 
     # replace lid on new plate and move to incubator nest 
     current_softLinx.plateCraneReplaceLid(["SoftLinx.PlateCrane.LidNest2"], ["SoftLinx.Solo.Position4"])
@@ -481,7 +472,15 @@ def take_hidex_reading(current_softLinx:SoftLinx, directory_name, incubator_plat
     )
 
 # ----------------------------------------------------------------------------------
-def generate_hso(file_path, directory_name, origin_wells, destination_wells, volume, num_mix, origin_mix_volume, destination_mix_volume, origin_z_shift, destination_z_shift):
+def generate_hso(
+    file_path, 
+    directory_name, 
+    volume, 
+    num_mix, 
+    origin_mix_volume, 
+    destination_mix_volume, 
+    origin_z_shift, 
+    destination_z_shift):
     """ generate_delection_hso
 
         Description: Generates the SOLO .hso files for creating the selection plates
@@ -507,22 +506,22 @@ def generate_hso(file_path, directory_name, origin_wells, destination_wells, vol
     soloSoft = SoloSoft(
         filename=file_path,
         plateList=[
-            "DeepBlock.96.VWR-75870-792.sterile",
-            "Empty",
-            "TipBox.50uL.Axygen-EV-50-R-S.tealbox", 
-            "Plate.96.Corning-3635.ClearUVAssay",
-            "Empty",
-            "Plate.96.Corning-3635.ClearUVAssay",
-            "Empty",
-            "Empty",
+            "DeepBlock.96.VWR-75870-792.sterile", # Position1
+            "Empty",  # Position2
+            "TipBox.50uL.Axygen-EV-50-R-S.tealbox",  # Position3
+            "Plate.96.Corning-3635.ClearUVAssay",   # Position4
+            "TipBox.180uL.Axygen-EVF-180-R-S.bluebox", # Position5
+            "Plate.96.Corning-3635.ClearUVAssay",  # Position6
+            "Empty",  # Position7
+            "Empty",  # Position8
         ],
     )
     
-    for i in range(len(origin_wells)): 
-        soloSoft.getTip("Position3", num_tips=1)
+    for i in range(12):  # for every column in the plate
+        soloSoft.getTip("Position3")
         soloSoft.aspirate(
             position="Position6", 
-            aspirate_volumes=Plate_96_Corning_3635_ClearUVAssay().setCell(origin_wells[i][0], int(origin_wells[i][1:]), volume),
+            aspirate_volumes=Plate_96_Corning_3635_ClearUVAssay().setColumn(i, volume),
             aspirate_shift=[0,0,origin_z_shift], 
             mix_at_start=True, 
             mix_cycles=num_mix, 
@@ -531,7 +530,7 @@ def generate_hso(file_path, directory_name, origin_wells, destination_wells, vol
         )
         soloSoft.dispense(
             position="Position4", 
-            dispense_volumes=Plate_96_Corning_3635_ClearUVAssay().setCell(destination_wells[i][0], int(destination_wells[i][1:]), volume),
+            dispense_volumes=Plate_96_Corning_3635_ClearUVAssay().setColumn(i, volume),
             dispense_shift=[0,0,destination_z_shift],
             mix_at_finish=True, 
             mix_cycles=num_mix, 
@@ -539,10 +538,10 @@ def generate_hso(file_path, directory_name, origin_wells, destination_wells, vol
             aspirate_height=destination_z_shift,
         )
 
-        if two_transfers == True: # repeat the above transfers again to transfer total volume
+        if two_transfers == True: # TODO: Remove this, not necessary anymore
             soloSoft.aspirate(
                 position="Position6", 
-                aspirate_volumes=Plate_96_Corning_3635_ClearUVAssay().setCell(origin_wells[i][0], int(origin_wells[i][1:]), volume),
+                aspirate_volumes=Plate_96_Corning_3635_ClearUVAssay().setColumn(i, volume),
                 aspirate_shift=[0,0,origin_z_shift], 
                 mix_at_start=True, 
                 mix_cycles=num_mix, 
@@ -551,7 +550,7 @@ def generate_hso(file_path, directory_name, origin_wells, destination_wells, vol
             )
             soloSoft.dispense(
                 position="Position4", 
-                dispense_volumes=Plate_96_Corning_3635_ClearUVAssay().setCell(destination_wells[i][0], int(destination_wells[i][1:]), volume),
+                dispense_volumes=Plate_96_Corning_3635_ClearUVAssay().setColumn(i, volume),
                 dispense_shift=[0,0,destination_z_shift],
                 mix_at_finish=True, 
                 mix_cycles=num_mix, 
@@ -569,7 +568,7 @@ def generate_hso(file_path, directory_name, origin_wells, destination_wells, vol
 
 
 # -------------------------------------------------------------------------------------------------------------
-def generate_glycerol_hso(file_path, directory_name, origin_wells, destination_wells, volume, num_mix, origin_mix_volume, destination_mix_volume, origin_z_shift, destination_z_shift):
+def generate_glycerol_hso(file_path, directory_name, volume, num_mix, origin_mix_volume, destination_mix_volume, origin_z_shift, destination_z_shift):
     """generate_glycerol_hso
 
     Description: TODO
@@ -588,36 +587,35 @@ def generate_glycerol_hso(file_path, directory_name, origin_wells, destination_w
             "Empty",
             "TipBox.50uL.Axygen-EV-50-R-S.tealbox", 
             "Plate.96.Corning-3635.ClearUVAssay",
-            "Empty",
+            "TipBox.180uL.Axygen-EVF-180-R-S.bluebox",
             "Plate.96.Corning-3635.ClearUVAssay",
             "Empty",
             "Empty",
         ],
     )
 
-    for i in range(len(origin_wells)):
-        for j in range(2):
-            soloSoft.getTip("Position3", num_tips=1)
-            soloSoft.aspirate(
-                position="Position1", 
-                aspirate_volumes=Reservoir_12col_Agilent_201256_100_BATSgroup().setCell("A", 1, volume),
-                aspirate_shift=[0,0,origin_z_shift], 
-                mix_at_start=True, 
-                mix_cycles=num_mix, 
-                mix_volume=origin_mix_volume,
-                dispense_height=origin_z_shift,
-                syringe_speed=75,
-            )
-            soloSoft.dispense(
-                position="Position6", # master plate
-                dispense_volumes=Plate_96_Corning_3635_ClearUVAssay().setCell(destination_wells[i][0], int(destination_wells[i][1:]), volume),
-                dispense_shift=[0,0,destination_z_shift],
-                mix_at_finish=True, 
-                mix_cycles=num_mix, 
-                mix_volume=destination_mix_volume, 
-                aspirate_height=destination_z_shift,
-                syringe_speed=75,
-            )
+    for i in range(12):  # for each column in the whole plate
+        soloSoft.getTip("Position5")
+        soloSoft.aspirate(
+            position="Position1", # glycerol stock 96 deep well
+            aspirate_volumes=Reservoir_12col_Agilent_201256_100_BATSgroup().setColumn(1, volume),
+            aspirate_shift=[0,0,origin_z_shift], 
+            mix_at_start=True, 
+            mix_cycles=num_mix, 
+            mix_volume=origin_mix_volume,
+            dispense_height=origin_z_shift,
+            syringe_speed=75,
+        )
+        soloSoft.dispense(
+            position="Position6", # master plate
+            dispense_volumes=Plate_96_Corning_3635_ClearUVAssay().setColumn(i, volume),
+            dispense_shift=[0,0,destination_z_shift],
+            mix_at_finish=True, 
+            mix_cycles=num_mix, 
+            mix_volume=destination_mix_volume, 
+            aspirate_height=destination_z_shift,
+            syringe_speed=75,
+        )
 
     soloSoft.shuckTip()
     soloSoft.savePipeline()
