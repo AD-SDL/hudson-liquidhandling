@@ -280,6 +280,7 @@ class SoftLinx:
         moveUp=999,
         nestIsSpringLoaded=False,
         checkForPlatesInAllPositions=False,
+        poolID=None,
         isActive=True,
         index=None,
         inplace=True,
@@ -333,6 +334,7 @@ class SoftLinx:
             if not isinstance(moveUp, int):
                 raise ValueError("moveUp must be an integer")
             onMoveCompleteVal += str(moveUp)
+        poolID = str(poolID) if poolID else " "
         step = {
             "type": "MovePlate",
             "Command": "Move Plate",
@@ -354,7 +356,7 @@ class SoftLinx:
                 ["x:String", str(hasLid)],
                 ["x:String", str(nestIsSpringLoaded)],
                 ["x:String", str(flip180)],
-                ["x:String", " "],
+                ["x:String", poolID],
             ],
         }
 
