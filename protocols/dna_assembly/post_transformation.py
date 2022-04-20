@@ -158,7 +158,7 @@ def generate_post_transformation(is_test):
 
     #incubation times
     default_incubation_time = [0,8,0,0]  # --> 0 days, 3 hours, 0 minutes, 0 seconds 
-    overnight_incubation_time_1= [0,20,0,0]  # --> 0 days, 8 hours, 0 minutes, 0 seconds
+    overnight_incubation_time_1= [0,19,0,0]  # --> 0 days, 8 hours, 0 minutes, 0 seconds
     overnight_incubation_time_2= [0,20,0,0]  # --> 0 days, 8 hours, 0 minutes, 0 seconds
     incubation_time_between_readings = [0,1,0,0] # 0 days, 1 hour, 0 mintues, 0 seconds
 
@@ -206,11 +206,9 @@ def generate_post_transformation(is_test):
 
     #* MASTER PLATE --> OVERNIGHT PLATE
     
-    # get new 180uL tips for glycerol transfer, reset solo tip count at deck pos 5
-    replace_tip_box(current_softLinx=softLinx, empty_tip_locaiton="Position5", pool_id=4) # pool id = stack num
     # set up the SOLO deck, get new 50uL tips, reset solo tip count at deck pos 3
-    set_up(current_softLinx=softLinx, incubator_plate_id=plate_id, empty_tip_deck_loc="Position3")  
-
+    set_up(current_softLinx=softLinx, incubator_plate_id=plate_id, empty_tip_deck_loc="Position3") 
+    
     # # generate and run liquidhandling hso(s)
     glycerol_hso = generate_glycerol_hso(   # uses 180uL tips, deck pos 5
         glycerol_to_master_filename,
@@ -222,7 +220,21 @@ def generate_post_transformation(is_test):
         deep_well_z_shift, 
         flat_96_z_shift,
     )
-    softLinx.soloSoftRun(glycerol_hso)  # only run once since using 180uL tips  
+    softLinx.soloSoftRun(glycerol_hso)  # only run once since using 180uL tips 
+
+    # remove empty 180uL tips from deck
+    remove_tip_box(
+        current_softLinx=softLinx, 
+        empty_tip_loc="Position3", 
+        poolID=4,
+    )
+
+    # place 50uL tips on deck
+    replace_tip_box(
+        current_softLinx=softLinx, 
+        empty_tip_loc="Position3", 
+        poolID=4,
+    )
 
     # generate and run liquidhandling hso
     hso_3 = generate_hso(
@@ -238,16 +250,16 @@ def generate_post_transformation(is_test):
     softLinx.soloSoftRun(hso_3)
     plate_id += 1
 
-    # remove empty 180uL tips from deck
+    # remove empty 50uL tips from deck
     remove_tip_box(
         current_softLinx=softLinx, 
-        empty_tip_loc="Position5", 
-        pool_id=4,
+        empty_tip_loc="Position3", 
+        poolID=4,
     )
 
     # different tear down method (place master plate in STACK 2 for safe keeping)
     softLinx.plateCraneReplaceLid(["SoftLinx.PlateCrane.LidNest1"], ["SoftLinx.Solo.Position6"])
-    softLinx.plateCraneMovePlate(["SoftLinx.Solo.Position6"], ["SoftLinx.PlateCrane.Stack2"], pool_id=2)  # place master plate in different stack to save
+    softLinx.plateCraneMovePlate(["SoftLinx.Solo.Position6"], ["SoftLinx.PlateCrane.Stack2"], poolID=2)  # place master plate in different stack to save
     softLinx.plateCraneReplaceLid(["SoftLinx.PlateCrane.LidNest2"], ["SoftLinx.Solo.Position4"])
     softLinx.plateCraneMovePlate(["SoftLinx.Solo.Position4"],["SoftLinx.Liconic.Nest"])  # move to other deck position, now source plate
     softLinx.plateCraneMoveCrane("SoftLinx.PlateCrane.Safe")
@@ -282,10 +294,10 @@ def generate_post_transformation(is_test):
     remove_tip_box(  # remove 50uL tips
         current_softLinx=softLinx,
         empty_tip_loc="Position3", 
-        pool_id=3,  # pool id = stack num of dest 
+        poolID=3,  # pool id = stack num of dest 
     )
     softLinx.plateCraneReplaceLid(["SoftLinx.PlateCrane.LidNest1"], ["SoftLinx.Solo.Position6"])
-    softLinx.plateCraneMovePlate(["SoftLinx.Solo.Position6"], ["SoftLinx.PlateCrane.Stack1"], pool_id=1)
+    softLinx.plateCraneMovePlate(["SoftLinx.Solo.Position6"], ["SoftLinx.PlateCrane.Stack1"], poolID=1)
 
     #* TEST PLATE HIDEX READINGS 
     # T0 hidex reading
@@ -311,7 +323,7 @@ def generate_post_transformation(is_test):
         if i == num_readings - 2: 
             softLinx.plateCraneMovePlate(["SoftLinx.Hidex.Nest"], ["SoftLinx.PlateCrane.Stack1"])
             softLinx.hidexClose()
-            softLinx.plateCraneReplaceLid(["SoftLinx.PlateCrane.LidNest2"], ["SoftLinx.PlateCrane.Stack1"], pool_id=1)
+            softLinx.plateCraneReplaceLid(["SoftLinx.PlateCrane.LidNest2"], ["SoftLinx.PlateCrane.Stack1"])
             softLinx.plateCraneMoveCrane("SoftLinx.PlateCrane.Safe")
 
         # otherwise, move to incubator until next reading
@@ -377,7 +389,7 @@ def set_up(
         current_softLinx=current_softLinx, 
         empty_tip_loc=empty_tip_deck_loc, 
         full_tip_storage=new_tip_storage_loc, 
-        pool_id=4,  # pool id = stack num
+        poolID=4,  # pool id = stack num
     )  
 
     # place plate from incubator on deck, remove lid
@@ -386,7 +398,7 @@ def set_up(
     current_softLinx.plateCraneRemoveLid(["SoftLinx.Solo.Position6"],["SoftLinx.PlateCrane.LidNest1"])
 
     # place prefilled media plate onto solo deck position 4, remove lid
-    current_softLinx.plateCraneMovePlate(["SoftLinx.PlateCrane.Stack5"],["SoftLinx.Solo.Position4"], pool_id=5)  # pool id = stack num
+    current_softLinx.plateCraneMovePlate(["SoftLinx.PlateCrane.Stack5"],["SoftLinx.Solo.Position4"], poolID=5)  # pool id = stack num
     current_softLinx.plateCraneRemoveLid(["SoftLinx.Solo.Position4"],["SoftLinx.PlateCrane.LidNest2"])
 
     current_softLinx.plateCraneMoveCrane("SoftLinx.PlateCrane.Safe")
@@ -398,7 +410,7 @@ def tear_down(
     incubator_plate_id, 
     incubation_time, 
     shaker_speed=30, 
-    empty_tip_deck_loc="SoftLinx.Solo.Position3", 
+    empty_tip_deck_loc="Position3", 
     empty_tip_storage_loc="SoftLinx.PlateCrane.Stack3",
 ): 
     """ tear_down
@@ -421,12 +433,12 @@ def tear_down(
         current_softLinx=current_softLinx, 
         empty_tip_loc=empty_tip_deck_loc, 
         empty_tip_storage=empty_tip_storage_loc, 
-        pool_id=3, # pool id = stack num
+        poolID=3, # pool id = stack num
     )  
 
     # remove used origin plate from deck and place in stack 1
     current_softLinx.plateCraneReplaceLid(["SoftLinx.PlateCrane.LidNest1"], ["SoftLinx.Solo.Position6"])
-    current_softLinx.plateCraneMovePlate(["SoftLinx.Solo.Position6"], ["SoftLinx.PlateCrane.Stack1"], pool_id=1)
+    current_softLinx.plateCraneMovePlate(["SoftLinx.Solo.Position6"], ["SoftLinx.PlateCrane.Stack1"], poolID=1)
 
     # replace lid on new plate and move to incubator nest 
     current_softLinx.plateCraneReplaceLid(["SoftLinx.PlateCrane.LidNest2"], ["SoftLinx.Solo.Position4"])
@@ -510,14 +522,14 @@ def generate_hso(
             "Empty",  # Position2
             "TipBox.50uL.Axygen-EV-50-R-S.tealbox",  # Position3
             "Plate.96.Corning-3635.ClearUVAssay",   # Position4
-            "TipBox.180uL.Axygen-EVF-180-R-S.bluebox", # Position5
+            "Empty", # Position5
             "Plate.96.Corning-3635.ClearUVAssay",  # Position6
             "Empty",  # Position7
             "Empty",  # Position8
         ],
     )
     
-    for i in range(12):  # for every column in the plate
+    for i in range(1,13):  # for every column in the plate
         soloSoft.getTip("Position3")
         soloSoft.aspirate(
             position="Position6", 
@@ -585,17 +597,17 @@ def generate_glycerol_hso(file_path, directory_name, volume, num_mix, origin_mix
         plateList=[
             "DeepBlock.96.VWR-75870-792.sterile",
             "Empty",
-            "TipBox.50uL.Axygen-EV-50-R-S.tealbox", 
+            "TipBox.180uL.Axygen-EVF-180-R-S.bluebox", 
             "Plate.96.Corning-3635.ClearUVAssay",
-            "TipBox.180uL.Axygen-EVF-180-R-S.bluebox",
+            "Empty",
             "Plate.96.Corning-3635.ClearUVAssay",
             "Empty",
             "Empty",
         ],
     )
 
-    for i in range(12):  # for each column in the whole plate
-        soloSoft.getTip("Position5")
+    for i in range(1,13):  # for each column in the whole plate
+        soloSoft.getTip("Position3")
         soloSoft.aspirate(
             position="Position1", # glycerol stock 96 deep well
             aspirate_volumes=Reservoir_12col_Agilent_201256_100_BATSgroup().setColumn(1, volume),

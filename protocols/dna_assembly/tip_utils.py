@@ -2,7 +2,7 @@ def replace_tip_box(
     current_softLinx,
     empty_tip_loc,  
     full_tip_storage="SoftLinx.PlateCrane.Stack4",
-    pool_id=4,
+    poolID=4,
 ): 
     """ replace_tip_box
 
@@ -10,7 +10,7 @@ def replace_tip_box(
 
     Parameters: 
         current_softLinx: TODO
-        empty_tip_locaiton: TODO
+        empty_tip_loc: TODO
         full_tip_storage: TODO
         pool_id: TODO
 
@@ -22,14 +22,14 @@ def replace_tip_box(
         [full_tip_storage],
         [empty_tip_loc],
         hasLid=True,
-        pool_id=pool_id,  # TODO check this
+        poolID=poolID,  # TODO check this
     )
 
     # move crane to safe 
     current_softLinx.plateCraneMoveCrane("SoftLinx.PlateCrane.Safe")
 
     # reset the tip count for location of new tip box
-    current_softLinx.soloSoftResetTipCount(int(empty_tip_deck_location[-1]))  
+    current_softLinx.soloSoftResetTipCount(int(empty_tip_loc[-1]))  
 
 
 # --------------------------------------------------------------------------------------------
@@ -37,7 +37,7 @@ def remove_tip_box(
     current_softLinx,
     empty_tip_loc, 
     empty_tip_storage="SoftLinx.PlateCrane.Stack3",
-    pool_id=3, 
+    poolID=3, 
 ):
     """ remove_tip_box
 
@@ -56,10 +56,10 @@ def remove_tip_box(
         [empty_tip_loc],
         [empty_tip_storage],
         hasLid=False,
-        pool_id=pool_id,
+        poolID=poolID,
     )
 
     # move crane to safe 
-    softLinx.plateCraneMoveCrane("SoftLinx.PlateCrane.Safe")
+    current_softLinx.plateCraneMoveCrane("SoftLinx.PlateCrane.Safe")
     
 
