@@ -445,7 +445,7 @@ class SoftLinx:
             positionsFrom = [" "]
         if not isinstance(positionsFrom, list) or not isinstance(positionsTo, list):
             raise ValueError("positionsFrom and positionsTo must be Lists.")
-
+            
         step = {
             "type": "ReplaceLid",
             "Command": "Replace Lid",
