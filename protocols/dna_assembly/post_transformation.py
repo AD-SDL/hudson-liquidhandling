@@ -157,9 +157,9 @@ def generate_post_transformation(is_test):
     
 
     #incubation times
-    default_incubation_time = [0,8,0,0]  # --> 0 days, 3 hours, 0 minutes, 0 seconds 
-    overnight_incubation_time_1= [0,19,0,0]  # --> 0 days, 8 hours, 0 minutes, 0 seconds
-    overnight_incubation_time_2= [0,20,0,0]  # --> 0 days, 8 hours, 0 minutes, 0 seconds
+    default_incubation_time = [0,8,0,0]  # --> 0 days, 8 hours, 0 minutes, 0 seconds 
+    overnight_incubation_time_1= [0,19,0,0]  # --> 0 days, 19 hours, 0 minutes, 0 seconds
+    overnight_incubation_time_2= [0,20,0,0]  # --> 0 days, 20 hours, 0 minutes, 0 seconds
     incubation_time_between_readings = [0,1,0,0] # 0 days, 1 hour, 0 mintues, 0 seconds
 
     # # FOR TESTING
@@ -472,8 +472,7 @@ def take_hidex_reading(current_softLinx:SoftLinx, directory_name, incubator_plat
     current_softLinx.plateCraneMovePlate(["SoftLinx.Liconic.Nest"],["SoftLinx.Hidex.Nest"])
     current_softLinx.plateCraneMoveCrane("SoftLinx.PlateCrane.Safe")
 
-    # take Hidex reading
-    current_softLinx.hidexRun("SetTempWait37")  # make sure hidex is at 37C  # TODO: combine into one Hidex protocol 
+    # take Hidex reading 
     current_softLinx.hidexRun(hidex_assay)
 
     # transfer data to lambda6
