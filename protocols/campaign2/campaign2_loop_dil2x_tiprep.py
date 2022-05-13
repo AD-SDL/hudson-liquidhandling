@@ -270,6 +270,7 @@ def generate_campaign1_repeatable(
             aspirate_shift=[0, 0, reservoir_z_shift],
             # 100% syringe speed
         )
+        
         soloSoft.dispense(
             position="Position7",
             dispense_volumes=Reservoir_12col_Agilent_201256_100_BATSgroup().setColumn(

@@ -86,41 +86,43 @@ STEP 1: INNOCULATE GROWTH PLATE FROM SOURCE BACTERIA PLATE ---------------------
 """
 # * Fill 6 columns of empty 96 well plate (corning 3383 or Falcon - ref 353916) with fresh lb media (12 channel in Position 3, column 1)
 soloSoft.getTip()
-j = 1
-for i in range(1, 7):
+def fill6plate():
+    j = 1
+    for i in range(1, 7):
+        soloSoft.aspirate(
+            position="Position3",
+            aspirate_volumes=Reservoir_12col_Agilent_201256_100_BATSgroup().setColumn(
+                1, media_transfer_volume_s1
+            ),
+            aspirate_shift=[0, 0, reservoir_z_shift],
+        )
+        soloSoft.dispense(
+            position="Position4",
+            dispense_volumes=Plate_96_Corning_3635_ClearUVAssay().setColumn(
+                i, media_transfer_volume_s1
+            ),
+            dispense_shift=[0, 0, 2],
+        )
+
+    # * Fill first column of culture 10 fold dilution plate with fresh lb media
     soloSoft.aspirate(
         position="Position3",
         aspirate_volumes=Reservoir_12col_Agilent_201256_100_BATSgroup().setColumn(
-            1, media_transfer_volume_s1
+            1, dilution_media_volume
         ),
         aspirate_shift=[0, 0, reservoir_z_shift],
     )
     soloSoft.dispense(
-        position="Position4",
+        position="Position7",
         dispense_volumes=Plate_96_Corning_3635_ClearUVAssay().setColumn(
-            i, media_transfer_volume_s1
+            1, dilution_media_volume
         ),
         dispense_shift=[0, 0, 2],
     )
 
-# * Fill first column of culture 10 fold dilution plate with fresh lb media
-soloSoft.aspirate(
-    position="Position3",
-    aspirate_volumes=Reservoir_12col_Agilent_201256_100_BATSgroup().setColumn(
-        1, dilution_media_volume
-    ),
-    aspirate_shift=[0, 0, reservoir_z_shift],
-)
-soloSoft.dispense(
-    position="Position7",
-    dispense_volumes=Plate_96_Corning_3635_ClearUVAssay().setColumn(
-        1, dilution_media_volume
-    ),
-    dispense_shift=[0, 0, 2],
-)
-
 # * Add bacteria from thawed culture plate (Position 5, column defined in variable) to dilution plate (Position 7, column 1) to make culture 10 fold dilution
-soloSoft.aspirate(
+def aspirate():
+    soloSoft.aspirate(
     position="Position5",
     aspirate_volumes=DeepBlock_96VWR_75870_792_sterile().setColumn(
         culture_plate_column_num, dilution_culture_volume
@@ -132,7 +134,8 @@ soloSoft.aspirate(
     dispense_height=2,
     pre_aspirate=blowoff_volume,
     syringe_speed=25,
-)
+    )
+
 soloSoft.dispense(
     position="Position7",
     dispense_volumes=Plate_96_Corning_3635_ClearUVAssay().setColumn(
@@ -256,33 +259,34 @@ for i in range(1, 6):
 """
 STEP 3: ADD ANTIBIOTIC TO CULTURE PLATES -------------------------------------------------------------------------------------
 """
-soloSoft.getTip()  # don't need to get tips here but good idea in case tip messed up in dilution step
-for i in range(6, 0, -1):
-    soloSoft.aspirate(
-        position="Position6",
-        aspirate_volumes=Plate_96_Corning_3635_ClearUVAssay().setColumn(
-            i, antibiotic_transfer_volume_s3
-        ),
-        mix_at_start=True,
-        mix_cycles=num_mixes,
-        mix_volume=antibiotic_mix_volume_s3,
-        dispense_height=2,
-        aspirate_shift=[0, 0, 2],
-    )
-    soloSoft.dispense(
-        position="Position4",
-        dispense_volumes=Plate_96_Corning_3635_ClearUVAssay().setColumn(
-            i, antibiotic_transfer_volume_s3
-        ),
-        mix_at_finish=True,
-        mix_cycles=num_mixes,
-        mix_volume=destination_mix_volume_s3,
-        aspirate_height=2,
-        dispense_shift=[0, 0, 2],
-    )
+def add_antibio():
+    soloSoft.getTip()  # don't need to get tips here but good idea in case tip messed up in dilution step
+    for i in range(6, 0, -1):
+        soloSoft.aspirate(
+            position="Position6",
+            aspirate_volumes=Plate_96_Corning_3635_ClearUVAssay().setColumn(
+                i, antibiotic_transfer_volume_s3
+            ),
+            mix_at_start=True,
+            mix_cycles=num_mixes,
+            mix_volume=antibiotic_mix_volume_s3,
+            dispense_height=2,
+            aspirate_shift=[0, 0, 2],
+        )
+        soloSoft.dispense(
+            position="Position4",
+            dispense_volumes=Plate_96_Corning_3635_ClearUVAssay().setColumn(
+                i, antibiotic_transfer_volume_s3
+            ),
+            mix_at_finish=True,
+            mix_cycles=num_mixes,
+            mix_volume=destination_mix_volume_s3,
+            aspirate_height=2,
+            dispense_shift=[0, 0, 2],
+        )
 
-soloSoft.shuckTip()
-soloSoft.savePipeline()
+    soloSoft.shuckTip()
+    soloSoft.savePipeline()
 
 # Add a run step with generated .hso file into SoftLinx and output .slvp and .ahk files
 softLinx = SoftLinx("Steps_1_2_3", os.path.join(protocol_directory, "steps_1_2_3.slvp"))
@@ -313,3 +317,18 @@ child_message_sender = child_pid = Popen(
 # print("New instruction directory passed to lambda6_send_message.py")
 
 print("New instruction directory passed to lambda6_send_message.py")
+
+
+
+plate_template={}
+
+reagents={}
+
+protocol_steps=[
+    fill6plate(),
+    aspirate(),
+    add_antibio(),
+]
+
+if __main__:
+    run_protocol

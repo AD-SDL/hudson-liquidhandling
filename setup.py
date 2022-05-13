@@ -2,13 +2,17 @@ from setuptools import setup, find_packages
 import os
 
 
-# Utility function to read the README file.
-# Used for the long_description.  It's nice, because now 1) we have a top level
-# README file and 2) it's easier to type in the README file than to put a raw
-# string in below ...
-def read(fname):
-    return open(os.path.join(os.path.dirname(__file__), fname)).read()
 
+with open('README.rst') as f:
+    long_description = f.read()
+
+install_requires = []
+with open('requirements.txt') as reqs:
+    for line in reqs.readlines():
+        req = line.strip()
+        if not req or req.startswith('#'):
+            continue
+        install_requires.append(req)
 
 setup(
     name="liquidhandling",
@@ -19,20 +23,9 @@ setup(
     author_email="ryan.lewis@anl.gov",
     license="MIT",
     keywords="robotics laboratory automation biology",
-    long_description=read("README.md"),
+    long_description=long_description,
     long_description_content_type="text/markdown",
-    install_requires=[
-        "jsonref",
-        "jsonschema",
-        "pytest",
-        "path",
-        "pandas",
-        "openpyxl",
-        "mysql-connector-python",
-        "zmq",
-    ],
-    zip_safe=False,
-    python_requires=">=3.8.5",
-    package_dir={"": "src"},
-    packages=find_packages(where="src"),
+    packages=["liquidhandling"],
+    install_requires=install_requires,
+    
 )

@@ -6,29 +6,14 @@ This library is currently in **active development**. As such, there are no guara
 
 ## Installation
 
-Pip:
+  git clone https://github.com/AD-SDL/hudson-liquidhandling.git
+  pip install -r requirements.txt
+  pip install -e .
 
-`pip install liquidhandling`
-
-Conda:
-
-`conda install -c conda-forge -c luckierdodge liquidhandling`
-
-(For development install, see below)
 
 ## Documentation
 
 Documentation for the interfaces contained in this library can be found in the `docs` directory. In addition, example code is available under `example`.
-
-## Development
-
-### Installing For Development/Testing
-
-1. Install [Python 3.8.5+](https://www.python.org/downloads/), making sure to include pip in the install
-1. Git clone this repository:
-    1. `git clone https://github.com/AD-SDL/hudson-liquidhandling.git`
-1. Run `pip install -r requirements.txt` in the repository root
-1. Run `pip install -e .` in the repository root
 
 ### Tests
 
@@ -37,11 +22,3 @@ Documentation for the interfaces contained in this library can be found in the `
 ### Formatting the Code
 
 To automatically format the code for style and readability, run `black .` in the repo's root directory. This keeps all python code stylistically consistent.
-
-### Recommended Visual Studio Code Extensions
-
-* Better Comments by Aaron Bond
-* GitLens by Eric Amodio
-* Pylance by Microsoft
-* Python by Microsoft
-* Visual Studio IntelliCode by Microsoft
