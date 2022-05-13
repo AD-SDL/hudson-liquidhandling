@@ -1,81 +1,16 @@
-import argparse
 import os
 from re import L
-import sys
 import time
-from subprocess import Popen
-from liquidhandling import SoloSoft
 from liquidhandling import SoftLinx
-from liquidhandling import Reservoir_12col_Agilent_201256_100_BATSgroup
-from liquidhandling import Plate_96_Corning_3635_ClearUVAssay
 from .utils.tip_utils import replace_tip_box, remove_tip_box
+from .utils.send_protocol import send_protocol
+from .utils.wc_setup import set_up
+from .utils.wc_tear import tear_down
+from .utils.hydex import take_hidex_reading
+
+from .generate_deletion_hso import generate_hso
+from .generate_glycerol_hso import generate_glycerol_hso
  
-"""
-DNA ASSEMBLY
-
-TODO: rewrite this
-
-USAGE EXAMPLE: python post_transformation.py -t 
- 
-SOLO DECK ARRANGEMENT AT START: 
-Pos 1 = EMPTY
-Pos 2 = EMPTY (heat nest)
-Pos 3 = 50uL tips (filter tips if possible)
-Pos 4 = EMPTY AT START (later 96 well clear, flat-bottom plate w/ lid placed by Plate Crane)
-Pos 5 = EMPTY
-Pos 6 = EMPTY AT START (later 96 well clear, flat-bottom plate w/ lid placed by Plate Crane)
-Pos 7 = EMPTY
-Pos 8 = EMPTY
-
-POST TRANSFORMATION STEPS: 
-*** start with transformation plate in incubator, with incubator plate ID = 1 ***
-
-Transformation plate to selection plate #1 
-- Unload transformation plate from incubator --> SOLO position 6
-- Move new plate to SOLO position 4 (will be selection plate #1)
-    Note: new plate will contain 180uL LB media + antobiotic in each well)
-- exectue transf_to_sel.hso: 
-    - transfer 10uL from each well of transformation plate to corresponding well in selection plate #1 
-- Load selection plate #1 into incubator (plate ID = 2) and remove used transformation plate to Stack 1
-- Incubate for 3 hours
-
-Selection plate #1 to master plate:
-- Unload selection plate #1 from incubator (plate ID = 2) --> SOLO position 6
-- Move new plate to SOLO position 4 (will be master plate)
-    (Note: new plate will contain 100uL of 50% glycerol media in each well)
-- exectue sel_to_master.hso: 
-    - transfer 100uL from each well of selection plate #1 to corresponding well in master plate  
-- Load master plate into incubator, plate ID = 3
-- Freeze for later use or immediately proceed to next step 
-    (If proceeding, remove used selection plate #1 to Stack 1 and move master plate to SOLO position 6)
-
-Master plate to overnight plate: 
-- Unload master plate from incubator (plate ID = 3) --> SOLO position 6
-- Move new plate to SOLO position 4 (will be overnight plate)
-    (Note: new plate will contain 180uL LB media + antibiotic in each well)
-- exectue master_to_overnight.hso: 
-    - transfer 10uL from each well of master plate to corresponding well in overnight plate 
-- Load overnight plate into incubator, plate ID = 4
-- Incubate for 8 hours
-
-Overnight plate to test plate: 
-- Unload overnight plate from incubator (plate ID = 4) --> SOLO position 6
-- Move new plate to SOLO position 4 (will be test plate)
-    (Note: new plate will contain 180uL LB media + antibiotic in each well)
-- exectue overnight_to_test.hso: 
-    - transfer 10uL from each well of overnight plate to corresponding well in test plate 
-
-Take Hidex Readings: 
-START LOOP (6 times)
-- Move test plate to Hidex (either move from SOLO Position 4 or unload from incubator)
-- Run Hidex Assay 
-    - TODO: details about assay
-- Load test plate into incubator (except after last reading move to Stack 1)
-- Incubate for 1 hour
-END LOOP
-
-
-"""
 
 def generate_post_transformation(is_test): 
 
@@ -337,190 +272,14 @@ def generate_post_transformation(is_test):
 
     softLinx.saveProtocol()
 
-    """
-    SEND NEW PROTOCOL TO WORK CELL (HUDSON01) ------------------------------------------------------------------
-    """
-    try:
-        # TODO: change to full path on lambda6
-        child_message_sender = child_pid = Popen(
-            [
-                "python",
-                "../../zeromq/lambda6_send_instructions.py",
-                "-d",
-                directory_path,
-                "-i", 
-                str(num_assay_plates),
-                str(num_assay_wells),
-                assay_plate_type,
-                str(is_test),
-            ],
-            start_new_session=True,
-        ).pid
+    i_list =[ 
+        str(num_assay_plates),
+        str(num_assay_wells),
+        assay_plate_type,
+        str(is_test),
+        ]
 
-        print("New instruction directory passed to lambda6_send_message.py")
-    except BaseException as e:
-        print(e)
-        print("Could not send new instructions to hudson01")
+    send_protocol(directory_path,i_list)
 
 
 
-
-# ----------------------------------------------------------------------------------
-
-
-# ----------------------------------------------------------------------------------
-def generate_hso(
-    file_path, 
-    directory_name, 
-    volume, 
-    num_mix, 
-    origin_mix_volume, 
-    destination_mix_volume, 
-    origin_z_shift, 
-    destination_z_shift):
-    """ generate_delection_hso
-
-        Description: Generates the SOLO .hso files for creating the selection plates
-
-        Parameters:
-            filename: filepath to sa
-            origin_wells: list of wells in origin plate to aspirate from (ex. ["A1", "A2", "A3", ...])
-            destination_wells: list of wells in destination plate to dispense into (ex. ["B1", "B2", "B3", ...])
-                note: in the above examples, A1 -> B1, A2 -> B2, A3 -> B3. Both lists must be same length
-            volume: volume of liquid to transfer from origin to destination
-            num_mix: 
-            origin_mix_volume: mix volume before aspiration
-            destination_mix_volume: mix volume after dispense 
-            origin_z_shift: distance from well bottom (mm) to aspirate
-            destination_z_shift: distance from well bottom (mm) to dispense
-    
-    """
-    two_transfers = False 
-    if volume > 50: 
-        volume = float(volume)/float(2)
-        two_transfers = True
-
-    soloSoft = SoloSoft(
-        filename=file_path,
-        plateList=[
-            "DeepBlock.96.VWR-75870-792.sterile", # Position1
-            "Empty",  # Position2
-            "TipBox.50uL.Axygen-EV-50-R-S.tealbox",  # Position3
-            "Plate.96.Corning-3635.ClearUVAssay",   # Position4
-            "Empty", # Position5
-            "Plate.96.Corning-3635.ClearUVAssay",  # Position6
-            "Empty",  # Position7
-            "Empty",  # Position8
-        ],
-    )
-    
-    for i in range(1,13):  # for every column in the plate
-        soloSoft.getTip("Position3")
-        soloSoft.aspirate(
-            position="Position6", 
-            aspirate_volumes=Plate_96_Corning_3635_ClearUVAssay().setColumn(i, volume),
-            aspirate_shift=[0,0,origin_z_shift], 
-            mix_at_start=True, 
-            mix_cycles=num_mix, 
-            mix_volume=origin_mix_volume,
-            dispense_height=origin_z_shift,
-        )
-        soloSoft.dispense(
-            position="Position4", 
-            dispense_volumes=Plate_96_Corning_3635_ClearUVAssay().setColumn(i, volume),
-            dispense_shift=[0,0,destination_z_shift],
-            mix_at_finish=True, 
-            mix_cycles=num_mix, 
-            mix_volume=destination_mix_volume, 
-            aspirate_height=destination_z_shift,
-        )
-
-        if two_transfers == True: # TODO: Remove this, not necessary anymore
-            soloSoft.aspirate(
-                position="Position6", 
-                aspirate_volumes=Plate_96_Corning_3635_ClearUVAssay().setColumn(i, volume),
-                aspirate_shift=[0,0,origin_z_shift], 
-                mix_at_start=True, 
-                mix_cycles=num_mix, 
-                mix_volume=origin_mix_volume,
-                dispense_height=origin_z_shift,
-            )
-            soloSoft.dispense(
-                position="Position4", 
-                dispense_volumes=Plate_96_Corning_3635_ClearUVAssay().setColumn(i, volume),
-                dispense_shift=[0,0,destination_z_shift],
-                mix_at_finish=True, 
-                mix_cycles=num_mix, 
-                mix_volume=destination_mix_volume, 
-                aspirate_height=destination_z_shift,
-            )
-
-    soloSoft.shuckTip()
-    soloSoft.savePipeline()
-
-    hudson01_hso_path = "C:\\labautomation\\instructions\\" + directory_name + "\\" + os.path.basename(file_path)
-    print(hudson01_hso_path)
-
-    return hudson01_hso_path 
-
-
-# -------------------------------------------------------------------------------------------------------------
-def generate_glycerol_hso(file_path, directory_name, volume, num_mix, origin_mix_volume, destination_mix_volume, origin_z_shift, destination_z_shift):
-    """generate_glycerol_hso
-
-    Description: TODO
-
-    Parameters: TODO
-
-    Returns: TODO
-
-    # TODO: maybe use larger tips to make this faster
-
-    """
-    soloSoft = SoloSoft(
-        filename=file_path,
-        plateList=[
-            "DeepBlock.96.VWR-75870-792.sterile",
-            "Empty",
-            "TipBox.180uL.Axygen-EVF-180-R-S.bluebox", 
-            "Plate.96.Corning-3635.ClearUVAssay",
-            "Empty",
-            "Plate.96.Corning-3635.ClearUVAssay",
-            "Empty",
-            "Empty",
-        ],
-    )
-
-    for i in range(1,13):  # for each column in the whole plate
-        soloSoft.getTip("Position3")
-        soloSoft.aspirate(
-            position="Position1", # glycerol stock 96 deep well
-            aspirate_volumes=Reservoir_12col_Agilent_201256_100_BATSgroup().setColumn(1, volume),
-            aspirate_shift=[0,0,origin_z_shift], 
-            mix_at_start=True, 
-            mix_cycles=num_mix, 
-            mix_volume=origin_mix_volume,
-            dispense_height=origin_z_shift,
-            syringe_speed=75,
-        )
-        soloSoft.dispense(
-            position="Position6", # master plate
-            dispense_volumes=Plate_96_Corning_3635_ClearUVAssay().setColumn(i, volume),
-            dispense_shift=[0,0,destination_z_shift],
-            mix_at_finish=True, 
-            mix_cycles=num_mix, 
-            mix_volume=destination_mix_volume, 
-            aspirate_height=destination_z_shift,
-            syringe_speed=75,
-        )
-
-    soloSoft.shuckTip()
-    soloSoft.savePipeline()
-
-    hudson01_hso_path = "C:\\labautomation\\instructions\\" + directory_name + "\\" + os.path.basename(file_path)
-    print(hudson01_hso_path)
-
-    return hudson01_hso_path 
-
-
-# ----------------------------------------------------------------------------------

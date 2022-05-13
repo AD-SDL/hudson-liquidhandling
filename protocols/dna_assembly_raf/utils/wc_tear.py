@@ -1,3 +1,5 @@
+from liquidhandling import SoftLinx
+from .tip_utils import remove_tip_box
 # ---------------------------------------------------------------------------------
 def tear_down(
     current_softLinx:SoftLinx, 

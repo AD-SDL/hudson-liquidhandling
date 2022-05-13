@@ -1,6 +1,5 @@
 import os
 import sys
-import json
 
 def handle_dna_assembly_data(address, json_decoded_message): 
     print(f"handling dna assembly data {address}")

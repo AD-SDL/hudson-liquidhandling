@@ -5,7 +5,7 @@ from pathlib import Path
 # this is needed to find config.py outside of the repo
 home = str(Path.home())
 sys.path.insert(0, home)
-import config
+import db_config
 
 
 def connect():

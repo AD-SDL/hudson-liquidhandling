@@ -1,3 +1,5 @@
+from liquidhandling import SoftLinx
+
 def take_hidex_reading(current_softLinx:SoftLinx, directory_name, incubator_plate_id, hidex_assay): 
     """ take_hidex_reading
 

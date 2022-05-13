@@ -1,10 +1,6 @@
 import os
-import sys
-import csv
 import pandas as pd
-import numpy as np
-sys.path.append("..")
-from utils.manifest import generateFileManifest
+from ...zeromq.utils.manifest import generateFileManifest
 
 
 def send_dna_assembly_data(f, plate_id, exp_name, data_format):
