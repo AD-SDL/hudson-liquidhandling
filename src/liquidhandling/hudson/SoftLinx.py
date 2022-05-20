@@ -836,6 +836,104 @@ class SoftLinx:
                 else:
                     self.protocolSteps.append(step)
 
+    # * TorreyPinesRIC20 Steps * #
+    def torreyPinesSetTemperature(
+        self, 
+        temperature=20,
+        waitUntilTempReached=False,
+        isActive=True, 
+        index=None,
+        inplace=True,
+    ): 
+
+        # Checks
+        if not isinstance(temperature, int): 
+            raise TypeError(
+                "TorreyPinesRIC20 temperature must be an integer between -10 and 100"
+            )
+        if ((temperature < -10) or (temperature > 100)): 
+            raise ValueError(
+                "TorreyPinesRIC20 temperature must be an integer between -10 and 100"
+            )
+
+        if not isinstance(waitUntilTempReached, bool): 
+            raise TypeError(
+                "TorreyPinesRIC20 waitUntilTempReached must be a boolean, True or False"
+            )
+
+        stepDescription = f"Set Temperature {str(temperature)}, {str(waitUntilTempReached)}"
+        
+        step = {
+            "type": "SetTemperature",
+            "Command": "Set Temperature",
+            "Description": stepDescription,
+            "SLXId": "e4672c3b-9e65-4165-a3f6-7f7c9a610e89",
+            "ToolTip": stepDescription,
+            "isActive": str(isActive),
+            "system": "TorreyPinesRIC20",    
+            "args": [
+                ["x:String", str(temperature)],
+                ["x:String", str(waitUntilTempReached)],
+            ],
+        }
+
+        if inplace:
+                if index != None:
+                    self.protocolSteps.insert(index, step)
+                else:
+                    self.protocolSteps.append(step)
+
+
+    def torreyPinesShutOff(
+        self, 
+        isActive=True, 
+        index=None,
+        inplace=True,
+    ): 
+        stepDescription = "Shut Off"
+        step = {
+            "type": "ShutOff",
+            "Command": "Shut Off",
+            "Description": stepDescription,
+            "SLXId": "80679ae1-e1f7-483d-8d64-df52ad3bc69b",
+            "ToolTip": stepDescription,
+            "isActive": str(isActive),
+            "system": "TorreyPinesRIC20",    
+            "args": [],  # no arguments here
+        }
+
+        if inplace:
+                if index != None:
+                    self.protocolSteps.insert(index, step)
+                else:
+                    self.protocolSteps.append(step)
+        
+
+    def torreyPinesWaitForTemperature(
+        self, 
+        isActive=True, 
+        index=None,
+        inplace=True,
+    ): 
+
+        stepDescription = "Wait For Temperature"
+        step = {
+            "type": "WaitForTemperature",
+            "Command": "WaitForTemperature",
+            "Description": stepDescription,
+            "SLXId": "9a7fd21f-46ef-4e73-a3dd-5dde4defb58f",
+            "ToolTip": stepDescription,
+            "isActive": str(isActive),
+            "system": "TorreyPinesRIC20",    
+            "args": [],  # no arguments here
+        }
+
+        if inplace:
+                if index != None:
+                    self.protocolSteps.insert(index, step)
+                else:
+                    self.protocolSteps.append(step)
+        
     # * Output * #
     def saveProtocol(self, filename=None, generate_ahk=True):
         if filename == None:
