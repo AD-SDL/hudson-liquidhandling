@@ -34,8 +34,8 @@ class SoftLinx:
             "Solo": 2,
             "Hidex": 3,
             "Liconic": 4,
-            # "RapidPick": 5,
-            # "TorreyPinesRIC20": 6,
+            "TorreyPinesRIC20": 5,
+            # "RapidPick": 6, 
         }
         self.plugin_address = {
             "PlateCrane": 5,
@@ -43,8 +43,8 @@ class SoftLinx:
             "Solo": 7,
             "Hidex": 8,
             "Liconic": 9,
-            # "RapidPick": 10,
-            # "TorreyPinesRIC20": 11,
+            "TorreyPinesRIC20": 10,
+            # "RapidPick": 11,
         }
 
         # *Set Protocol Name
@@ -1013,11 +1013,12 @@ class SoftLinx:
         self.generatePluginInterface(scg_dict, "Solo")
         self.generatePluginInterface(scg_dict, "Hidex")
         self.generatePluginInterface(scg_dict, "Liconic")
+        self.generatePluginInterface(interfaces, "TorreyPinesRIC20")
         # self.generatePluginInterface(interfaces, "PlateCrane")
         # self.generatePluginInterface(interfaces, "Plates")
         # self.generatePluginInterface(interfaces, "RapidPick")
         # self.generatePluginInterface(interfaces, "Solo")
-        # self.generatePluginInterface(interfaces, "TorreyPinesRIC20")
+        
 
         # *TimeConstraints
         timeConstraints = ET.SubElement(protocol, "Protocol.TimeConstraints")
@@ -1038,7 +1039,7 @@ class SoftLinx:
         self.generatePluginVariables(variableList, "Hidex")
         self.generatePluginVariables(variableList, "Solo")
         self.generatePluginVariables(variableList, "Liconic")
-        # self.generatePluginVariables(variableList, "TorreyPinesRIC20")
+        self.generatePluginVariables(variableList, "TorreyPinesRIC20")
 
         # *Add each variable
         # for variable in self.variables:
