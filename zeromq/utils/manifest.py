@@ -10,7 +10,7 @@ import pathlib
 import json
 
 
-def generateFileManifest(filename, purpose, plate_id="", exp_name="", manifest_filename=None):
+def generateFileManifest(filename, purpose, plate_id="", exp_name="", data_format="", manifest_filename=None):
 
     string = ""
     data = {}
@@ -36,7 +36,6 @@ def generateFileManifest(filename, purpose, plate_id="", exp_name="", manifest_f
         # * Construct message
         data[os.path.basename(filename)] = {
             "path": [str(f.resolve())],
-            "purpose": [purpose],
             "type": [(os.path.splitext(filename)[1]).replace(".", "")],
             "ctime": [
                 str(f.stat().st_ctime),
@@ -47,8 +46,10 @@ def generateFileManifest(filename, purpose, plate_id="", exp_name="", manifest_f
                 str(datetime.fromtimestamp(f.stat().st_mtime)),
             ],
             "data": contents,
+            "purpose": purpose,
             "plate_id": plate_id,
             "experiment_name": exp_name,
+            "data_format": data_format,
         }
         json_data = json.dumps(data)
 

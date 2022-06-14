@@ -673,9 +673,9 @@ def generate_campaign1_repeatable(
 
         # transfer data to lambda6
         softLinx.runProgram(
-            "C:\\Users\\svcaibio\\Dev\\liquidhandling\\zeromq\\utils\\send_data.bat", arguments=f"{k} {directory_name}"
+            "C:\\Users\\svcaibio\\Dev\\liquidhandling\\zeromq\\utils\\send_data.bat", arguments=f"{k} {directory_name} campaign2"
         )
-
+ 
         # Move plate from Hidex to Stack 1 and replace lid
         softLinx.plateCraneMovePlate(["SoftLinx.Hidex.Nest"], ["SoftLinx.PlateCrane.Stack1"])
         softLinx.hidexClose()

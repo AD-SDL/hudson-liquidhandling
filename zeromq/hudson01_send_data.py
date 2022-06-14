@@ -13,8 +13,9 @@ import os
 import sys
 import datetime
 
+# NO LONGER USED! (as of 04/04/22)
 
-def hudson01_send_data(directory, lookback_time=None, extension="", plate_id="", exp_name=""):
+def hudson01_send_data(directory, lookback_time=None, extension="", plate_id="", exp_name="", data_format=""):
     """Sends most recent file in data folder to compute cell (lambda6)"""
 
     plate_id = "" if (isinstance(plate_id, int) and plate_id == -1) else plate_id
@@ -51,10 +52,10 @@ def hudson01_send_data(directory, lookback_time=None, extension="", plate_id="",
                 os.path.splitext(os.path.basename(f))[1] == ".xlsx"
             ):  # if excel file, parse and covert to csv
                 csv_filepath = excel_to_csv(f)
-                tmp = generateFileManifest(csv_filepath, "data", plate_id, exp_name)
+                tmp = generateFileManifest(csv_filepath, "data", plate_id, exp_name, data_format)
                 files_to_archive.extend([f, csv_filepath])
             else:
-                tmp = generateFileManifest(f, "data", plate_id, exp_name)
+                tmp = generateFileManifest(f, "data", plate_id, exp_name, data_format)
                 files_to_archive.append(f)
 
             for key, value in tmp.items():
@@ -93,14 +94,18 @@ def main(args):
     parser.add_argument(
         "-en", "--exp_name", help="Experiment name. (same as the dir name of the folder containing the protocol instructions)", required=False
     )
+    parser.add_argument(
+        "-df", "--data_format", help="Data Format. (name of protocol on hidex used to create data file))", required=False, type=str
+    )
     args = vars(parser.parse_args())
     # print(
     #     "time = {}, dir = {}, ext = {}".format(args["time"], args["dir"], args["ext"])
     # )
 
-    hudson01_send_data(args["dir"], args["time"], args["ext"], args["plate_id"], args["exp_name"])
+    hudson01_send_data(args["dir"], args["time"], args["ext"], args["plate_id"], args["exp_name"], args["data_format"])
 
 
 if __name__ == "__main__":
     # execute only if run as a script
+    print("hudson01_send_data called")  #TEST
     main(sys.argv)

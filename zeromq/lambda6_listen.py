@@ -16,7 +16,7 @@ import json
 import _thread
 import threading
 from subprocess import Popen
-from lambda6_handle_message import lambda6_handle_message
+
 
 # This should probably go into a core module so that we have common
 # timestamps across the system
@@ -31,7 +31,7 @@ socket.bind("tcp://*:5555")
 
 while True:
     message = socket.recv()
-    decoded = message.decode("utf-8")
+    utf8_decoded_message = message.decode("utf-8")
 
     if message == b"SHUTDOWN":
         socket.send(b"Shutting down")
@@ -44,9 +44,10 @@ while True:
 
     else:
         # immediately pass the message off to message handler and keep listening
-        # this needs to change from a systen call to a thread pool
+        # this needs to change from a system call to a thread pool
         child_message_handler = Popen(
-            ["python", "./lambda6_handle_message.py", decoded], start_new_session=True
+            ["python", "./lambda6_distribute_message.py", utf8_decoded_message], start_new_session=True
         ).pid
+
         date = datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%S.%f")
-        socket.send(b"Message received and passed to lambda6_handle_message")
+        socket.send(b"Message received and passed to lambda6_distribute_message")
