@@ -451,7 +451,7 @@ def insert_control_qc(experiment_name: str, plate_number: int, Control_QC: str):
 
         Inc_ID, table_name = Inc_ID_finder(cursor, experiment_name, plate_number)
 
-
+        
         update_plate_table = "UPDATE " + table_name + " SET Control_QC = %s WHERE Inc_ID = %s"
         update_values = (Control_QC, Inc_ID)
         cursor.execute(update_plate_table, update_values)
@@ -529,10 +529,16 @@ def upload_image(filename, experiment_name: str, plate_number: int):
         cursor,cnx = connect_Database() 
         
         Inc_ID, table_name = Inc_ID_finder(cursor, experiment_name, plate_number)
-
-
-        Image_query =  "UPDATE " + table_name + " SET Exp_Image = %s WHERE Inc_ID = %s"
-        update_values = (binary_data, Inc_ID)
+        
+        if table_name[0] == "T":
+            table = "Test_graphs"
+        elif table_name[0] == "p":
+            table = "graphs"
+        else:
+            return
+        
+        Image_query =  "INSERT INTO " + table + " (exp_id, plate_id, exp_image) VALUES (%s, %s, %s)"
+        update_values = (experiment_name, plate_number, binary_data)
         cursor.execute(Image_query, update_values)
 
     except mysql.connector.Error as error:
@@ -560,12 +566,22 @@ def retrieve_image(experiment_name: str, plate_number: int):
         Inc_ID, table_name = Inc_ID_finder(cursor, experiment_name, plate_number)
 
 
-        Image_query = "SELECT Exp_Image from " + table_name + " WHERE Inc_ID = %s"
-        cursor.execute(Image_query, (Inc_ID,))
+        if table_name[0] == "T":
+            table = "Test_graphs"
+        elif table_name[0] == "p":
+            table = "graphs"
+        else:
+            return
+        
+
+        Image_query = "SELECT exp_image from " + table + " WHERE exp_id = %s and plate_id = %s"
+        values = (experiment_name, plate_number)
+
+        cursor.execute(Image_query, values)
         data = cursor.fetchone()[0]
         
         try:
-            file = open(experiment_name + ".png", 'wb')
+            file = open("experiment_graph" + ".png", 'wb')
         except OSError as err:
             print(err)
             sys.exit()
@@ -579,7 +595,7 @@ def retrieve_image(experiment_name: str, plate_number: int):
     except Exception as err:
         print(err)
     else:
-        print("Image saved to directory")
+        print("Image retrieved")
     finally:
         disconnect_Database(cursor,cnx)
     
@@ -684,32 +700,90 @@ def add_time(date, time, time_stamp):
     print(date_and_time)
     pass
 
+def calculate_avg(list):
+    """calculate_avg
+
+        Description: Avarage calculations of the "H" values
+    """
+    avg_list = []
+    pointer1 = 0
+    pointer2 = 6
+
+    while pointer1 < 6:
+        
+        avg_list.insert(pointer1,(float(list[pointer1]) + float(list[pointer2]))/2)
+        avg_list.insert(pointer2,(float(list[pointer1]) + float(list[pointer2]))/2)
+        pointer1+=1
+        pointer2+=1
+    
+    return avg_list
+
+
+
+def od_blank_adjusted(data_frame, time_stamps):
+    print("----- BLANK ADDJUSTING -----")
+    """od_blank_adjusted
+
+        Description: Recives a data_frame and calculates blank adjusted values for each data point
+        Parameters: 
+            data_frame: Data itself
+            time_stamps: A list that contains the time points
+        
+        Returns: 
+            - blank_adj_data_frame: A new data frame with blank adjusted values
+            - adjusted_values_list: A list of blank adjusted values (this will be used to insert the values into the database)
+    """
+    blank_adj_data_frame = data_frame
+    adjusted_values_list = []
+    for time_point in time_stamps:
+    
+        blank_adj_list = calculate_avg(list(data_frame[time_point][84:]))
+        index = 0
+        
+        for data_index_num in range(1,len(data_frame)+1) :
+            A = float(data_frame[time_point][data_index_num])
+            if index == len(blank_adj_list):
+                index = 0
+            adjust = round(float(data_frame[time_point][data_index_num]) - blank_adj_list[index], 3)
+            if adjust < 0:
+                adjust = 0
+            
+            blank_adj_data_frame[time_point][data_index_num] = adjust
+            adjusted_values_list.append(adjust)
+            index+=1
+    
+    return blank_adj_data_frame, adjusted_values_list
     
 def main(filename):
     df, date_time  = parse_hidex(filename)
     time_stamps = df.columns[3:].to_list()
     date_time = date_time.split(" ", 1)
-    print(df)
-    #blank_adj = {'A1': 0.5319999999999999, 'A2': 0.7965, 'A3': 1.091, 'A4': 1.1945, 'A5': 1.2455, 'A6': 1.402, 'A7': 0.5389999999999999, 'A8': 0.7595000000000001, 'A9': 1.097, 'A10': 1.2274999999999998, 'A11': 1.2255, 'A12': 1.3739999999999999, 'B1': 0.599, 'B2': 0.8635, 'B3': 1.135, 'B4': 1.2414999999999998, 'B5': 1.3445, 'B6': 1.48, 'B7': 0.6479999999999999, 'B8': 0.8985, 'B9': 1.1260000000000001, 'B10': 1.2334999999999998, 'B11': 1.3185, 'B12': 1.4589999999999999, 'C1': 0.48900000000000005, 'C2': 0.6875, 'C3': 0.9939999999999999, 'C4': 1.1864999999999999, 'C5': 1.2785, 'C6': 1.458, 'C7': 0.5549999999999999, 'C8': 0.7885, 'C9': 0.95, 'C10': 1.2094999999999998, 'C11': 1.2315, 'C12': 1.445, 'D1': 0.388, 'D2': 0.6455, 'D3': 0.8069999999999999, 'D4': 0.9105, 'D5': 1.0415, 'D6': 1.156, 'D7': 0.391, 'D8': 0.6365000000000001, 'D9': 0.7989999999999999, 'D10': 0.9175, 'D11': 0.9984999999999999, 'D12': 1.193, 'E1': 1.126, 'E2': 1.3485, 'E3': 1.383, 'E4': 1.3555, 'E5': 1.3615, 'E6': 1.349, 'E7': 1.379, 'E8': 1.3355, 'E9': 1.374, 'E10': 1.3375, 'E11': 1.3125, 'E12': 1.27, 'F1': 0.45, 'F2': 0.7085, 'F3': 1.107, 'F4': 1.2834999999999999, 'F5': 1.3835, 'F6': 1.4989999999999999, 'F7': 0.691, 'F8': 0.9225, 'F9': 1.1560000000000001, 'F10': 1.2945, 'F11': 1.2945, 'F12': 1.466, 'G1': 0.508, 'G2': 0.7005, 'G3': 1.01, 'G4': 1.1875, 'G5': 1.3665, 'G6': 1.4829999999999999, 'G7': 0.76, 'G8': 0.9155, 'G9': 1.1260000000000001, 'G10': 1.2445, 'G11': 1.3025, 'G12': 1.438, 'H1': 0.0010000000000000009, 'H2': 0.0005000000000000004, 'H3': 0.0020000000000000018, 'H4': 0.0, 'H5': 0.0, 'H6': 0.0, 'H7': 0.0, 'H8': 0.0, 'H9': 0.0, 'H10': 0.0005000000000000004, 'H11': 0.0005000000000000004, 'H12': 0.0010000000000000009}
-    
+    # print(df)
+    # blank_adj = {'A1': 0.5319999999999999, 'A2': 0.7965, 'A3': 1.091, 'A4': 1.1945, 'A5': 1.2455, 'A6': 1.402, 'A7': 0.5389999999999999, 'A8': 0.7595000000000001, 'A9': 1.097, 'A10': 1.2274999999999998, 'A11': 1.2255, 'A12': 1.3739999999999999, 'B1': 0.599, 'B2': 0.8635, 'B3': 1.135, 'B4': 1.2414999999999998, 'B5': 1.3445, 'B6': 1.48, 'B7': 0.6479999999999999, 'B8': 0.8985, 'B9': 1.1260000000000001, 'B10': 1.2334999999999998, 'B11': 1.3185, 'B12': 1.4589999999999999, 'C1': 0.48900000000000005, 'C2': 0.6875, 'C3': 0.9939999999999999, 'C4': 1.1864999999999999, 'C5': 1.2785, 'C6': 1.458, 'C7': 0.5549999999999999, 'C8': 0.7885, 'C9': 0.95, 'C10': 1.2094999999999998, 'C11': 1.2315, 'C12': 1.445, 'D1': 0.388, 'D2': 0.6455, 'D3': 0.8069999999999999, 'D4': 0.9105, 'D5': 1.0415, 'D6': 1.156, 'D7': 0.391, 'D8': 0.6365000000000001, 'D9': 0.7989999999999999, 'D10': 0.9175, 'D11': 0.9984999999999999, 'D12': 1.193, 'E1': 1.126, 'E2': 1.3485, 'E3': 1.383, 'E4': 1.3555, 'E5': 1.3615, 'E6': 1.349, 'E7': 1.379, 'E8': 1.3355, 'E9': 1.374, 'E10': 1.3375, 'E11': 1.3125, 'E12': 1.27, 'F1': 0.45, 'F2': 0.7085, 'F3': 1.107, 'F4': 1.2834999999999999, 'F5': 1.3835, 'F6': 1.4989999999999999, 'F7': 0.691, 'F8': 0.9225, 'F9': 1.1560000000000001, 'F10': 1.2945, 'F11': 1.2945, 'F12': 1.466, 'G1': 0.508, 'G2': 0.7005, 'G3': 1.01, 'G4': 1.1875, 'G5': 1.3665, 'G6': 1.4829999999999999, 'G7': 0.76, 'G8': 0.9155, 'G9': 1.1260000000000001, 'G10': 1.2445, 'G11': 1.3025, 'G12': 1.438, 'H1': 0.0010000000000000009, 'H2': 0.0005000000000000004, 'H3': 0.0020000000000000018, 'H4': 0.0, 'H5': 0.0, 'H6': 0.0, 'H7': 0.0, 'H8': 0.0, 'H9': 0.0, 'H10': 0.0005000000000000004, 'H11': 0.0005000000000000004, 'H12': 0.0010000000000000009}
     Is_Test = "True"
+    # print(blank_list)
     #insert_source_plate('/homes/dozgulbas/data/11_17_21_plate2.csv')
     # Calling the create empty plate records function.
-    #create_empty_plate_records(1, 48, "Hidex", "Campaign1_20210505_191201_RawOD.csv", Is_Test)
+    # create_empty_plate_records(1, 48, "Hidex", "Campaign1_20210505_191201_RawOD.csv", Is_Test)
+    # create_empty_plate_records(1, 96, "Hidex", filename, Is_Test)
+
     
     # Calling the update plate data function
     
-    #update_plate_data("Campaign1_20210505_191201_RawOD.csv", 0, time_stamps, df, date_time[0], date_time[1], "Campaign1_20210505")
+    # update_plate_data(filename, 0, time_stamps, df, date_time[0], date_time[1], "Campaign1_20210505")
 
     #calling blob handler function
-    #upload_image('/home/dozgulbas/hudson-liquidhandling/rdbms/images/Campaign2_HopeStrains106-112_plate2col4_12hrInc_12PlateTest.png',"Campaign1_20210505_191201_RawOD.csv", 0, Is_Test)
+    # upload_image('/homes/dozgulbas/hudson-liquidhandling/rdbms/images/Campaign2_HopeStrains127-133_plate2col7_12hrInc_12PlateTest.png',filename, 0)
     
-    #retrieve_image("Campaign1_20210505_191201_RawOD.csv", 0, Is_Test)
+    # retrieve_image(filename, 0)
 
-    #insert_control_qc("Campaign1_20210505_191201_RawOD.csv", 0,"Pass")
 
-    #insert_blank_adj("Campaign1_20210505_191201_RawOD.csv", 0, blank_adj)
+    # insert_control_qc(filename, 0,"Pass")
+    
+    # df1, blank_list = od_blank_adjusted(df, time_stamps)
 
+    # insert_blank_adj("Campaign1_20210505_191201_RawOD.csv", 0, blank_adj)
+    # insert_blank_adj(filename, 0, blank_list)
 if __name__ == "__main__":
     #Execute only if run as a script
     main('/lambda_stor/data/hudson/data/1623878974-1/Campaign1_20210615_150156_RawOD.csv')

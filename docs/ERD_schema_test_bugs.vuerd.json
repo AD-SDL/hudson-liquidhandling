@@ -3,8 +3,8 @@
     "version": "2.2.11",
     "width": 2000,
     "height": 2000,
-    "scrollTop": -272,
-    "scrollLeft": -126,
+    "scrollTop": -140,
+    "scrollLeft": -132,
     "zoomLevel": 0.9,
     "show": {
       "tableComment": true,
@@ -272,9 +272,9 @@
         ],
         "ui": {
           "active": false,
-          "left": 96.2217,
-          "top": 655.3325,
-          "zIndex": 8,
+          "left": 7.3332,
+          "top": 614.2216,
+          "zIndex": 6,
           "widthName": 76.43896484375,
           "widthComment": 60
         },
@@ -1348,9 +1348,9 @@
         ],
         "ui": {
           "active": false,
-          "left": 690.2222,
-          "top": 574.0558,
-          "zIndex": 6,
+          "left": 702.0271,
+          "top": 627.9451,
+          "zIndex": 7,
           "widthName": 71.3798828125,
           "widthComment": 60
         },
@@ -1698,8 +1698,8 @@
           "columnIds": [
             "908a6db1-4435-4bad-a548-e0064b05b618"
           ],
-          "x": 891.59964140625,
-          "y": 574.0558,
+          "x": 903.40454140625,
+          "y": 627.9451,
           "direction": "top"
         },
         "constraintName": "fk_plate_to_assay_plate",
@@ -1750,8 +1750,8 @@
           "columnIds": [
             "c214d797-1048-4600-9e85-9526277d5757"
           ],
-          "x": 535.79933671875,
-          "y": 751.3325,
+          "x": 446.91083671875,
+          "y": 710.2216,
           "direction": "right"
         },
         "constraintName": "fk_plate_to_source_plate",

@@ -145,3 +145,5 @@ dmypy.json
 
 # vi swp files
 .*.swp
+
+rdbms/images/
