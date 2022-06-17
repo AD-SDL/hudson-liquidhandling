@@ -141,7 +141,11 @@ def generate_campaign1_repeatable(
         """
         STEP 1: INNOCULATE GROWTH PLATE FROM SOURCE BACTERIA PLATE -----------------------------------------------------------------
         """
-        # * Initialize soloSoft (step 1)
+        
+
+        # * Fill all columns of empty 96 well plate (corning 3383 or Falcon - ref 353916) with fresh lb media (12 channel in Position 3, media_start_column and media_start_column+1)
+        # * adding lb stock to first half of plate
+        # * Initialize soloSoft
         step1_assay_plate_media_first_half_hso_filename = os.path.join(directory_path, f"plate{k}_step1_first_half_assay_media.hso")
         step1_hso_filename_list.append(step1_assay_plate_media_first_half_hso_filename)
         soloSoft = SoloSoft(
@@ -157,8 +161,6 @@ def generate_campaign1_repeatable(
                 "DeepBlock.96.VWR-75870-792.sterile",
             ],
         )
-
-        # * Fill all columns of empty 96 well plate (corning 3383 or Falcon - ref 353916) with fresh lb media (12 channel in Position 3, media_start_column and media_start_column+1)
         soloSoft.getTip("Position3")
         for i in range(1, 7):  # first quarter plate = media from column 1
             soloSoft.aspirate(
@@ -229,6 +231,8 @@ def generate_campaign1_repeatable(
         soloSoft.shuckTip()
         soloSoft.savePipeline()
 
+        # * adding lb stock to second half of plate
+        # * Initialize soloSoft
         step1_assay_plate_media_second_half_hso_filename = os.path.join(directory_path, f"plate{k}_step1_second_half_assay_media.hso")
         step1_hso_filename_list.append(step1_assay_plate_media_second_half_hso_filename)
         soloSoft = SoloSoft(
@@ -245,7 +249,6 @@ def generate_campaign1_repeatable(
             ],
         )
 
-        # adding lb stock to second half of assay plate
         soloSoft.getTip("Position3")
         for i in range(13, 19):  # third quarter plate = media from column 1
             soloSoft.aspirate(
@@ -316,6 +319,7 @@ def generate_campaign1_repeatable(
         soloSoft.shuckTip()
         soloSoft.savePipeline()
 
+        # * Fill one column of culture dilution plate with fresh lb media (do in two steps due to 180uL filter tips)
         step1_cell_dilution_hso_filename = os.path.join(directory_path, f"plate{k}_step1_cell_dilution.hso")
         step1_hso_filename_list.append(step1_cell_dilution_hso_filename)
         soloSoft = SoloSoft(
@@ -335,7 +339,6 @@ def generate_campaign1_repeatable(
         soloSoft.getTip("Position3")
 
 
-        # * Fill one column of culture dilution plate with fresh lb media (do in two steps due to 180uL filter tips)
         for i in range(
             2
         ):  # from first media column -> cell dilution plate, column = same as culture column
@@ -427,6 +430,8 @@ def generate_campaign1_repeatable(
         soloSoft.shuckTip()
         soloSoft.savePipeline()
 
+        # * Add bacteria from 10 fold diluted culture plate (Position 7, column = culture_column[k]) to growth plate with fresh media
+        # * First half of assay plate
         step1_cells_to_assay_first_half_hso_filename = os.path.join(directory_path, f"plate{k}_step1_cells_to_assay_first_half.hso")
         step1_hso_filename_list.append(step1_cells_to_assay_first_half_hso_filename)
         soloSoft = SoloSoft(
@@ -443,7 +448,6 @@ def generate_campaign1_repeatable(
             ],
         )
 
-        # * Add bacteria from 10 fold diluted culture plate (Position 7, column = culture_column[k]) to growth plate with fresh media (both halves)
         soloSoft.getTip("Position3")
         for i in range(1, 7):  # trying a different method of cell dispensing (09/07/21)
             soloSoft.aspirate(  # well in first half
@@ -571,6 +575,7 @@ def generate_campaign1_repeatable(
         soloSoft.shuckTip()
         soloSoft.savePipeline()
 
+        # * second half of assay plate 
         step1_cells_to_assay_second_half_hso_filename = os.path.join(directory_path, f"plate{k}_cells_to_assay_second_half.hso")
         step1_hso_filename_list.append(step1_cells_to_assay_second_half_hso_filename)
         soloSoft = SoloSoft(
