@@ -11,6 +11,7 @@ from liquidhandling import SoftLinx
 from liquidhandling import DeepBlock_96VWR_75870_792_sterile
 from liquidhandling import Reservoir_12col_Agilent_201256_100_BATSgroup
 from liquidhandling import Plate_96_Corning_3635_ClearUVAssay
+from liquidhandling import *
 from tip_utils import replace_tip_box, remove_tip_box
 
 """
@@ -70,7 +71,8 @@ def generate_campaign1_repeatable(
     media_z_shift = 0.5
     reservoir_z_shift = 0.5  # z shift for deep blocks (Deck Positions 3 and 5)
     flat_bottom_z_shift = 2  # Note: 1 is not high enough (tested)
-    lambda6_path = "/lambda_stor/data/hudson/instructions/"
+    #lambda6_path = "/lambda_stor/data/hudson/instructions/"
+    lambda6_path = "C:\\Users\\svcaibio\\Dev\\liquidhandling\\protocols\\campaign2\\test_hso"
 
     # Step 1 variables
     media_transfer_volume_s1 = 20 
@@ -1244,29 +1246,29 @@ def generate_campaign1_repeatable(
     """
     SEND NEW PROTOCOL TO WORK CELL (HUDSON01) ------------------------------------------------------------------
     """
-    try:
-        # TODO: change to full path on lambda6
-        child_message_sender = child_pid = Popen(
-            [
-                "python",
-                "../../zeromq/lambda6_send_instructions.py",
-                "-d",
-                directory_path,
-                "-i",
-                str(num_assay_plates),
-                str(num_assay_wells),
-                assay_plate_type,
-                str(is_test),
-            ],
-            start_new_session=True,
-        ).pid
+#     try:
+#         # TODO: change to full path on lambda6
+#         child_message_sender = child_pid = Popen(
+#             [
+#                 "python",
+#                 "../../zeromq/lambda6_send_instructions.py",
+#                 "-d",
+#                 directory_path,
+#                 "-i",
+#                 str(num_assay_plates),
+#                 str(num_assay_wells),
+#                 assay_plate_type,
+#                 str(is_test),
+#             ],
+#             start_new_session=True,
+#         ).pid
 
-        print("New instruction directory passed to lambda6_send_message.py")
-    except BaseException as e:
-        print(e)
-        print("Could not send new instructions to hudson01")
+#         print("New instruction directory passed to lambda6_send_message.py")
+#     except BaseException as e:
+#         print(e)
+#         print("Could not send new instructions to hudson01")
 
-    return return_val
+#     return return_val
 
 
 def find_treatment_loc(treatment_name):  # TODO: Move this method out of protocol file
