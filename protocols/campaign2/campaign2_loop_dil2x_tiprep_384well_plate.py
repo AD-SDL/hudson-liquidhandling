@@ -12,6 +12,7 @@ from liquidhandling import DeepBlock_96VWR_75870_792_sterile
 from liquidhandling import Reservoir_12col_Agilent_201256_100_BATSgroup
 from liquidhandling import Plate_96_Corning_3635_ClearUVAssay
 from tip_utils import replace_tip_box, remove_tip_box
+from campaign2_loop_dil2x_tiprep_384well_plate_hso_functions import *
 
 """
 Campaign 2 Protocol - 2x dilutions
@@ -135,7 +136,7 @@ def generate_campaign1_repeatable(
     media_start_column,
     media_z_shift, 
     media_transfer_volume_s1,
-    flat_bottom_z_shift
+    flat_bottom_z_shift,
     start_col, # provide column to start dispense on assay plate
     end_col): # provide column to end dispense on assay plate
 
@@ -143,6 +144,7 @@ def generate_campaign1_repeatable(
         # * Initialize soloSoft (step 1)
         step1_hso_filename = os.path.join(directory_path, f"plate{k}_step1.hso")
         #step1_hso_filename_list.append(step1_hso_filename)
+        filename = step1_hso_filename
         soloSoft = SoloSoft(
             filename=step1_hso_filename,
             plateList=[
@@ -228,9 +230,9 @@ def generate_campaign1_repeatable(
         soloSoft.shuckTip()
         soloSoft.savePipeline()
 
-        hudson01_hso_path = # * TODO: FIGURE OUT PATH NAME
+        # hudson01_hso_path = # * TODO: FIGURE OUT PATH NAME
 
-        return hudson01_hso_path
+        return filename
 
     # * Fill culture dilution resevoir and treatment plates with media
     def generate_fill_culture_dilution_and_treatment_plates_with_media_hso(directory_path, 
