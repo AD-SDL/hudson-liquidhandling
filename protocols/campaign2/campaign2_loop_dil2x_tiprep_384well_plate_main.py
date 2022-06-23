@@ -71,7 +71,8 @@ def generate_campaign1_repeatable(
     media_z_shift = 0.5
     reservoir_z_shift = 0.5  # z shift for deep blocks (Deck Positions 3 and 5)
     flat_bottom_z_shift = 2  # Note: 1 is not high enough (tested)
-    lambda6_path = "/lambda_stor/data/hudson/instructions/"
+    # lambda6_path = "/lambda_stor/data/hudson/instructions/"
+    lambda6_path = "C:\\Users\\svcaibio\\Dev\\liquidhandling\\protocols\\campaign2\\test_hso\\"
 
     # Step 1 variables
     media_transfer_volume_s1 = 20 
@@ -148,7 +149,8 @@ def generate_campaign1_repeatable(
 
 
         ''' CALL generate_media_transfer_to_assay_hso TWICE, ONE FOR EACH HALF OF PLATE, change start and end cols'''
-        media_to_assay_1_hso.append(campaign2_loop_dil2x_tiprep_384well_plate_hso_functions.generate_media_transfer_to_half_assay_hso(directory_path=directory_path,
+        media_to_assay_1_hso.append(generate_media_transfer_to_half_assay_hso(directory_path=directory_path,
+        filename="media_to_assay_first_half.hso",
 media_start_column=media_start_column,
 media_z_shift=media_z_shift, 
 media_transfer_volume_s1=media_transfer_volume_s1,
@@ -157,7 +159,8 @@ start_col = 1,
 end_col = 6,
 k=k))
 
-        media_to_assay_2_hso.append(campaign2_loop_dil2x_tiprep_384well_plate_hso_functions.generate_media_transfer_to_half_assay_hso(directory_path=directory_path,
+        media_to_assay_2_hso.append(generate_media_transfer_to_half_assay_hso(directory_path=directory_path,
+        filename="media_to_assay_second_half.hso",
 media_start_column=media_start_column,
 media_z_shift=media_z_shift, 
 media_transfer_volume_s1=media_transfer_volume_s1,
@@ -169,7 +172,8 @@ k=k))
 
         ''' call generate_fill_culture_dilution_and_treatment_plates_with_media_hso'''
 
-        media_to_culture_hso.append(campaign2_loop_dil2x_tiprep_384well_plate_hso_functions.generate_fill_culture_dilution_and_treatment_plates_with_media_hso(directory_path=directory_path,
+        media_to_culture_hso.append(generate_fill_culture_dilution_and_treatment_plates_with_media_hso(directory_path=directory_path,
+        filename="culture_dilution.hso",
 media_start_column=media_start_column,
 media_z_shift=media_z_shift,
 flat_bottom_z_shift=flat_bottom_z_shift,
@@ -186,7 +190,8 @@ culture_dilution_num_mix=culture_dilution_num_mix,
 culture_dilution_mix_volume=culture_dilution_mix_volume))
 
         '''call generate_add_diluted_cells_to_assay_hso twice, once for each half, change start and end cols'''
-        cells_to_assay_1_hso.append(campaign2_loop_dil2x_tiprep_384well_plate_hso_functions.generate_add_diluted_cells_to_assay_hso(directory_path=directory_path,
+        cells_to_assay_1_hso.append(generate_add_diluted_cells_to_assay_hso(directory_path=directory_path,
+        filename="cells_to_assay_first_half.hso",
 media_start_column=media_start_column,
 media_z_shift=media_z_shift,
 flat_bottom_z_shift=flat_bottom_z_shift,
@@ -199,7 +204,8 @@ start_col=1,
 end_col=6,
 k=k))
 
-        cells_to_assay_2_hso.append(campaign2_loop_dil2x_tiprep_384well_plate_hso_functions.generate_add_diluted_cells_to_assay_hso(directory_path=directory_path,
+        cells_to_assay_2_hso.append(generate_add_diluted_cells_to_assay_hso(directory_path=directory_path,
+        filename="cells_to_assay_second_half.hso",
 media_start_column=media_start_column,
 media_z_shift=media_z_shift,
 flat_bottom_z_shift=flat_bottom_z_shift,
@@ -213,7 +219,8 @@ end_col=12,
 k=k))
         ''' call generate_serial_dlution_treatment_hso'''
 
-        serial_dilution_hso.append(campaign2_loop_dil2x_tiprep_384well_plate_hso_functions.generate_serial_dlution_treatment_hso(directory_path=directory_path,
+        serial_dilution_hso.append(generate_serial_dlution_treatment_hso(directory_path=directory_path,
+        filename="serial_dilution_treatment.hso",
 treatment_dil_half=treatment_dil_half,
 media_start_column=media_start_column,
 media_transfer_volume_s2=media_transfer_volume_s2,
@@ -234,7 +241,8 @@ num_mixes=num_mixes))
 
         '''call generate_add_antibioitc_to_assay_hso TWICE, for each half, different start_col, end_col'''
         
-        treatment_to_assay_1_hso.append(campaign2_loop_dil2x_tiprep_384well_plate_hso_functions.generate_add_antibioitc_to_assay_hso(directory_path=directory_path,
+        treatment_to_assay_1_hso.append(generate_add_antibioitc_to_assay_hso(directory_path=directory_path,
+        filename="antibiotic_to_assay_first_half.hso",
 treatment_dil_half=treatment_dil_half,
 antibiotic_transfer_volume_s3=antibiotic_transfer_volume_s3,
 num_mixes=num_mixes,
@@ -247,7 +255,8 @@ end_col=6,
 k=k,
 reservoir_z_shift=reservoir_z_shift))
 
-        treatment_to_assay_1_hso.append(campaign2_loop_dil2x_tiprep_384well_plate_hso_functions.generate_add_antibioitc_to_assay_hso(directory_path=directory_path,
+        treatment_to_assay_2_hso.append(generate_add_antibioitc_to_assay_hso(directory_path=directory_path,
+        filename="antibiotic_to_assay_second_half.hso",
 treatment_dil_half=treatment_dil_half,
 antibiotic_transfer_volume_s3=antibiotic_transfer_volume_s3,
 num_mixes=num_mixes,
@@ -259,3 +268,276 @@ start_col=7,
 end_col=12,
 k=k,
 reservoir_z_shift=reservoir_z_shift))
+
+# """
+#     ADD ALL STEPS TO SOFTLINX PROTOCOL AND SEND TO HUDSON01 -----------------------------------------------------------------------
+# """
+
+ # initialize softLinx
+    softLinx = SoftLinx("Steps_384_assay_1_2_3", os.path.join(directory_path, "steps384_assay_1_2_3.slvp"))
+
+    softLinx.setPlates(
+        {"SoftLinx.PlateCrane.Stack5": "Corning 3540"}
+    )
+
+# set up equiptment
+    softLinx.hidexRun("SetTemp37")
+    softLinx.liconicBeginShake(shaker1Speed=30)
+
+    #* LOOP: create plates, take t0 reading, transfer to incubator
+    for k in range(len(treatment)):
+        # restock growth assay plate before run
+        softLinx.plateCraneMovePlate(
+            ["SoftLinx.PlateCrane.Stack5"], ["SoftLinx.Solo.Position4"], hasLid=True
+        )
+        # remove lid and place in Lid Nest
+        softLinx.plateCraneRemoveLid(
+            ["SoftLinx.Solo.Position4"], ["SoftLinx.PlateCrane.LidNest2"]
+        )
+        # TO DO: Figure out the number of tip boxes needed
+        # replace tip box if necessary
+        if (k%2 == 0):
+            # if k == 0:
+            #     replace_tip_box(softLinx, "Position3")
+            # else:
+            #     remove_tip_box(softLinx, "Position3")
+            #     replace_tip_box(softLinx, "Position3")
+            softLinx.soloSoftResetTipCount(3)  # reset the tip count at pos 3 not pos 1
+
+        softLinx.plateCraneMoveCrane("SoftLinx.PlateCrane.Safe")
+
+        # run all three liquid handling steps
+        softLinx.soloSoftRun(
+            "C:\\Users\\svcaibio\\Dev\\liquidhandling\\protocols\\campaign2\\test_hso\\"
+            + directory_name
+            + "\\"
+            + os.path.basename(media_to_assay_1_hso[k])
+        )
+        softLinx.soloSoftRun(
+            "C:\\Users\\svcaibio\\Dev\\liquidhandling\\protocols\\campaign2\\test_hso\\"
+            + directory_name
+            + "\\"
+            + os.path.basename(media_to_assay_2_hso[k])
+        )
+        softLinx.soloSoftRun(
+            "C:\\Users\\svcaibio\\Dev\\liquidhandling\\protocols\\campaign2\\test_hso\\"
+            + directory_name
+            + "\\"
+            + os.path.basename(media_to_culture_hso[k])
+        )
+
+        softLinx.soloSoftRun(
+            "C:\\Users\\svcaibio\\Dev\\liquidhandling\\protocols\\campaign2\\test_hso\\"
+            + directory_name
+            + "\\"
+            + os.path.basename(cells_to_assay_1_hso[k])
+        )
+        softLinx.soloSoftRun(
+            "C:\\Users\\svcaibio\\Dev\\liquidhandling\\protocols\\campaign2\\test_hso\\"
+            + directory_name
+            + "\\"
+            + os.path.basename(cells_to_assay_2_hso[k])
+        )
+        softLinx.soloSoftRun(
+            "C:\\Users\\svcaibio\\Dev\\liquidhandling\\protocols\\campaign2\\test_hso\\"
+            + directory_name
+            + "\\"
+            + os.path.basename(serial_dilution_hso[k])
+        )
+
+        softLinx.soloSoftRun(
+            "C:\\Users\\svcaibio\\Dev\\liquidhandling\\protocols\\campaign2\\test_hso\\"
+            + directory_name
+            + "\\"
+            + os.path.basename(treatment_to_assay_1_hso[k])
+        )
+        softLinx.soloSoftRun(
+            "C:\\Users\\svcaibio\\Dev\\liquidhandling\\protocols\\campaign2\\test_hso\\"
+            + directory_name
+            + "\\"
+            + os.path.basename(treatment_to_assay_2_hso[k])
+        )
+    
+
+        softLinx.plateCraneMovePlate(["SoftLinx.Solo.Position4"], ["SoftLinx.Liconic.Nest"])
+            #softLinx.hidexClose()
+        softLinx.plateCraneReplaceLid(["SoftLinx.PlateCrane.LidNest2"], ["SoftLinx.Liconic.Nest"])
+        softLinx.plateCraneMoveCrane("SoftLinx.PlateCrane.Safe")
+        # Load plate into incubator
+        softLinx.liconicLoadIncubator(loadID=k, holdWithoutIncubationTime=True)
+        #* END LOOP
+
+        # reduce Hidex temp to reduce strain on instument over incubation (necessary?)
+        softLinx.hidexRun("SetTemp20")
+
+        softLinx.liconicShake(shaker1Speed=30, shakeTime=[0,7,6,0]) # 7hrs 6 min
+
+        # preheat Hidex for readings after incubation
+        softLinx.hidexRun("SetTempWait37")
+
+        #* LOOP: unload plates from incubator and take endpoing reading
+        for k in range(len(treatment)):
+            softLinx.liconicUnloadIncubator(loadID=k)
+            softLinx.plateCraneRemoveLid(["SoftLinx.Liconic.Nest"], ["SoftLinx.PlateCrane.LidNest2"])
+            softLinx.plateCraneMovePlate(["SoftLinx.Liconic.Nest"], ["SoftLinx.Hidex.Nest"])
+            softLinx.hidexClose()
+            softLinx.plateCraneMoveCrane("SoftLinx.PlateCrane.Safe")
+            softLinx.hidexRun("Campaign1_noIncubate2")
+
+            # transfer data to lambda6
+            softLinx.runProgram(
+                "C:\\Users\\svcaibio\\Dev\\liquidhandling\\zeromq\\utils\\send_data.bat", arguments=f"{k} {directory_name} campaign2"
+            )
+
+            # Move plate from Hidex to Stack 1 and replace lid
+            softLinx.plateCraneMovePlate(["SoftLinx.Hidex.Nest"], ["SoftLinx.PlateCrane.Stack1"])
+            softLinx.hidexClose()
+            softLinx.plateCraneReplaceLid(["SoftLinx.PlateCrane.LidNest2"], ["SoftLinx.PlateCrane.Stack1"])
+            softLinx.plateCraneMoveCrane("SoftLinx.PlateCrane.Safe")
+
+            # shake in incubator until time to take next reading  (don't do if already read last plate)
+            if not k == (len(treatment)-1):
+                softLinx.liconicShake(shaker1Speed=30, shakeTime=[0,0,23,0])  # 23 min
+        #* END LOOP
+
+        softLinx.hidexRun("SetTemp20")
+        softLinx.liconicEndShake()
+        # save protocol to write instructions to .slvp file, create .txt manifest, and .ahk remote start file
+        softLinx.saveProtocol()
+
+"""
+    SEND NEW PROTOCOL TO WORK CELL (HUDSON01) ------------------------------------------------------------------
+"""
+#     try:
+#         # TODO: change to full path on lambda6
+#         child_message_sender = child_pid = Popen(
+#             [
+#                 "python",
+#                 "../../zeromq/lambda6_send_instructions.py",
+#                 "-d",
+#                 directory_path,
+#                 "-i",
+#                 str(num_assay_plates),
+#                 str(num_assay_wells),
+#                 assay_plate_type,
+#                 str(is_test),
+#             ],
+#             start_new_session=True,
+#         ).pid
+
+#         print("New instruction directory passed to lambda6_send_message.py")
+#     except BaseException as e:
+#         print(e)
+#         print("Could not send new instructions to hudson01")
+
+#     return return_val
+
+
+def find_treatment_loc(treatment_name):  # TODO: Move this method out of protocol file
+    """
+    Connect to SQL database. Determine plate # and well location of desired treatment
+    (for now, these locations will be hardcoded (plate assumed to be on Solo deck))
+    """
+    treatment_locations = {
+        "col1": ["Position8", 1],
+        "col2": ["Position8", 2],
+        "col3": ["Position8", 3],
+        "col4": ["Position8", 4],
+        "col5": ["Position8", 5],
+        "col6": ["Position8", 6],
+        "col7": ["Position8", 7],
+        "col8": ["Position8", 8],
+        "col9": ["Position8", 9],
+        "col10": ["Position8", 10],
+        "col11": ["Position8", 11],
+        "col12": ["Position8", 12],
+    }
+
+    return treatment_locations[treatment_name]
+
+
+def main(args):
+    # Parse args
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "-tr",
+        "--treatment",
+        nargs="*",
+        help="treatment to apply to cells",
+        required=True,
+        type=str,
+    )
+    parser.add_argument(
+        "-IC50",
+        "--predicted_IC50",
+        help="predicted_IC50, must be a float (do not include units)",
+        required=False,
+        type=float,
+        nargs="*",
+    )
+    parser.add_argument(
+        "-cc",
+        "--culture_column",
+        help="culture plate column to use, must be an integer (ex. 3 means column 3)",
+        required=False,
+        type=int,
+        nargs="*",
+    )
+    parser.add_argument(
+        "-mc",
+        "--media_start_column",
+        help="media plate column to start with, must be an integer (ex. 1) Will use column specified(i) and column(i+1). (ex. -mc 1 = first and second column)",
+        required=False,
+        type=int,
+        nargs="*",
+    )
+    parser.add_argument(
+        "-tdh",
+        "--treatment_dilution_half",
+        help="which half of the treatment serial dilution plate to use, must be an integer (1 or 2). 1 = columns 1-6, 2 = columns 7-12",
+        required=False,
+        type=int,
+        nargs="*",
+    )
+    parser.add_argument(
+        "-cdc",
+        "--culture_dilution_column",
+        help="column of 10-fold culture dilution plate to use, must be an integer (ex. 1 means column 1)",
+        required=False,
+        type = int,
+        nargs="*",
+    )
+    parser.add_argument(
+        "-t",
+        "--is_test",
+        help="use -t or --is_test only if the run is a test and the data can be deleted",
+        action="store_true",
+    )
+    args = vars(parser.parse_args())
+    print(
+        "treatment(s) = {}, IC50 = {}, culture_column(s) = {}, culture dilution column(s) = {}, media start column(s) = {}, treatment dilution column(s)= {}, is test = {}".format(
+            args["treatment"],
+            args["predicted_IC50"],
+            args["culture_column"],
+            args["culture_dilution_column"],
+            args["media_start_column"],
+            args["treatment_dilution_half"],
+            args["is_test"],
+        )
+    )
+
+    # pass to method
+    generate_campaign1_repeatable(
+        args["treatment"],
+        args["predicted_IC50"],
+        args["culture_column"],
+        args["culture_dilution_column"],
+        args["media_start_column"],
+        args["treatment_dilution_half"],
+        args["is_test"],
+    )
+
+
+if __name__ == "__main__":
+    # execute only if run as a script
+    main(sys.argv)

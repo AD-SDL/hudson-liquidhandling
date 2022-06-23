@@ -8,6 +8,7 @@ from tip_utils import replace_tip_box, remove_tip_box
 
 # * Transfers media from resevoir in position 1 to given columns in 384 well assay plate in position 4
 def generate_media_transfer_to_half_assay_hso(directory_path,
+filename,
 media_start_column,
 media_z_shift, 
 media_transfer_volume_s1,
@@ -18,7 +19,7 @@ k): # k = current treatment number
 
 
     # * Initialize soloSoft (step 1)
-    step1_hso_filename = os.path.join(directory_path, f"plate{k}_step1.hso")
+    step1_hso_filename = os.path.join(directory_path, f"plate{k}_"+ filename)
     #step1_hso_filename_list.append(step1_hso_filename)
     soloSoft = SoloSoft(
         filename=step1_hso_filename,
@@ -107,11 +108,12 @@ k): # k = current treatment number
 
     # hudson01_hso_path = # * TODO: FIGURE OUT PATH NAME
 
-    return step1_hso_filename
+    return filename
 
 
 # * Fill culture dilution resevoir and treatment plates with media
 def generate_fill_culture_dilution_and_treatment_plates_with_media_hso(directory_path,
+filename,
 media_start_column,
 media_z_shift,
 flat_bottom_z_shift,
@@ -127,7 +129,7 @@ num_mixes,
 culture_dilution_num_mix,
 culture_dilution_mix_volume
 ):
-    step1_cell_dilution_hso_filename = os.path.join(directory_path, f"plate{k}_step1_cell_dilution.hso")
+    step1_cell_dilution_hso_filename = os.path.join(directory_path, f"plate{k}_" + filename)
     #step1_hso_filename_list.append(step1_cell_dilution_hso_filename)
     soloSoft = SoloSoft(
         filename=step1_cell_dilution_hso_filename,
@@ -238,10 +240,11 @@ culture_dilution_mix_volume
     soloSoft.shuckTip()
     soloSoft.savePipeline()
 
-    return step1_cell_dilution_hso_filename
+    return filename
 
 # * Adds diluted cells to assay plate
 def generate_add_diluted_cells_to_assay_hso(directory_path,
+filename,
 media_start_column,
 media_z_shift,
 flat_bottom_z_shift,
@@ -254,7 +257,7 @@ start_col,
 end_col,
 k
 ):
-    step1_cells_to_assay_first_half_hso_filename = os.path.join(directory_path, f"plate{k}_step1_cells_to_assay_first_half.hso")
+    step1_cells_to_assay_first_half_hso_filename = os.path.join(directory_path, f"plate{k}_" + filename)
     # step1_hso_filename_list.append(step1_cells_to_assay_first_half_hso_filename)
     soloSoft = SoloSoft(
         filename=step1_cells_to_assay_first_half_hso_filename,
@@ -398,11 +401,12 @@ k
     soloSoft.shuckTip()
     soloSoft.savePipeline()
 
-    return step1_cells_to_assay_first_half_hso_filename
+    return filename
 
 
 #* Step 2, performs serial dilution on treatment plate
 def generate_serial_dlution_treatment_hso(directory_path,
+filename,
 treatment_dil_half,
 media_start_column,
 media_transfer_volume_s2,
@@ -421,7 +425,7 @@ num_mixes
 ):
 
         # * Initialize soloSoft (step 2)
-    step2_hso_filename = os.path.join(directory_path, f"plate{k}_step2.hso")
+    step2_hso_filename = os.path.join(directory_path, f"plate{k}_" + filename)
     # step2_hso_filename_list.append(step2_hso_filename)
     soloSoft = SoloSoft(
         filename=step2_hso_filename,
@@ -560,10 +564,11 @@ num_mixes
     soloSoft.shuckTip()
     soloSoft.savePipeline()
 
-    return step2_hso_filename
+    return filename
 
 # * adds antibiotic to assay plate
 def generate_add_antibioitc_to_assay_hso(directory_path,
+filename,
 treatment_dil_half,
 antibiotic_transfer_volume_s3,
 num_mixes,
@@ -576,7 +581,7 @@ end_col,
 k,
 reservoir_z_shift
 ):
-    step3_hso_filename = os.path.join(directory_path, f"plate{k}_step3.hso")
+    step3_hso_filename = os.path.join(directory_path, f"plate{k}_"+ filename)
     # step3_hso_filename_list.append(step3_hso_filename)
     soloSoft = SoloSoft(
         filename=step3_hso_filename,
@@ -610,7 +615,7 @@ reservoir_z_shift
         soloSoft.dispense(
             position="Position4",
             dispense_volumes=Plate_384_Corning_3540_BlackwClearBottomAssay().setColumn(
-                i, antibiotic_transfer_volume_s3
+                i + start_col, antibiotic_transfer_volume_s3
             ),
             mix_at_finish=True,
             mix_cycles=num_mixes,
@@ -632,9 +637,9 @@ reservoir_z_shift
         )
 
         dispense_volumes_startB = Plate_384_Corning_3540_BlackwClearBottomAssay().setColumn(
-                i, antibiotic_transfer_volume_s3
+                i + start_col, antibiotic_transfer_volume_s3
             )
-        dispense_volumes_startB[0][i-1] = 0
+        dispense_volumes_startB[0][i+start_col-1] = 0
 
         soloSoft.dispense(
             position="Position4",
@@ -664,7 +669,7 @@ reservoir_z_shift
         soloSoft.dispense(
             position="Position4",
             dispense_volumes=Plate_384_Corning_3540_BlackwClearBottomAssay().setColumn(
-                i + 6, antibiotic_transfer_volume_s3
+                i + end_col, antibiotic_transfer_volume_s3
             ),
             mix_at_finish=True,
             mix_cycles=num_mixes,
@@ -684,9 +689,9 @@ reservoir_z_shift
             aspirate_shift=[0, 0, reservoir_z_shift],
         )
         dispense_volumes_startB = Plate_384_Corning_3540_BlackwClearBottomAssay().setColumn(
-                i + 6, antibiotic_transfer_volume_s3
+                i + end_col, antibiotic_transfer_volume_s3
             )
-        dispense_volumes_startB[0][i+5] = 0
+        dispense_volumes_startB[0][i+end_col-1] = 0
 
         soloSoft.dispense(
             position="Position4",
@@ -701,4 +706,4 @@ reservoir_z_shift
     soloSoft.shuckTip()
     soloSoft.savePipeline()
 
-    return step3_hso_filename
+    return filename

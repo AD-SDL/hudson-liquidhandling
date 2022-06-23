@@ -72,7 +72,7 @@ def generate_campaign1_repeatable(
     reservoir_z_shift = 0.5  # z shift for deep blocks (Deck Positions 3 and 5)
     flat_bottom_z_shift = 2  # Note: 1 is not high enough (tested)
     #lambda6_path = "/lambda_stor/data/hudson/instructions/"
-    lambda6_path = "C:\\Users\\svcaibio\\Dev\\liquidhandling\\protocols\\campaign2\\test_hso"
+    lambda6_path = "C:\\Users\\svcaibio\\Dev\\liquidhandling\\protocols\\campaign2\\test_hso\\"
 
     # Step 1 variables
     media_transfer_volume_s1 = 20 
@@ -992,10 +992,10 @@ def generate_campaign1_repeatable(
 
 
         # * New File, second half of assay plate
-        step3_hso_filename = os.path.join(directory_path, f"plate{k}_step3.hso")
-        step3_hso_filename_list.append(step3_hso_filename)
+        step3_second_half_hso_filename = os.path.join(directory_path, f"plate{k}_step3_second_half.hso")
+        step3_hso_filename_list.append(step3_second_half_hso_filename)
         soloSoft = SoloSoft(
-            filename=step3_hso_filename,
+            filename=step3_second_half_hso_filename,
             plateList=[
                 "DeepBlock.96.VWR-75870-792.sterile",
                 "Empty",
@@ -1027,7 +1027,7 @@ def generate_campaign1_repeatable(
             soloSoft.dispense(
                 position="Position4",
                 dispense_volumes=Plate_384_Corning_3540_BlackwClearBottomAssay().setColumn(
-                    i, antibiotic_transfer_volume_s3
+                    i + 6, antibiotic_transfer_volume_s3
                 ),
                 mix_at_finish=True,
                 mix_cycles=num_mixes,
@@ -1049,9 +1049,9 @@ def generate_campaign1_repeatable(
             )
 
             dispense_volumes_startB = Plate_384_Corning_3540_BlackwClearBottomAssay().setColumn(
-                    i, antibiotic_transfer_volume_s3
+                    i + 6, antibiotic_transfer_volume_s3
                 )
-            dispense_volumes_startB[0][i-1] = 0
+            dispense_volumes_startB[0][i+5] = 0
 
             soloSoft.dispense(
                 position="Position4",
@@ -1081,7 +1081,7 @@ def generate_campaign1_repeatable(
             soloSoft.dispense(
                 position="Position4",
                 dispense_volumes=Plate_384_Corning_3540_BlackwClearBottomAssay().setColumn(
-                    i + 6, antibiotic_transfer_volume_s3
+                    i + 12, antibiotic_transfer_volume_s3
                 ),
                 mix_at_finish=True,
                 mix_cycles=num_mixes,
@@ -1101,9 +1101,9 @@ def generate_campaign1_repeatable(
                 aspirate_shift=[0, 0, reservoir_z_shift],
             )
             dispense_volumes_startB = Plate_384_Corning_3540_BlackwClearBottomAssay().setColumn(
-                    i + 6, antibiotic_transfer_volume_s3
+                    i + 12, antibiotic_transfer_volume_s3
                 )
-            dispense_volumes_startB[0][i+5] = 0
+            dispense_volumes_startB[0][i+11] = 0
 
             soloSoft.dispense(
                 position="Position4",
