@@ -137,7 +137,7 @@ def generate_campaign1_repeatable(
     treatment_to_assay_1_hso = []
     treatment_to_assay_2_hso = []
 
-    #* LOOP: produce 3 separate .hso files per plate
+    #* LOOP: produce 8 separate .hso files per plate
     for k in range(len(treatment)):
         # * Get location of treatment
         try:
@@ -304,7 +304,7 @@ reservoir_z_shift=reservoir_z_shift))
 
         softLinx.plateCraneMoveCrane("SoftLinx.PlateCrane.Safe")
 
-        # run all three liquid handling steps
+        # run all liquid handling steps
         softLinx.soloSoftRun(
             "C:\\Users\\svcaibio\\Dev\\liquidhandling\\protocols\\campaign2\\test_hso\\"
             + directory_name
