@@ -363,6 +363,8 @@ reservoir_z_shift=reservoir_z_shift))
         softLinx.plateCraneMoveCrane("SoftLinx.PlateCrane.Safe")
         # Load plate into incubator
         softLinx.liconicLoadIncubator(loadID=k, holdWithoutIncubationTime=True)
+
+        #TODO: swap out all labware? (dilution plates etc)
         #* END LOOP
 
     # reduce Hidex temp to reduce strain on instument over incubation (necessary?)

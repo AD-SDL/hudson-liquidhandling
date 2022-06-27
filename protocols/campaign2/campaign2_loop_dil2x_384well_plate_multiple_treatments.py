@@ -9,7 +9,7 @@ from liquidhandling import DeepBlock_96VWR_75870_792_sterile
 from liquidhandling import Reservoir_12col_Agilent_201256_100_BATSgroup
 from liquidhandling import Plate_96_Corning_3635_ClearUVAssay
 from tip_utils import replace_tip_box, remove_tip_box
-from campaign2_loop_dil2x_tiprep_384well_plate_hso_functions import *
+from campaign2_loop_dil2x_384_multiple_treatments_functions import *
 
 """
 Campaign 2 Protocol - 2x dilutions
