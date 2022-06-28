@@ -501,6 +501,7 @@ num_mixes
             # blowoff=blowoff_volume,
         )
 
+    # * here
     # * Transfer treatment in to first column of treatement dilution plate (will make 1:2 dilution)
     for i in range(2):
         soloSoft.aspirate(

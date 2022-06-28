@@ -383,38 +383,40 @@ reservoir_z_shift=reservoir_z_shift))
 
         #TODO: swap out all labware? (dilution plates etc)
         #* END LOOP
+    
+    # TODO: perform hourly hidex runs on all plates
+
 
     # reduce Hidex temp to reduce strain on instument over incubation (necessary?)
-    softLinx.hidexRun("SetTemp20")
+    # softLinx.hidexRun("SetTemp20")
 
-    softLinx.liconicShake(shaker1Speed=30, shakeTime=[0,0,5,0]) # 7hrs 6 min # * Temp shorten for testing
+    for i in range(12): # hours
+        # every hour, scan all plates
+        for k in range(len(treatment)):
+            softLinx.liconicUnloadIncubator(loadID=k)
+            softLinx.plateCraneRemoveLid(["SoftLinx.Liconic.Nest"], ["SoftLinx.PlateCrane.LidNest2"])
+            softLinx.plateCraneMovePlate(["SoftLinx.Liconic.Nest"], ["SoftLinx.Hidex.Nest"])
+            softLinx.hidexClose()
+            softLinx.plateCraneMoveCrane("SoftLinx.PlateCrane.Safe")
+            softLinx.hidexRun("Campaign1_noIncubate2_384")
 
-    # preheat Hidex for readings after incubation
-    softLinx.hidexRun("SetTempWait37")
-
-    #* LOOP: unload plates from incubator and take endpoing reading
-    for k in range(len(treatment)):
-        softLinx.liconicUnloadIncubator(loadID=k)
-        softLinx.plateCraneRemoveLid(["SoftLinx.Liconic.Nest"], ["SoftLinx.PlateCrane.LidNest2"])
-        softLinx.plateCraneMovePlate(["SoftLinx.Liconic.Nest"], ["SoftLinx.Hidex.Nest"])
-        softLinx.hidexClose()
-        softLinx.plateCraneMoveCrane("SoftLinx.PlateCrane.Safe")
-        softLinx.hidexRun("Campaign1_noIncubate2_384") # TODO
-
-        # transfer data to lambda6 # TODO
-        softLinx.runProgram(
+            # lambda6 TODO
+            softLinx.runProgram(
             "C:\\Users\\svcaibio\\Dev\\liquidhandling\\zeromq\\utils\\send_data.bat", arguments=f"{k} {directory_name} campaign2"
         )
 
-        # Move plate from Hidex to Stack 1 and replace lid
-        softLinx.plateCraneMovePlate(["SoftLinx.Hidex.Nest"], ["SoftLinx.PlateCrane.Stack1"], poolID=1)
-        softLinx.hidexClose()
-        softLinx.plateCraneReplaceLid(["SoftLinx.PlateCrane.LidNest2"], ["SoftLinx.PlateCrane.Stack1"])
-        softLinx.plateCraneMoveCrane("SoftLinx.PlateCrane.Safe")
+            # Move plate back to incubator, replace lid
+            softLinx.plateCraneMovePlate(["SoftLinx.Hidex.Nest"], ["SoftLinx.Liconic.Nest"])
+            softLinx.hidexClose()
+            softLinx.plateCraneReplaceLid(["SoftLinx.PlateCrane.LidNest2"], ["SoftLinx.Liconic.Nest"])
+            softLinx.plateCraneMoveCrane("SoftLinx.PlateCrane.Safe")
+            softLinx.liconicLoadIncubator(loadID=k, holdWithoutIncubationTime=True)
 
-        # shake in incubator until time to take next reading  (don't do if already read last plate)
-        if not k == (len(treatment)-1):
-            softLinx.liconicShake(shaker1Speed=30, shakeTime=[0,1,0,0])  # 23 min
+
+        softLinx.liconicShake(shaker1Speed=30, shakeTime=[0,1,0,0]) # 1 hour
+
+
+  
     #* END LOOP
 
     softLinx.hidexRun("SetTemp20")
