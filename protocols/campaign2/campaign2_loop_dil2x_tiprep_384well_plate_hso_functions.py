@@ -566,8 +566,8 @@ num_mixes
 
     return filename
 
-# * adds antibiotic to assay plate
-def generate_add_antibioitc_to_assay_hso(directory_path,
+# * adds antibiotic to assay plate (first half)
+def generate_add_antibioitc_to_assay_first_half_hso(directory_path,
 filename,
 treatment_dil_half,
 antibiotic_transfer_volume_s3,
@@ -681,6 +681,148 @@ reservoir_z_shift
             position="Position6",
             aspirate_volumes=Reservoir_12col_Agilent_201256_100_BATSgroup().setColumn(
                 (6 * (treatment_dil_half[k] - 1)) + i, antibiotic_transfer_volume_s3
+            ),
+            mix_at_start=True,
+            mix_cycles=num_mixes,
+            mix_volume=antibiotic_mix_volume_s3,
+            dispense_height=reservoir_z_shift,
+            aspirate_shift=[0, 0, reservoir_z_shift],
+        )
+        dispense_volumes_startB = Plate_384_Corning_3540_BlackwClearBottomAssay().setColumn(
+                i + end_col, antibiotic_transfer_volume_s3
+            )
+        dispense_volumes_startB[0][i+end_col-1] = 0
+
+        soloSoft.dispense(
+            position="Position4",
+            dispense_volumes=dispense_volumes_startB,
+            mix_at_finish=True,
+            mix_cycles=num_mixes,
+            mix_volume=destination_mix_volume_s3,
+            aspirate_height=flat_bottom_z_shift,
+            dispense_shift=[0, 0, flat_bottom_z_shift],
+        )
+
+    soloSoft.shuckTip()
+    soloSoft.savePipeline()
+
+    return filename
+
+
+def generate_add_antibioitc_to_assay_second_half_hso(directory_path,
+filename,
+treatment_dil_half,
+antibiotic_transfer_volume_s3,
+num_mixes,
+antibiotic_mix_volume_s3,
+resevoir_z_shift,
+destination_mix_volume_s3,
+flat_bottom_z_shift,
+start_col,
+end_col,
+k,
+reservoir_z_shift
+):
+    step3_hso_filename = os.path.join(directory_path, f"plate{k}_"+ filename)
+    # step3_hso_filename_list.append(step3_hso_filename)
+    soloSoft = SoloSoft(
+        filename=step3_hso_filename,
+        plateList=[
+            "DeepBlock.96.VWR-75870-792.sterile",
+            "Empty",
+            "TipBox.180uL.Axygen-EVF-180-R-S.bluebox",
+            "Corning 3540",
+            "DeepBlock.96.VWR-75870-792.sterile",
+            "DeepBlock.96.VWR-75870-792.sterile",
+            "DeepBlock.96.VWR-75870-792.sterile",
+            "DeepBlock.96.VWR-75870-792.sterile",
+        ],
+    )
+
+    soloSoft.getTip("Position3")
+    for i in range(end_col, start_col-1, -1):  # first quarter of plate
+        # if i == 3:  # switch tips half way through to reduce error  # tested and ok to remove
+        #     soloSoft.getTip()
+        soloSoft.aspirate(
+            position="Position6",
+            aspirate_volumes=Reservoir_12col_Agilent_201256_100_BATSgroup().setColumn(
+                (6 * (treatment_dil_half[k] - 1)) + i - 6, antibiotic_transfer_volume_s3 # difference here
+            ),
+            mix_at_start=True,
+            mix_cycles=num_mixes,
+            mix_volume=antibiotic_mix_volume_s3,
+            dispense_height=reservoir_z_shift,
+            aspirate_shift=[0, 0, reservoir_z_shift],
+        )
+        soloSoft.dispense(
+            position="Position4",
+            dispense_volumes=Plate_384_Corning_3540_BlackwClearBottomAssay().setColumn(
+                i + start_col, antibiotic_transfer_volume_s3
+            ),
+            mix_at_finish=True,
+            mix_cycles=num_mixes,
+            mix_volume=destination_mix_volume_s3,
+            aspirate_height=flat_bottom_z_shift,
+            dispense_shift=[0, 0, flat_bottom_z_shift],
+        )
+
+        soloSoft.aspirate(
+            position="Position6",
+            aspirate_volumes=Reservoir_12col_Agilent_201256_100_BATSgroup().setColumn(
+                (6 * (treatment_dil_half[k] - 1)) + i - 6, antibiotic_transfer_volume_s3
+            ),
+            mix_at_start=True,
+            mix_cycles=num_mixes,
+            mix_volume=antibiotic_mix_volume_s3,
+            dispense_height=reservoir_z_shift,
+            aspirate_shift=[0, 0, reservoir_z_shift],
+        )
+
+        dispense_volumes_startB = Plate_384_Corning_3540_BlackwClearBottomAssay().setColumn(
+                i + start_col, antibiotic_transfer_volume_s3
+            )
+        dispense_volumes_startB[0][i+start_col-1] = 0
+
+        soloSoft.dispense(
+            position="Position4",
+            dispense_volumes=dispense_volumes_startB,
+            mix_at_finish=True,
+            mix_cycles=num_mixes,
+            mix_volume=destination_mix_volume_s3,
+            aspirate_height=flat_bottom_z_shift,
+            dispense_shift=[0, 0, flat_bottom_z_shift],
+        )
+
+    soloSoft.getTip("Position3")
+    for i in range(end_col, start_col-1, -1):  # second quarter of plate
+        # if i == 3:  # switch tips half way through to reduce error  # tested and ok to remove
+        #     soloSoft.getTip()
+        soloSoft.aspirate(
+            position="Position6",
+            aspirate_volumes=Reservoir_12col_Agilent_201256_100_BATSgroup().setColumn(
+                (6 * (treatment_dil_half[k] - 1)) + i - 6, antibiotic_transfer_volume_s3
+            ),
+            mix_at_start=True,
+            mix_cycles=num_mixes,
+            mix_volume=antibiotic_mix_volume_s3,
+            dispense_height=reservoir_z_shift,
+            aspirate_shift=[0, 0, reservoir_z_shift],
+        )
+        soloSoft.dispense(
+            position="Position4",
+            dispense_volumes=Plate_384_Corning_3540_BlackwClearBottomAssay().setColumn(
+                i + end_col, antibiotic_transfer_volume_s3
+            ),
+            mix_at_finish=True,
+            mix_cycles=num_mixes,
+            mix_volume=destination_mix_volume_s3,
+            aspirate_height=flat_bottom_z_shift,
+            dispense_shift=[0, 0, flat_bottom_z_shift],
+        )
+        soloSoft.aspirate(
+            position="Position6",
+            aspirate_volumes=Reservoir_12col_Agilent_201256_100_BATSgroup().setColumn(
+                (6 * (treatment_dil_half[k] - 1)) + i - 6, antibiotic_transfer_volume_s3
             ),
             mix_at_start=True,
             mix_cycles=num_mixes,

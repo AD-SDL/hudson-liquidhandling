@@ -241,7 +241,7 @@ num_mixes=num_mixes))
 
         '''call generate_add_antibioitc_to_assay_hso TWICE, for each half, different start_col, end_col'''
         
-        treatment_to_assay_1_hso.append(generate_add_antibioitc_to_assay_hso(directory_path=directory_path,
+        treatment_to_assay_1_hso.append(generate_add_antibioitc_to_assay_first_half_hso(directory_path=directory_path,
         filename="antibiotic_to_assay_first_half.hso",
 treatment_dil_half=treatment_dil_half,
 antibiotic_transfer_volume_s3=antibiotic_transfer_volume_s3,
@@ -255,7 +255,7 @@ end_col=6,
 k=k,
 reservoir_z_shift=reservoir_z_shift))
 
-        treatment_to_assay_2_hso.append(generate_add_antibioitc_to_assay_hso(directory_path=directory_path,
+        treatment_to_assay_2_hso.append(generate_add_antibioitc_to_assay_second_half_hso(directory_path=directory_path,
         filename="antibiotic_to_assay_second_half.hso",
 treatment_dil_half=treatment_dil_half,
 antibiotic_transfer_volume_s3=antibiotic_transfer_volume_s3,
@@ -297,10 +297,14 @@ reservoir_z_shift=reservoir_z_shift))
         
 
         # current protocol uses 10 columns of tips per plate
-        # replace tip box for every treatment
-        remove_tip_box(softLinx, "Position3")
-        replace_tip_box(softLinx, "Protocol3")
-        softLinx.soloSoftResetTipCount(3)
+        # replace tip box for every treatment unless on first round
+        if k == 0:
+            replace_tip_box(softLinx, "Protocol3")
+            softLinx.soloSoftResetTipCount(3)
+        else:
+            remove_tip_box(softLinx, "Position3")
+            replace_tip_box(softLinx, "Protocol3")
+            softLinx.soloSoftResetTipCount(3)
 
         softLinx.plateCraneMoveCrane("SoftLinx.PlateCrane.Safe")
 
@@ -370,7 +374,7 @@ reservoir_z_shift=reservoir_z_shift))
     # reduce Hidex temp to reduce strain on instument over incubation (necessary?)
     softLinx.hidexRun("SetTemp20")
 
-    softLinx.liconicShake(shaker1Speed=30, shakeTime=[0,7,6,0]) # 7hrs 6 min
+    softLinx.liconicShake(shaker1Speed=30, shakeTime=[0,7,6,0]) # 7hrs 6 min # * Temp shorten for testing
 
     # preheat Hidex for readings after incubation
     softLinx.hidexRun("SetTempWait37")
