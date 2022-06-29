@@ -82,7 +82,7 @@ def generate_campaign1_repeatable(
     culture_plate_mix_volume_s1 = 100  # mix volume increased for test 09/07/21
     culture_plate_num_mix = 7
     culture_dilution_num_mix = 10
-    growth_plate_mix_volume_s1 = 40
+    growth_plate_mix_volume_s1 = 20
     culture_dilution_mix_volume = 180
 
     # Step 2 variables
@@ -99,8 +99,8 @@ def generate_campaign1_repeatable(
 
     # Step 3 variables
     antibiotic_transfer_volume_s3 = 30 # reduced to be 1:1 with media + cells
-    antibiotic_mix_volume_s3 = 90
-    destination_mix_volume_s3 = 100
+    antibiotic_mix_volume_s3 = 30
+    destination_mix_volume_s3 = 50
 
     # * Create folder to store all instruction files
     project = "Campaign2"
