@@ -165,8 +165,8 @@ media_start_column=media_start_column,
 media_z_shift=media_z_shift, 
 media_transfer_volume_s1=media_transfer_volume_s1,
 flat_bottom_z_shift=flat_bottom_z_shift,
-start_col = 7,
-end_col = 12,
+start_col = 13,
+end_col = 18,
 k=k))
 
 
