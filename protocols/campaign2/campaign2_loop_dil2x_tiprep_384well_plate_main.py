@@ -82,7 +82,7 @@ def generate_campaign1_repeatable(
     culture_plate_mix_volume_s1 = 100  # mix volume increased for test 09/07/21
     culture_plate_num_mix = 7
     culture_dilution_num_mix = 10
-    growth_plate_mix_volume_s1 = 40
+    growth_plate_mix_volume_s1 = 20
     culture_dilution_mix_volume = 180
 
     # Step 2 variables
@@ -99,8 +99,8 @@ def generate_campaign1_repeatable(
 
     # Step 3 variables
     antibiotic_transfer_volume_s3 = 30 # reduced to be 1:1 with media + cells
-    antibiotic_mix_volume_s3 = 90
-    destination_mix_volume_s3 = 100
+    antibiotic_mix_volume_s3 = 30
+    destination_mix_volume_s3 = 50
 
     # * Create folder to store all instruction files
     project = "Campaign2"
@@ -149,7 +149,7 @@ def generate_campaign1_repeatable(
 
 
         ''' CALL generate_media_transfer_to_assay_hso TWICE, ONE FOR EACH HALF OF PLATE, change start and end cols'''
-        media_to_assay_1_hso.append(generate_media_transfer_to_half_assay_hso(directory_path=directory_path,
+        media_to_assay_1_hso.append(generate_media_transfer_to_half_assay_loop_hso(directory_path=directory_path,
         filename="media_to_assay_first_half.hso",
 media_start_column=media_start_column,
 media_z_shift=media_z_shift, 
@@ -159,7 +159,7 @@ start_col = 1,
 end_col = 6,
 k=k))
 
-        media_to_assay_2_hso.append(generate_media_transfer_to_half_assay_hso(directory_path=directory_path,
+        media_to_assay_2_hso.append(generate_media_transfer_to_half_assay_loop_hso(directory_path=directory_path,
         filename="media_to_assay_second_half.hso",
 media_start_column=media_start_column,
 media_z_shift=media_z_shift, 
@@ -200,6 +200,7 @@ culture_transfer_volume_s1=culture_transfer_volume_s1,
 culture_dil_column=culture_dil_column,
 num_mixes=num_mixes,
 growth_plate_mix_volume_s1=growth_plate_mix_volume_s1,
+# pre_aspirate=10,
 start_col=1,
 end_col=6,
 k=k))
@@ -214,6 +215,7 @@ culture_transfer_volume_s1=culture_transfer_volume_s1,
 culture_dil_column=culture_dil_column,
 num_mixes=num_mixes,
 growth_plate_mix_volume_s1=growth_plate_mix_volume_s1,
+# pre_aspirate=10,
 start_col=13,
 end_col=18,
 k=k))
@@ -387,7 +389,7 @@ reservoir_z_shift=reservoir_z_shift))
     # reduce Hidex temp to reduce strain on instument over incubation (necessary?)
     softLinx.hidexRun("SetTemp20")
 
-    softLinx.liconicShake(shaker1Speed=30, shakeTime=[0,0,5,0]) # 7hrs 6 min # * Temp shorten for testing
+    softLinx.liconicShake(shaker1Speed=30, shakeTime=[0,7,6,0]) # 7hrs 6 min # * Temp shorten for testing
 
     # preheat Hidex for readings after incubation
     softLinx.hidexRun("SetTempWait37")
