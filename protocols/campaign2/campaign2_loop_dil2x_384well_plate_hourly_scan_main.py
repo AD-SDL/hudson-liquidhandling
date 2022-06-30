@@ -77,8 +77,8 @@ def generate_campaign1_repeatable(
     # Step 1 variables
     media_transfer_volume_s1 = 20 
     culture_transfer_volume_s1 = 10 # reducing volumes, keeping 1:3 ratio culture to media volume
-    half_dilution_media_volume = 99
-    dilution_culture_volume = 22
+    half_dilution_media_volume = 99 # TODO: triple
+    dilution_culture_volume = 22 # TODO: triple
     culture_plate_mix_volume_s1 = 100  # mix volume increased for test 09/07/21
     culture_plate_num_mix = 7
     culture_dilution_num_mix = 10
@@ -86,10 +86,10 @@ def generate_campaign1_repeatable(
     culture_dilution_mix_volume = 180
 
     # Step 2 variables
-    media_transfer_volume_s2 = (
+    media_transfer_volume_s2 = ( # TODO: increase
         120  # two times = 240 uL (will add 240 ul stock for 1:2 dilution)
     )
-    last_column_transfer_volume_s2 = (
+    last_column_transfer_volume_s2 = ( # TODO: increase
         120  # two times = 240uL (to equal volume in 1:10 dilution wells)
     )
     serial_antibiotic_transfer_volume_s2 = 120  # transfers twice (240tr + 240 lb = 1:2 dil)
@@ -99,8 +99,8 @@ def generate_campaign1_repeatable(
 
     # Step 3 variables
     antibiotic_transfer_volume_s3 = 30 # reduced to be 1:1 with media + cells
-    antibiotic_mix_volume_s3 = 30
-    destination_mix_volume_s3 = 50
+    antibiotic_mix_volume_s3 = 30 # must be less than or equal to volume of antibiotics
+    destination_mix_volume_s3 = 50 # less than sum of antibiotics + cells + media
 
     # * Create folder to store all instruction files
     project = "Campaign2"
@@ -147,7 +147,7 @@ def generate_campaign1_repeatable(
             raise  # need to know locaton of treatment, rest of protocol useless if not specified
 
 
-
+        #TODO: change to looping function, add preaspirate and blowoff
         ''' CALL generate_media_transfer_to_assay_hso TWICE, ONE FOR EACH HALF OF PLATE, change start and end cols'''
         media_to_assay_1_hso.append(generate_media_transfer_to_half_assay_hso(directory_path=directory_path,
         filename="media_to_assay_first_half.hso",
@@ -188,7 +188,7 @@ culture_column=culture_column,
 num_mixes=num_mixes,
 culture_dilution_num_mix=culture_dilution_num_mix,
 culture_dilution_mix_volume=culture_dilution_mix_volume))
-
+        # TODO: remove mixing step in function
         '''call generate_add_diluted_cells_to_assay_hso twice, once for each half, change start and end cols'''
         cells_to_assay_1_hso.append(generate_add_diluted_cells_to_assay_hso(directory_path=directory_path,
         filename="cells_to_assay_first_half.hso",
@@ -474,7 +474,7 @@ def find_treatment_loc(treatment_name):  # TODO: Move this method out of protoco
 
     return treatment_locations[treatment_name]
 
-
+# TODO: edit command line to treat a 384 well plate like 4 96 well plates (4 arguments per plate)
 def main(args):
     # Parse args
     parser = argparse.ArgumentParser()

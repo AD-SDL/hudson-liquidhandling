@@ -7,6 +7,7 @@ from liquidhandling import *
 from tip_utils import replace_tip_box, remove_tip_box
 
 # * Transfers media from resevoir in position 1 to given columns in 384 well assay plate in position 4
+# TODO: edit to aspirate from 4 columns instead of two
 def generate_media_transfer_to_half_assay_hso(directory_path,
 filename,
 media_start_column,
