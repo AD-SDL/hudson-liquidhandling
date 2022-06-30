@@ -8,7 +8,7 @@ from tip_utils import replace_tip_box, remove_tip_box
 
 # * Transfers media from resevoir in position 1 to given columns in 384 well assay plate in position 4 for 6 columns (one quadrant)
 
-def generate_media_transfer_to_half_assay_hso(directory_path,
+def generate_media_transfer_to_quarter_assay_hso(directory_path,
 filename,
 media_start_column,
 media_z_shift, 
@@ -37,15 +37,18 @@ k): # k = current treatment number
     )
 
     soloSoft.getTip("Position3")
-
-    for i in range(start_col, end_col+1):  # first quarter plate = media from column 1
-        soloSoft.aspirate(
+    # TODO: check to see if pre-aspirate possible with multiple dispenses 
+    soloSoft.aspirate(
             position="Position1",
             aspirate_volumes=Reservoir_12col_Agilent_201256_100_BATSgroup().setColumn(
                 media_start_column[k], media_transfer_volume_s1
             ),
             aspirate_shift=[0, 0, media_z_shift],
+            #pre_aspirate=10
         )
+
+    for i in range(start_col, end_col+1):  # first quarter plate = media from column 1
+        
         soloSoft.dispense(
             position="Position4",
             dispense_volumes=Plate_384_Corning_3540_BlackwClearBottomAssay().setColumn(
@@ -53,14 +56,16 @@ k): # k = current treatment number
             ),
             dispense_shift=[0, 0, flat_bottom_z_shift],
         )
+    soloSoft.aspirate(
+        position="Position1",
+        aspirate_volumes=Reservoir_12col_Agilent_201256_100_BATSgroup().setColumn(
+            media_start_column[k], media_transfer_volume_s1
+        ),
+        aspirate_shift=[0, 0, media_z_shift],
+    )
 
-        soloSoft.aspirate(
-            position="Position1",
-            aspirate_volumes=Reservoir_12col_Agilent_201256_100_BATSgroup().setColumn(
-                media_start_column[k], media_transfer_volume_s1
-            ),
-            aspirate_shift=[0, 0, media_z_shift],
-        )
+    for i in range(start_col, end_col-1):
+
         dispense_volumes_startB = Plate_384_Corning_3540_BlackwClearBottomAssay().setColumn(
                 i, media_transfer_volume_s1
             )
@@ -76,6 +81,7 @@ k): # k = current treatment number
 
     return filename
 
+# TODO: should be fine to keep same, look into using multiple 
 # * Fill culture dilution resevoir and treatment plates with media
 def generate_fill_culture_dilution_and_treatment_plates_with_media_hso(directory_path,
 filename,
@@ -256,6 +262,7 @@ k
             dispense_height=reservoir_z_shift,
             mix_volume=culture_transfer_volume_s1,
             syringe_speed=25,
+            pre_aspirate=10,
         )
         soloSoft.dispense(  # do need to mix at end of transfer
             position="Position4",
@@ -268,6 +275,7 @@ k
             aspirate_height=flat_bottom_z_shift,
             dispense_shift=[0, 0, flat_bottom_z_shift],
             syringe_speed=25,
+            blowoff=10,
         )
 
         soloSoft.aspirate(  # well in first half
@@ -285,6 +293,7 @@ k
             dispense_height=reservoir_z_shift,
             mix_volume=culture_transfer_volume_s1,
             syringe_speed=25,
+            pre_aspirate=10,
         )
 
         dispense_volumes_startB = Plate_384_Corning_3540_BlackwClearBottomAssay().setColumn(
@@ -301,9 +310,13 @@ k
             aspirate_height=flat_bottom_z_shift,
             dispense_shift=[0, 0, flat_bottom_z_shift],
             syringe_speed=25,
+            blowoff=10,
         )
+    soloSoft.shuckTip()
+    soloSoft.savePipeline()
 
-#* Step 2, performs serial dilution on treatment plate
+    return filename
+
 
 #* Step 2, performs serial dilution on treatment plate
 def generate_serial_dlution_treatment_hso(directory_path,
