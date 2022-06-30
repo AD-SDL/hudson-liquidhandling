@@ -84,11 +84,11 @@ def generate_campaign1_repeatable(
     culture_plate_mix_volume_s1 = 100  # mix volume increased for test 09/07/21
     culture_plate_num_mix = 7
     culture_dilution_num_mix = 10
-    growth_plate_mix_volume_s1 = 40
+    growth_plate_mix_volume_s1 = 20
     culture_dilution_mix_volume = 180
 
     # Step 2 variables
-    media_transfer_volume_s2 = (
+    media_transfer_volume_s2 = ( # TODO: increase most stock volumes for 384
         120  # two times = 240 uL (will add 240 ul stock for 1:2 dilution)
     )
     last_column_transfer_volume_s2 = (
@@ -101,8 +101,8 @@ def generate_campaign1_repeatable(
 
     # Step 3 variables
     antibiotic_transfer_volume_s3 = 30 # reduced to be 1:1 with media + cells
-    antibiotic_mix_volume_s3 = 90
-    destination_mix_volume_s3 = 100
+    antibiotic_mix_volume_s3 = 30
+    destination_mix_volume_s3 = 50
 
     # * Create folder to store all instruction files
     project = "Campaign2"
@@ -132,13 +132,15 @@ def generate_campaign1_repeatable(
     # * Lists for every generated hso file
     # TODO: should be able to keep the same? but look into it
     media_to_assay_1_hso = []
-    media_to_assay_2_hso = []
+    # media_to_assay_2_hso = []
+    # media_to_assay_3_hso = []
+    # media_to_assay_4_hso = []
     media_to_culture_hso = []
-    cells_to_assay_1_hso = []
-    cells_to_assay_2_hso = []
+    cells_to_assay_hso = []
+    # cells_to_assay_2_hso = []
     serial_dilution_hso = []
-    treatment_to_assay_1_hso = []
-    treatment_to_assay_2_hso = []
+    treatment_to_assay_hso = []
+    # treatment_to_assay_2_hso = []
 
     #* LOOP: produce 8 separate .hso files per treatment
     for k in range(len(treatment)):
@@ -150,15 +152,101 @@ def generate_campaign1_repeatable(
             raise  # need to know locaton of treatment, rest of protocol useless if not specified
         # TODO, check to see if using full plate? or fill plate with media regardless?
         # TODO, might need separte file of functions
+        #TODO: run one quarter at a time? or fill entire plate at once?
+
+        # establish start and end columns for current quadrant:
+        if k%4 == 0:
+            start_col = 1
+            end_col = 6
+        else:
+            end_col = ((k%4) * 6) + 6
+            start_col = end_col - 5
+
+        #* completes protocol for one single quadrant only
+
+
         #* generate media transfer to assay hso # one col of tips
+        media_to_assay_1_hso.append(generate_media_transfer_to_quarter_assay_hso(directory_path=directory_path,
+        filename="media_to_assay_quarter_1.hso",
+        media_start_column=media_start_column, 
+        media_z_shift=media_z_shift,
+        media_transfer_volume_s1=media_transfer_volume_s1,
+        flat_bottom_z_shift=flat_bottom_z_shift,
+        start_col=start_col,
+        end_col=end_col,
+        k=k))
+
         
         #* fill cell dilution and treatment dilution plates with media # one col of tips 
+        media_to_culture_hso.append(generate_fill_culture_dilution_and_treatment_plates_with_media_hso(directory_path=directory_path,
+        fielname="media_to_culture",
+        media_start_column=media_start_column,
+        media_z_shift=media_z_shift,
+        flat_bottom_z_shift=flat_bottom_z_shift,
+        reservoir_z_shift=reservoir_z_shift,
+        half_dilution_media_volume=half_dilution_media_volume,
+        dilution_culture_volume=dilution_culture_volume,
+        culture_plate_num_mix=culture_plate_num_mix,
+        culture_plate_mix_volume_s1=culture_plate_mix_volume_s1,
+        culture_dil_column=culture_dil_column,
+        k=k,
+        culture_column=culture_column,
+        num_mixes=num_mixes,
+        culture_dilution_num_mix=culture_dilution_num_mix,
+        culture_dilution_mix_volume=culture_dilution_mix_volume))
 
         #* add diluted cells to assay # one column of tips unless want to do outside of loop?
+        #* no loop, so that we can blowoff
+        cells_to_assay_hso.append(generate_add_diluted_cells_to_assay_hso(directory_path=directory_path,
+        filename="cells_to_assay",
+        media_start_column=media_start_column,
+        media_z_shift=media_z_shift,
+        flat_bottom_z_shift=flat_bottom_z_shift,
+        reservoir_z_shift=reservoir_z_shift,
+        culture_transfer_volume_s1=culture_transfer_volume_s1,
+        culture_dil_column=culture_dil_column,
+        num_mixes=num_mixes,
+        growth_plate_mix_volume_s1=growth_plate_mix_volume_s1,
+        start_col=start_col,
+        end_col=end_col,
+        k=k))
+
 
         #* perform serial dilution of given treatment # one column of tips
+        #* should be fine to leave same? just increase volumes
+        serial_dilution_hso.append(generate_serial_dlution_treatment_hso(directory_path=directory_path,
+        filename="treatment_serial_dilution",
+        treatment_dil_half=treatment_dil_half,
+        media_start_column=media_start_column,
+        media_transfer_volume_s2=media_transfer_volume_s2,
+        media_z_shift=media_z_shift,
+        reservoir_z_shift=reservoir_z_shift,
+        last_column_transfer_volume_s2=last_column_transfer_volume_s2,
+        treatment_plate_loc=treatment_plate_loc,
+        serial_antibiotic_transfer_volume_s2=serial_antibiotic_transfer_volume_s2,
+        treatment_column=treatment_column,
+        blowoff_volume=blowoff_volume,
+        serial_source_num_mixes_s2=serial_source_num_mixes_s2,
+        serial_source_mixing_volume_s2=serial_source_mixing_volume_s2,
+        serial_destination_mixing_volume_s2=serial_destination_mixing_volume_s2,
+        k=k,
+        num_mixes=num_mixes
+        ))
 
         #* add antibiotic to assay # one column of tips
+        treatment_to_assay_hso.append(generate_add_antibioitc_to_assay_hso(directory_path=directory_path,
+        filename="treatment_to_assay",
+        treatment_dil_half=treatment_dil_half,
+        antibiotic_transfer_volume_s3=antibiotic_transfer_volume_s3,
+        num_mixes=num_mixes,
+        antibiotic_mix_volume_s3=antibiotic_mix_volume_s3,
+        reservoir_z_shift=reservoir_z_shift,
+        destination_mix_volume_s3=destination_mix_volume_s3,
+        flat_bottom_z_shift=flat_bottom_z_shift,
+        start_col=1,
+        end_col=6,
+        k=k,
+        reservoir_z_shift=reservoir_z_shift))
 
         # TODO: tip total per treatment: 5, can use 2 boxes per treatment as of now
     
@@ -167,8 +255,12 @@ def generate_campaign1_repeatable(
     # initialize softLinx
     softLinx = SoftLinx("Steps_384_assay_multi_treatment", os.path.join(directory_path, "steps384_assay_multi_treatment.slvp"))
 
+    # softLinx.setPlates(
+    #     {"SoftLinx.PlateCrane.Stack5": "Corning 3540", }
+    # )
+
     softLinx.setPlates(
-        {"SoftLinx.PlateCrane.Stack5": "Corning 3540"}
+        {"SoftLinx.PlateCrane.Stack5": "Plate.96.Corning-3635.ClearUVAssay", "SoftLinx.PlateCrane.Stack4": "TipBox.180uL.Axygen-EVF-180-R-S.bluebox"}
     )
 
     # set up equiptment
@@ -183,7 +275,7 @@ def generate_campaign1_repeatable(
 
         #* if fourth or last treatment total, move assay plate from position 4 to liconic, replace lid, move to safe, load incubator
 
-    #* incubate plates for 7 hours 6 mins, start up hidex
+    #* incubate plates for 12 hours, start up hidex
 
     #TODO: create way to detemrine how many plates we have (#treatments/4)
 
