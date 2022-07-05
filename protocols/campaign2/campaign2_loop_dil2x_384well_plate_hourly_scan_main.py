@@ -1,6 +1,4 @@
-# TO DO
-# variables, plates list, quadrants
-# divide hso steps
+# required imports
 import argparse
 import os
 import sys
@@ -75,7 +73,7 @@ def generate_campaign1_repeatable(
     lambda6_path = "C:\\Users\\svcaibio\\Dev\\liquidhandling\\protocols\\campaign2\\test_hso\\"
 
     # Step 1 variables
-    media_transfer_volume_s1 = 20 
+    media_transfer_volume_s1 = 20
     culture_transfer_volume_s1 = 10 # reducing volumes, keeping 1:3 ratio culture to media volume
     half_dilution_media_volume = 99 # TODO: triple
     dilution_culture_volume = 22 # TODO: triple
@@ -147,31 +145,28 @@ def generate_campaign1_repeatable(
             raise  # need to know locaton of treatment, rest of protocol useless if not specified
 
 
-        #TODO: change to looping function, add preaspirate and blowoff
-        ''' CALL generate_media_transfer_to_assay_hso TWICE, ONE FOR EACH HALF OF PLATE, change start and end cols'''
+        # transfer media from media reservoir to half of the assay plate (1-12 columns) -- multiple dispense per aspiration
         media_to_assay_1_hso.append(generate_media_transfer_to_half_assay_loop_hso(directory_path=directory_path,
         filename="media_to_assay_first_half.hso",
 media_start_column=media_start_column,
-media_z_shift=media_z_shift, 
+media_z_shift=media_z_shift,
 media_transfer_volume_s1=media_transfer_volume_s1,
 flat_bottom_z_shift=flat_bottom_z_shift,
 start_col = 1,
 end_col = 6,
 k=k))
-
+    # transfer media from media reservoir to second half of the assay plate (13 -24 columns)-- multiple dispense per aspiration
         media_to_assay_2_hso.append(generate_media_transfer_to_half_assay_loop_hso(directory_path=directory_path,
         filename="media_to_assay_second_half.hso",
 media_start_column=media_start_column,
-media_z_shift=media_z_shift, 
+media_z_shift=media_z_shift,
 media_transfer_volume_s1=media_transfer_volume_s1,
 flat_bottom_z_shift=flat_bottom_z_shift,
 start_col = 13,
 end_col = 18,
 k=k))
 
-
-        ''' call generate_fill_culture_dilution_and_treatment_plates_with_media_hso'''
-
+# transferring media from media reservoir to cell dilution and treatment dilution deep well plates
         media_to_culture_hso.append(generate_fill_culture_dilution_and_treatment_plates_with_media_hso(directory_path=directory_path,
         filename="culture_dilution.hso",
 media_start_column=media_start_column,
@@ -190,7 +185,7 @@ culture_dilution_num_mix=culture_dilution_num_mix,
 culture_dilution_mix_volume=culture_dilution_mix_volume,
 blowoff_volume=blowoff_volume))
         # TODO: remove mixing step in function
-        '''call generate_add_diluted_cells_to_assay_hso twice, once for each half, change start and end cols'''
+        #transferring diluted cells from cell dilution deep well columns 1 and 2 and dispensed into first half of the assay plate
         cells_to_assay_1_hso.append(generate_add_diluted_cells_to_assay_first_half_hso(directory_path=directory_path,
         filename="cells_to_assay_first_half.hso",
 media_start_column=media_start_column,
@@ -205,6 +200,7 @@ start_col=1,
 end_col=6,
 k=k))
 
+#transferring diluted cells from cell dilution deep well columns 3 and 4 and dispensed into second half of the assay plate
         cells_to_assay_2_hso.append(generate_add_diluted_cells_to_assay_second_half_hso(directory_path=directory_path,
         filename="cells_to_assay_second_half.hso",
 media_start_column=media_start_column,
@@ -218,8 +214,9 @@ growth_plate_mix_volume_s1=growth_plate_mix_volume_s1,
 start_col=13,
 end_col=18,
 k=k))
-        ''' call generate_serial_dlution_treatment_hso'''
 
+#TO DO : check if this needs to be split because of the volumes
+# treatment dilutions are made with different concentrations
         serial_dilution_hso.append(generate_serial_dlution_treatment_hso(directory_path=directory_path,
         filename="serial_dilution_treatment.hso",
 treatment_dil_half=treatment_dil_half,
@@ -238,10 +235,7 @@ serial_destination_mixing_volume_s2=serial_destination_mixing_volume_s2,
 k=k,
 num_mixes=num_mixes))
 
-        
-
-        '''call generate_add_antibioitc_to_assay_hso TWICE, for each half, different start_col, end_col'''
-        
+# Transferring treatment to first half of assay plate with different concentrations
         treatment_to_assay_1_hso.append(generate_add_antibioitc_to_assay_first_half_hso(directory_path=directory_path,
         filename="antibiotic_to_assay_first_half.hso",
 treatment_dil_half=treatment_dil_half,
@@ -255,7 +249,7 @@ start_col=1,
 end_col=6,
 k=k,
 reservoir_z_shift=reservoir_z_shift))
-
+# Transferring treatment to second half of assay plate with different concentrations
         treatment_to_assay_2_hso.append(generate_add_antibioitc_to_assay_second_half_hso(directory_path=directory_path,
         filename="antibiotic_to_assay_second_half.hso",
 treatment_dil_half=treatment_dil_half,
@@ -300,7 +294,7 @@ reservoir_z_shift=reservoir_z_shift))
         softLinx.plateCraneRemoveLid(
             ["SoftLinx.Solo.Position4"], ["SoftLinx.PlateCrane.LidNest2"]
         )
-        
+
 
         # current protocol uses 10 columns of tips per plate
         # replace tip box for every treatment unless on first round
@@ -373,18 +367,34 @@ reservoir_z_shift=reservoir_z_shift))
             + f"plate{k}_"
             + os.path.basename(treatment_to_assay_2_hso[k])
         )
-    
 
-        softLinx.plateCraneMovePlate(["SoftLinx.Solo.Position4"], ["SoftLinx.Liconic.Nest"])
-            #softLinx.hidexClose()
+        softLinx.plateCraneMovePlate(["SoftLinx.Solo.Position4"], ["SoftLinx.Hidex.Nest"])
+        softLinx.hidexClose()
+        softLinx.plateCraneMoveCrane("SoftLinx.PlateCrane.Safe")
+        softLinx.hidexRun("Campaign1_noIncubate2_384")
+
+        # lambda6 TODO
+        softLinx.runProgram(
+        "C:\\Users\\svcaibio\\Dev\\liquidhandling\\zeromq\\utils\\send_data.bat", arguments=f"{k} {directory_name} campaign2"
+    )
+
+        # Move plate back to incubator, replace lid
+        softLinx.plateCraneMovePlate(["SoftLinx.Hidex.Nest"], ["SoftLinx.Liconic.Nest"])
+        softLinx.hidexClose()
         softLinx.plateCraneReplaceLid(["SoftLinx.PlateCrane.LidNest2"], ["SoftLinx.Liconic.Nest"])
         softLinx.plateCraneMoveCrane("SoftLinx.PlateCrane.Safe")
-        # Load plate into incubator
         softLinx.liconicLoadIncubator(loadID=k, holdWithoutIncubationTime=True)
+        
+        # softLinx.plateCraneMovePlate(["SoftLinx.Solo.Position4"], ["SoftLinx.Liconic.Nest"])
+        #     #softLinx.hidexClose()
+        # softLinx.plateCraneReplaceLid(["SoftLinx.PlateCrane.LidNest2"], ["SoftLinx.Liconic.Nest"])
+        # softLinx.plateCraneMoveCrane("SoftLinx.PlateCrane.Safe")
+        # # Load plate into incubator
+        # softLinx.liconicLoadIncubator(loadID=k, holdWithoutIncubationTime=True)
 
         #TODO: swap out all labware? (dilution plates etc)
         #* END LOOP
-    
+
     # TODO: perform hourly hidex runs on all plates
 
 
@@ -417,7 +427,7 @@ reservoir_z_shift=reservoir_z_shift))
         softLinx.liconicShake(shaker1Speed=30, shakeTime=[0,1,0,0]) # 1 hour
 
 
-  
+
     #* END LOOP
 
     softLinx.hidexRun("SetTemp20")
