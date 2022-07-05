@@ -31,7 +31,7 @@ Stack 5 - 384 well clear, flat-bottom plate w/ lid.  (will be placed on deck pos
 Stack 4 - Full Tip Box Replacements
 Stack 3 - Empty Tip Box Storage (empty at start)
 Example command line usage: (creating 3 plates)
-python campaign2_loop_dil2x.py -tr col1 col2 col3 -cc 1 2 3 -mc 1 3 5 -tdh 1 2 1 -cdc 1 2 3
+python campaign2_loop_dil2x.py -tr col1 col2 col3 -cc 1 2 3 -mc 1 3 5 -tdh 1 2 1 -cdc 1 2 3 #* 4 media columns per run
 COMMAND LINE ARGUMENTS:
 TODO
 """
@@ -149,7 +149,7 @@ def generate_campaign1_repeatable(
 
         #TODO: change to looping function, add preaspirate and blowoff
         ''' CALL generate_media_transfer_to_assay_hso TWICE, ONE FOR EACH HALF OF PLATE, change start and end cols'''
-        media_to_assay_1_hso.append(generate_media_transfer_to_half_assay_hso(directory_path=directory_path,
+        media_to_assay_1_hso.append(generate_media_transfer_to_half_assay_loop_hso(directory_path=directory_path,
         filename="media_to_assay_first_half.hso",
 media_start_column=media_start_column,
 media_z_shift=media_z_shift, 
@@ -159,7 +159,7 @@ start_col = 1,
 end_col = 6,
 k=k))
 
-        media_to_assay_2_hso.append(generate_media_transfer_to_half_assay_hso(directory_path=directory_path,
+        media_to_assay_2_hso.append(generate_media_transfer_to_half_assay_loop_hso(directory_path=directory_path,
         filename="media_to_assay_second_half.hso",
 media_start_column=media_start_column,
 media_z_shift=media_z_shift, 
@@ -187,10 +187,11 @@ k=k,
 culture_column=culture_column,
 num_mixes=num_mixes,
 culture_dilution_num_mix=culture_dilution_num_mix,
-culture_dilution_mix_volume=culture_dilution_mix_volume))
+culture_dilution_mix_volume=culture_dilution_mix_volume,
+blowoff_volume=blowoff_volume))
         # TODO: remove mixing step in function
         '''call generate_add_diluted_cells_to_assay_hso twice, once for each half, change start and end cols'''
-        cells_to_assay_1_hso.append(generate_add_diluted_cells_to_assay_hso(directory_path=directory_path,
+        cells_to_assay_1_hso.append(generate_add_diluted_cells_to_assay_first_half_hso(directory_path=directory_path,
         filename="cells_to_assay_first_half.hso",
 media_start_column=media_start_column,
 media_z_shift=media_z_shift,
@@ -204,7 +205,7 @@ start_col=1,
 end_col=6,
 k=k))
 
-        cells_to_assay_2_hso.append(generate_add_diluted_cells_to_assay_hso(directory_path=directory_path,
+        cells_to_assay_2_hso.append(generate_add_diluted_cells_to_assay_second_half_hso(directory_path=directory_path,
         filename="cells_to_assay_second_half.hso",
 media_start_column=media_start_column,
 media_z_shift=media_z_shift,
