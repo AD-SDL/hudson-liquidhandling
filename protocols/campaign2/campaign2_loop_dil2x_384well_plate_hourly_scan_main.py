@@ -24,7 +24,7 @@ Pos 4 = EMPTY TO START
 Pos 5 = 96 deep well culture stock plate
 Pos 6 = 96 deep well (empty at start)
 Pos 7 = 96 deep well culture dilution plate (plate is empty at start)
-Pos 8 = 96 well flat bottom treatment plate (one treatment per column, min 280uL treatment per well)
+Pos 8 = 96 deep well treatment plate (one treatment per column, min 280uL treatment per well)
 Stack 5 - 384 well clear, flat-bottom plate w/ lid.  (will be placed on deck pos 4 at start of protocol)
 Stack 4 - Full Tip Box Replacements
 Stack 3 - Empty Tip Box Storage (empty at start)
@@ -90,7 +90,7 @@ def generate_campaign1_repeatable(
     last_column_transfer_volume_s2 = ( # TODO: increase
         120  # two times = 240uL (to equal volume in 1:10 dilution wells)
     )
-    serial_antibiotic_transfer_volume_s2 = 120  # transfers twice (240tr + 240 lb = 1:2 dil)
+    serial_antibiotic_transfer_volume_s2 = 120  # transfers twice (480tr + 480 lb = 1:2 dil)
     serial_source_mixing_volume_s2 = 110
     serial_source_num_mixes_s2 = 5
     serial_destination_mixing_volume_s2 = 150
@@ -217,8 +217,8 @@ k=k))
 
 #TO DO : check if this needs to be split because of the volumes
 # treatment dilutions are made with different concentrations
-        serial_dilution_hso.append(generate_serial_dlution_treatment_hso(directory_path=directory_path,
-        filename="serial_dilution_treatment.hso",
+        serial_dilution_hso.append(generate_serial_dlution_treatment_part1_hso(directory_path=directory_path,
+        filename="serial_dilution_treatment_part1.hso",
 treatment_dil_half=treatment_dil_half,
 media_start_column=media_start_column,
 media_transfer_volume_s2=media_transfer_volume_s2,
@@ -234,6 +234,27 @@ serial_source_mixing_volume_s2=serial_source_mixing_volume_s2,
 serial_destination_mixing_volume_s2=serial_destination_mixing_volume_s2,
 k=k,
 num_mixes=num_mixes))
+
+# treatment dilutions are made with different concentrations
+        serial_dilution_hso.append(generate_serial_dlution_treatment_part2_hso(directory_path=directory_path,
+        filename="serial_dilution_treatment_part2.hso",
+treatment_dil_half=treatment_dil_half,
+media_start_column=media_start_column,
+media_transfer_volume_s2=media_transfer_volume_s2,
+media_z_shift=media_z_shift,
+reservoir_z_shift=reservoir_z_shift,
+last_column_transfer_volume_s2=last_column_transfer_volume_s2,
+treatment_plate_loc=treatment_plate_loc,
+serial_antibiotic_transfer_volume_s2=serial_antibiotic_transfer_volume_s2,
+treatment_column=treatment_column,
+blowoff_volume=blowoff_volume,
+serial_source_num_mixes_s2=serial_source_num_mixes_s2,
+serial_source_mixing_volume_s2=serial_source_mixing_volume_s2,
+serial_destination_mixing_volume_s2=serial_destination_mixing_volume_s2,
+k=k,
+num_mixes=num_mixes))
+
+
 
 # Transferring treatment to first half of assay plate with different concentrations
         treatment_to_assay_1_hso.append(generate_add_antibioitc_to_assay_first_half_hso(directory_path=directory_path,

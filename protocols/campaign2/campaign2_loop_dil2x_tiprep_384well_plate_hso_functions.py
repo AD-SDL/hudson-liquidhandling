@@ -427,7 +427,7 @@ blowoff_volume
             mix_cycles=culture_plate_num_mix,
             mix_volume=culture_plate_mix_volume_s1,
             dispense_height=2,
-            # pre_aspirate=blowoff_volume,
+            pre_aspirate=blowoff_volume,
             syringe_speed=25,
         )
         soloSoft.dispense(
@@ -441,7 +441,7 @@ blowoff_volume
             mix_volume=culture_plate_mix_volume_s1,
             aspirate_height=reservoir_z_shift,
             syringe_speed=25,
-            # blowoff=blowoff_volume,
+            blowoff=blowoff_volume,
         )
     
     # * Make culture 10 fold dilution col 2
@@ -456,7 +456,7 @@ blowoff_volume
             mix_cycles=culture_plate_num_mix,
             mix_volume=culture_plate_mix_volume_s1,
             dispense_height=2,
-            # pre_aspirate=blowoff_volume,
+            pre_aspirate=blowoff_volume,
             syringe_speed=25,
         )
         soloSoft.dispense(
@@ -470,7 +470,7 @@ blowoff_volume
             mix_volume=culture_plate_mix_volume_s1,
             aspirate_height=reservoir_z_shift,
             syringe_speed=25,
-            # blowoff=blowoff_volume,
+            blowoff=blowoff_volume,
         )
     
     # * Make culture 10 fold dilution col 3
@@ -485,7 +485,7 @@ blowoff_volume
             mix_cycles=culture_plate_num_mix,
             mix_volume=culture_plate_mix_volume_s1,
             dispense_height=2,
-            # pre_aspirate=blowoff_volume,
+            pre_aspirate=blowoff_volume,
             syringe_speed=25,
         )
         soloSoft.dispense(
@@ -499,7 +499,7 @@ blowoff_volume
             mix_volume=culture_plate_mix_volume_s1,
             aspirate_height=reservoir_z_shift,
             syringe_speed=25,
-            # blowoff=blowoff_volume,
+            blowoff=blowoff_volume,
         )
     
     # * Make culture 10 fold dilution col 4
@@ -514,7 +514,7 @@ blowoff_volume
             mix_cycles=culture_plate_num_mix,
             mix_volume=culture_plate_mix_volume_s1,
             dispense_height=2,
-            # pre_aspirate=blowoff_volume,
+            pre_aspirate=blowoff_volume,
             syringe_speed=25,
         )
         soloSoft.dispense(
@@ -528,7 +528,7 @@ blowoff_volume
             mix_volume=culture_plate_mix_volume_s1,
             aspirate_height=reservoir_z_shift,
             syringe_speed=25,
-            # blowoff=blowoff_volume,
+            blowoff=blowoff_volume,
         )
 
 
@@ -539,7 +539,7 @@ blowoff_volume
         aspirate_volumes=Reservoir_12col_Agilent_201256_100_BATSgroup().setColumn(
             culture_dil_column[k], dilution_culture_volume
         ),
-        pre_aspirate=blowoff_volume
+        pre_aspirate=blowoff_volume,
         aspirate_shift=[0, 0, reservoir_z_shift],
         # 100% syringe speed
     )
@@ -563,7 +563,7 @@ blowoff_volume
         aspirate_volumes=Reservoir_12col_Agilent_201256_100_BATSgroup().setColumn(
             culture_dil_column[k]+1, dilution_culture_volume
         ),
-        pre_aspirate=blowoff_volume
+        pre_aspirate=blowoff_volume,
         aspirate_shift=[0, 0, reservoir_z_shift],
         # 100% syringe speed
     )
@@ -588,7 +588,7 @@ blowoff_volume
         aspirate_volumes=Reservoir_12col_Agilent_201256_100_BATSgroup().setColumn(
             culture_dil_column[k]+2, dilution_culture_volume
         ),
-        pre_aspirate=blowoff_volume
+        pre_aspirate=blowoff_volume,
         aspirate_shift=[0, 0, reservoir_z_shift],
         # 100% syringe speed
     )
@@ -612,7 +612,7 @@ blowoff_volume
         aspirate_volumes=Reservoir_12col_Agilent_201256_100_BATSgroup().setColumn(
             culture_dil_column[k]+3, dilution_culture_volume
         ),
-        pre_aspirate=blowoff_volume
+        pre_aspirate=blowoff_volume,
         aspirate_shift=[0, 0, reservoir_z_shift],
         # 100% syringe speed
     )
@@ -1141,7 +1141,7 @@ k
 
 
 #* Step 2, performs serial dilution on treatment plate
-def generate_serial_dlution_treatment_hso(directory_path,
+def generate_serial_dlution_treatment_part1_hso(directory_path,
 filename,
 treatment_dil_half,
 media_start_column,
@@ -1256,7 +1256,7 @@ num_mixes
         )
 
     
-    # * Fill column 6 of a generic 96 well plate with 240uL lb media total in two steps
+    # * Fill column 6 of a generic 96 well plate with 480uL lb media total in two steps
     for i in range(media_start_column[k], media_start_column[k] + 2):
         soloSoft.aspirate(  # first lb media well
             position="Position1",
@@ -1292,9 +1292,51 @@ num_mixes
             dispense_shift=[0, 0, reservoir_z_shift],
             # blowoff=blowoff_volume,
         )
+    
+    soloSoft.shuckTip()
+    soloSoft.savePipeline()
 
+    return filename
+
+
+def generate_serial_dlution_treatment_part2_hso(directory_path,
+filename,
+treatment_dil_half,
+media_start_column,
+media_transfer_volume_s2,
+media_z_shift,
+reservoir_z_shift,
+last_column_transfer_volume_s2,
+treatment_plate_loc,
+serial_antibiotic_transfer_volume_s2,
+treatment_column,
+blowoff_volume,
+serial_source_num_mixes_s2,
+serial_source_mixing_volume_s2,
+serial_destination_mixing_volume_s2,
+k,
+num_mixes
+):
+
+        # * Initialize soloSoft (step 2)
+    step2_hso_filename = os.path.join(directory_path, f"plate{k}_" + filename)
+    # step2_hso_filename_list.append(step2_hso_filename)
+    soloSoft = SoloSoft(
+        filename=step2_hso_filename,
+        plateList=[
+            "DeepBlock.96.VWR-75870-792.sterile",
+            "Empty",
+            "TipBox.180uL.Axygen-EVF-180-R-S.bluebox",
+            "Corning 3540",
+            "DeepBlock.96.VWR-75870-792.sterile",
+            "DeepBlock.96.VWR-75870-792.sterile",
+            "DeepBlock.96.VWR-75870-792.sterile",
+            "DeepBlock.96.VWR-75870-792.sterile",
+        ],
+    )
     # * here
     # * Transfer treatment in to first column of treatement dilution plate (will make 1:2 dilution)
+    soloSoft.getTip("Position3")
     for i in range(4):
         soloSoft.aspirate(
             position=treatment_plate_loc,
@@ -1404,17 +1446,19 @@ reservoir_z_shift
             mix_volume=antibiotic_mix_volume_s3,
             dispense_height=reservoir_z_shift,
             aspirate_shift=[0, 0, reservoir_z_shift],
+            pre_aspirate=10,
         )
         soloSoft.dispense(
             position="Position4",
             dispense_volumes=Plate_384_Corning_3540_BlackwClearBottomAssay().setColumn(
-                i + start_col, antibiotic_transfer_volume_s3
+                i + start_col-1, antibiotic_transfer_volume_s3
             ),
             mix_at_finish=True,
             mix_cycles=num_mixes,
             mix_volume=destination_mix_volume_s3,
             aspirate_height=flat_bottom_z_shift,
             dispense_shift=[0, 0, flat_bottom_z_shift],
+            blowoff=10,
         )
 
         soloSoft.aspirate(
@@ -1427,10 +1471,11 @@ reservoir_z_shift
             mix_volume=antibiotic_mix_volume_s3,
             dispense_height=reservoir_z_shift,
             aspirate_shift=[0, 0, reservoir_z_shift],
+            pre_aspirate=10,
         )
 
         dispense_volumes_startB = Plate_384_Corning_3540_BlackwClearBottomAssay().setColumn(
-                i + start_col, antibiotic_transfer_volume_s3
+                i + start_col-1, antibiotic_transfer_volume_s3
             )
         dispense_volumes_startB[0][i+start_col-1] = 0
 
@@ -1442,6 +1487,7 @@ reservoir_z_shift
             mix_volume=destination_mix_volume_s3,
             aspirate_height=flat_bottom_z_shift,
             dispense_shift=[0, 0, flat_bottom_z_shift],
+            blowoff=10,
         )
 
     soloSoft.getTip("Position3")
@@ -1458,6 +1504,7 @@ reservoir_z_shift
             mix_volume=antibiotic_mix_volume_s3,
             dispense_height=reservoir_z_shift,
             aspirate_shift=[0, 0, reservoir_z_shift],
+            pre_aspirate=10
         )
         soloSoft.dispense(
             position="Position4",
@@ -1469,6 +1516,7 @@ reservoir_z_shift
             mix_volume=destination_mix_volume_s3,
             aspirate_height=flat_bottom_z_shift,
             dispense_shift=[0, 0, flat_bottom_z_shift],
+            blowoff=10
         )
         soloSoft.aspirate(
             position="Position6",
@@ -1480,6 +1528,7 @@ reservoir_z_shift
             mix_volume=antibiotic_mix_volume_s3,
             dispense_height=reservoir_z_shift,
             aspirate_shift=[0, 0, reservoir_z_shift],
+            pre_aspirate=10,
         )
         dispense_volumes_startB = Plate_384_Corning_3540_BlackwClearBottomAssay().setColumn(
                 i + end_col, antibiotic_transfer_volume_s3
@@ -1494,6 +1543,7 @@ reservoir_z_shift
             mix_volume=destination_mix_volume_s3,
             aspirate_height=flat_bottom_z_shift,
             dispense_shift=[0, 0, flat_bottom_z_shift],
+            blowoff=10,
         )
 
     soloSoft.shuckTip()
@@ -1546,17 +1596,19 @@ reservoir_z_shift
             mix_volume=antibiotic_mix_volume_s3,
             dispense_height=reservoir_z_shift,
             aspirate_shift=[0, 0, reservoir_z_shift],
+            pre_aspirate=10,
         )
         soloSoft.dispense(
             position="Position4",
             dispense_volumes=Plate_384_Corning_3540_BlackwClearBottomAssay().setColumn(
-                i + start_col, antibiotic_transfer_volume_s3
+                i + start_col-1, antibiotic_transfer_volume_s3
             ),
             mix_at_finish=True,
             mix_cycles=num_mixes,
             mix_volume=destination_mix_volume_s3,
             aspirate_height=flat_bottom_z_shift,
             dispense_shift=[0, 0, flat_bottom_z_shift],
+            blowoff=10,
         )
 
         soloSoft.aspirate(
@@ -1569,10 +1621,11 @@ reservoir_z_shift
             mix_volume=antibiotic_mix_volume_s3,
             dispense_height=reservoir_z_shift,
             aspirate_shift=[0, 0, reservoir_z_shift],
+            pre_aspirate=10,
         )
 
         dispense_volumes_startB = Plate_384_Corning_3540_BlackwClearBottomAssay().setColumn(
-                i + start_col, antibiotic_transfer_volume_s3
+                i + start_col-1, antibiotic_transfer_volume_s3
             )
         dispense_volumes_startB[0][i+start_col-1] = 0
 
@@ -1584,6 +1637,7 @@ reservoir_z_shift
             mix_volume=destination_mix_volume_s3,
             aspirate_height=flat_bottom_z_shift,
             dispense_shift=[0, 0, flat_bottom_z_shift],
+            blowoff=10,
         )
 
     soloSoft.getTip("Position3")
@@ -1600,6 +1654,7 @@ reservoir_z_shift
             mix_volume=antibiotic_mix_volume_s3,
             dispense_height=reservoir_z_shift,
             aspirate_shift=[0, 0, reservoir_z_shift],
+            pre_aspirate=10,
         )
         soloSoft.dispense(
             position="Position4",
@@ -1611,6 +1666,7 @@ reservoir_z_shift
             mix_volume=destination_mix_volume_s3,
             aspirate_height=flat_bottom_z_shift,
             dispense_shift=[0, 0, flat_bottom_z_shift],
+            blowoff=10,
         )
         soloSoft.aspirate(
             position="Position6",
@@ -1622,6 +1678,7 @@ reservoir_z_shift
             mix_volume=antibiotic_mix_volume_s3,
             dispense_height=reservoir_z_shift,
             aspirate_shift=[0, 0, reservoir_z_shift],
+            pre_aspirate=10,
         )
         dispense_volumes_startB = Plate_384_Corning_3540_BlackwClearBottomAssay().setColumn(
                 i + end_col, antibiotic_transfer_volume_s3
@@ -1636,6 +1693,7 @@ reservoir_z_shift
             mix_volume=destination_mix_volume_s3,
             aspirate_height=flat_bottom_z_shift,
             dispense_shift=[0, 0, flat_bottom_z_shift],
+            blowoff=10,
         )
 
     soloSoft.shuckTip()
