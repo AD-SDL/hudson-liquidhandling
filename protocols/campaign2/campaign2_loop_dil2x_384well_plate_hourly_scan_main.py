@@ -405,6 +405,8 @@ reservoir_z_shift=reservoir_z_shift))
         softLinx.plateCraneReplaceLid(["SoftLinx.PlateCrane.LidNest2"], ["SoftLinx.Liconic.Nest"])
         softLinx.plateCraneMoveCrane("SoftLinx.PlateCrane.Safe")
         softLinx.liconicLoadIncubator(loadID=k, holdWithoutIncubationTime=True)
+        softLinx.liconicShake(shaker1Speed=30, shakeTime=[0,1,0,0]) # 1 hour
+
         
         # softLinx.plateCraneMovePlate(["SoftLinx.Solo.Position4"], ["SoftLinx.Liconic.Nest"])
         #     #softLinx.hidexClose()
