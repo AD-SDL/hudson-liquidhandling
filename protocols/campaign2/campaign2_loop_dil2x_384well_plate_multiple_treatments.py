@@ -28,7 +28,7 @@ Stack 5 - 384 well clear, flat-bottom plate w/ lid.  (will be placed on deck pos
 Stack 4 - Full Tip Box Replacements
 Stack 3 - Empty Tip Box Storage (empty at start)
 Example command line usage: (creating 3 plates)
-python campaign2_loop_dil2x.py -tr col1 col2 col3 -cc 1 2 3 -mc 1 3 5 -tdh 1 2 1 -cdc 1 2 3
+python campaign2_loop_dil2x.py -tr col1 col2 col3 col4 -cc 1 2 3 4 -mc 1 2 3 4 -tdh 1 2 1 2 -cdc 1 2 3 4
 COMMAND LINE ARGUMENTS:
 TODO
 """
@@ -65,6 +65,8 @@ def generate_campaign1_repeatable(
             raise ValueError (
                 "all command line arguments must be lists of equal length"
             )
+    
+    #TODO: divide command line argument into groupings of 4, with 1 argument per treatment per quadrant of assay plate, qith 4 treatments per plate
 
     # * Program variables
     # TODO: for future make variables treatment specific?
@@ -132,17 +134,12 @@ def generate_campaign1_repeatable(
     # * Lists for every generated hso file
     # TODO: should be able to keep the same? but look into it
     media_to_assay_hso = []
-    # media_to_assay_2_hso = []
-    # media_to_assay_3_hso = []
-    # media_to_assay_4_hso = []
     media_to_culture_hso = []
     cells_to_assay_hso = []
-    # cells_to_assay_2_hso = []
     serial_dilution_hso = []
     treatment_to_assay_hso = []
-    # treatment_to_assay_2_hso = []
 
-    #* LOOP: produce 8 separate .hso files per treatment
+    #* LOOP: produce 5 separate .hso files per treatment
     for k in range(len(treatment)):
         # * Get location of treatment
         try:
@@ -179,7 +176,7 @@ def generate_campaign1_repeatable(
         
         #* fill cell dilution and treatment dilution plates with media # one col of tips 
         media_to_culture_hso.append(generate_fill_culture_dilution_and_treatment_plates_with_media_hso(directory_path=directory_path,
-        fielname="media_to_culture",
+        filename="media_to_culture",
         media_start_column=media_start_column,
         media_z_shift=media_z_shift,
         flat_bottom_z_shift=flat_bottom_z_shift,
@@ -245,8 +242,7 @@ def generate_campaign1_repeatable(
         flat_bottom_z_shift=flat_bottom_z_shift,
         start_col=1,
         end_col=6,
-        k=k,
-        reservoir_z_shift=reservoir_z_shift))
+        k=k,))
 
         # TODO: tip total per treatment: 5, can use 2 boxes per treatment as of now
     
@@ -371,10 +367,31 @@ def generate_campaign1_repeatable(
         # else continue on to next treatment 
             
     # TODO: check out softlinx parallel capabilities
-    #* incubate plates for 12 hours, start up hidex
+    #* wait an hour *** less: figure out time between plates *** place all plates into hidex again
+
+    for i in range(12): # 12 scans hourly
+        for k in range(plate_num): # plate_num = total number of assay plates
+            softLinx.liconicUnloadIncubator(loadID=k)
+            softLinx.plateCraneRemoveLid(["SoftLinx.Liconic.Nest"], ["SoftLinx.PlateCrane.LidNest2"])
+            softLinx.plateCraneMovePlate(["SoftLinx.Liconic.Nest"], ["SoftLinx.Hidex.Nest"])
+            softLinx.hidexClose()
+            softLinx.plateCraneMoveCrane("SoftLinx.PlateCrane.Safe")
+            softLinx.hidexRun("Campaign1_noIncubate2_384")
+
+            # lambda6 TODO
+            softLinx.runProgram(
+            "C:\\Users\\svcaibio\\Dev\\liquidhandling\\zeromq\\utils\\send_data.bat", arguments=f"{k} {directory_name} campaign2"
+        )
+
+            softLinx.plateCraneMovePlate(["SoftLinx.Hidex.Nest"], ["SoftLinx.Liconic.Nest"])
+            softLinx.hidexClose()
+            softLinx.plateCraneReplaceLid(["SoftLinx.PlateCrane.LidNest2"], ["SoftLinx.Liconic.Nest"])
+            softLinx.plateCraneMoveCrane("SoftLinx.PlateCrane.Safe")
+            softLinx.liconicLoadIncubator(loadID=k, holdWithoutIncubationTime=True)
+        
+        softLinx.liconicShake(shaker1Speed=30, shakeTime=[0,1,0,0]) # 1 hour
 
 
-    #* range over plates, take hidex readings
 
 
     #TODO: lambda6 path
