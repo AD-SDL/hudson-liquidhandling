@@ -28,7 +28,7 @@ Stack 5 - 384 well clear, flat-bottom plate w/ lid.  (will be placed on deck pos
 Stack 4 - Full Tip Box Replacements
 Stack 3 - Empty Tip Box Storage (empty at start)
 Example command line usage: (creating 3 plates)
-python campaign2_loop_dil2x.py -tr col1 col2 col3 col4 -cc 1 2 3 4 -mc 1 2 3 4 -tdh 1 2 1 2 -cdc 1 2 3 4
+python campaign2_loop_dil2x.py -tr col1 col2 col3 col4 -cc 1 2 3 4 -mc 1 3 5 7 -tdh 1 2 1 2 -cdc 1 2 3 4
 COMMAND LINE ARGUMENTS:
 TODO
 """
@@ -190,11 +190,12 @@ def generate_campaign1_repeatable(
         culture_column=culture_column,
         num_mixes=num_mixes,
         culture_dilution_num_mix=culture_dilution_num_mix,
-        culture_dilution_mix_volume=culture_dilution_mix_volume))
+        culture_dilution_mix_volume=culture_dilution_mix_volume,
+        blowoff_volume=blowoff_volume))
 
         #* add diluted cells to assay # one column of tips unless want to do outside of loop?
         #* no loop, so that we can blowoff, or loop and no blowoff
-        cells_to_assay_hso.append(generate_add_diluted_cells_to_assay_hso(directory_path=directory_path,
+        cells_to_assay_hso.append(generate_add_diluted_cells_to_assay_loop_hso(directory_path=directory_path,
         filename="cells_to_assay",
         media_start_column=media_start_column,
         media_z_shift=media_z_shift,
@@ -289,6 +290,7 @@ def generate_campaign1_repeatable(
             softLinx.soloSoftResetTipCount(3)
 
             # TODO: treatment plate 
+            #* for now, have to manually swap treatment dilution plate with empty every 2 treatments
         
 
 
@@ -392,7 +394,12 @@ def generate_campaign1_repeatable(
         softLinx.liconicShake(shaker1Speed=30, shakeTime=[0,1,0,0]) # 1 hour
 
 
+    #* END LOOP
 
+    softLinx.hidexRun("SetTemp20")
+    softLinx.liconicEndShake()
+    # save protocol to write instructions to .slvp file, create .txt manifest, and .ahk remote start file
+    softLinx.saveProtocol()
 
     #TODO: lambda6 path
 
