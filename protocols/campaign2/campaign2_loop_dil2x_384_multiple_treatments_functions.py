@@ -64,7 +64,7 @@ k): # k = current treatment number
         aspirate_shift=[0, 0, media_z_shift],
     )
 
-    for i in range(start_col, end_col-1):
+    for i in range(start_col, end_col+1):
 
         dispense_volumes_startB = Plate_384_Corning_3540_BlackwClearBottomAssay().setColumn(
                 i, media_transfer_volume_s1
@@ -275,7 +275,7 @@ k
             dispense_volumes=Plate_384_Corning_3540_BlackwClearBottomAssay().setColumn(
                 i, culture_transfer_volume_s1
             ),
-            mix_at_finish=True,
+            mix_at_finish=False,
             mix_cycles=num_mixes,
             mix_volume=growth_plate_mix_volume_s1,
             aspirate_height=flat_bottom_z_shift,
@@ -292,7 +292,7 @@ k
         soloSoft.dispense(  # do need to mix at end of transfer
             position="Position4",
             dispense_volumes=dispense_volumes_startB,
-            mix_at_finish=True,
+            mix_at_finish=False,
             mix_cycles=num_mixes,
             mix_volume=growth_plate_mix_volume_s1,
             aspirate_height=flat_bottom_z_shift,
@@ -505,7 +505,7 @@ reservoir_z_shift
         soloSoft.aspirate(
             position="Position6",
             aspirate_volumes=Reservoir_12col_Agilent_201256_100_BATSgroup().setColumn(
-                (6 * (treatment_dil_half[k] - 1)) + i, antibiotic_transfer_volume_s3 * 2
+                (6 * (treatment_dil_half[k] - 1)) + i, antibiotic_transfer_volume_s3
             ),
             mix_at_start=True,
             mix_cycles=num_mixes,
@@ -516,7 +516,7 @@ reservoir_z_shift
         soloSoft.dispense(
             position="Position4",
             dispense_volumes=Plate_384_Corning_3540_BlackwClearBottomAssay().setColumn(
-                i + start_col, antibiotic_transfer_volume_s3
+                i + start_col - 1, antibiotic_transfer_volume_s3
             ),
             mix_at_finish=True,
             mix_cycles=num_mixes,
@@ -525,22 +525,22 @@ reservoir_z_shift
             dispense_shift=[0, 0, flat_bottom_z_shift],
         )
 
-        # soloSoft.aspirate(
-        #     position="Position6",
-        #     aspirate_volumes=Reservoir_12col_Agilent_201256_100_BATSgroup().setColumn(
-        #         (6 * (treatment_dil_half[k] - 1)) + i, antibiotic_transfer_volume_s3
-        #     ),
-        #     mix_at_start=True,
-        #     mix_cycles=num_mixes,
-        #     mix_volume=antibiotic_mix_volume_s3,
-        #     dispense_height=reservoir_z_shift,
-        #     aspirate_shift=[0, 0, reservoir_z_shift],
-        # )
+        soloSoft.aspirate(
+            position="Position6",
+            aspirate_volumes=Reservoir_12col_Agilent_201256_100_BATSgroup().setColumn(
+                (6 * (treatment_dil_half[k] - 1)) + i, antibiotic_transfer_volume_s3
+            ),
+            mix_at_start=True,
+            mix_cycles=num_mixes,
+            mix_volume=antibiotic_mix_volume_s3,
+            dispense_height=reservoir_z_shift,
+            aspirate_shift=[0, 0, reservoir_z_shift],
+        )
 
         dispense_volumes_startB = Plate_384_Corning_3540_BlackwClearBottomAssay().setColumn(
-                i + start_col, antibiotic_transfer_volume_s3
+                i + start_col -1, antibiotic_transfer_volume_s3
             )
-        dispense_volumes_startB[0][i+start_col-1] = 0
+        dispense_volumes_startB[0][i+start_col-2] = 0
 
         soloSoft.dispense(
             position="Position4",

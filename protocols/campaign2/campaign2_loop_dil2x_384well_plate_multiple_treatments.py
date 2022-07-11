@@ -176,7 +176,7 @@ def generate_campaign1_repeatable(
         
         #* fill cell dilution and treatment dilution plates with media # one col of tips 
         media_to_culture_hso.append(generate_fill_culture_dilution_and_treatment_plates_with_media_hso(directory_path=directory_path,
-        filename="media_to_culture",
+        filename="media_to_culture.hso",
         media_start_column=media_start_column,
         media_z_shift=media_z_shift,
         flat_bottom_z_shift=flat_bottom_z_shift,
@@ -196,7 +196,7 @@ def generate_campaign1_repeatable(
         #* add diluted cells to assay # one column of tips unless want to do outside of loop?
         #* no loop, so that we can blowoff, or loop and no blowoff
         cells_to_assay_hso.append(generate_add_diluted_cells_to_assay_loop_hso(directory_path=directory_path,
-        filename="cells_to_assay",
+        filename="cells_to_assay.hso",
         media_start_column=media_start_column,
         media_z_shift=media_z_shift,
         flat_bottom_z_shift=flat_bottom_z_shift,
@@ -213,7 +213,7 @@ def generate_campaign1_repeatable(
         #* perform serial dilution of given treatment # one column of tips
         #* should be fine to leave same? just increase volumes
         serial_dilution_hso.append(generate_serial_dlution_treatment_hso(directory_path=directory_path,
-        filename="treatment_serial_dilution",
+        filename="treatment_serial_dilution.hso",
         treatment_dil_half=treatment_dil_half,
         media_start_column=media_start_column,
         media_transfer_volume_s2=media_transfer_volume_s2,
@@ -233,7 +233,7 @@ def generate_campaign1_repeatable(
 
         #* add antibiotic to assay # one column of tips
         treatment_to_assay_hso.append(generate_add_antibioitc_to_assay_hso(directory_path=directory_path,
-        filename="treatment_to_assay",
+        filename="treatment_to_assay.hso",
         treatment_dil_half=treatment_dil_half,
         antibiotic_transfer_volume_s3=antibiotic_transfer_volume_s3,
         num_mixes=num_mixes,
