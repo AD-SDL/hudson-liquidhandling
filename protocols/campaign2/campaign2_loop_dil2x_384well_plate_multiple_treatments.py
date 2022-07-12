@@ -342,7 +342,7 @@ def generate_campaign1_repeatable(
 
         #* if fourth or last treatment total, move assay plate from position 4 to hidex, run protocol, replace lid, load incubator, move to safe
         if k != 0:
-            if k % 4 == 0 or k == len(treatment) - 1:
+            if k % 4 == 0:
                 softLinx.plateCraneMovePlate(["SoftLinx.Solo.Position4"], ["SoftLinx.Hidex.Nest"])
                 softLinx.hidexClose()
                 softLinx.plateCraneMoveCrane("SoftLinx.PlateCrane.Safe")
@@ -367,6 +367,31 @@ def generate_campaign1_repeatable(
                 softLinx.plateCraneMovePlate(
                 ["SoftLinx.PlateCrane.Stack5"], ["SoftLinx.Solo.Position4"], hasLid=True, poolID=5
             )
+        
+            elif k == len(treatment) - 1:
+                softLinx.plateCraneMovePlate(["SoftLinx.Solo.Position4"], ["SoftLinx.Hidex.Nest"])
+                softLinx.hidexClose()
+                softLinx.plateCraneMoveCrane("SoftLinx.PlateCrane.Safe")
+                softLinx.hidexRun("Campaign1_noIncubate2_384")
+
+                # lambda6 TODO
+                softLinx.runProgram(
+                "C:\\Users\\svcaibio\\Dev\\liquidhandling\\zeromq\\utils\\send_data.bat", arguments=f"{k} {directory_name} campaign2"
+                )
+
+                # Move plate back to incubator, replace lid
+                softLinx.plateCraneMovePlate(["SoftLinx.Hidex.Nest"], ["SoftLinx.Liconic.Nest"])
+                softLinx.hidexClose()
+                softLinx.plateCraneReplaceLid(["SoftLinx.PlateCrane.LidNest2"], ["SoftLinx.Liconic.Nest"])
+                softLinx.plateCraneMoveCrane("SoftLinx.PlateCrane.Safe")
+                softLinx.liconicLoadIncubator(loadID=k, holdWithoutIncubationTime=True)
+
+                # add one ot plate num
+                plate_num+=1
+
+                softLinx.liconicShake(shaker1Speed=30, shakeTime=[0,1,0,0]) # 1 hour
+
+
 
         
         # else continue on to next treatment 
@@ -394,7 +419,7 @@ def generate_campaign1_repeatable(
             softLinx.plateCraneMoveCrane("SoftLinx.PlateCrane.Safe")
             softLinx.liconicLoadIncubator(loadID=k, holdWithoutIncubationTime=True)
         
-        softLinx.liconicShake(shaker1Speed=30, shakeTime=[0,0,1,0]) # 1 hour
+        softLinx.liconicShake(shaker1Speed=30, shakeTime=[0,1,0,0]) # 1 hour
 
 
     #* END LOOP
