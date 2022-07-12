@@ -241,8 +241,8 @@ def generate_campaign1_repeatable(
         reservoir_z_shift=reservoir_z_shift,
         destination_mix_volume_s3=destination_mix_volume_s3,
         flat_bottom_z_shift=flat_bottom_z_shift,
-        start_col=1,
-        end_col=6,
+        start_col=start_col,
+        end_col=end_col,
         k=k,))
 
         # TODO: tip total per treatment: 5, can use 2 boxes per treatment as of now
@@ -292,6 +292,8 @@ def generate_campaign1_repeatable(
             # TODO: treatment plate 
             #* for now, have to manually swap treatment dilution plate with empty every 2 treatments
         
+        softLinx.plateCraneMoveCrane("SoftLinx.PlateCrane.Safe")
+        
 
 
 
@@ -300,7 +302,7 @@ def generate_campaign1_repeatable(
             "C:\\Users\\svcaibio\\Dev\\liquidhandling\\protocols\\campaign2\\test_hso\\"
             + directory_name
             + "\\"
-            + f"plate{plate_num}_treatment{k}_"
+            + f"plate{k}_"
             + os.path.basename(media_to_assay_hso[k])
         )
 
@@ -308,7 +310,7 @@ def generate_campaign1_repeatable(
             "C:\\Users\\svcaibio\\Dev\\liquidhandling\\protocols\\campaign2\\test_hso\\"
             + directory_name
             + "\\"
-            + f"plate{plate_num}_treatment{k}_"
+            + f"plate{k}_"
             + os.path.basename(media_to_culture_hso[k])
         )
 
@@ -316,7 +318,7 @@ def generate_campaign1_repeatable(
             "C:\\Users\\svcaibio\\Dev\\liquidhandling\\protocols\\campaign2\\test_hso\\"
             + directory_name
             + "\\"
-            + f"plate{plate_num}_treatment{k}_"
+            + f"plate{k}_"
             + os.path.basename(cells_to_assay_hso[k])
         )
 
@@ -324,7 +326,7 @@ def generate_campaign1_repeatable(
             "C:\\Users\\svcaibio\\Dev\\liquidhandling\\protocols\\campaign2\\test_hso\\"
             + directory_name
             + "\\"
-            + f"plate{plate_num}_treatment{k}_"
+            + f"plate{k}_"
             + os.path.basename(serial_dilution_hso[k])
         )
 
@@ -332,38 +334,39 @@ def generate_campaign1_repeatable(
             "C:\\Users\\svcaibio\\Dev\\liquidhandling\\protocols\\campaign2\\test_hso\\"
             + directory_name
             + "\\"
-            + f"plate{plate_num}_treatment{k}_"
+            + f"plate{k}_"
             + os.path.basename(treatment_to_assay_hso[k])
         )
 
       
 
         #* if fourth or last treatment total, move assay plate from position 4 to hidex, run protocol, replace lid, load incubator, move to safe
-        if k % 4 == 0 or k == len(treatment) - 1:
-            softLinx.plateCraneMovePlate(["SoftLinx.Solo.Position4"], ["SoftLinx.Hidex.Nest"])
-            softLinx.hidexClose()
-            softLinx.plateCraneMoveCrane("SoftLinx.PlateCrane.Safe")
-            softLinx.hidexRun("Campaign1_noIncubate2_384")
+        if k != 0:
+            if k % 4 == 0 or k == len(treatment) - 1:
+                softLinx.plateCraneMovePlate(["SoftLinx.Solo.Position4"], ["SoftLinx.Hidex.Nest"])
+                softLinx.hidexClose()
+                softLinx.plateCraneMoveCrane("SoftLinx.PlateCrane.Safe")
+                softLinx.hidexRun("Campaign1_noIncubate2_384")
 
-             # lambda6 TODO
-            softLinx.runProgram(
-            "C:\\Users\\svcaibio\\Dev\\liquidhandling\\zeromq\\utils\\send_data.bat", arguments=f"{k} {directory_name} campaign2"
+                # lambda6 TODO
+                softLinx.runProgram(
+                "C:\\Users\\svcaibio\\Dev\\liquidhandling\\zeromq\\utils\\send_data.bat", arguments=f"{k} {directory_name} campaign2"
+                )
+
+                # Move plate back to incubator, replace lid
+                softLinx.plateCraneMovePlate(["SoftLinx.Hidex.Nest"], ["SoftLinx.Liconic.Nest"])
+                softLinx.hidexClose()
+                softLinx.plateCraneReplaceLid(["SoftLinx.PlateCrane.LidNest2"], ["SoftLinx.Liconic.Nest"])
+                softLinx.plateCraneMoveCrane("SoftLinx.PlateCrane.Safe")
+                softLinx.liconicLoadIncubator(loadID=k, holdWithoutIncubationTime=True)
+
+                # add one ot plate num
+                plate_num+=1
+
+                # replenish assay plate
+                softLinx.plateCraneMovePlate(
+                ["SoftLinx.PlateCrane.Stack5"], ["SoftLinx.Solo.Position4"], hasLid=True, poolID=5
             )
-
-            # Move plate back to incubator, replace lid
-            softLinx.plateCraneMovePlate(["SoftLinx.Hidex.Nest"], ["SoftLinx.Liconic.Nest"])
-            softLinx.hidexClose()
-            softLinx.plateCraneReplaceLid(["SoftLinx.PlateCrane.LidNest2"], ["SoftLinx.Liconic.Nest"])
-            softLinx.plateCraneMoveCrane("SoftLinx.PlateCrane.Safe")
-            softLinx.liconicLoadIncubator(loadID=k, holdWithoutIncubationTime=True)
-
-            # add one ot plate num
-            plate_num+=1
-
-            # replenish assay plate
-            softLinx.plateCraneMovePlate(
-            ["SoftLinx.PlateCrane.Stack5"], ["SoftLinx.Solo.Position4"], hasLid=True, poolID=5
-        )
 
         
         # else continue on to next treatment 
@@ -391,7 +394,7 @@ def generate_campaign1_repeatable(
             softLinx.plateCraneMoveCrane("SoftLinx.PlateCrane.Safe")
             softLinx.liconicLoadIncubator(loadID=k, holdWithoutIncubationTime=True)
         
-        softLinx.liconicShake(shaker1Speed=30, shakeTime=[0,1,0,0]) # 1 hour
+        softLinx.liconicShake(shaker1Speed=30, shakeTime=[0,0,1,0]) # 1 hour
 
 
     #* END LOOP
