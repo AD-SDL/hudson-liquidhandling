@@ -253,7 +253,7 @@ k
     soloSoft.aspirate(  # well in first half
             position="Position7",
             aspirate_volumes=Reservoir_12col_Agilent_201256_100_BATSgroup().setColumn(
-                culture_dil_column[k], culture_transfer_volume_s1*12 # 2 for each column in quadrant
+                culture_dil_column[k], culture_transfer_volume_s1*15 # 2 for each column in quadrant, plus extra
             ),
             aspirate_shift=[
                 0,

@@ -358,7 +358,7 @@ def generate_campaign1_repeatable(
                 softLinx.hidexClose()
                 softLinx.plateCraneReplaceLid(["SoftLinx.PlateCrane.LidNest2"], ["SoftLinx.Liconic.Nest"])
                 softLinx.plateCraneMoveCrane("SoftLinx.PlateCrane.Safe")
-                softLinx.liconicLoadIncubator(loadID=k, holdWithoutIncubationTime=True)
+                softLinx.liconicLoadIncubator(loadID=plate_num, holdWithoutIncubationTime=True)
 
                 # add one ot plate num
                 plate_num+=1
@@ -384,7 +384,7 @@ def generate_campaign1_repeatable(
                 softLinx.hidexClose()
                 softLinx.plateCraneReplaceLid(["SoftLinx.PlateCrane.LidNest2"], ["SoftLinx.Liconic.Nest"])
                 softLinx.plateCraneMoveCrane("SoftLinx.PlateCrane.Safe")
-                softLinx.liconicLoadIncubator(loadID=k, holdWithoutIncubationTime=True)
+                softLinx.liconicLoadIncubator(loadID=plate_num, holdWithoutIncubationTime=True)
 
                 # add one ot plate num
                 plate_num+=1
