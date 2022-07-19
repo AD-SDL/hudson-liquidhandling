@@ -35,7 +35,7 @@ k): # k = current treatment number
             "DeepBlock.96.VWR-75870-792.sterile",
         ],
     )
-
+    soloSoft.setSpeed(xyz_speed=100)    
     soloSoft.getTip("Position3")
     # TODO: check to see if pre-aspirate possible with multiple dispenses 
     soloSoft.aspirate(
@@ -46,7 +46,7 @@ k): # k = current treatment number
             aspirate_shift=[0, 0, media_z_shift],
             #pre_aspirate=10
         )
-
+    soloSoft.setSpeed(xyz_speed=30)
     for i in range(start_col, end_col+1):  # first quarter plate = media from column 1
         
         soloSoft.dispense(
@@ -56,6 +56,7 @@ k): # k = current treatment number
             ),
             dispense_shift=[0, 0, flat_bottom_z_shift],
         )
+    soloSoft.setSpeed(xyz_speed=100)
     soloSoft.aspirate(
         position="Position1",
         aspirate_volumes=Reservoir_12col_Agilent_201256_100_BATSgroup().setColumn(
@@ -63,7 +64,7 @@ k): # k = current treatment number
         ),
         aspirate_shift=[0, 0, media_z_shift],
     )
-
+    soloSoft.setSpeed(xyz_speed=30)
     for i in range(start_col, end_col+1):
 
         dispense_volumes_startB = Plate_384_Corning_3540_BlackwClearBottomAssay().setColumn(
@@ -75,7 +76,7 @@ k): # k = current treatment number
             dispense_volumes= dispense_volumes_startB,
             dispense_shift=[0, 0, flat_bottom_z_shift],
         )
-
+    soloSoft.setSpeed(xyz_speed=100)
     soloSoft.shuckTip()
     soloSoft.savePipeline()
 
@@ -248,6 +249,7 @@ k
     )
 
     # * Add bacteria from 10 fold diluted culture plate (Position 7, column = culture_column[k]) to growth plate with fresh media (both halves)
+    soloSoft.setSpeed(xyz_speed=100)
     soloSoft.getTip("Position3")
 
     soloSoft.aspirate(  # well in first half
@@ -267,7 +269,7 @@ k
             syringe_speed=25,
             # pre_aspirate=10,
         )
-
+    soloSoft.setSpeed(xyz_speed=30)
     for i in range(start_col, end_col+1):  # trying a different method of cell dispensing (09/07/21)
         
         soloSoft.dispense(  # do need to mix at end of transfer
@@ -300,6 +302,7 @@ k
             syringe_speed=25,
             # blowoff=10,
         )
+    soloSoft.setSpeed(xyz_speed=100)
     soloSoft.shuckTip()
     soloSoft.savePipeline()
 
