@@ -69,8 +69,8 @@ def generate_campaign1_repeatable(
     media_z_shift = 0.5
     reservoir_z_shift = 0.5  # z shift for deep blocks (Deck Positions 3 and 5)
     flat_bottom_z_shift = 2  # Note: 1 is not high enough (tested)
-    # lambda6_path = "/lambda_stor/data/hudson/instructions/"
-    lambda6_path = "C:\\Users\\svcaibio\\Dev\\liquidhandling\\protocols\\campaign2\\test_hso\\"
+    lambda6_path = "/lambda_stor/data/hudson/instructions/"
+    # lambda6_path = "C:\\Users\\svcaibio\\Dev\\liquidhandling\\protocols\\campaign2\\test_hso\\"
 
     # Step 1 variables
     media_transfer_volume_s1 = 20
@@ -103,7 +103,7 @@ def generate_campaign1_repeatable(
     # * Create folder to store all instruction files
     project = "Campaign2"
     project_desc = "loop"
-    version_num = "v1"
+    version_num = "384"
     timestamp = str(time.time()).split(".")[0]
     directory_name = f"{project}-{project_desc}-{version_num}-{timestamp}"
     directory_path = os.path.join(
@@ -331,21 +331,21 @@ reservoir_z_shift=reservoir_z_shift))
 
         # run all liquid handling steps
         softLinx.soloSoftRun(
-            "C:\\Users\\svcaibio\\Dev\\liquidhandling\\protocols\\campaign2\\test_hso\\"
+            "C:\\labautomation\\instructions\\"
             + directory_name
             + "\\"
             + f"plate{k}_"
             + os.path.basename(media_to_assay_1_hso[k])
         )
         softLinx.soloSoftRun(
-            "C:\\Users\\svcaibio\\Dev\\liquidhandling\\protocols\\campaign2\\test_hso\\"
+            "C:\\labautomation\\instructions\\"
             + directory_name
             + "\\"
             + f"plate{k}_"
             + os.path.basename(media_to_assay_2_hso[k])
         )
         softLinx.soloSoftRun(
-            "C:\\Users\\svcaibio\\Dev\\liquidhandling\\protocols\\campaign2\\test_hso\\"
+           "C:\\labautomation\\instructions\\"
             + directory_name
             + "\\"
             + f"plate{k}_"
@@ -353,21 +353,22 @@ reservoir_z_shift=reservoir_z_shift))
         )
 
         softLinx.soloSoftRun(
-            "C:\\Users\\svcaibio\\Dev\\liquidhandling\\protocols\\campaign2\\test_hso\\"
+            "C:\\labautomation\\instructions\\"
             + directory_name
             + "\\"
             + f"plate{k}_"
             + os.path.basename(cells_to_assay_1_hso[k])
         )
         softLinx.soloSoftRun(
-            "C:\\Users\\svcaibio\\Dev\\liquidhandling\\protocols\\campaign2\\test_hso\\"
+            "C:\\labautomation\\instructions\\"
             + directory_name
             + "\\"
             + f"plate{k}_"
             + os.path.basename(cells_to_assay_2_hso[k])
         )
         softLinx.soloSoftRun(
-            "C:\\Users\\svcaibio\\Dev\\liquidhandling\\protocols\\campaign2\\test_hso\\"
+            # "C:\\Users\\svcaibio\\Dev\\liquidhandling\\protocols\\campaign2\\test_hso\\"
+            "C:\\labautomation\\instructions\\"
             + directory_name
             + "\\"
             + f"plate{k}_"
@@ -375,14 +376,14 @@ reservoir_z_shift=reservoir_z_shift))
         )
 
         softLinx.soloSoftRun(
-            "C:\\Users\\svcaibio\\Dev\\liquidhandling\\protocols\\campaign2\\test_hso\\"
+            "C:\\labautomation\\instructions\\"
             + directory_name
             + "\\"
             + f"plate{k}_"
             + os.path.basename(treatment_to_assay_1_hso[k])
         )
         softLinx.soloSoftRun(
-            "C:\\Users\\svcaibio\\Dev\\liquidhandling\\protocols\\campaign2\\test_hso\\"
+            "C:\\labautomation\\instructions\\"
             + directory_name
             + "\\"
             + f"plate{k}_"
@@ -395,9 +396,9 @@ reservoir_z_shift=reservoir_z_shift))
         softLinx.hidexRun("Campaign1_noIncubate2_384")
 
         # lambda6 TODO
-        softLinx.runProgram(
-        "C:\\Users\\svcaibio\\Dev\\liquidhandling\\zeromq\\utils\\send_data.bat", arguments=f"{k} {directory_name} campaign2"
-    )
+        # softLinx.runProgram(
+        # "C:\\Users\\svcaibio\\Dev\\liquidhandling\\zeromq\\utils\\send_data.bat", arguments=f"{k} {directory_name} campaign2"
+    # )
 
         # Move plate back to incubator, replace lid
         softLinx.plateCraneMovePlate(["SoftLinx.Hidex.Nest"], ["SoftLinx.Liconic.Nest"])
