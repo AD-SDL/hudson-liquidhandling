@@ -462,29 +462,29 @@ reservoir_z_shift=reservoir_z_shift))
 """
     SEND NEW PROTOCOL TO WORK CELL (HUDSON01) ------------------------------------------------------------------
 """
-#     try:
-#         # TODO: change to full path on lambda6
-#         child_message_sender = child_pid = Popen(
-#             [
-#                 "python",
-#                 "../../zeromq/lambda6_send_instructions.py",
-#                 "-d",
-#                 directory_path,
-#                 "-i",
-#                 str(num_assay_plates),
-#                 str(num_assay_wells),
-#                 assay_plate_type,
-#                 str(is_test),
-#             ],
-#             start_new_session=True,
-#         ).pid
+    try:
+        # TODO: change to full path on lambda6
+        child_message_sender = child_pid = Popen(
+            [
+                "python",
+                "../../zeromq/lambda6_send_instructions.py",
+                "-d",
+                directory_path,
+                "-i",
+                str(num_assay_plates),
+                str(num_assay_wells),
+                assay_plate_type,
+                str(is_test),
+            ],
+            start_new_session=True,
+        ).pid
 
-#         print("New instruction directory passed to lambda6_send_message.py")
-#     except BaseException as e:
-#         print(e)
-#         print("Could not send new instructions to hudson01")
+        print("New instruction directory passed to lambda6_send_message.py")
+    except BaseException as e:
+        print(e)
+        print("Could not send new instructions to hudson01")
 
-#     return return_val
+    return return_val
 
 
 def find_treatment_loc(treatment_name):  # TODO: Move this method out of protocol file
