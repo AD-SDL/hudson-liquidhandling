@@ -12,6 +12,11 @@ sys.path.append("../../rdbms/") # this is the one that works
 
 def lamdba6_send_instructions(instructions_dir, info_list):
 
+    # TESTING
+    # print("METHOD CALLED") 
+    print(instructions_dir)
+    print(info_list)
+
     # * connect to port on hudson01
     context = zmq.Context()
     socket = context.socket(zmq.REQ)
@@ -84,9 +89,16 @@ def main(args):
    
     instructions_dir = args["dir"]  # full path
     info_list = args["info"]
+    
+    # TESTING
+    print("MAIN CALLED")
+    print(instructions_dir)
+    print(info_list)
+
     lamdba6_send_instructions(instructions_dir, info_list)
 
 
 if __name__ == "__main__":
     # execute only if run as a script
+    print(sys.argv) # ADDED FOR TESTING
     main(sys.argv)
