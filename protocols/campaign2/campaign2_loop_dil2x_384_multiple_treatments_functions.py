@@ -3,6 +3,7 @@ import os
 import sys
 import time
 from subprocess import Popen
+from turtle import position
 from liquidhandling import *
 from tip_utils import replace_tip_box, remove_tip_box
 
@@ -57,6 +58,8 @@ k): # k = current treatment number
             dispense_shift=[0, 0, flat_bottom_z_shift],
         )
     soloSoft.setSpeed(xyz_speed=100)
+    # soloSoft.moveArm(destination="TipDisposal")
+    # soloSoft.prime(position="TipDisposal",empty_syringe=True) #blow-off after half plate of transfer
     soloSoft.aspirate(
         position="Position1",
         aspirate_volumes=Reservoir_12col_Agilent_201256_100_BATSgroup().setColumn(
@@ -286,6 +289,11 @@ k
             # blowoff=10,
         )
 
+        # soloSoft.setSpeed(xyz_speed=100)
+        # soloSoft.moveArm(destination="TipDisposal")
+        # soloSoft.prime(position="TipDisposal",empty_syringe=True)
+        # soloSoft.setSpeed(xyz_speed=30)
+
         dispense_volumes_startB = Plate_384_Corning_3540_BlackwClearBottomAssay().setColumn(
                 i, culture_transfer_volume_s1
             )
@@ -432,7 +440,8 @@ num_mixes
             # mix_volume=serial_destination_mixing_volume_s2,
             aspirate_height=reservoir_z_shift,
         )
-
+    soloSoft.shuckTip()
+    soloSoft.getTip("Position3")
     # * Serial dilution within Generic 96 well plate (Corning or Falcon) - mix 3 times before and after transfer
     for i in range(
         (6 * (treatment_dil_half[k] - 1)) + 1, (6 * (treatment_dil_half[k] - 1)) + 5
