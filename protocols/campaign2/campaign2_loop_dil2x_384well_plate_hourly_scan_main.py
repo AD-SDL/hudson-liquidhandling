@@ -459,9 +459,9 @@ reservoir_z_shift=reservoir_z_shift))
     # save protocol to write instructions to .slvp file, create .txt manifest, and .ahk remote start file
     softLinx.saveProtocol()
 
-"""
-    SEND NEW PROTOCOL TO WORK CELL (HUDSON01) ------------------------------------------------------------------
-"""
+    """
+        SEND NEW PROTOCOL TO WORK CELL (HUDSON01) ------------------------------------------------------------------
+    """
     try:
         # TODO: change to full path on lambda6
         child_message_sender = child_pid = Popen(
@@ -484,7 +484,7 @@ reservoir_z_shift=reservoir_z_shift))
         print(e)
         print("Could not send new instructions to hudson01")
 
-    return return_val
+# return return_val
 
 
 def find_treatment_loc(treatment_name):  # TODO: Move this method out of protocol file
