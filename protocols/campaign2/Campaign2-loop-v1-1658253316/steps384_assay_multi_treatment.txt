@@ -1,0 +1,24 @@
+1658253316.935492
+2022-07-19 12:55:16.935501
+plate0_media_to_assay_quarter_1.hso
+plate0_media_to_culture.hso
+plate0_cells_to_assay.hso
+plate0_treatment_serial_dilution.hso
+plate0_treatment_to_assay.hso
+plate1_media_to_assay_quarter_1.hso
+plate1_media_to_culture.hso
+plate1_cells_to_assay.hso
+plate1_treatment_serial_dilution.hso
+plate1_treatment_to_assay.hso
+plate2_media_to_assay_quarter_1.hso
+plate2_media_to_culture.hso
+plate2_cells_to_assay.hso
+plate2_treatment_serial_dilution.hso
+plate2_treatment_to_assay.hso
+plate3_media_to_assay_quarter_1.hso
+plate3_media_to_culture.hso
+plate3_cells_to_assay.hso
+plate3_treatment_serial_dilution.hso
+plate3_treatment_to_assay.hso
+steps384_assay_multi_treatment.slvp
+steps384_assay_multi_treatment.ahk
