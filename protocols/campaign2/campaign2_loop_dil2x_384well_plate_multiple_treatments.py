@@ -1,4 +1,5 @@
 import argparse
+from multiprocessing import pool
 import os
 import sys
 import time
@@ -427,6 +428,11 @@ def generate_campaign1_repeatable(
 
     softLinx.hidexRun("SetTemp20")
     softLinx.liconicEndShake()
+    
+    for k in range(plate_num):
+        softLinx.liconicUnloadIncubator(loadID=k)
+        softLinx.plateCraneMovePlate(["SoftLinx.Liconic.Nest"], ["SoftLinx.PlateCrane.Stack2"],poolID = 2)
+    softLinx.plateCraneMoveCrane("SoftLinx.PlateCrane.Safe")
     # save protocol to write instructions to .slvp file, create .txt manifest, and .ahk remote start file
     softLinx.saveProtocol()
 
