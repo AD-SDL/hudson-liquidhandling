@@ -109,7 +109,7 @@ def generate_campaign1_repeatable(
     # * Create folder to store all instruction files
     project = "Campaign2"
     project_desc = "loop"
-    version_num = "v1"
+    version_num = "384"
     timestamp = str(time.time()).split(".")[0]
     directory_name = f"{project}-{project_desc}-{version_num}-{timestamp}"
     directory_path = os.path.join(
