@@ -29,7 +29,7 @@ Stack 5 - 384 well clear, flat-bottom plate w/ lid.  (will be placed on deck pos
 Stack 4 - Full Tip Box Replacements
 Stack 3 - Empty Tip Box Storage (empty at start)
 Example command line usage: (creating 3 plates)
-python campaign2_loop_dil2x.py -tr col1 col2 col3 col4 -cc 1 2 3 4 -mc 1 3 5 7 -tdh 1 2 1 2 -cdc 1 2 3 4
+python campaign2_loop_dil2x_384well_plate_multiple_treatments.py -tr col1 col2 col3 col4 -cc 1 2 3 4 -mc 1 3 5 7 -tdh 1 2 1 2 -cdc 1 2 3 4
 COMMAND LINE ARGUMENTS:
 TODO
 """
@@ -365,7 +365,7 @@ def generate_campaign1_repeatable(
             # add one ot plate num
             # plate_num+=1
 
-            softLinx.liconicShake(shaker1Speed=30, shakeTime=[0,0,0,10]) # 1 hour
+            softLinx.liconicShake(shaker1Speed=30, shakeTime=[0,1,0,0]) # 1 hour
         elif k != 0:
             if (k+1) % 4 == 0:
                 softLinx.plateCraneMovePlate(["SoftLinx.Solo.Position4"], ["SoftLinx.Hidex.Nest"])
@@ -425,7 +425,7 @@ def generate_campaign1_repeatable(
     
 
         
-        softLinx.liconicShake(shaker1Speed=30, shakeTime=[0,0,0,10]) # 1 hour
+        softLinx.liconicShake(shaker1Speed=30, shakeTime=[0,1,0,0]) # 1 hour
 
 
     #* END LOOP
