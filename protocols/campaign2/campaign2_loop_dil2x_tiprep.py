@@ -72,7 +72,10 @@ def generate_campaign1_repeatable(
     media_z_shift = 0.5
     reservoir_z_shift = 0.5  # z shift for deep blocks (Deck Positions 3 and 5)
     flat_bottom_z_shift = 2  # Note: 1 is not high enough (tested)
-    lambda6_path = "/lambda_stor/data/hudson/instructions/"
+    #lambda6_path = "/lambda_stor/data/hudson/instructions/"
+    lambda6_path = "C:\\Users\\svcaibio\\Desktop\\Debug\\test_96"  # TESTING
+    #hudson01_instructions_path = "C:\\labautomation\\instructions\\"
+    hudson01_instructions_path = "C:\\Users\\svcaibio\\Desktop\\Debug\\test_96"  # TESTING
 
     # Step 1 variables
     media_transfer_volume_s1 = 60
@@ -612,19 +615,19 @@ def generate_campaign1_repeatable(
 
         # run all three liquid handling steps 
         softLinx.soloSoftRun(
-            "C:\\labautomation\\instructions\\"
+            hudson01_instructions_path
             + directory_name
             + "\\"
             + os.path.basename(step1_hso_filename_list[k])
         )
         softLinx.soloSoftRun(
-            "C:\\labautomation\\instructions\\"
+            hudson01_instructions_path
             + directory_name
             + "\\"
             + os.path.basename(step2_hso_filename_list[k])
         )
         softLinx.soloSoftRun(
-            "C:\\labautomation\\instructions\\"
+            hudson01_instructions_path
             + directory_name
             + "\\"
             + os.path.basename(step3_hso_filename_list[k])
@@ -657,7 +660,8 @@ def generate_campaign1_repeatable(
     # reduce Hidex temp to reduce strain on instument over incubation (necessary?)
     softLinx.hidexRun("SetTemp20") 
     
-    softLinx.liconicShake(shaker1Speed=30, shakeTime=[0,7,6,0]) # 7hrs 6 min
+    #softLinx.liconicShake(shaker1Speed=30, shakeTime=[0,7,6,0]) # 7hrs 6 min
+    softLinx.liconicShake(shaker1Speed=30, shakeTime=[0,12,0,0]) # 12 hours for one plate
 
     # preheat Hidex for readings after incubation
     softLinx.hidexRun("SetTempWait37")  
@@ -671,10 +675,10 @@ def generate_campaign1_repeatable(
         softLinx.plateCraneMoveCrane("SoftLinx.PlateCrane.Safe")
         softLinx.hidexRun("Campaign1_noIncubate2")
 
-        # transfer data to lambda6
-        softLinx.runProgram(
-            "C:\\Users\\svcaibio\\Dev\\liquidhandling\\zeromq\\utils\\send_data.bat", arguments=f"{k} {directory_name} campaign2"
-        )
+        # transfer data to lambda6 REMOVED FOR TESTING
+        # softLinx.runProgram(
+        #     "C:\\Users\\svcaibio\\Dev\\liquidhandling\\zeromq\\utils\\send_data.bat", arguments=f"{k} {directory_name} campaign2"
+        # )
  
         # Move plate from Hidex to Stack 1 and replace lid
         softLinx.plateCraneMovePlate(["SoftLinx.Hidex.Nest"], ["SoftLinx.PlateCrane.Stack1"])
@@ -696,29 +700,29 @@ def generate_campaign1_repeatable(
     """
     SEND NEW PROTOCOL TO WORK CELL (HUDSON01) ------------------------------------------------------------------
     """
-    try:
-        # TODO: change to full path on lambda6
-        child_message_sender = child_pid = Popen(
-            [
-                "python",
-                "../../zeromq/lambda6_send_instructions.py",
-                "-d",
-                directory_path,
-                "-i", 
-                str(num_assay_plates),
-                str(num_assay_wells),
-                assay_plate_type,
-                str(is_test),
-            ],
-            start_new_session=True,
-        ).pid
+    # try:
+    #     # TODO: change to full path on lambda6
+    #     child_message_sender = child_pid = Popen(
+    #         [
+    #             "python",
+    #             "../../zeromq/lambda6_send_instructions.py",
+    #             "-d",
+    #             directory_path,
+    #             "-i", 
+    #             str(num_assay_plates),
+    #             str(num_assay_wells),
+    #             assay_plate_type,
+    #             str(is_test),
+    #         ],
+    #         start_new_session=True,
+    #     ).pid
 
-        print("New instruction directory passed to lambda6_send_message.py")
-    except BaseException as e:
-        print(e)
-        print("Could not send new instructions to hudson01")
+    #     print("New instruction directory passed to lambda6_send_message.py")
+    # except BaseException as e:
+    #     print(e)
+    #     print("Could not send new instructions to hudson01")
 
-    return return_val
+    # return return_val
 
 
 def find_treatment_loc(treatment_name):  # TODO: Move this method out of protocol file
