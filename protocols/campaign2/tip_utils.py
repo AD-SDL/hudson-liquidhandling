@@ -11,7 +11,7 @@ def replace_tip_box(
     current_softLinx.plateCraneMovePlate(
         [full_tip_storage],
         [empty_tip_location],
-        hasLid=True,
+        hasLid=True, poolID=4
     )
 
 def remove_tip_box(
@@ -26,6 +26,7 @@ def remove_tip_box(
     current_softLinx.plateCraneMovePlate(
         [empty_tip_location],
         [empty_tip_storage],
+        poolID=3
     )
     
 
