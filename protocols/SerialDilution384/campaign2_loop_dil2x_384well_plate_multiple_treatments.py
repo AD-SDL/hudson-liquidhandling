@@ -394,6 +394,7 @@ def generate_campaign1_repeatable(
             )
         
 <<<<<<< HEAD:protocols/SerialDilution384/campaign2_loop_dil2x_384well_plate_multiple_treatments.py
+<<<<<<< HEAD:protocols/SerialDilution384/campaign2_loop_dil2x_384well_plate_multiple_treatments.py
             elif k == len(treatment) - 1:
                 softLinx.plateCraneMovePlate(["SoftLinx.Solo.Position4"], ["SoftLinx.Hidex.Nest"])
                 softLinx.hidexClose()
@@ -416,6 +417,9 @@ def generate_campaign1_repeatable(
                 plate_num+=1
 
                 softLinx.liconicShake(shaker1Speed=30, shakeTime=[0,1,0,0]) # 1 hour
+=======
+            
+>>>>>>> 54b65a94a90ec0f3a9443cbab5f806a3a874456c:protocols/campaign2/campaign2_loop_dil2x_384well_plate_multiple_treatments.py
 =======
             
 >>>>>>> 54b65a94a90ec0f3a9443cbab5f806a3a874456c:protocols/campaign2/campaign2_loop_dil2x_384well_plate_multiple_treatments.py
