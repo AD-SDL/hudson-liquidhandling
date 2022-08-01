@@ -77,7 +77,7 @@ def generate_campaign1_repeatable(
     reservoir_z_shift = 0.5  # z shift for deep blocks (Deck Positions 3 and 5)
     flat_bottom_z_shift = 2  # Note: 1 is not high enough (tested)
     lambda6_path = "/lambda_stor/data/hudson/instructions/"
-    # lambda6_path = "C:\\Users\\svcaibio\\Dev\\liquidhandling\\protocols\\campaign2\\test_hso\\" # TODO change directory name
+    # lambda6_path = "C:\\Users\\svcaibio\\Dev\\liquidhandling\\protocols\\SerialDilution384\\test_hso\\" # TODO change directory name
 
     # Step 1 variables
     media_transfer_volume_s1 = 20 
@@ -352,7 +352,7 @@ def generate_campaign1_repeatable(
 
                 # lambda6 TODO
                 softLinx.runProgram(
-                "C:\\Users\\svcaibio\\Dev\\liquidhandling\\zeromq\\utils\\send_data.bat", arguments=f"{k} {directory_name} campaign2"
+                "C:\\Users\\svcaibio\\Dev\\liquidhandling\\zeromq\\utils\\send_data.bat", arguments=f"{k} {directory_name} serial_dilution"
                 )
 
                 # Move plate back to incubator, replace lid
@@ -378,7 +378,7 @@ def generate_campaign1_repeatable(
 
                 # lambda6 TODO
                 softLinx.runProgram(
-                "C:\\Users\\svcaibio\\Dev\\liquidhandling\\zeromq\\utils\\send_data.bat", arguments=f"{k} {directory_name} campaign2"
+                "C:\\Users\\svcaibio\\Dev\\liquidhandling\\zeromq\\utils\\send_data.bat", arguments=f"{k} {directory_name} serial_dilution"
                 )
 
                 # Move plate back to incubator, replace lid
@@ -412,7 +412,7 @@ def generate_campaign1_repeatable(
 
             # lambda6 TODO
             softLinx.runProgram(
-            "C:\\Users\\svcaibio\\Dev\\liquidhandling\\zeromq\\utils\\send_data.bat", arguments=f"{k} {directory_name} campaign2"
+            "C:\\Users\\svcaibio\\Dev\\liquidhandling\\zeromq\\utils\\send_data.bat", arguments=f"{k} {directory_name} serial_dilution"
         )
 
             softLinx.plateCraneMovePlate(["SoftLinx.Hidex.Nest"], ["SoftLinx.Liconic.Nest"])
