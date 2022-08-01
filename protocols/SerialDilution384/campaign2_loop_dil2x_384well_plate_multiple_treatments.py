@@ -29,7 +29,7 @@ Stack 5 - 384 well clear, flat-bottom plate w/ lid.  (will be placed on deck pos
 Stack 4 - Full Tip Box Replacements
 Stack 3 - Empty Tip Box Storage (empty at start)
 Example command line usage: (creating 3 plates)
-python campaign2_loop_dil2x.py -tr col1 col2 col3 col4 -cc 1 2 3 4 -mc 1 3 5 7 -tdh 1 2 1 2 -cdc 1 2 3 4
+python campaign2_loop_dil2x_384well_plate_multiple_treatments.py -tr col1 col2 col3 col4 -cc 1 2 3 4 -mc 1 3 5 7 -tdh 1 2 1 2 -cdc 1 2 3 4
 COMMAND LINE ARGUMENTS:
 TODO
 """
@@ -267,7 +267,7 @@ def generate_campaign1_repeatable(
 
     #* loop over treatments, every four treatments, swap out assay plate from stack 5 to position 4
 
-    plate_num = 0 # keeps track of how many plates we have created
+    plate_num = 1 # keeps track of how many plates we have created
 
     for k in range(len(treatment)):
 
@@ -343,8 +343,31 @@ def generate_campaign1_repeatable(
       
 
         #* if fourth or last treatment total, move assay plate from position 4 to hidex, run protocol, replace lid, load incubator, move to safe
-        if k != 0:
-            if k % 4 == 0:
+        if k == len(treatment) - 1:
+            softLinx.plateCraneMovePlate(["SoftLinx.Solo.Position4"], ["SoftLinx.Hidex.Nest"])
+            softLinx.hidexClose()
+            softLinx.plateCraneMoveCrane("SoftLinx.PlateCrane.Safe")
+            softLinx.hidexRun("Campaign1_noIncubate2_384")
+
+            # lambda6 TODO
+            softLinx.runProgram(
+            "C:\\Users\\svcaibio\\Dev\\liquidhandling\\zeromq\\utils\\send_data.bat", arguments=f"{k} {directory_name} campaign2"
+            )
+
+            # Move plate back to incubator, replace lid
+            softLinx.plateCraneMovePlate(["SoftLinx.Hidex.Nest"], ["SoftLinx.Liconic.Nest"])
+            softLinx.hidexClose()
+            softLinx.plateCraneReplaceLid(["SoftLinx.PlateCrane.LidNest2"], ["SoftLinx.Liconic.Nest"])
+            softLinx.plateCraneMoveCrane("SoftLinx.PlateCrane.Safe")
+            softLinx.liconicLoadIncubator(loadID=plate_num, holdWithoutIncubationTime=True)
+
+            # removed, no more plates
+            # add one ot plate num
+            # plate_num+=1
+
+            softLinx.liconicShake(shaker1Speed=30, shakeTime=[0,1,0,0]) # 1 hour
+        elif k != 0:
+            if (k+1) % 4 == 0:
                 softLinx.plateCraneMovePlate(["SoftLinx.Solo.Position4"], ["SoftLinx.Hidex.Nest"])
                 softLinx.hidexClose()
                 softLinx.plateCraneMoveCrane("SoftLinx.PlateCrane.Safe")
@@ -362,7 +385,7 @@ def generate_campaign1_repeatable(
                 softLinx.plateCraneMoveCrane("SoftLinx.PlateCrane.Safe")
                 softLinx.liconicLoadIncubator(loadID=plate_num, holdWithoutIncubationTime=True)
 
-                # add one ot plate num
+                # add one ot plate num, still more plates
                 plate_num+=1
 
                 # replenish assay plate
@@ -370,6 +393,7 @@ def generate_campaign1_repeatable(
                 ["SoftLinx.PlateCrane.Stack5"], ["SoftLinx.Solo.Position4"], hasLid=True, poolID=5
             )
         
+<<<<<<< HEAD:protocols/SerialDilution384/campaign2_loop_dil2x_384well_plate_multiple_treatments.py
             elif k == len(treatment) - 1:
                 softLinx.plateCraneMovePlate(["SoftLinx.Solo.Position4"], ["SoftLinx.Hidex.Nest"])
                 softLinx.hidexClose()
@@ -392,6 +416,9 @@ def generate_campaign1_repeatable(
                 plate_num+=1
 
                 softLinx.liconicShake(shaker1Speed=30, shakeTime=[0,1,0,0]) # 1 hour
+=======
+            
+>>>>>>> 54b65a94a90ec0f3a9443cbab5f806a3a874456c:protocols/campaign2/campaign2_loop_dil2x_384well_plate_multiple_treatments.py
 
 
 
@@ -403,7 +430,7 @@ def generate_campaign1_repeatable(
 
     for i in range(12): # 12 scans hourly
         for k in range(plate_num): # plate_num = total number of assay plates
-            softLinx.liconicUnloadIncubator(loadID=k)
+            softLinx.liconicUnloadIncubator(loadID=k+1)
             softLinx.plateCraneRemoveLid(["SoftLinx.Liconic.Nest"], ["SoftLinx.PlateCrane.LidNest2"])
             softLinx.plateCraneMovePlate(["SoftLinx.Liconic.Nest"], ["SoftLinx.Hidex.Nest"])
             softLinx.hidexClose()
@@ -419,7 +446,9 @@ def generate_campaign1_repeatable(
             softLinx.hidexClose()
             softLinx.plateCraneReplaceLid(["SoftLinx.PlateCrane.LidNest2"], ["SoftLinx.Liconic.Nest"])
             softLinx.plateCraneMoveCrane("SoftLinx.PlateCrane.Safe")
-            softLinx.liconicLoadIncubator(loadID=k, holdWithoutIncubationTime=True)
+            softLinx.liconicLoadIncubator(loadID=k+1, holdWithoutIncubationTime=True)
+    
+
         
         softLinx.liconicShake(shaker1Speed=30, shakeTime=[0,1,0,0]) # 1 hour
 
@@ -430,7 +459,7 @@ def generate_campaign1_repeatable(
     softLinx.liconicEndShake()
     
     for k in range(plate_num):
-        softLinx.liconicUnloadIncubator(loadID=k)
+        softLinx.liconicUnloadIncubator(loadID=k+1)
         softLinx.plateCraneMovePlate(["SoftLinx.Liconic.Nest"], ["SoftLinx.PlateCrane.Stack2"],poolID = 2)
     softLinx.plateCraneMoveCrane("SoftLinx.PlateCrane.Safe")
     # save protocol to write instructions to .slvp file, create .txt manifest, and .ahk remote start file
