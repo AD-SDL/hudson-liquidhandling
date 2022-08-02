@@ -1,4 +1,5 @@
 # imports
+from audioop import avg
 import os
 import sys
 import csv 
@@ -270,7 +271,7 @@ def check_for_contamination(raw_df, timepoint_list,i):
 
     return ret_val
 
-def calculate_avg(list):
+def calculate_avg(list_o, list_p):
     """calculate_avg
 
     Description: Average calculations of the "O" and "P" values (blanks/control wells)
@@ -283,20 +284,11 @@ def calculate_avg(list):
     
     """
     avg_list = []
-    pointer1 = 0
-    pointer2 = 6
-    
-
-    while pointer1 < 6:
-        
-        avg_list.insert(pointer1,(float(list[pointer1]) + float(list[pointer2]))/2)
-        avg_list.insert(pointer2,(float(list[pointer1]) + float(list[pointer2]))/2)
-        pointer1+=1
-        pointer2+=1
-    
+    for i in range(len(list_o)):
+        avg_list.insert(i,(float(list_o[i]) + float(list_p[i]))/2)
     return avg_list
 
-def od_blank_adjusted(data_frame, time_stamps):
+def od_blank_adjusted(data_frame, time_stamps,i):
     """od_blank_adjusted
 
         Description: Recives a data_frame and calculates blank adjusted values for each data point
@@ -309,3 +301,34 @@ def od_blank_adjusted(data_frame, time_stamps):
             - blank_adj_data_frame: A new data frame with blank adjusted values
             - adjusted_values_list: A list of blank adjusted values (this will be used to insert the values into the database)
     """
+    blank_adj_data_frame = data_frame
+    adjusted_values_list = []
+    for time_point in time_stamps:
+        if i == 0:
+            blank_adj_list= calculate_avg(list(data_frame[time_point][336:342]), (list(data_frame[time_point][360:366])))
+        elif i == 1:
+            blank_adj_list = calculate_avg(list(data_frame[time_point][342:348]), list(data_frame[time_point][366:372]))       
+        elif i == 2:
+            blank_adj_list_o = calculate_avg(list(data_frame[time_point][348:354]), list(data_frame[time_point][372:378]))
+        elif i == 3:
+            blank_adj_list_o = calculate_avg(list(data_frame[time_point][354:360]), list(data_frame[time_point][378:]))
+        else:
+            print("ERROR: Incorrect plate quadrant given to od_blank_adjusted function")
+        
+        index = 0
+        
+        for data_index_num in range(1,len(data_frame)+1) :
+            A = float(data_frame[time_point][data_index_num])
+            if index == len(blank_adj_list):
+                index = 0
+            adjust = round(float(data_frame[time_point][data_index_num]) - blank_adj_list[index], 3)
+            if adjust < 0:
+                adjust = 0
+            
+            blank_adj_data_frame[time_point][data_index_num] = adjust
+            adjusted_values_list.append(adjust)
+            index+=1
+    
+    return blank_adj_data_frame, adjusted_values_list
+
+    # TO DO: graphing
