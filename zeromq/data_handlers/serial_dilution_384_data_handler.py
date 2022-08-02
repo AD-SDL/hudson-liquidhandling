@@ -171,7 +171,7 @@ def log_and_save(address, json_decoded_message):
 
 def parse_hidex_sd(file_name):
 
-     """parses the Hidex csv file
+    """parses the Hidex csv file
 
     Description: extract the reading date, time, and data (into dataframe)
 
