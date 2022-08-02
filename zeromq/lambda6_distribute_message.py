@@ -44,6 +44,9 @@ def lambda6_distribute_message(utf8_decoded_message):
 
             if data_format == "dna_assembly": 
                 handle_dna_assembly_data(address, json_decoded_message)  
+            
+            if data_format == 'serial_dilution':
+                handle_sd_384_data(address, json_decoded_message)
 
 
 def main(json_string):
