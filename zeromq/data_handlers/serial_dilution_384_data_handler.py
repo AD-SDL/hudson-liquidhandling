@@ -8,7 +8,7 @@ import pandas as pd
 import numpy as np
 from utils.run_qc import run_qc
 from utils.zmq_connection import zmq_connect
-#import matplotlib.pyplot as plt
+import matplotlib.pyplot as plt
 sys.path.append("../rdbms/")
 sys.path.append("../../rdbms/") # this is the one that works
 from database_functions import update_plate_data, insert_control_qc, insert_blank_adj
@@ -37,7 +37,7 @@ def handle_sd_384_data(address, json_decoded_message):
     for i in range(4):
         # check for contaminated controls
         print(f"calling qc on {file_path}")
-        qc_result = check_for_contamination(df, timestamp_list)  # TODO reformat to produce QC df
+        qc_result = check_for_contamination(df, timestamp_list, i)  # TODO reformat to produce QC df
 
         # print qc result 
         print(f"done running qc on {file_name}")
@@ -46,16 +46,16 @@ def handle_sd_384_data(address, json_decoded_message):
         if qc_result == "PASS": 
 
             # blank adjust the data
-            blank_adj_df, blank_adj_list = od_blank_adjusted(df, timestamp_list)  
+            blank_adj_df, blank_adj_list = od_blank_adjusted(df, timestamp_list, i)  
 
             # graph blank adjusted data for each timepoint
             data_basename = data_filename.split(".")[0]
             j+=1
 
-            graph_filepaths_list = generate_graphs(blank_adj_df, data_filename, plot_dir_path,i)  # REMOVED FOR TESTING
+            graph_filepaths_list = generate_graphs(blank_adj_df, data_filename, plot_dir_path,i)
             print(f"graphs generated for {data_basename}")
 
-            if j == 4:
+            if j == 3:
                 print(f"Done handling message: {str(address)}")
 
                 # send message to build_dataframe if the data is good 
@@ -312,9 +312,9 @@ def od_blank_adjusted(data_frame, time_stamps,i):
         elif i == 1:
             blank_adj_list = calculate_avg(list(data_frame[time_point][342:348]), list(data_frame[time_point][366:372]))       
         elif i == 2:
-            blank_adj_list_o = calculate_avg(list(data_frame[time_point][348:354]), list(data_frame[time_point][372:378]))
+            blank_adj_list = calculate_avg(list(data_frame[time_point][348:354]), list(data_frame[time_point][372:378]))
         elif i == 3:
-            blank_adj_list_o = calculate_avg(list(data_frame[time_point][354:360]), list(data_frame[time_point][378:]))
+            blank_adj_list = calculate_avg(list(data_frame[time_point][354:360]), list(data_frame[time_point][378:]))
         else:
             print("ERROR: Incorrect plate quadrant given to od_blank_adjusted function")
         
@@ -385,15 +385,45 @@ def generate_graphs(blank_adj_df, data_filename, plot_directory_path, quadrant):
         data_in_sets = []
         data_rep1 = []
         data_rep2 = []
+        # print("data list", data_list)
+        # print(data_list[:6])
 
-# TO DO: figure out the indices
-        # # separate data into replicate 1 and 2
-        # while not len(data_list) == 0:  
-        #     data_in_sets.append(data_list[:6])
-        #     data_in_sets.append(data_list[6:12])
-        #     data_rep1.append(data_list[:6])
-        #     data_rep2.append(data_list[6:12])
-        #     data_list = data_list[12:]
+
+        if quadrant == 0:
+        # separate data into replicate 1 and 2
+            for p in range(8):
+                data_in_sets.append(data_list[:6])
+                data_in_sets.append(data_list[24:30])
+                data_rep1.append(data_list[:6])
+                data_rep2.append(data_list[24:30])
+                del data_list[:48]
+        
+        elif quadrant == 1:
+            for p in range(8):
+                data_in_sets.append(data_list[6:12])
+                data_in_sets.append(data_list[30:36])
+                data_rep1.append(data_list[6:12])
+                data_rep2.append(data_list[30:36])
+                del data_list[:48]
+        
+        elif quadrant == 2:
+            for p in range(8):
+                data_in_sets.append(data_list[12:18])
+                data_in_sets.append(data_list[36:42])
+                data_rep1.append(data_list[12:18])
+                data_rep2.append(data_list[36:42])
+                del data_list[:48]
+        
+        elif quadrant == 3:
+            for p in range(8):
+                data_in_sets.append(data_list[18:24])
+                data_in_sets.append(data_list[42:48])
+                data_rep1.append(data_list[18:24])
+                data_rep2.append(data_list[42:48])
+                del data_list[:48]
+
+
+
 
         plt.figure(figsize=(10, 5))
 
