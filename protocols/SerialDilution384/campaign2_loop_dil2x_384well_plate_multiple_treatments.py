@@ -351,7 +351,7 @@ def generate_campaign1_repeatable(
 
             # lambda6 TODO
             softLinx.runProgram(
-            "C:\\Users\\svcaibio\\Dev\\liquidhandling\\zeromq\\utils\\send_data.bat", arguments=f"{k} {directory_name} campaign2"
+            "C:\\Users\\svcaibio\\Dev\\liquidhandling\\zeromq\\utils\\send_data.bat", arguments=f"{k} {directory_name} serial_dilution"
             )
 
             # Move plate back to incubator, replace lid
