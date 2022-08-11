@@ -25,7 +25,7 @@ def generate_test_repeatable():
         os.path.realpath(os.path.dirname(lambda6_path)), directory_name
     )
 
-    num_assay_plates = 4 # from cl args
+    num_assay_plates = 1 # from cl args
     num_assay_wells = 384  # hardcoded for now
     assay_plate_type = "hidex"
 
@@ -82,10 +82,14 @@ def generate_test_repeatable():
     softLinx.plateCraneMoveCrane("SoftLinx.PlateCrane.Safe")
 
     softLinx.liconicUnloadIncubator(loadID=1)
+    softLinx.plateCraneMovePlate(["SoftLinx.Liconic.Nest"], ["SoftLinx.PlateCrane.Stack5"],poolID = 5)
+    softLinx.plateCraneMoveCrane("SoftLinx.PlateCrane.Safe")
 
 
     softLinx.hidexRun("SetTemp20")
     softLinx.liconicEndShake()
+
+    softLinx.saveProtocol()
 
 
     try:
