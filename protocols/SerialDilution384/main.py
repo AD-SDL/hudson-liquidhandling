@@ -10,10 +10,10 @@ from liquidhandling import DeepBlock_96VWR_75870_792_sterile
 from liquidhandling import Reservoir_12col_Agilent_201256_100_BATSgroup
 from liquidhandling import Plate_96_Corning_3635_ClearUVAssay
 from tip_utils import replace_tip_box, remove_tip_box
-from campaign2_loop_dil2x_384_multiple_treatments_functions import *
+from functions import *
 
 """
-Campaign 2 Protocol - 2x dilutions
+Serial Dilution 384 Protocol - 2x dilutions
 (7 strains x 1 treatment x 5 dilutions x 2 replicates)
 created 06/21/22
 SOLO DECK ARRANGEMENT:
@@ -39,7 +39,7 @@ Version to plate multiple treatments within the same 384 well plate (one per 6 c
 """
 
 
-def generate_campaign1_repeatable(
+def generate_SD_384_repeatable(
     treatment, # string list of treatment names
     predicted_IC50=None,  # TODO: handle predicted IC50
     culture_column=None,  # int list of cell culture columns
@@ -581,7 +581,7 @@ def main(args):
     )
 
     # pass to method
-    generate_campaign1_repeatable(
+    generate_SD_384_repeatable(
         args["treatment"],
         args["predicted_IC50"],
         args["culture_column"],
