@@ -66,7 +66,7 @@ def generate_test_repeatable():
 
     # lambda6 TODO
     softLinx.runProgram(
-    "C:\\Users\\svcaibio\\Dev\\liquidhandling\\zeromq\\utils\\send_data.bat", arguments=f"{1} {directory_name} serial_dilution"
+    "C:\\Users\\svcaibio\\Dev\\liquidhandling\\zeromq\\utils\\send_data.bat", arguments=f"{1} {directory_name} serial_dilution_384"
     )
 
     # Move plate back to incubator, replace lid

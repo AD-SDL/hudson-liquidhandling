@@ -325,7 +325,7 @@ def generate_SD_384_repeatable(
             softLinx.hidexRun("Campaign1_noIncubate2_384")
 
             softLinx.runProgram(
-            "C:\\Users\\svcaibio\\Dev\\liquidhandling\\zeromq\\utils\\send_data.bat", arguments=f"{k} {directory_name} serial_dilution"
+            "C:\\Users\\svcaibio\\Dev\\liquidhandling\\zeromq\\utils\\send_data.bat", arguments=f"{k} {directory_name} serial_dilution_384"
             )
 
             # Move plate back to incubator, replace lid
@@ -345,7 +345,7 @@ def generate_SD_384_repeatable(
 
                 # lambda6 TODO
                 softLinx.runProgram(
-                "C:\\Users\\svcaibio\\Dev\\liquidhandling\\zeromq\\utils\\send_data.bat", arguments=f"{k} {directory_name} serial_dilution"
+                "C:\\Users\\svcaibio\\Dev\\liquidhandling\\zeromq\\utils\\send_data.bat", arguments=f"{k} {directory_name} serial_dilution_384"
                 )
 
                 # Move plate back to incubator, replace lid
@@ -371,7 +371,7 @@ def generate_SD_384_repeatable(
 
                 # lambda6 TODO
                 softLinx.runProgram(
-                "C:\\Users\\svcaibio\\Dev\\liquidhandling\\zeromq\\utils\\send_data.bat", arguments=f"{k} {directory_name} serial_dilution"
+                "C:\\Users\\svcaibio\\Dev\\liquidhandling\\zeromq\\utils\\send_data.bat", arguments=f"{k} {directory_name} serial_dilution_384"
                 )
 
                 # Move plate back to incubator, replace lid
@@ -406,7 +406,7 @@ def generate_SD_384_repeatable(
 
             # lambda6
             softLinx.runProgram(
-            "C:\\Users\\svcaibio\\Dev\\liquidhandling\\zeromq\\utils\\send_data.bat", arguments=f"{k} {directory_name} serial_dilution"
+            "C:\\Users\\svcaibio\\Dev\\liquidhandling\\zeromq\\utils\\send_data.bat", arguments=f"{k} {directory_name} serial_dilution_384"
         )
 
             softLinx.plateCraneMovePlate(["SoftLinx.Hidex.Nest"], ["SoftLinx.Liconic.Nest"])

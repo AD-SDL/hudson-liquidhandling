@@ -66,7 +66,7 @@ def hudson01_distribute_send_data(directory, lookback_time=None, extension="", p
                 elif data_format == "dna_assembly": 
                     print("handling sending dna assembly formatted data")
                     data_dict, files_to_archive = send_dna_assembly_data(f, plate_id, exp_name, data_format)
-                elif data_format == "serial_dilution":
+                elif data_format == "serial_dilution_384":
                     print("handling sending serial dilution 384 formatted data")
                     data_dict, files_to_archive = send_sd_384_data(f, plate_id, exp_name, data_format)
             else:
