@@ -374,7 +374,7 @@ def generate_graphs(blank_adj_df, data_filename, plot_directory_path, quadrant):
 
         # determine plot title and file path
         plot_title = f"{data_filename}, timepoint = {timepoint} (seconds), quadrant = {quadrant+1}"
-        plot_basename = f"{data_filename}_{str(timepoint).split('.')[0]}.png"
+        plot_basename = f"{data_filename}_{str(timepoint).split('.')[0]}_quadrant:{str(quadrant)}.png"
         
         try:
             plot_file_path = os.path.join(plot_directory_path, plot_basename)
