@@ -12,27 +12,6 @@ from liquidhandling import Plate_96_Corning_3635_ClearUVAssay
 from tip_utils import replace_tip_box, remove_tip_box
 from functions import *
 
-"""
-Serial Dilution 384 Protocol - 2x dilutions
-(7 strains x 1 treatment x 5 dilutions x 2 replicates)
-created 06/21/22
-SOLO DECK ARRANGEMENT:
-Pos 1 = 96 deep well media reservoir
-Pos 2 = EMPTY (heat nest)
-Pos 3 = 180uL tips (filtered if possible)
-Pos 4 = EMPTY TO START
-Pos 5 = 96 deep well culture stock plate
-Pos 6 = 96 deep well (empty at start)
-Pos 7 = 96 deep well culture dilution plate (plate is empty at start)
-Pos 8 = 96 well flat bottom treatment plate (one treatment per column, min 280uL treatment per well)
-Stack 5 - 384 well clear, flat-bottom plate w/ lid.  (will be placed on deck pos 4 at start of protocol)
-Stack 4 - Full Tip Box Replacements
-Stack 3 - Empty Tip Box Storage (empty at start)
-Example command line usage: (creating 3 plates)
-python campaign2_loop_dil2x_384well_plate_multiple_treatments.py -tr col1 col2 col3 col4 -cc 1 2 3 4 -mc 1 3 5 7 -tdh 1 2 1 2 -cdc 1 2 3 4
-COMMAND LINE ARGUMENTS:
-TODO
-"""
 
 """
 Version to plate multiple treatments within the same 384 well plate (one per 6 column quadrant)
@@ -66,46 +45,43 @@ def generate_SD_384_repeatable(
             raise ValueError (
                 "all command line arguments must be lists of equal length"
             )
-    
-    #TODO: divide command line argument into groupings of 4, with 1 argument per treatment per quadrant of assay plate, qith 4 treatments per plate
 
     # * Program variables
-    # TODO: for future make variables treatment specific?
     blowoff_volume = 10
     num_mixes = 3
     media_z_shift = 0.5
     reservoir_z_shift = 0.5  # z shift for deep blocks (Deck Positions 3 and 5)
     flat_bottom_z_shift = 2  # Note: 1 is not high enough (tested)
-    lambda6_path = "/lambda_stor/data/hudson/instructions/"
+    lambda6_path = "/lambda_stor/data/hudson/instructions/" # location where instructions are sent to on lambda6
     # lambda6_path = "C:\\Users\\svcaibio\\Dev\\liquidhandling\\protocols\\SerialDilution384\\test_hso\\" # TODO change directory name
 
     # Step 1 variables
-    media_transfer_volume_s1 = 20 
-    culture_transfer_volume_s1 = 10 # reducing volumes, keeping 1:3 ratio culture to media volume
-    half_dilution_media_volume = 99
-    dilution_culture_volume = 22
-    culture_plate_mix_volume_s1 = 100  # mix volume increased for test 09/07/21
-    culture_plate_num_mix = 7
-    culture_dilution_num_mix = 10
-    growth_plate_mix_volume_s1 = 20
-    culture_dilution_mix_volume = 180
+    media_transfer_volume_s1 = 20 # volume of media dispensed into assay plate well
+    culture_transfer_volume_s1 = 10 # volume of diluted cells dispensed into assay platee well 1:3 ratio culture to media volume
+    half_dilution_media_volume = 99 # half of volume of media dispensed into culture dilution column
+    dilution_culture_volume = 22 # half of volume of culture cells dispensed into culture dilution column
+    culture_plate_mix_volume_s1 = 100  # mixing volume used when cells are added to dilution plate
+    culture_plate_num_mix = 7 # number of times cells are mixed before being added to dilution plate
+    culture_dilution_num_mix = 10 # number of times cells are mixed after being added to dilution plate
+    growth_plate_mix_volume_s1 = 20 # mixing volume after cells are dispensed into assay plate
+    culture_dilution_mix_volume = 180 # mixing volume when performing large final mix in cell dilution plate
 
     # Step 2 variables
-    media_transfer_volume_s2 = ( # TODO: increase most stock volumes for 384
-        120  # two times = 240 uL (will add 240 ul stock for 1:2 dilution)
+    media_transfer_volume_s2 = (
+        120  # half of volume of media dispensed into each well of serial dilution plate for prep # two times = 240 uL (will add 240 ul stock for 1:2 dilution)
     )
     last_column_transfer_volume_s2 = (
-        120  # two times = 240uL (to equal volume in 1:10 dilution wells)
+        120  # half of volume of media dispensed into last column of serial dilution plate for prep # two times = 240uL (to equal volume in 1:10 dilution wells)
     )
-    serial_antibiotic_transfer_volume_s2 = 120  # transfers twice (240tr + 240 lb = 1:2 dil)
-    serial_source_mixing_volume_s2 = 110
-    serial_source_num_mixes_s2 = 5
-    serial_destination_mixing_volume_s2 = 150
+    serial_antibiotic_transfer_volume_s2 = 120  # half of volume of treatment dispensed into first column of serial dilution half # transfers twice (240tr + 240 lb = 1:2 dil)
+    serial_source_mixing_volume_s2 = 110 # mixing volume in treatment source before aspirating for serial dilution plate
+    serial_source_num_mixes_s2 = 5 # number of mixes performed in treatment source before aspirating for serial dilution plate
+    serial_destination_mixing_volume_s2 = 150 # mixing volume used when serial dilution being performed between columns of serial dilution plate
 
     # Step 3 variables
-    antibiotic_transfer_volume_s3 = 30 # reduced to be 1:1 with media + cells
-    antibiotic_mix_volume_s3 = 30
-    destination_mix_volume_s3 = 50
+    antibiotic_transfer_volume_s3 = 30 # volume of treatment from serial dilution dispensed into assay plate # reduced to be 1:1 with media + cells
+    antibiotic_mix_volume_s3 = 30 # mixing volume used in serial dilution plate before aspirating treatment for assay plate
+    destination_mix_volume_s3 = 50 # mixing volume used in assay plate after treatment has been dispensed in assay plate
 
     # * Create folder to store all instruction files
     project = "SerialDil384"
