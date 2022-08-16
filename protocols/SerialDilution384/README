@@ -1,6 +1,7 @@
 -------------------------------------------
 Serial Dilution Protocol for 384 Well Plate
 -------------------------------------------
+Treatment performed in duplicate by row (ex. A1 and B1 are duplicates)
 
 ----------------
 SOLO DECK LAYOUT
@@ -69,14 +70,19 @@ main: main function adding command line arguments and executing generate_SD_384_
 
 
 
-
-
-
-
-
 ------------
 functions.py
 ------------
 - Python script which houses all of the liquid handling protocols to be executed by the Hudson Solo
+
+generate_media_transfer_to_quarter_assay_hso: aspirates media from media resevoir and dispenses into every well in current quadrant of assay plate
+
+generate_fill_culture_dilution_and_treatment_plates_with_media_hso: aspirates media from media resevoir and dispenses into culture dilution, and aspirates cells from culture stock plate and dispenses into culture dilution
+
+generate_add_diluted_cells_to_assay_loop_hso: aspirates diluted cells from culture dilution plate and dispenses ino current quadrant of assay plate
+
+generate_serial_dlution_treatment_hso: Dispesnes media into current half of serial dilution plate, adds treatment to first column, and performs serial dilution
+
+generate_add_antibioitc_to_assay_hso: adds treatment from serial dilution plate to corresponding column of assay plate
 
 
