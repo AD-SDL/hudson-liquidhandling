@@ -170,8 +170,7 @@ def generate_SD_384_repeatable(
         culture_dilution_mix_volume=culture_dilution_mix_volume,
         blowoff_volume=blowoff_volume))
 
-        #* add diluted cells to assay # one column of tips unless want to do outside of loop?
-        #* no loop, so that we can blowoff, or loop and no blowoff
+        #* add diluted cells to assay # one column of tips
         cells_to_assay_hso.append(generate_add_diluted_cells_to_assay_loop_hso(directory_path=directory_path,
         filename="cells_to_assay.hso",
         media_start_column=media_start_column,
@@ -187,8 +186,7 @@ def generate_SD_384_repeatable(
         k=k))
 
 
-        #* perform serial dilution of given treatment # one column of tips
-        #* should be fine to leave same? just increase volumes
+        #* perform serial dilution of given treatment # two columns of tips
         serial_dilution_hso.append(generate_serial_dlution_treatment_hso(directory_path=directory_path,
         filename="treatment_serial_dilution.hso",
         treatment_dil_half=treatment_dil_half,
@@ -233,6 +231,7 @@ def generate_SD_384_repeatable(
     #     {"SoftLinx.PlateCrane.Stack5": "Corning 3540", }
     # )
 
+    # declare 384 well plates in stack 5 and tip boxes in stack 4
     softLinx.setPlates(
         {"SoftLinx.PlateCrane.Stack5": "Plate.96.Corning-3635.ClearUVAssay", "SoftLinx.PlateCrane.Stack4": "TipBox.180uL.Axygen-EVF-180-R-S.bluebox"}
     )
@@ -260,14 +259,14 @@ def generate_SD_384_repeatable(
             softLinx.soloSoftResetTipCount(3)
 
         #* replace tip box and swap out treatment dilution plate every two treatments
-        #TODO: figure out effective way to swap treatment plate, or see if there's a manual pause to do manually
+        #TODO: figure out effective way to swap serial dilution plate, or see if there's a manual pause to do manually
         elif k % 2 == 0:
             remove_tip_box(softLinx, "Position3")
             replace_tip_box(softLinx, "Position3")
             softLinx.soloSoftResetTipCount(3)
 
             # TODO: treatment plate 
-            #* for now, have to manually swap treatment dilution plate with empty every 2 treatments
+            #* for now, have to manually swap serial dilution dilution plate with empty every 2 treatments
         
         softLinx.plateCraneMoveCrane("SoftLinx.PlateCrane.Safe")
         
@@ -319,13 +318,12 @@ def generate_SD_384_repeatable(
       
 
         #* if fourth or last treatment total, move assay plate from position 4 to hidex, run protocol, replace lid, load incubator, move to safe
-        if k == len(treatment) - 1:
+        if k == len(treatment) - 1: # last treatment
             softLinx.plateCraneMovePlate(["SoftLinx.Solo.Position4"], ["SoftLinx.Hidex.Nest"])
             softLinx.hidexClose()
             softLinx.plateCraneMoveCrane("SoftLinx.PlateCrane.Safe")
             softLinx.hidexRun("Campaign1_noIncubate2_384")
 
-            # lambda6 TODO
             softLinx.runProgram(
             "C:\\Users\\svcaibio\\Dev\\liquidhandling\\zeromq\\utils\\send_data.bat", arguments=f"{k} {directory_name} serial_dilution"
             )
@@ -337,13 +335,9 @@ def generate_SD_384_repeatable(
             softLinx.plateCraneMoveCrane("SoftLinx.PlateCrane.Safe")
             softLinx.liconicLoadIncubator(loadID=plate_num, holdWithoutIncubationTime=True)
 
-            # removed, no more plates
-            # add one ot plate num
-            # plate_num+=1
-
             softLinx.liconicShake(shaker1Speed=30, shakeTime=[0,1,0,0]) # 1 hour
         elif k != 0:
-            if (k+1) % 4 == 0:
+            if (k+1) % 4 == 0: # not the first treatment, but last treatment of plate
                 softLinx.plateCraneMovePlate(["SoftLinx.Solo.Position4"], ["SoftLinx.Hidex.Nest"])
                 softLinx.hidexClose()
                 softLinx.plateCraneMoveCrane("SoftLinx.PlateCrane.Safe")
@@ -369,7 +363,7 @@ def generate_SD_384_repeatable(
                 ["SoftLinx.PlateCrane.Stack5"], ["SoftLinx.Solo.Position4"], hasLid=True, poolID=5
             )
         
-            elif k == len(treatment) - 1:
+            elif k == len(treatment) - 1: # last treatment
                 softLinx.plateCraneMovePlate(["SoftLinx.Solo.Position4"], ["SoftLinx.Hidex.Nest"])
                 softLinx.hidexClose()
                 softLinx.plateCraneMoveCrane("SoftLinx.PlateCrane.Safe")
@@ -401,7 +395,7 @@ def generate_SD_384_repeatable(
     # TODO: check out softlinx parallel capabilities
     #* wait an hour *** less: figure out time between plates *** place all plates into hidex again
 
-    for i in range(12): # 12 scans hourly
+    for i in range(12): # 12 hourly scans
         for k in range(plate_num): # plate_num = total number of assay plates
             softLinx.liconicUnloadIncubator(loadID=k+1)
             softLinx.plateCraneRemoveLid(["SoftLinx.Liconic.Nest"], ["SoftLinx.PlateCrane.LidNest2"])
@@ -410,7 +404,7 @@ def generate_SD_384_repeatable(
             softLinx.plateCraneMoveCrane("SoftLinx.PlateCrane.Safe")
             softLinx.hidexRun("Campaign1_noIncubate2_384")
 
-            # lambda6 TODO
+            # lambda6
             softLinx.runProgram(
             "C:\\Users\\svcaibio\\Dev\\liquidhandling\\zeromq\\utils\\send_data.bat", arguments=f"{k} {directory_name} serial_dilution"
         )
@@ -431,6 +425,7 @@ def generate_SD_384_repeatable(
     softLinx.hidexRun("SetTemp20")
     softLinx.liconicEndShake()
     
+    #* disposes of all plates into stack 2
     for k in range(plate_num):
         softLinx.liconicUnloadIncubator(loadID=k+1)
         softLinx.plateCraneMovePlate(["SoftLinx.Liconic.Nest"], ["SoftLinx.PlateCrane.Stack2"],poolID = 2)
