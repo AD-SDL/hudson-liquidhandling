@@ -42,13 +42,13 @@ k): # k = current treatment number
     soloSoft.aspirate(
             position="Position1",
             aspirate_volumes=Reservoir_12col_Agilent_201256_100_BATSgroup().setColumn(
-                media_start_column[k], 120
+                media_start_column[k], 120 # aspirate from first media column
             ),
             aspirate_shift=[0, 0, media_z_shift],
             #pre_aspirate=10
         )
     soloSoft.setSpeed(xyz_speed=30)
-    for i in range(start_col, end_col+1):  # first quarter plate = media from column 1
+    for i in range(start_col, end_col+1):
         
         soloSoft.dispense(
             position="Position4",
@@ -63,7 +63,7 @@ k): # k = current treatment number
     soloSoft.aspirate(
         position="Position1",
         aspirate_volumes=Reservoir_12col_Agilent_201256_100_BATSgroup().setColumn(
-            media_start_column[k]+1, 120
+            media_start_column[k]+1, 120 # aspirate from second media column
         ),
         aspirate_shift=[0, 0, media_z_shift],
     )
@@ -85,8 +85,8 @@ k): # k = current treatment number
 
     return filename
 
-# TODO: should be fine to keep same, look into using multiple 
-# * Fill culture dilution resevoir and treatment plates with media
+
+# * Fill culture dilution resevoir with media
 def generate_fill_culture_dilution_and_treatment_plates_with_media_hso(directory_path,
 filename,
 media_start_column,
@@ -124,7 +124,6 @@ blowoff_volume,
     soloSoft.getTip("Position3")
 
     # * Fill one column of culture dilution plate with fresh lb media (do in two steps due to 180uL filter tips)
-    # TODO: check to make sure using only one media column is viable
     for i in range(
         2
     ):  # from first media column -> cell dilution plate, column = same as culture column
