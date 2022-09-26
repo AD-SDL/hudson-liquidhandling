@@ -47,13 +47,13 @@ def disconnect_Database(cursor,cnx):
     close(cnx)
 
 #-----------------------------------------------
-def create_empty_records_assay_plate(Inc_ID, cursor, row_num, num_wells, Is_Test):
+def create_empty_records_assay_plate(plate_id, cursor, row_num, num_wells, Is_Test):
     """create_empty_records_assay_plate
 
         Description: Creates empty records in the assay plate table
 
         Parameters: 
-            Inc_ID
+            plate_id
             cursor
             row_num
             num_wells
@@ -69,17 +69,17 @@ def create_empty_records_assay_plate(Inc_ID, cursor, row_num, num_wells, Is_Test
         table_name = "assay_plate"
 
 
-    add_assay_plate = "INSERT INTO " + table_name + "(Inc_ID, Row_num) VALUES (%s, %s)"
+    add_assay_plate = "INSERT INTO " + table_name + "(plate_id, Row_num) VALUES (%s, %s)"
         
-    assay_data = (Inc_ID, row_num)
+    assay_data = (plate_id, row_num)
     cursor.execute(add_assay_plate, assay_data)
 
     if row_num < (num_wells):
         row_num += 1
-        return create_empty_records_assay_plate(Inc_ID, cursor, row_num, num_wells, Is_Test)
+        return create_empty_records_assay_plate(plate_id, cursor, row_num, num_wells, Is_Test)
     elif row_num >= (num_wells) and row_num%(num_wells) != 0:
         row_num += 1
-        return create_empty_records_assay_plate(Inc_ID, cursor, row_num, num_wells, Is_Test)
+        return create_empty_records_assay_plate(plate_id, cursor, row_num, num_wells, Is_Test)
     else:
         return row_num
 
@@ -88,7 +88,7 @@ def create_empty_records_assay_plate(Inc_ID, cursor, row_num, num_wells, Is_Test
 def count_rows_assay_table(cursor, plate_num , Is_Test):
     """count_rows_assay_table
 
-        Description: Counts the number of rows in table for the given Inc_ID
+        Description: Counts the number of rows in table for the given plate_id
 
         Parameters: 
             cursor
@@ -103,7 +103,7 @@ def count_rows_assay_table(cursor, plate_num , Is_Test):
     elif Is_Test == "false":
         table_name = "assay_plate"
 
-    count="SELECT COUNT(*) FROM " + table_name + " WHERE Inc_ID = %s"
+    count="SELECT COUNT(*) FROM " + table_name + " WHERE plate_id = %s"
     value = plate_num
     count_rows = cursor.execute(count, (value,))
     count_rows = cursor.fetchall()
@@ -111,14 +111,14 @@ def count_rows_assay_table(cursor, plate_num , Is_Test):
     return count_rows[0][0]
 
 #-----------------------------------------------
-def find_format(cursor, Inc_ID, Is_Test):
+def find_format(cursor, plate_id, Is_Test):
     """find_format
 
-        Description: Finds format of the plate for the given Inc_ID
+        Description: Finds format of the plate for the given plate_id
 
         Parameters: 
             cursor
-            Inc_ID
+            plate_id
             Is_Test: 
         
         Returns:
@@ -131,17 +131,17 @@ def find_format(cursor, Inc_ID, Is_Test):
     elif Is_Test == "false":
         table_name = "plate"
 
-    plate_format ="SELECT Format FROM " + table_name + " WHERE Inc_ID = %s"
-    value = Inc_ID
+    plate_format ="SELECT Format FROM " + table_name + " WHERE plate_id = %s"
+    value = plate_id
     format = cursor.execute(plate_format, (value,))
     format = cursor.fetchall()
     return format[0][0]
 
 #-----------------------------------------------
-def Inc_ID_finder(cursor, experiment_name, plate_number):
-    """Inc_ID_finder
+def plate_id_finder(cursor, experiment_name, plate_number):
+    """plate_id_finder
 
-        Description: Finds which Inc_ID is associated with the given file name and plate number
+        Description: Finds which plate_id is associated with the given file name and plate number
 
         Parameters: 
             cursor:
@@ -149,26 +149,26 @@ def Inc_ID_finder(cursor, experiment_name, plate_number):
             plate_number:
         Returns:
             -1: If Plate is not found in the database
-            Inc_ID number and table_name: If plate exist in the database 
+            plate_id number and table_name: If plate exist in the database 
     """
 
-    find_plate = "select Inc_ID from Test_plate WHERE Exp_ID = %s and Barcode = %s"
+    find_plate = "select plate_id from Test_plate WHERE Exp_ID = %s and Barcode = %s"
     plate_info = (experiment_name, plate_number)
-    Inc_ID = cursor.execute(find_plate, plate_info)
-    Inc_ID = cursor.fetchall()
+    plate_id = cursor.execute(find_plate, plate_info)
+    plate_id = cursor.fetchall()
     
-    if len(Inc_ID) != 0:
-        print("Record found in the database. Inc_ID:", Inc_ID[0][0])   
-        return Inc_ID[0][0], "Test_plate"
+    if len(plate_id) != 0:
+        print("Record found in the database. plate_id:", plate_id[0][0])   
+        return plate_id[0][0], "Test_plate"
 
-    find_plate = "select Inc_ID from plate WHERE Exp_ID = %s and Barcode = %s"
+    find_plate = "select plate_id from plate WHERE Exp_ID = %s and Barcode = %s"
     plate_info = (experiment_name, plate_number)
-    Inc_ID = cursor.execute(find_plate, plate_info)
-    Inc_ID = cursor.fetchall()
+    plate_id = cursor.execute(find_plate, plate_info)
+    plate_id = cursor.fetchall()
     
-    if len(Inc_ID) != 0:
-        print("Record found in the database. Inc_ID:", Inc_ID[0][0])   
-        return Inc_ID[0][0], "plate"
+    if len(plate_id) != 0:
+        print("Record found in the database. plate_id:", plate_id[0][0])   
+        return plate_id[0][0], "plate"
     else:
         return -1, "NULL"
     
@@ -203,7 +203,7 @@ def assay_plate_insert_data(cursor, time_index, new_data, Data_information, Is_T
                     file_basename_for_data: The name of the experiment file
                     date: Experiment start date 
                     time: Experiment start time 
-                    Inc_ID: Inc_ID 
+                    plate_id: plate_id 
             Is_Test: True; records will be inserted into Test_plate & Test_assay_plate. False; records will be inserted into plate & assay_plate.
         Returns:
             Recursive function
@@ -222,7 +222,7 @@ def assay_plate_insert_data(cursor, time_index, new_data, Data_information, Is_T
             elif Is_Test == "false":
                 table_name = "assay_plate"
 
-            update_assay_plate = "UPDATE " + table_name + " SET Data_group =  %s, Well=%s, Raw_Value=%s, Elapsed_time = %s, Data_File_Name = %s, Reading_date = %s, Reading_time = %s, Assay_Details = %s WHERE Inc_ID = %s AND Row_num = %s"
+            update_assay_plate = "UPDATE " + table_name + " SET Data_group =  %s, Well=%s, Raw_Value=%s, Elapsed_time = %s, Data_File_Name = %s, Reading_date = %s, Reading_time = %s, Assay_Details = %s WHERE plate_id = %s AND Row_num = %s"
             plate_assay_data = (Data_group, new_data['Well'][Data_information[1]], new_data[time_index][Data_information[1]], time_index, Data_information[2], Data_information[3], Data_information[4], "Row_OD(590)", Data_information[5], Data_information[0])
             cursor.execute(update_assay_plate, plate_assay_data)
             Data_information[0]+= 1
@@ -278,13 +278,13 @@ def create_empty_plate_records(num_plates: int, num_wells: int, plate_type: str,
             plate_data = (plate_type, num_wells, str(create_plate), directory_name, current_date, current_time)
             cursor.execute(add_plate, plate_data)
 
-            # Recieving Inc_ID back to utilize the unique plate id in the assay_plate records
-            Inc_ID = cursor.lastrowid
+            # Recieving plate_id back to utilize the unique plate id in the assay_plate records
+            plate_id = cursor.lastrowid
 
     
             # Considering the plate format, creating a given number of records in the assay_plate table
             row_num = 1
-            create_empty_records_assay_plate(Inc_ID, cursor, row_num, num_wells, Is_Test)
+            create_empty_records_assay_plate(plate_id, cursor, row_num, num_wells, Is_Test)
 
 
     except mysql.connector.Error as error:
@@ -324,12 +324,12 @@ def update_plate_data(experiment_name: str, plate_number: int, time_stamps: list
         
       
        
-        # Find the Inc_ID for the given data
+        # Find the plate_id for the given data
         experiment_name = experiment_name.strip()
-        Inc_ID, table_name = Inc_ID_finder(cursor, experiment_name, plate_number)
+        plate_id, table_name = plate_id_finder(cursor, experiment_name, plate_number)
         
         
-        if Inc_ID == -1:
+        if plate_id == -1:
             print("Plate record does not exists in the database!!!")
             print("Creating new records for", experiment_name, " Barcode: 0")
             upload_data_directly(experiment_name, plate_number, time_stamps, new_data, date, time, file_basename_for_data)
@@ -343,27 +343,27 @@ def update_plate_data(experiment_name: str, plate_number: int, time_stamps: list
                 Is_Test = "false"
                 
             # Find format of the plate
-            format = find_format(cursor, Inc_ID, Is_Test)
+            format = find_format(cursor, plate_id, Is_Test)
             
             # Counting how many records exist in the table. Returns the last index number
-            row_num = count_rows_assay_table(cursor, Inc_ID, Is_Test) 
+            row_num = count_rows_assay_table(cursor, plate_id, Is_Test) 
 
             # Checking if the database needs to be extended
             if len(time_stamps) * format > row_num:
                 # Creating new empty record in the assay_table until len(time_stamps) * format = row_num
                 for lenght_time_stamps in range(len(time_stamps)-1):
-                    row_num = create_empty_records_assay_plate(Inc_ID, cursor, row_num +1, format, Is_Test)
+                    row_num = create_empty_records_assay_plate(plate_id, cursor, row_num +1, format, Is_Test)
                 
             # Update the records in the assay_plate table with the given data
             row_num, data_index_num = 1, 0
-            Data_information = [row_num, data_index_num, file_basename_for_data, date, time, Inc_ID]
+            Data_information = [row_num, data_index_num, file_basename_for_data, date, time, plate_id]
             timestamp_tracker(time_stamps, cursor, new_data, Data_information, Is_Test)
 
-            # Update plate info for the given Inc_ID and the timestemp
+            # Update plate info for the given plate_id and the timestemp
 
 
-            update_plate_table = "UPDATE " + table_name + " SET Process_status = %s WHERE Inc_ID = %s"
-            update_values = ("Completed", Inc_ID)
+            update_plate_table = "UPDATE " + table_name + " SET Process_status = %s WHERE plate_id = %s"
+            update_values = ("Completed", plate_id)
             cursor.execute(update_plate_table, update_values)
             
     
@@ -408,8 +408,8 @@ def upload_data_directly(experiment_name, plate_number, time_stamps, new_data, d
         plate_data = ("Hidex", "Completed", str(plate_number), experiment_name, 96, current_date, current_time)
         cursor.execute(add_plate, plate_data)
             
-        # Recieving Inc_ID back to utilize the unique plate id in the assay_plate records
-        Inc_ID = cursor.lastrowid
+        # Recieving plate_id back to utilize the unique plate id in the assay_plate records
+        plate_id = cursor.lastrowid
         
         row_num = 1
         for index in time_stamps:
@@ -420,8 +420,8 @@ def upload_data_directly(experiment_name, plate_number, time_stamps, new_data, d
                 else:
                     Data_group = "Experimental"
                 
-                update_assay_plate = "INSERT INTO Test_assay_plate (Inc_ID, Data_group, Row_num, Well, Raw_Value, Elapsed_time, Data_File_Name, Reading_date, Reading_time, Assay_Details) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"                
-                plate_assay_data = (Inc_ID, Data_group, row_num, new_data['Well'][data_index_num], new_data[index][data_index_num], index, file_basename_for_data, date, time, "Row_OD(590)")
+                update_assay_plate = "INSERT INTO Test_assay_plate (plate_id, Data_group, Row_num, Well, Raw_Value, Elapsed_time, Data_File_Name, Reading_date, Reading_time, Assay_Details) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"                
+                plate_assay_data = (plate_id, Data_group, row_num, new_data['Well'][data_index_num], new_data[index][data_index_num], index, file_basename_for_data, date, time, "Row_OD(590)")
                 cursor.execute(update_assay_plate, plate_assay_data)
                 row_num+=1
 
@@ -449,11 +449,11 @@ def insert_control_qc(experiment_name: str, plate_number: int, Control_QC: str):
     try:
         cursor,cnx = connect_Database()    
 
-        Inc_ID, table_name = Inc_ID_finder(cursor, experiment_name, plate_number)
+        plate_id, table_name = plate_id_finder(cursor, experiment_name, plate_number)
 
         
-        update_plate_table = "UPDATE " + table_name + " SET Control_QC = %s WHERE Inc_ID = %s"
-        update_values = (Control_QC, Inc_ID)
+        update_plate_table = "UPDATE " + table_name + " SET Control_QC = %s WHERE plate_id = %s"
+        update_values = (Control_QC, plate_id)
         cursor.execute(update_plate_table, update_values)
 
     except mysql.connector.Error as error:
@@ -480,7 +480,7 @@ def insert_blank_adj(experiment_name, plate_number, adjusted_values_list):
     try:
         cursor,cnx = connect_Database() 
         
-        Inc_ID, table_name = Inc_ID_finder(cursor, experiment_name, plate_number)
+        plate_id, table_name = plate_id_finder(cursor, experiment_name, plate_number)
 
 
         if table_name == "Test_plate":
@@ -490,8 +490,8 @@ def insert_blank_adj(experiment_name, plate_number, adjusted_values_list):
             table_name = "assay_plate"
         
         for row_num, value in enumerate(adjusted_values_list):
-            query = "UPDATE " + table_name + " SET Blank_Adj_Value = %s Where Inc_ID = %s and Row_num = %s"
-            update_values = (value, Inc_ID, row_num+1)
+            query = "UPDATE " + table_name + " SET Blank_Adj_Value = %s Where plate_id = %s and Row_num = %s"
+            update_values = (value, plate_id, row_num+1)
             cursor.execute(query,update_values)
         
 
@@ -528,7 +528,7 @@ def upload_image(filename, experiment_name: str, plate_number: int):
     try:
         cursor,cnx = connect_Database() 
         
-        Inc_ID, table_name = Inc_ID_finder(cursor, experiment_name, plate_number)
+        plate_id, table_name = plate_id_finder(cursor, experiment_name, plate_number)
         
         if table_name[0] == "T":
             table = "Test_graphs"
@@ -563,7 +563,7 @@ def retrieve_image(experiment_name: str, plate_number: int):
     try:
         cursor,cnx = connect_Database() 
         
-        Inc_ID, table_name = Inc_ID_finder(cursor, experiment_name, plate_number)
+        plate_id, table_name = plate_id_finder(cursor, experiment_name, plate_number)
 
 
         if table_name[0] == "T":
@@ -671,12 +671,12 @@ def insert_source_plate(file):
         cursor.execute(add_plate, plate_data)
 
             
-        # Recieving Inc_ID back to utilize the unique plate id in the assay_plate records
-        Inc_ID = cursor.lastrowid
+        # Recieving plate_id back to utilize the unique plate id in the assay_plate records
+        plate_id = cursor.lastrowid
 
         for data in range(1, len(df)+1):
-            update_assay_plate = "INSERT INTO source_plate (Inc_ID, well, sample_id) VALUES (%s, %s, %s)"                
-            plate_assay_data = (Inc_ID, df['Well'][data].strip(), df['Sample ID'][data].strip())
+            update_assay_plate = "INSERT INTO source_plate (plate_id, well, sample_id) VALUES (%s, %s, %s)"                
+            plate_assay_data = (plate_id, df['Well'][data].strip(), df['Sample ID'][data].strip())
             cursor.execute(update_assay_plate, plate_assay_data)
            
 
@@ -764,7 +764,7 @@ def main(filename):
     # print(blank_list)
     #insert_source_plate('/homes/dozgulbas/data/11_17_21_plate2.csv')
     # Calling the create empty plate records function.
-    # create_empty_plate_records(1, 48, "Hidex", "Campaign1_20210505_191201_RawOD.csv", Is_Test)
+    create_empty_plate_records(1, 48, "Hidex", "Campaign1_20210505_191201_RawOD.csv", Is_Test)
     # create_empty_plate_records(1, 96, "Hidex", filename, Is_Test)
 
     
