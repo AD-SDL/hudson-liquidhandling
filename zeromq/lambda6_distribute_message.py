@@ -8,9 +8,10 @@ from utils.run_qc import run_qc
 from utils.zmq_connection import zmq_connect
 sys.path.append("../rdbms/")
 sys.path.append("../../rdbms/") # this is the one that works
-from database_functions import update_plate_data, insert_control_qc, insert_blank_adj
+#from database_functions import update_plate_data, insert_control_qc, insert_blank_adj
 from data_handlers.dna_assembly_data_handler import handle_dna_assembly_data
 from data_handlers.campaign2_data_handler import handle_campaign2_data
+from data_handlers.serial_dilution_384_data_handler import handle_sd_384_data
 
 
 def lambda6_distribute_message(utf8_decoded_message):  
@@ -44,6 +45,9 @@ def lambda6_distribute_message(utf8_decoded_message):
 
             if data_format == "dna_assembly": 
                 handle_dna_assembly_data(address, json_decoded_message)  
+            
+            if data_format == 'serial_dilution':
+                handle_sd_384_data(address, json_decoded_message)
 
 
 def main(json_string):

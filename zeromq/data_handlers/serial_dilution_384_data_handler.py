@@ -1,3 +1,5 @@
+# imports
+from audioop import avg
 import os
 import sys
 import csv 
@@ -11,11 +13,11 @@ sys.path.append("../rdbms/")
 sys.path.append("../../rdbms/") # this is the one that works
 from database_functions import update_plate_data, insert_control_qc, insert_blank_adj
 
+def handle_sd_384_data(address, json_decoded_message):
 
-def handle_campaign2_data(address, json_decoded_message):
-    """handle_campaign2_data
+    """handle_serial_dilution_384_data
 
-    Description: handles data processing for campaign2 formatted data messages from hudson01
+    Description: handles data processing for serial dilution (384 well plate) formatted data messages from hudson01
 
     Parameters: 
         address: unique message address
@@ -29,54 +31,51 @@ def handle_campaign2_data(address, json_decoded_message):
     file_path = os.path.join(data_dir_path, os.path.basename(file_name))
 
     # parse the hidex data file
-    df, timestamp_list, reading_date, reading_time, data_filename = parse_hidex_campaign2(file_path)
+    df, timestamp_list, reading_date, reading_time, data_filename = parse_hidex_sd(file_path)
 
-    # Add data to db 
-    update_plate_data(exp_name, plate_id, timestamp_list, df, reading_date, reading_time, data_filename)
+    j = 0
+    for i in range(4):
+        # check for contaminated controls
+        print(f"calling qc on {file_path}")
+        qc_result = check_for_contamination(df, timestamp_list, i)  # TODO reformat to produce QC df
 
-    # check for contaminated controls
-    print(f"calling qc on {file_path}")
-    qc_result = check_for_contamination(df, timestamp_list)  # TODO reformat to produce QC df
+        # print qc result 
+        print(f"done running qc on {file_name}")
+        print(f"result: {qc_result}")
 
-    # print qc result 
-    print(f"done running qc on {file_name}")
-    print(f"result: {qc_result}")
+        if qc_result == "PASS": 
 
-    # insert qc results into DB  # TESTING # TODO pass QC df to db  
-    insert_control_qc(exp_name, plate_id, qc_result) 
+            # blank adjust the data
+            blank_adj_df, blank_adj_list = od_blank_adjusted(df, timestamp_list, i)  
 
-    if qc_result == "PASS": 
+            # graph blank adjusted data for each timepoint
+            data_basename = data_filename.split(".")[0]
+            j+=1
 
-        # blank adjust the data
-        blank_adj_df, blank_adj_list = od_blank_adjusted(df, timestamp_list)  
+            graph_filepaths_list = generate_graphs(blank_adj_df, data_filename, plot_dir_path,i)
+            print(f"graphs generated for {data_basename}")
 
-        #insert blank adjusted data into db # TESTING
-        insert_blank_adj(exp_name, plate_id, blank_adj_list)
-        #print("INSERTED BLANK ADJ DATA INTO TABLE")
-        
-        # graph blank adjusted data for each timepoint
-        data_basename = data_filename.split(".")[0]
-        graph_filepaths_list = generate_graphs(blank_adj_df, data_filename, plot_dir_path)  
-        print(f"graphs generated for {data_basename}")
+            if j == 3:
+                print(f"Done handling message: {str(address)}")
 
-        print(f"Done handling message: {str(address)}")
+                # send message to build_dataframe if the data is good 
+                context, socket = zmq_connect(port=5556, pattern="REQ")
+                basename = os.path.basename(file_path)
+                print("got basename {} for filename {}".format(basename, file_path))
+                message = {  # TODO: might not need to pass to build df becuase df already generated in previous step
+                    basename: {
+                        "path": [file_path],
+                        "purpose": ["build_dataframe"],
+                        "type": ["JSON"],
+                    }
+                }
+                socket.send_string(json.dumps(message))  
+                repl = socket.recv()
+                print(f"Got {repl}")
+                j = 0
+        else:
+            print(f"qc failed on {file_name}")
 
-        # send message to build_dataframe if the data is good 
-        context, socket = zmq_connect(port=5556, pattern="REQ")
-        basename = os.path.basename(file_path)
-        print("got basename {} for filename {}".format(basename, file_path))
-        message = {  # TODO: might not need to pass to build df becuase df already generated in previous step
-            basename: {
-                "path": [file_path],
-                "purpose": ["build_dataframe"],
-                "type": ["JSON"],
-            }
-        }
-        socket.send_string(json.dumps(message))  
-        repl = socket.recv()
-        print(f"Got {repl}")
-    else:
-        print(f"qc failed on {file_name}")
 
 
 def log_and_save(address, json_decoded_message): 
@@ -172,10 +171,12 @@ def log_and_save(address, json_decoded_message):
 
     return data_dir_path, file_name, plate_id, exp_name, plot_dir_path
 
-def parse_hidex_campaign2(file_name):
+
+def parse_hidex_sd(file_name):
+
     """parses the Hidex csv file
 
-    Description: TODO
+    Description: extract the reading date, time, and data (into dataframe)
 
     Parameters:
         file_name: the complete path and name of the Hidex csv file
@@ -185,6 +186,7 @@ def parse_hidex_campaign2(file_name):
 
 
     """
+
     df = pd.DataFrame()
 
     # extract the reading date, time, and data (into dataframe)
@@ -213,13 +215,11 @@ def parse_hidex_campaign2(file_name):
 
     return df, timestamp_list, reading_date, reading_time, basename 
 
-
-
-def check_for_contamination(raw_df, timepoint_list):  # TODO
+def check_for_contamination(raw_df, timepoint_list,i): 
     """check_for_contaminaton
 
     Description: checks data from all timepoints for contaminated blanks. 
-        (All wells in Row H are blanks)
+        (All wells in Row o and P are blanks)
 
     Parameters: 
         raw_df = dataframe of raw OD(590) absorbance readings
@@ -228,15 +228,44 @@ def check_for_contamination(raw_df, timepoint_list):  # TODO
 
     Returns: 
         ret_val: TODO
-    """ 
-    
-    ret_val = "PASS"
-    print("TODO: reformat campaign2 qc check")  #TEST
 
-    blanks = raw_df.iloc[84:,3:]
-    numpy_blanks = blanks.to_numpy()
-    flat_numpy_blanks = numpy_blanks.ravel().tolist()
-    
+        o : 336 p:360
+    """ 
+    ret_val = "PASS"
+    print("TODO: reformat serial dilution qc check")  #TEST
+    if i == 0:
+        blanks_o = raw_df.iloc[336:342,3:]
+        blanks_p = raw_df.iloc[360:366,3:]
+        numpy_blanks_o = blanks_o.to_numpy()
+        flat_numpy_blanks_o = numpy_blanks_o.ravel().tolist()
+        numpy_blanks_p = blanks_p.to_numpy()
+        flat_numpy_blanks_p = numpy_blanks_p.ravel().tolist()
+    elif i == 1:
+        blanks_o = raw_df.iloc[342:348,3:]
+        blanks_p = raw_df.iloc[366:372,3:]
+        numpy_blanks_o = blanks_o.to_numpy()
+        flat_numpy_blanks_o = numpy_blanks_o.ravel().tolist()
+        numpy_blanks_p = blanks_p.to_numpy()
+        flat_numpy_blanks_p = numpy_blanks_p.ravel().tolist()
+    elif i == 2:
+        blanks_o = raw_df.iloc[348:354,3:]
+        blanks_p = raw_df.iloc[372:378,3:]
+        numpy_blanks_o = blanks_o.to_numpy()
+        flat_numpy_blanks_o = numpy_blanks_o.ravel().tolist()
+        numpy_blanks_p = blanks_p.to_numpy()
+        flat_numpy_blanks_p = numpy_blanks_p.ravel().tolist()
+    elif i == 3:
+        blanks_o = raw_df.iloc[354:360,3:]
+        blanks_p = raw_df.iloc[378:,3:]
+        numpy_blanks_o = blanks_o.to_numpy()
+        flat_numpy_blanks_o = numpy_blanks_o.ravel().tolist()
+        numpy_blanks_p = blanks_p.to_numpy()
+        flat_numpy_blanks_p = numpy_blanks_p.ravel().tolist()
+    else:
+        print("ERROR: Incorrect plate quadrant given to check_for_contamination function")
+
+    flat_numpy_blanks = np.concatenate((flat_numpy_blanks_o,flat_numpy_blanks_p))
+
     for blank_raw_OD in flat_numpy_blanks: 
         if float(blank_raw_OD) > 0.07: 
             ret_val == "FAIL"
@@ -245,11 +274,10 @@ def check_for_contamination(raw_df, timepoint_list):  # TODO
 
     return ret_val
 
-
-def calculate_avg(list):
+def calculate_avg(list_o, list_p):
     """calculate_avg
 
-    Description: Average calculations of the "H" values (blanks/control wells)
+    Description: Average calculations of the "O" and "P" values (blanks/control wells)
 
     Parameters: 
         list: TODO
@@ -259,21 +287,11 @@ def calculate_avg(list):
     
     """
     avg_list = []
-    pointer1 = 0
-    pointer2 = 6
-
-    while pointer1 < 6:
-        
-        avg_list.insert(pointer1,(float(list[pointer1]) + float(list[pointer2]))/2)
-        avg_list.insert(pointer2,(float(list[pointer1]) + float(list[pointer2]))/2)
-        pointer1+=1
-        pointer2+=1
-    
+    for i in range(len(list_o)):
+        avg_list.insert(i,(float(list_o[i]) + float(list_p[i]))/2)
     return avg_list
 
-
-
-def od_blank_adjusted(data_frame, time_stamps):
+def od_blank_adjusted(data_frame, time_stamps,i):
     """od_blank_adjusted
 
         Description: Recives a data_frame and calculates blank adjusted values for each data point
@@ -289,8 +307,17 @@ def od_blank_adjusted(data_frame, time_stamps):
     blank_adj_data_frame = data_frame
     adjusted_values_list = []
     for time_point in time_stamps:
-    
-        blank_adj_list = calculate_avg(list(data_frame[time_point][84:]))
+        if i == 0:
+            blank_adj_list= calculate_avg(list(data_frame[time_point][336:342]), (list(data_frame[time_point][360:366])))
+        elif i == 1:
+            blank_adj_list = calculate_avg(list(data_frame[time_point][342:348]), list(data_frame[time_point][366:372]))       
+        elif i == 2:
+            blank_adj_list = calculate_avg(list(data_frame[time_point][348:354]), list(data_frame[time_point][372:378]))
+        elif i == 3:
+            blank_adj_list = calculate_avg(list(data_frame[time_point][354:360]), list(data_frame[time_point][378:]))
+        else:
+            print("ERROR: Incorrect plate quadrant given to od_blank_adjusted function")
+        
         index = 0
         
         for data_index_num in range(1,len(data_frame)+1) :
@@ -307,9 +334,8 @@ def od_blank_adjusted(data_frame, time_stamps):
     
     return blank_adj_data_frame, adjusted_values_list
 
-
-# METHOD REMOVED FOR TESTING
-def generate_graphs(blank_adj_df, data_filename, plot_directory_path): #TODO: check graph format
+    
+def generate_graphs(blank_adj_df, data_filename, plot_directory_path, quadrant): #TODO: check graph format
     """generate_graphs
 
     Description: Received a blank adjusted data frame and produces one graph per data timepoint
@@ -347,8 +373,8 @@ def generate_graphs(blank_adj_df, data_filename, plot_directory_path): #TODO: ch
         data_list = [float(x) for x in data_list]
 
         # determine plot title and file path
-        plot_title = f"{data_filename}, timepoint = {timepoint} (seconds)"
-        plot_basename = f"{data_filename}_{str(timepoint).split('.')[0]}.png"
+        plot_title = f"{data_filename}, timepoint = {timepoint} (seconds), quadrant = {quadrant+1}"
+        plot_basename = f"{data_filename}_{str(timepoint).split('.')[0]}_quadrant:{str(quadrant)}.png"
         
         try:
             plot_file_path = os.path.join(plot_directory_path, plot_basename)
@@ -359,14 +385,45 @@ def generate_graphs(blank_adj_df, data_filename, plot_directory_path): #TODO: ch
         data_in_sets = []
         data_rep1 = []
         data_rep2 = []
+        # print("data list", data_list)
+        # print(data_list[:6])
 
+
+        if quadrant == 0:
         # separate data into replicate 1 and 2
-        while not len(data_list) == 0:  
-            data_in_sets.append(data_list[:6])
-            data_in_sets.append(data_list[6:12])
-            data_rep1.append(data_list[:6])
-            data_rep2.append(data_list[6:12])
-            data_list = data_list[12:]
+            for p in range(8):
+                data_in_sets.append(data_list[:6])
+                data_in_sets.append(data_list[24:30])
+                data_rep1.append(data_list[:6])
+                data_rep2.append(data_list[24:30])
+                del data_list[:48]
+        
+        elif quadrant == 1:
+            for p in range(8):
+                data_in_sets.append(data_list[6:12])
+                data_in_sets.append(data_list[30:36])
+                data_rep1.append(data_list[6:12])
+                data_rep2.append(data_list[30:36])
+                del data_list[:48]
+        
+        elif quadrant == 2:
+            for p in range(8):
+                data_in_sets.append(data_list[12:18])
+                data_in_sets.append(data_list[36:42])
+                data_rep1.append(data_list[12:18])
+                data_rep2.append(data_list[36:42])
+                del data_list[:48]
+        
+        elif quadrant == 3:
+            for p in range(8):
+                data_in_sets.append(data_list[18:24])
+                data_in_sets.append(data_list[42:48])
+                data_rep1.append(data_list[18:24])
+                data_rep2.append(data_list[42:48])
+                del data_list[:48]
+
+
+
 
         plt.figure(figsize=(10, 5))
 
@@ -376,10 +433,10 @@ def generate_graphs(blank_adj_df, data_filename, plot_directory_path): #TODO: ch
         for i in range(len(data_rep2)): 
             plt.plot(x_rep2, data_rep2[i], colors[i])
 
-        plt.legend(["Row A","Row B","Row C","Row D","Row E","Row F","Row G","Row H"], loc='center left', bbox_to_anchor=(1, 0.5), borderaxespad=0.)  #TODO: extract strain names from db
+        plt.legend(["Row A and B","Row C and D","Row E and F","Row G and H", "Row I and J", "Row K and L", "Row M and N", "Row O and P"], loc='center left', bbox_to_anchor=(1, 0.5), borderaxespad=0.)  #TODO: extract strain names from db
         plt.title(plot_title)
         plt.xticks(x_ticks)
-        plt.xlabel("Dilution (1-6) and (7-12) are replicates. 1 is most concentrated, 6 is no treatment")
+        plt.xlabel("Dilution columns with highest to lowest concentration from left to right with last column being control")
         plt.ylabel("Blank-adjusted OD(590)")
     
         # save figure to file
@@ -390,7 +447,7 @@ def generate_graphs(blank_adj_df, data_filename, plot_directory_path): #TODO: ch
 
 
 def main(json_string):
-    lambda6_handle_message(json_string)  # TODO 
+    lambda6_handle_message(json_string)
     
 
 if __name__ == "__main__":
@@ -402,5 +459,3 @@ if __name__ == "__main__":
         json_string = sys.argv[1]
 
     main(json_string)
-    
- 

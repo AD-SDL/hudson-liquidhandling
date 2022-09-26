@@ -1,0 +1,88 @@
+-------------------------------------------
+Serial Dilution Protocol for 384 Well Plate
+-------------------------------------------
+Treatment performed in duplicate by row (ex. A1 and B1 are duplicates)
+
+----------------
+SOLO DECK LAYOUT
+----------------
+Position 1: Media resevoir (96 deep well containing media)
+Position 2: Empty
+Position 3: 180 uL tips (starts empty)
+Position 4: Assay plate (starts empty)
+Position 5: Culture stock plate (96 deep well, containing stock cells)
+Position 6: Treatment serial diluton plate (empty 96 deep well)
+Position 7: Culture dilution plate (empty 96 deep well)
+Position 8: Treatment stock plate (96 deep well containing treatment)
+
+Stack 1: Empty
+Stack 2: Finished assay plate disposal (empty at start)
+Stack 3: Empty tip box storage (empty at start)
+Stack 4: Full tip box replacements (1 for every 2 plate quadrants)
+Stack 5: 384 well clear flat bottom plate with lid (1 for every 4 plate quadrants)
+
+
+
+-----------------
+REQUIRED VOLUMES
+-----------------
+Media resevoir: ~1.5 mL media per well
+Culture stock: ~100uL stock per well
+Treatment stock: ~500 uL (approx. 250 + dead volume)
+
+-------
+TO RUN
+-------
+The following is an example command line entry to execute the protocol. Each argument will execute the protocol
+for one quadrant of the plate (6 cols) (The example will execute the protocol for all 4 quadrants, or the entire plate)
+
+python main.py -tr col1 col2 col3 col4 -cc 1 2 3 4 -mc 1 3 5 7 -tdh 1 2 1 2 -cdc 1 2 3 4
+
+
+
+-tr: treatment location, which column of the treatment stock plate will be dispensed into the current quadrant of the plate (ex col1 to be dispensed in plate quadrant 1)
+-cc: culture column, which column of the cell stock plate will be dispensed into the current quadrant of the plate
+-mc media start column, first column the protocol will aspirate from for the current quadrant. Entire quadrant uses 2 columns of media
+-tdh: treatment dilution half, indicates whether the treatment serial dilution is made on the first (1) or second (2) half of the serial dilution plate
+IMPORTANT: for now, if more than 2 quadrants being made, must swap out the serial dilution plate every 2 quadrants manually
+-cdc: culture dilution column, which column of the culture dilution plate will be used to dilute the stock cells
+
+
+-------
+main.py
+-------
+-The python script executed in order to run the protocol
+
+generate_SD_384_repeatable: function which executes all liquid handling and softlinx steps, takes in above arguments
+
+Line 56: Argument error checking
+Line 74: Variable list (see comments in main.py)
+Line 167: generation of each hso file in protocol
+Line 253: Implimentation of the softlinx pipeline
+Line 302: Execution of hso files (liquid handling)
+Line 428: hourly scan of plate every hour for 12 hours
+Line 463: Save and export protocol
+Line 468: Data sent to lambda6
+
+find_treatment_loc: function allowing program to parse -tr argument as treatment locations
+
+main: main function adding command line arguments and executing generate_SD_384_repeatable
+
+
+
+------------
+functions.py
+------------
+- Python script which houses all of the liquid handling protocols to be executed by the Hudson Solo
+
+generate_media_transfer_to_quarter_assay_hso: aspirates media from media resevoir and dispenses into every well in current quadrant of assay plate
+
+generate_fill_culture_dilution_and_treatment_plates_with_media_hso: aspirates media from media resevoir and dispenses into culture dilution, and aspirates cells from culture stock plate and dispenses into culture dilution
+
+generate_add_diluted_cells_to_assay_loop_hso: aspirates diluted cells from culture dilution plate and dispenses ino current quadrant of assay plate
+
+generate_serial_dlution_treatment_hso: Dispesnes media into current half of serial dilution plate, adds treatment to first column, and performs serial dilution
+
+generate_add_antibioitc_to_assay_hso: adds treatment from serial dilution plate to corresponding column of assay plate
+
+

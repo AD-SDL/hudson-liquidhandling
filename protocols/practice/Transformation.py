@@ -16,12 +16,12 @@ mixVolumeAspirateDNALigation = 10
 #define variables dispensing DNA ligation
 mixVolumeDispenseDNALigation = 15
 
-Path = "/Users/priyankavsetty/hudson-liquidhandling/scripts/"
+Path = "C:\\Users\\svcaibio\\Desktop\\Test\\"
 
 #liquidhandling chunk using SoloSoft
 # defining the plates on solosoft
 soloSoft = SoloSoft(
-    filename = "CompetentCells.hso",
+    filename = "C:\\Users\\svcaibio\\Desktop\\Test\\CompetentCells.hso",
     plateList = [
         "Empty",
         "Empty",
@@ -62,7 +62,7 @@ soloSoft.savePipeline()
 # -------------------------------------------------------------------------------
 # defining the plates on solosoft
 soloSoft = SoloSoft(
-    filename = "DNALigation.hso",
+    filename = "C:\\Users\\svcaibio\\Desktop\\Test\\DNALigation.hso",
     plateList = [
         "Empty",
         "Empty",
@@ -103,7 +103,7 @@ soloSoft.savePipeline() # saves as a hso file
  # need to break steps because it can handle only 71 steps
 #----------------------------------------------------------------------------------
 # add all steps to softlinx protocol
-softLinx = SoftLinx("Transformation", "Transformation.slvp") # display name, path to saves
+softLinx = SoftLinx("Transformation", "C:\\Users\\svcaibio\\Desktop\\Test\\Transformation.slvp") # display name, path to saves
 softLinx.setPlates(
     {"SoftLinx.PlateCrane.Stack5":"Plate.96.Corning-3635.ClearUVAssay",
     "SoftLinx.PlateCrane.Stack4":"TipBox.50uL.Axygen-EV-50-R-S.tealbox"
@@ -115,15 +115,16 @@ softLinx.plateCraneRemoveLid(["SoftLinx.Solo.Position4"],["SoftLinx.PlateCrane.L
 
 # Move the tip box from stack to deck
 softLinx.plateCraneMovePlate(["SoftLinx.PlateCrane.Stack4"],["SoftLinx.Solo.Position3"],poolID = 4)
-softLinx.soloSoftResetTips(3) # softlinx is telling Solo where the tips are
+softLinx.soloSoftResetTipCount(3) # softlinx is telling Solo where the tips are
 softLinx.plateCraneMoveCrane("SoftLinx.PlateCrane.Safe")
-softLinx.soloSoftRun("CompetentCells.hso")# put the path for the file (.hso, .slvp)
+softLinx.soloSoftRun("C:\\Users\\svcaibio\\Desktop\\Test\\CompetentCells.hso")# put the path for the file (.hso, .slvp)
 softLinx.plateCraneMovePlate(["SoftLinx.Solo.Position3"],["SoftLinx.PlateCrane.Stack3"],poolID = 3) #remove the empty tip TipBox
 softLinx.plateCraneMovePlate(["SoftLinx.PlateCrane.Stack4"],["SoftLinx.Solo.Position3"],poolID = 4) #putting a new tip box
-softLinx.soloSoftResetTips(3)
+softLinx.soloSoftResetTipCount(3) # softlinx is telling Solo where the tips are
 softLinx.plateCraneMoveCrane("SoftLinx.PlateCrane.Safe")
-softLinx.soloSoftRun("DNALigation.hso")
+softLinx.soloSoftRun("C:\\Users\\svcaibio\\Desktop\\Test\\DNALigation.hso")
 softLinx.plateCraneMovePlate(["SoftLinx.Solo.Position3"],["SoftLinx.PlateCrane.Stack3"],poolID = 3) #remove the empty tip TipBox
+softLinx.saveProtocol() #save the .slvp file
 
 # move to stack2 for cooling
 #liquid handling -
