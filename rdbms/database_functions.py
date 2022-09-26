@@ -421,7 +421,7 @@ def upload_data_directly(experiment_name, plate_number, time_stamps, new_data, d
                     Data_group = "Experimental"
                 
                 update_assay_plate = "INSERT INTO Test_assay_plate (plate_id, Data_group, Row_num, Well, Raw_Value, Elapsed_time, Data_File_Name, Reading_date, Reading_time, Assay_Details) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"                
-                plate_assay_data = (plate_id, Data_group, row_num, new_data['Well'][data_index_num], new_data[index][data_index_num], index, file_basename_for_data, date, time, "Row_OD(590)")
+                plate_assay_data = (plate_id, Data_group, row_num, new_data['Well'][data_index_num], new_data[index][data_index_num], index, file_basename_for_data, date, time, "Raw_OD(590)")
                 cursor.execute(update_assay_plate, plate_assay_data)
                 row_num+=1
 
