@@ -72,10 +72,10 @@ def generate_campaign1_repeatable(
     media_z_shift = 0.5
     reservoir_z_shift = 0.5  # z shift for deep blocks (Deck Positions 3 and 5)
     flat_bottom_z_shift = 2  # Note: 1 is not high enough (tested)
-    #lambda6_path = "/lambda_stor/data/hudson/instructions/"
-    lambda6_path = "C:\\Users\\svcaibio\\Desktop\\Debug\\test_96"  # TESTING
-    #hudson01_instructions_path = "C:\\labautomation\\instructions\\"
-    hudson01_instructions_path = "C:\\Users\\svcaibio\\Desktop\\Debug\\test_96"  # TESTING
+    lambda6_path = "/lambda_stor/data/hudson/instructions/"
+    #lambda6_path = "C:\\Users\\svcaibio\\Desktop\\Debug\\test_96"  # TESTING
+    hudson01_instructions_path = "C:\\labautomation\\instructions\\"
+    #hudson01_instructions_path = "C:\\Users\\svcaibio\\Desktop\\Debug\\test_96"  # TESTING
 
     # Step 1 variables
     media_transfer_volume_s1 = 60
