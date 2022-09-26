@@ -636,22 +636,22 @@ def generate_campaign1_repeatable(
         )
 
         # # Timepoint 0 Hidex reading (NOT NECESSARY)
-        # softLinx.plateCraneMovePlate(
-        #     ["SoftLinx.Solo.Position4"], ["SoftLinx.Hidex.Nest"]
-        # )  # no need to open hidex
-        # softLinx.hidexClose()
-        # softLinx.plateCraneMoveCrane("SoftLinx.PlateCrane.Safe")
-        # softLinx.hidexRun("Campaign1_noIncubate2")  # Hidex will close automatically
+        softLinx.plateCraneMovePlate(
+            ["SoftLinx.Solo.Position4"], ["SoftLinx.Hidex.Nest"]
+        )  # no need to open hidex
+        softLinx.hidexClose()
+        softLinx.plateCraneMoveCrane("SoftLinx.PlateCrane.Safe")
+        softLinx.hidexRun("Campaign1_noIncubate2")  # Hidex will close automatically
 
         # # Transfer Hidex data (timepoint 0 data)
-        # softLinx.runProgram(
-        #     "C:\\Users\\svcaibio\\Dev\\liquidhandling\\zeromq\\utils\\send_data.bat", arguments=k
-        # )
+        softLinx.runProgram(
+            "C:\\Users\\svcaibio\\Dev\\liquidhandling\\zeromq\\utils\\send_data.bat", arguments=f"{k} {directory_name} campaign2"
+        )
 
         # Transfer plate to Liconic.Nest and replace lid
-        #softLinx.plateCraneMovePlate(["SoftLinx.Hidex.Nest"], ["SoftLinx.Liconic.Nest"])
-        softLinx.plateCraneMovePlate(["SoftLinx.Solo.Position4"], ["SoftLinx.Liconic.Nest"])
-        #softLinx.hidexClose()
+        softLinx.plateCraneMovePlate(["SoftLinx.Hidex.Nest"], ["SoftLinx.Liconic.Nest"])
+        #softLinx.plateCraneMovePlate(["SoftLinx.Solo.Position4"], ["SoftLinx.Liconic.Nest"])
+        softLinx.hidexClose()
         softLinx.plateCraneReplaceLid(["SoftLinx.PlateCrane.LidNest2"], ["SoftLinx.Liconic.Nest"])
         softLinx.plateCraneMoveCrane("SoftLinx.PlateCrane.Safe")
 
