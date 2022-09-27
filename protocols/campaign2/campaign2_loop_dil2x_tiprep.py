@@ -663,7 +663,8 @@ def generate_campaign1_repeatable(
     softLinx.hidexRun("SetTemp20") 
     
     #softLinx.liconicShake(shaker1Speed=30, shakeTime=[0,7,6,0]) # 7hrs 6 min for 12 plates
-    softLinx.liconicShake(shaker1Speed=30, shakeTime=[0,12,0,0]) # 12 hours for one plate
+    softLinx.liconicShake(shaker1Speed=30, shakeTime=[0,9,30,0]) # 9 hours 30 min for 6 plates
+    #softLinx.liconicShake(shaker1Speed=30, shakeTime=[0,12,0,0]) # 12 hours for one plate TESTING
 
     # preheat Hidex for readings after incubation
     softLinx.hidexRun("SetTempWait37")  
@@ -690,7 +691,7 @@ def generate_campaign1_repeatable(
 
         # shake in incubator until time to take next reading  (don't do if already read last plate)
         if not k == (len(treatment)-1):
-            softLinx.liconicShake(shaker1Speed=30, shakeTime=[0,0,23,0])  # 23 min
+            softLinx.liconicShake(shaker1Speed=30, shakeTime=[0,0,24,0])  # 24 min
     #* END LOOP
 
     softLinx.hidexRun("SetTemp20") 
