@@ -72,10 +72,10 @@ def generate_campaign1_repeatable(
     media_z_shift = 0.5
     reservoir_z_shift = 0.5  # z shift for deep blocks (Deck Positions 3 and 5)
     flat_bottom_z_shift = 2  # Note: 1 is not high enough (tested)
-    #lambda6_path = "/lambda_stor/data/hudson/instructions/"
-    lambda6_path = "C:\\Users\\svcaibio\\Desktop\\Debug\\test_96"  # TESTING
-    #hudson01_instructions_path = "C:\\labautomation\\instructions\\"
-    hudson01_instructions_path = "C:\\Users\\svcaibio\\Desktop\\Debug\\test_96"  # TESTING
+    lambda6_path = "/lambda_stor/data/hudson/instructions/"
+    #lambda6_path = "C:\\Users\\svcaibio\\Desktop\\Debug\\test_96"  # TESTING
+    hudson01_instructions_path = "C:\\labautomation\\instructions\\"
+    #hudson01_instructions_path = "C:\\Users\\svcaibio\\Desktop\\Debug\\test_96"  # TESTING
 
     # Step 1 variables
     media_transfer_volume_s1 = 60
@@ -663,7 +663,8 @@ def generate_campaign1_repeatable(
     softLinx.hidexRun("SetTemp20") 
     
     #softLinx.liconicShake(shaker1Speed=30, shakeTime=[0,7,6,0]) # 7hrs 6 min for 12 plates
-    softLinx.liconicShake(shaker1Speed=30, shakeTime=[0,12,0,0]) # 12 hours for one plate
+    softLinx.liconicShake(shaker1Speed=30, shakeTime=[0,9,30,0]) # 9 hours 30 min for 6 plates
+    #softLinx.liconicShake(shaker1Speed=30, shakeTime=[0,12,0,0]) # 12 hours for one plate TESTING
 
     # preheat Hidex for readings after incubation
     softLinx.hidexRun("SetTempWait37")  
@@ -690,7 +691,7 @@ def generate_campaign1_repeatable(
 
         # shake in incubator until time to take next reading  (don't do if already read last plate)
         if not k == (len(treatment)-1):
-            softLinx.liconicShake(shaker1Speed=30, shakeTime=[0,0,23,0])  # 23 min
+            softLinx.liconicShake(shaker1Speed=30, shakeTime=[0,0,24,0])  # 24 min
     #* END LOOP
 
     softLinx.hidexRun("SetTemp20") 
