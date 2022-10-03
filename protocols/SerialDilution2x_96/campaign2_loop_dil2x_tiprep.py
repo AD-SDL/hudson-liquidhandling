@@ -72,10 +72,10 @@ def generate_campaign1_repeatable(
     media_z_shift = 0.5
     reservoir_z_shift = 0.5  # z shift for deep blocks (Deck Positions 3 and 5)
     flat_bottom_z_shift = 2  # Note: 1 is not high enough (tested)
-    lambda6_path = "/lambda_stor/data/hudson/instructions/"
-    #lambda6_path = "C:\\Users\\svcaibio\\Desktop\\Debug\\test_96"  # TESTING
-    hudson01_instructions_path = "C:\\labautomation\\instructions\\"
-    #hudson01_instructions_path = "C:\\Users\\svcaibio\\Desktop\\Debug\\test_96"  # TESTING
+    #lambda6_path = "/lambda_stor/data/hudson/instructions/"
+    lambda6_path = "C:\\Users\\svcaibio\\Desktop\\Debug\\test_96"  # TESTING
+    #hudson01_instructions_path = "C:\\labautomation\\instructions\\"
+    hudson01_instructions_path = "C:\\Users\\svcaibio\\Desktop\\Debug\\test_96"  # TESTING
 
     # Step 1 variables
     media_transfer_volume_s1 = 60
@@ -579,15 +579,13 @@ def generate_campaign1_repeatable(
     softLinx = SoftLinx("Steps_1_2_3", os.path.join(directory_path, "steps_1_2_3.slvp"))
 
     # define starting plate layout
-    softLinx.setPlates(
-        {"SoftLinx.PlateCrane.Stack5": "Plate.96.Corning-3635.ClearUVAssay", 
-        "SoftLinx.PlateCrane.Stack4": "TipBox.180uL.Axygen-EVF-180-R-S.bluebox"}
-    )
-
-    # FOR TESTING
     # softLinx.setPlates(
-    #     {"SoftLinx.PlateCrane.Stack5": "Plate.96.Corning-3635.ClearUVAssay"}
+    #     {"SoftLinx.PlateCrane.Stack5": "Plate.96.Corning-3635.ClearUVAssay", 
+    #     "SoftLinx.PlateCrane.Stack4": "TipBox.180uL.Axygen-EVF-180-R-S.bluebox"}
     # )
+    softLinx.setPlates(
+        {"SoftLinx.PlateCrane.Stack5": "Plate.96.Corning-3635.ClearUVAssay"}
+    )
 
     # set up equiptment
     softLinx.hidexRun("SetTemp37")
@@ -606,11 +604,11 @@ def generate_campaign1_repeatable(
         
         # replace tip box if necessary 
         if (k%2 == 0):
-            if k == 0: 
-                replace_tip_box(softLinx, "Position3") 
-            else: 
-                remove_tip_box(softLinx, "Position3")
-                replace_tip_box(softLinx, "Position3")
+            # if k == 0: 
+            #     replace_tip_box(softLinx, "Position3") 
+            # else: 
+            #     remove_tip_box(softLinx, "Position3")
+            #     replace_tip_box(softLinx, "Position3")
             softLinx.soloSoftResetTipCount(3)  # reset the tip count at pos 3 not pos 1
 
         softLinx.plateCraneMoveCrane("SoftLinx.PlateCrane.Safe")
@@ -636,22 +634,22 @@ def generate_campaign1_repeatable(
         )
 
         # # Timepoint 0 Hidex reading (NOT NECESSARY)
-        softLinx.plateCraneMovePlate(
-            ["SoftLinx.Solo.Position4"], ["SoftLinx.Hidex.Nest"]
-        )  # no need to open hidex
-        softLinx.hidexClose()
-        softLinx.plateCraneMoveCrane("SoftLinx.PlateCrane.Safe")
-        softLinx.hidexRun("Campaign1_noIncubate2")  # Hidex will close automatically
+        # softLinx.plateCraneMovePlate(
+        #     ["SoftLinx.Solo.Position4"], ["SoftLinx.Hidex.Nest"]
+        # )  # no need to open hidex
+        # softLinx.hidexClose()
+        # softLinx.plateCraneMoveCrane("SoftLinx.PlateCrane.Safe")
+        # softLinx.hidexRun("Campaign1_noIncubate2")  # Hidex will close automatically
 
         # # Transfer Hidex data (timepoint 0 data)
-        softLinx.runProgram(
-            "C:\\Users\\svcaibio\\Dev\\liquidhandling\\zeromq\\utils\\send_data.bat", arguments=f"{k} {directory_name} campaign2"
-        )
+        # softLinx.runProgram(
+        #     "C:\\Users\\svcaibio\\Dev\\liquidhandling\\zeromq\\utils\\send_data.bat", arguments=k
+        # )
 
         # Transfer plate to Liconic.Nest and replace lid
-        softLinx.plateCraneMovePlate(["SoftLinx.Hidex.Nest"], ["SoftLinx.Liconic.Nest"])
-        #softLinx.plateCraneMovePlate(["SoftLinx.Solo.Position4"], ["SoftLinx.Liconic.Nest"])
-        softLinx.hidexClose()
+        #softLinx.plateCraneMovePlate(["SoftLinx.Hidex.Nest"], ["SoftLinx.Liconic.Nest"])
+        softLinx.plateCraneMovePlate(["SoftLinx.Solo.Position4"], ["SoftLinx.Liconic.Nest"])
+        #softLinx.hidexClose()
         softLinx.plateCraneReplaceLid(["SoftLinx.PlateCrane.LidNest2"], ["SoftLinx.Liconic.Nest"])
         softLinx.plateCraneMoveCrane("SoftLinx.PlateCrane.Safe")
 
@@ -662,10 +660,8 @@ def generate_campaign1_repeatable(
     # reduce Hidex temp to reduce strain on instument over incubation (necessary?)
     softLinx.hidexRun("SetTemp20") 
     
-    #softLinx.liconicShake(shaker1Speed=30, shakeTime=[0,7,6,0]) # 7hrs 6 min for 12 plates
-    softLinx.liconicShake(shaker1Speed=30, shakeTime=[0,9,30,0]) # 9 hours 30 min for 6 plates
-    #softLinx.liconicShake(shaker1Speed=30, shakeTime=[0,7,30,0]) # 7 hours 30 min for 10 plates
-    #softLinx.liconicShake(shaker1Speed=30, shakeTime=[0,12,0,0]) # 12 hours for one plate TESTING
+    #softLinx.liconicShake(shaker1Speed=30, shakeTime=[0,7,6,0]) # 7hrs 6 min
+    softLinx.liconicShake(shaker1Speed=30, shakeTime=[0,12,0,0]) # 12 hours for one plate
 
     # preheat Hidex for readings after incubation
     softLinx.hidexRun("SetTempWait37")  
@@ -679,10 +675,10 @@ def generate_campaign1_repeatable(
         softLinx.plateCraneMoveCrane("SoftLinx.PlateCrane.Safe")
         softLinx.hidexRun("Campaign1_noIncubate2")
 
-        #transfer data to lambda6 REMOVED FOR TESTING
-        softLinx.runProgram(
-            "C:\\Users\\svcaibio\\Dev\\liquidhandling\\zeromq\\utils\\send_data.bat", arguments=f"{k} {directory_name} campaign2"
-        )
+        # transfer data to lambda6 REMOVED FOR TESTING
+        # softLinx.runProgram(
+        #     "C:\\Users\\svcaibio\\Dev\\liquidhandling\\zeromq\\utils\\send_data.bat", arguments=f"{k} {directory_name} campaign2"
+        # )
  
         # Move plate from Hidex to Stack 1 and replace lid
         softLinx.plateCraneMovePlate(["SoftLinx.Hidex.Nest"], ["SoftLinx.PlateCrane.Stack1"])
@@ -692,7 +688,7 @@ def generate_campaign1_repeatable(
 
         # shake in incubator until time to take next reading  (don't do if already read last plate)
         if not k == (len(treatment)-1):
-            softLinx.liconicShake(shaker1Speed=30, shakeTime=[0,0,24,0])  # 24 min
+            softLinx.liconicShake(shaker1Speed=30, shakeTime=[0,0,23,0])  # 23 min
     #* END LOOP
 
     softLinx.hidexRun("SetTemp20") 
@@ -704,29 +700,29 @@ def generate_campaign1_repeatable(
     """
     SEND NEW PROTOCOL TO WORK CELL (HUDSON01) ------------------------------------------------------------------
     """
-    try:
-        # TODO: change to full path on lambda6
-        child_message_sender = child_pid = Popen(
-            [
-                "python",
-                "../../zeromq/lambda6_send_instructions.py",
-                "-d",
-                directory_path,
-                "-i", 
-                str(num_assay_plates),
-                str(num_assay_wells),
-                assay_plate_type,
-                str(is_test),
-            ],
-            start_new_session=True,
-        ).pid
+    # try:
+    #     # TODO: change to full path on lambda6
+    #     child_message_sender = child_pid = Popen(
+    #         [
+    #             "python",
+    #             "../../zeromq/lambda6_send_instructions.py",
+    #             "-d",
+    #             directory_path,
+    #             "-i", 
+    #             str(num_assay_plates),
+    #             str(num_assay_wells),
+    #             assay_plate_type,
+    #             str(is_test),
+    #         ],
+    #         start_new_session=True,
+    #     ).pid
 
-        print("New instruction directory passed to lambda6_send_message.py")
-    except BaseException as e:
-        print(e)
-        print("Could not send new instructions to hudson01")
+    #     print("New instruction directory passed to lambda6_send_message.py")
+    # except BaseException as e:
+    #     print(e)
+    #     print("Could not send new instructions to hudson01")
 
-    return return_val
+    # return return_val
 
 
 def find_treatment_loc(treatment_name):  # TODO: Move this method out of protocol file
