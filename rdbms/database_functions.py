@@ -3,6 +3,7 @@ from hashlib import new
 import os
 import csv
 from selectors import EpollSelector
+from more_itertools import first
 from pandas.core.frame import DataFrame
 from connect import *
 import pandas as pd
@@ -182,10 +183,14 @@ def timestamp_tracker(time_stamps, cursor, new_data, Data_information, Is_Test):
                 
     """
 
+    print("BUG Time")
 
     for index in range(0,len(time_stamps)):
         assay_plate_insert_data(cursor, time_stamps[index], new_data, Data_information, Is_Test)
+        print(index)      
+
         Data_information[1] = 0
+
 
 #-----------------------------------------------
 def assay_plate_insert_data(cursor, time_index, new_data, Data_information, Is_Test):
@@ -234,6 +239,7 @@ def assay_plate_insert_data(cursor, time_index, new_data, Data_information, Is_T
         finally:    
             return assay_plate_insert_data(cursor, time_index, new_data, Data_information, Is_Test)
   
+
 
 
 #-----------------------------------------------
@@ -302,7 +308,31 @@ def create_empty_plate_records(num_plates: int, num_wells: int, plate_type: str,
         # Disconnect from the test_bugs database
         disconnect_Database(cursor, cnx)
         print("Connection to the database is closed")
+        
+def check_previous_data(experiment_name, plate_number, Is_Test):
+    cursor,cnx = connect_Database() 
+    p_data = False 
 
+    if Is_Test.lower() == "true":
+        table_name = "Test_plate"
+    elif Is_Test.llower() == "false":
+        table_name = "plate"
+
+    data_query = "SELECT Process_status from " + table_name + " WHERE exp_id = %s and Barcode = %s"
+    values = (experiment_name, plate_number)
+
+    cursor.execute(data_query, values)
+    data = cursor.fetchone()[0]
+
+    if data == None or data.lower() == "new":
+        p_data = False
+    elif data.lower() == "completed":
+        p_data = True
+
+    disconnect_Database(cursor,cnx)
+    return p_data
+
+#-----------------------------------------------
 #-----------------------------------------------
 def update_plate_data(experiment_name: str, plate_number: int, time_stamps: list, new_data: DataFrame, date: str, time: str, file_basename_for_data: str):
     """update_plate_data
@@ -321,8 +351,6 @@ def update_plate_data(experiment_name: str, plate_number: int, time_stamps: list
     """
     try:
         cursor,cnx = connect_Database() 
-        
-      
        
         # Find the plate_id for the given data
         experiment_name = experiment_name.strip()
@@ -349,13 +377,25 @@ def update_plate_data(experiment_name: str, plate_number: int, time_stamps: list
             row_num = count_rows_assay_table(cursor, plate_id, Is_Test) 
 
             # Checking if the database needs to be extended
+            previous_data = check_previous_data(experiment_name, plate_number, Is_Test) 
+
+            if previous_data:
+                first_row_num = row_num + 1
+                for lenght_time_stamps in range(len(time_stamps)):
+                    row_num = create_empty_records_assay_plate(plate_id, cursor, row_num +1, format, Is_Test)
+
+
             if len(time_stamps) * format > row_num:
                 # Creating new empty record in the assay_table until len(time_stamps) * format = row_num
                 for lenght_time_stamps in range(len(time_stamps)-1):
                     row_num = create_empty_records_assay_plate(plate_id, cursor, row_num +1, format, Is_Test)
-                
+
+            if previous_data:
+                row_num, data_index_num = first_row_num, 0 
+            else:
+                row_num, data_index_num = 1, 0
+
             # Update the records in the assay_plate table with the given data
-            row_num, data_index_num = 1, 0
             Data_information = [row_num, data_index_num, file_basename_for_data, date, time, plate_id]
             timestamp_tracker(time_stamps, cursor, new_data, Data_information, Is_Test)
 
@@ -378,6 +418,8 @@ def update_plate_data(experiment_name: str, plate_number: int, time_stamps: list
         # Disconnect from the test_bugs database
         disconnect_Database(cursor, cnx)        
         print("Connection to the database is closed")
+   
+            
 
 #-----------------------------------------------
 def upload_data_directly(experiment_name, plate_number, time_stamps, new_data, date, time, file_basename_for_data):
@@ -764,13 +806,13 @@ def main(filename):
     # print(blank_list)
     #insert_source_plate('/homes/dozgulbas/data/11_17_21_plate2.csv')
     # Calling the create empty plate records function.
-    create_empty_plate_records(1, 48, "Hidex", "Campaign1_20210505_191201_RawOD.csv", Is_Test)
+    # create_empty_plate_records(1, 48, "Hidex", "Campaign1_20210505_191201_RawOD.csv", Is_Test)
     # create_empty_plate_records(1, 96, "Hidex", filename, Is_Test)
 
     
     # Calling the update plate data function
     
-    # update_plate_data(filename, 0, time_stamps, df, date_time[0], date_time[1], "Campaign1_20210505")
+    update_plate_data(filename, 0, time_stamps, df, date_time[0], date_time[1], "Campaign1_20210505")
 
     #calling blob handler function
     # upload_image('/homes/dozgulbas/hudson-liquidhandling/rdbms/images/Campaign2_HopeStrains127-133_plate2col7_12hrInc_12PlateTest.png',filename, 0)
@@ -786,5 +828,7 @@ def main(filename):
     # insert_blank_adj(filename, 0, blank_list)
 if __name__ == "__main__":
     #Execute only if run as a script
-    main('/lambda_stor/data/hudson/data/1623878974-1/Campaign1_20210615_150156_RawOD.csv')
+    # main('/lambda_stor/data/hudson/data/1623878974-1/Campaign1_20210615_150156_RawOD.csv')
+    # main("/lambda_stor/data/hudson/data/1620252337-1/Campaign1_20210505_144922_RawOD.csv")
+    main("/lambda_stor/data/hudson/data/1626386355-1/Campaign1_20210715_165605_RawOD.csv")
 
