@@ -663,7 +663,8 @@ def generate_campaign1_repeatable(
     softLinx.hidexRun("SetTemp20") 
     
     #softLinx.liconicShake(shaker1Speed=30, shakeTime=[0,7,6,0]) # 7hrs 6 min for 12 plates
-    softLinx.liconicShake(shaker1Speed=30, shakeTime=[0,10,30,0]) # 10 hours 30 min for 4 plates
+    #softLinx.liconicShake(shaker1Speed=30, shakeTime=[0,10,30,0]) # 10 hours 30 min for 4 plates
+    softLinx.liconicShake(shaker1Speed=30, shakeTime=[0,10,0,0]) # 10 hours 0 min for 5 plates
     #softLinx.liconicShake(shaker1Speed=30, shakeTime=[0,9,30,0]) # 9 hours 30 min for 6 plates
     #softLinx.liconicShake(shaker1Speed=30, shakeTime=[0,7,30,0]) # 7 hours 30 min for 10 plates
     #softLinx.liconicShake(shaker1Speed=30, shakeTime=[0,12,0,0]) # 12 hours for one plate TESTING
