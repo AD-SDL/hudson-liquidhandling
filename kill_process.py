@@ -2,8 +2,8 @@
 
 import psutil
 
-proc1 = "softlinx.exe" # TODO: change
-proc2 = "solo.exe"
+proc1 = "SoftLinxVProtocolEditor.exe"
+proc2 = "SOLOSoft.exe"
 
 for proc in psutil.process_iter():
     if proc.name() == proc1:
