@@ -12,6 +12,10 @@ from liquidhandling import Plate_96_Corning_3635_ClearUVAssay
 
 def test():
     lambda6_path = "/lambda_stor/data/hudson/instructions/"
+    num_assay_plates = 1
+    num_assay_wells = 96
+    assay_plate_type = "hidex"
+    is_test = False
     return_val = "PASS"
     project = "test_shutoff"
     project_desc = "loop"
@@ -43,6 +47,11 @@ def test():
                 "../../zeromq/lambda6_send_instructions.py",
                 "-d",
                 directory_path,
+                "-i", 
+                str(num_assay_plates),
+                str(num_assay_wells),
+                assay_plate_type,
+                str(is_test),
             ],
             start_new_session=True,
         ).pid
