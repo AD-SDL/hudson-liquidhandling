@@ -12,7 +12,7 @@ from liquidhandling import Plate_96_Corning_3635_ClearUVAssay
 
 def test():
     lambda6_path = "/lambda_stor/data/hudson/instructions/"
-
+    return_val = "PASS"
     project = "test_shutoff"
     project_desc = "loop"
     version_num = "v1"
@@ -64,4 +64,4 @@ def main():
 
 if __name__ == "__main__":
     # execute only if run as a script
-    main(sys.argv)
+    main()
