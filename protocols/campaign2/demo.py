@@ -25,44 +25,29 @@ def test():
     soloSoft = SoloSoft(
         filename=step1_hso_filename,
         plateList=[
-            "DeepBlock.96.VWR-75870-792.sterile",
-            "Empty",
-            "TipBox.180uL.Axygen-EVF-180-R-S.bluebox",
-            "Plate.96.Corning-3635.ClearUVAssay",
-            "Empty",
-            "Empty",
-            "Empty",
-            "Empty",
-        ],
+                "DeepBlock.96.VWR-75870-792.sterile",
+                "Empty",
+                "TipBox.180uL.Axygen-EVF-180-R-S.bluebox",
+                "Plate.96.Corning-3635.ClearUVAssay",
+                "DeepBlock.96.VWR-75870-792.sterile",
+                "DeepBlock.96.VWR-75870-792.sterile",
+                "DeepBlock.96.VWR-75870-792.sterile",
+                "DeepBlock.96.VWR-75870-792.sterile",
+            ],
     )
 
     # * Fill all columns of empty 96 well plate (corning 3383 or Falcon - ref 353916) with fresh lb media (12 channel in Position 3, media_start_column and media_start_column+1)
     soloSoft.getTip("Position3")  
     j = 1
-    for i in range(1, 7):  # first half plate = media from column 1
-        soloSoft.aspirate(
-            position="Position1",
-            aspirate_volumes=Reservoir_12col_Agilent_201256_100_BATSgroup().setColumn(
-                1, 30
-            ),
-            aspirate_shift=[0, 0, 0.5],
-        )
-        soloSoft.dispense(
-            position="Position4",
-            dispense_volumes=Plate_96_Corning_3635_ClearUVAssay().setColumn(
-                i, 30
-            ),
-            dispense_shift=[0, 0, 0.5],
-        )
+    soloSoft.aspirate(
+    position="Position1",
+    aspirate_volumes=Reservoir_12col_Agilent_201256_100_BATSgroup().setColumn(
+        1, 150
+    ),
+    aspirate_shift=[0, 0, 0.5],
+    )
+    for i in range(1, 5):  # first half plate = media from column 1
 
-    for i in range(7, 13):  # second half plate = media from column 2
-        soloSoft.aspirate(
-            position="Position1",
-            aspirate_volumes=Reservoir_12col_Agilent_201256_100_BATSgroup().setColumn(
-                2, 30
-            ),
-            aspirate_shift=[0, 0, 0.5],
-        )
         soloSoft.dispense(
             position="Position4",
             dispense_volumes=Plate_96_Corning_3635_ClearUVAssay().setColumn(
@@ -70,6 +55,105 @@ def test():
             ),
             dispense_shift=[0, 0, 0.5],
         )
+    soloSoft.shuckTip()
+
+    soloSoft.getTip("Position3") 
+    # media to culture dilution
+    soloSoft.aspirate(
+        position="Position1",
+        aspirate_volumes=Reservoir_12col_Agilent_201256_100_BATSgroup().setColumn(
+            1, 30
+        ),
+        aspirate_shift=[0, 0, 0.5],
+    )
+
+    soloSoft.dispense(
+        position="Position7",
+        dispense_volumes=Plate_96_Corning_3635_ClearUVAssay().setColumn(
+            1, 30
+        ),
+        dispense_shift=[0, 0, 0.5],
+    )
+
+    soloSoft.shuckTip()
+    soloSoft.getTip("Position3")  
+    # add cells to culture dilution 
+    soloSoft.aspirate(
+        position="Position5",
+        aspirate_volumes=Reservoir_12col_Agilent_201256_100_BATSgroup().setColumn(
+            1, 30
+        ),
+        aspirate_shift=[0, 0, 0.5],
+    )
+
+    soloSoft.dispense(
+        position="Position7",
+        dispense_volumes=Plate_96_Corning_3635_ClearUVAssay().setColumn(
+            1, 30
+        ),
+        dispense_shift=[0, 0, 0.5],
+    )
+
+    soloSoft.shuckTip()
+    soloSoft.getTip("Position3")  
+
+    # cells to assay plate
+    soloSoft.aspirate(
+    position="Position7",
+    aspirate_volumes=Reservoir_12col_Agilent_201256_100_BATSgroup().setColumn(
+        1, 150
+    ),
+    aspirate_shift=[0, 0, 0.5],
+    )
+    for i in range(1, 5):  
+
+        soloSoft.dispense(
+            position="Position4",
+            dispense_volumes=Plate_96_Corning_3635_ClearUVAssay().setColumn(
+                i, 30
+            ),
+            dispense_shift=[0, 0, 0.5],
+        )
+    soloSoft.shuckTip()
+    soloSoft.getTip("Position3")
+
+    #serial dilution
+    for i in range(1, 5):
+        soloSoft.aspirate(
+        position="Position6",
+        aspirate_volumes=Reservoir_12col_Agilent_201256_100_BATSgroup().setColumn(
+            i, 30
+        ),
+        aspirate_shift=[0, 0, 0.5],
+    )
+
+    soloSoft.dispense(
+        position="Position6",
+        dispense_volumes=Plate_96_Corning_3635_ClearUVAssay().setColumn(
+            i+1, 30
+        ),
+        dispense_shift=[0, 0, 0.5],
+    )
+    soloSoft.shuckTip()
+    soloSoft.getTip("Position3")
+
+    for i in range(6, 0, -1):
+        soloSoft.aspirate(
+        position="Position6",
+        aspirate_volumes=Reservoir_12col_Agilent_201256_100_BATSgroup().setColumn(
+            i, 30
+        ),
+        aspirate_shift=[0, 0, 0.5],
+    )
+
+        soloSoft.dispense(
+        position="Position4",
+        dispense_volumes=Plate_96_Corning_3635_ClearUVAssay().setColumn(
+            i, 30
+        ),
+        dispense_shift=[0, 0, 0.5],
+    )
+
     soloSoft.shuckTip()
     soloSoft.savePipeline()
 
@@ -107,7 +191,7 @@ def test():
         )  # no need to open hidex
     softLinx.hidexClose()
     softLinx.plateCraneMoveCrane("SoftLinx.PlateCrane.Safe")
-    softLinx.hidexRun("Campaign1_noIncubate2") 
+    #softLinx.hidexRun("Campaign1_noIncubate2") 
    
     # Transfer plate to Liconic.Nest and replace lid
     softLinx.plateCraneMovePlate(["SoftLinx.Hidex.Nest"], ["SoftLinx.Liconic.Nest"])
