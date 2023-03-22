@@ -1,5 +1,5 @@
 {% set name = "liquidhandling" %}
-{% set version = "0.1.39" %}
+{% set version = "0.1.40" %}
 
 package:
   name: "{{ name|lower }}"
