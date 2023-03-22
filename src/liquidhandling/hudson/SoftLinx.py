@@ -27,6 +27,7 @@ class SoftLinx:
             "RapidPick": False,
             "TorreyPinesRIC20": False,
             "Liconic": False,
+            "PlateDefModifier": False,
         }
         self.plugin_reference = {
             "PlateCrane": 0,
@@ -34,16 +35,18 @@ class SoftLinx:
             "Solo": 2,
             "Hidex": 3,
             "Liconic": 4,
-            "TorreyPinesRIC20": 5,
-            # "RapidPick": 6, 
+            "PlateDefModifier": 5,
+            # "TorreyPinesRIC20": 6,
+            # "RapidPick": 7, 
         }
         self.plugin_address = {
-            "PlateCrane": 5,
-            "Plates": 6,
-            "Solo": 7,
-            "Hidex": 8,
-            "Liconic": 9,
-            "TorreyPinesRIC20": 10,
+            "PlateCrane": 6,
+            "Plates": 7,
+            "Solo": 8,
+            "Hidex": 9,
+            "Liconic": 10,
+            "PlateDefModifier": 11,
+            # "TorreyPinesRIC20": 13,
             # "RapidPick": 11,
         }
 
@@ -587,6 +590,73 @@ class SoftLinx:
             else:
                 self.protocolSteps.append(step)
 
+
+    # * PlateDefModifier Steps * #
+    def changePlateType(
+        self, 
+        softLinx_plate_location,
+        plate_type_name,
+        isActive=True, 
+        index=None, 
+        inplace=True
+    ):
+        if not isinstance(softLinx_plate_location, str):
+            raise TypeError(
+                "softLinx_plate_location must be a string correspondind to the deck location of the plate at the time of the plate definition change"
+            )
+        if not isinstance(plate_type_name, str): 
+            raise TypeError(
+                "plate_type_name must be a string name of the softLinx plate definition to change to"
+            )
+        step = {
+            "type": "ChangePlateType",  
+            "Command": "Change Plate Type",  
+            "Description": "Change Plate Type " + softLinx_plate_location + ", " +  plate_type_name, 
+            "SLXId": "80f3c5f5-7664-4949-b492-b32f9b7db45d", 
+            "ToolTip": "Change Plate Type " + softLinx_plate_location + ", " +  plate_type_name, 
+            "isActive": str(isActive),
+            "system": "PlateDefModifier",
+            "args": [
+                ["x:String", softLinx_plate_location],
+                ["x:String", plate_type_name],
+            ],
+        }
+        if inplace:
+            if index != None:
+                self.protocolSteps.insert(index, step)
+            else:
+                self.protocolSteps.append(step)
+
+    def resetPlateType(
+        self,
+        softLinx_plate_location,
+        isActive=True, 
+        index=None, 
+        inplace=True
+    ):
+        if not isinstance(softLinx_plate_location, str):
+            raise TypeError(
+                "softLinx_plate_location must be a string correspondind to the deck location of the plate at the time of the plate definition change"
+            )
+        step = {
+            "type": "ResetPlateType",  
+            "Command": "Reset Plate Type",  
+            "Description": "Reset Plate Type " + softLinx_plate_location, 
+            "SLXId": "343e4dcc-420e-4001-bc2a-7f02deed344a", 
+            "ToolTip": "Change Plate Type " + softLinx_plate_location, 
+            "isActive": str(isActive),
+            "system": "PlateDefModifier",
+            "args": [
+                ["x:String", softLinx_plate_location],
+            ],
+        }
+        if inplace:
+            if index != None:
+                self.protocolSteps.insert(index, step)
+            else:
+                self.protocolSteps.append(step)
+
+
     # * Liconic Steps * #
     def liconicLoadIncubator(
         self, 
@@ -836,6 +906,7 @@ class SoftLinx:
                 else:
                     self.protocolSteps.append(step)
 
+
     # * TorreyPinesRIC20 Steps * #
     def torreyPinesSetTemperature(
         self, 
@@ -845,7 +916,6 @@ class SoftLinx:
         index=None,
         inplace=True,
     ): 
-
         # Checks
         if not isinstance(temperature, int): 
             raise TypeError(
@@ -883,7 +953,6 @@ class SoftLinx:
                 else:
                     self.protocolSteps.append(step)
 
-
     def torreyPinesShutOff(
         self, 
         isActive=True, 
@@ -908,7 +977,6 @@ class SoftLinx:
                 else:
                     self.protocolSteps.append(step)
         
-
     def torreyPinesWaitForTemperature(
         self, 
         isActive=True, 
@@ -1013,7 +1081,8 @@ class SoftLinx:
         self.generatePluginInterface(scg_dict, "Solo")
         self.generatePluginInterface(scg_dict, "Hidex")
         self.generatePluginInterface(scg_dict, "Liconic")
-        self.generatePluginInterface(interfaces, "TorreyPinesRIC20")
+        self.generatePluginInterface(scg_dict, "PlateDefModifier")
+        #self.generatePluginInterface(interfaces, "TorreyPinesRIC20")
         # self.generatePluginInterface(interfaces, "PlateCrane")
         # self.generatePluginInterface(interfaces, "Plates")
         # self.generatePluginInterface(interfaces, "RapidPick")
@@ -1039,7 +1108,8 @@ class SoftLinx:
         self.generatePluginVariables(variableList, "Hidex")
         self.generatePluginVariables(variableList, "Solo")
         self.generatePluginVariables(variableList, "Liconic")
-        self.generatePluginVariables(variableList, "TorreyPinesRIC20")
+        self.generatePluginVariables(variableList, "PlateDefModifier")
+        #self.generatePluginVariables(variableList, "TorreyPinesRIC20")
 
         # *Add each variable
         # for variable in self.variables:
